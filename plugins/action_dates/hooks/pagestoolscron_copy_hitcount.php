@@ -9,7 +9,7 @@ function HookAction_datesPagestoolscron_copy_hitcountAddplugincronjob()
 	# Check that this is a valid date field to use
 	if(in_array($action_dates_restrictfield, $allowable_fields))
 		{
-		$restrict_resources=sql_query("select resource, value from resource_data where resource_type_field = '$action_dates_restrictfield'");
+		$restrict_resources=sql_query("select resource, value from resource_data where resource_type_field = '$action_dates_restrictfield' and value <>'' and value is not null");
 			
 		$emailrefs=array();
 		foreach ($restrict_resources as $resource)
@@ -50,7 +50,7 @@ function HookAction_datesPagestoolscron_copy_hitcountAddplugincronjob()
 		}
 	if(in_array($action_dates_deletefield, $allowable_fields))
 		{
-		$delete_resources=sql_query("select resource, value from resource_data where resource_type_field = '$action_dates_deletefield'");
+		$delete_resources=sql_query("select resource, value from resource_data where resource_type_field = '$action_dates_deletefield' and value <>'' and value is not null");
 		foreach ($delete_resources as $resource)
 			{
 			$ref=$resource["resource"];                       
@@ -61,7 +61,7 @@ function HookAction_datesPagestoolscron_copy_hitcountAddplugincronjob()
                             if ($action_dates_reallydelete)
                                 {
                                 delete_resource($ref);
-                                }
+				}
                             else
                                 {
                                 if (!isset($resource_deletion_state)){$resource_deletion_state=3;}
@@ -75,7 +75,7 @@ function HookAction_datesPagestoolscron_copy_hitcountAddplugincronjob()
 		}
 	}
 function HookAction_datesCron_copy_hitcountAddplugincronjob()
-	{	
+	{
 	HookAction_datesPagestoolscron_copy_hitcountAddplugincronjob();
 	}
 			
