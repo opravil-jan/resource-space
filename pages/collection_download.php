@@ -660,8 +660,15 @@ if ($zipped_collection_textfile=="true") { ?>
 <div class="Question">
 <label for="text"><?php echo $lang["zippedcollectiontextfile"]?></label>
 <select name="text" class="shrtwidth" id="text"<?php if (!empty($submitted)) echo ' disabled="disabled"' ?>>
-<option value="true"><?php echo $lang["yes"]?></option>
-<option value="false"><?php echo $lang["no"]?></option>
+<?php if($zipped_collection_textfile_default_no){
+	?><option value="false"><?php echo $lang["no"]?></option>
+	<option value="true"><?php echo $lang["yes"]?></option><?php
+}
+else{
+	?><option value="true"><?php echo $lang["yes"]?></option>
+	<option value="false"><?php echo $lang["no"]?></option><?php
+}
+?>	
 </select>
 <div class="clearerleft"></div>
 </div>

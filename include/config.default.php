@@ -618,6 +618,8 @@ $collection_download = false;
 
 # Option to write a text file into zipped collections containing resource data
 $zipped_collection_textfile=false;
+# Set default option for text file download to "no"
+$zipped_collection_textfile_default_no=false;
 
 # Enable speed tagging feature? (development)
 $speedtagging=false;
