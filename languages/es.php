@@ -37,6 +37,10 @@ $lang["perpage"]="Por página";
 $lang["gotoadvancedsearch"]="Ir a búsqueda avanzada";
 $lang["viewnewmaterial"]="Ver material nuevo";
 $lang["researchrequestservice"]="Servicio de petición de materiales";
+$lang["allresourcessearchbar"]="Todos los recursos";
+$lang["allcollectionssearchbar"]="Todas las colecciones";
+$lang["geographicsearch"]="Búsqueda Geográfica";
+
 
 # Team Centre ;
 $lang["manageresources"]="Gestionar materiales";
@@ -579,7 +583,28 @@ $lang["password_not_min_special"]="La contraseña debe tener como mínimo ? cara
 $lang["password_matches_existing"]="La contraseña introducida es la misma que la contraseña existente";
 $lang["password_expired"]="Tu contraseña ha caducado. Debes crear una nueva";
 $lang["max_login_attempts_exceeded"]="Has excedido el número máximo de intentos. Deberás esperar ? minutos antes de poder entrar de nuevo.";
-
-
+$lang["youfoundresult"]="Resultado";
+$lang["searchitemsdiskusage"]="Espacio en disco según el resultado";
+$lang['location-title'] = "Localización";
+$lang["resources-all-types"]="Todo tipo de recursos";
+$lang["header-upload-subtitle"] = "Paso %number: %subtitle"; # %number, %subtitle will be replaced, e.g. Step 1: Specify Default Content For New Resources
+$lang["intro-plupload_dragdrop"] = "Arrastre y suelte o seleccione Agregar Archivos para localizar unos o más archivos y luego seleccione Subir Archivos.";
+$lang["xlthumbs"]="X-Grande";
+$lang["smallthumbs"]="Pequeño";
+$lang["geographicsearch_help"]="Arrastre para seleccionar el área.";
+$lang["type"]="Tipo de Recurso";
+$lang["upload-options"]="Opciones de subida";
+$lang["associatedcollections"]="Colecciones asociadas";
+$lang["selectcollection"]="Seleccionar colección";
+$lang["theme_home_promote"]="Promocionar en página de inicio?";
+$lang["log"]="Registros";
+$lang["youfoundresource"]="recurso";
+$lang["sharecollection"]="Compartir colección";
+$lang["noattachedusers"]="No se han adjuntado usuarios.";
+$lang["externalusersharing"]="Compartición con usuarios externos";
+$lang["noexternalsharing"]="No hay compartición externa.";
+$lang["externalselectresourceaccess"]="Si el destinatario es un usuario externo, por favor especifique el nivel acceso que quiere establecer para este recurso.";
+$lang["externalselectresourceexpires"]="Si el destinatario es un usuario externo, por favor especifique una fecha de caducidad para la URL generada.";
+$lang["emailfromuser"]="Enviar el mail desde";
 
 ?>
