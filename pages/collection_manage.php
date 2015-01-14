@@ -348,7 +348,11 @@ if (!hook('collectionaccessmode')) {
 ?><a onClick="return CentralSpaceLoad(this,true);" href="<?php echo $baseurl_short?>pages/search.php?search=<?php echo urlencode("!collection" . $collections[$n]["ref"])?>">&gt;&nbsp;<?php echo $lang["viewall"]?></a>
 <!-- No need to check for permission 'b' - this check is done in the beginning of this file -->
 	&nbsp;<a href="<?php echo $baseurl_short?>pages/collections.php?collection=<?php echo urlencode($collections[$n]["ref"]); if ($autoshow_thumbs) {echo "&amp;thumbs=show";}?>" onClick="ChangeCollection(<?php echo $collections[$n]["ref"]?>, '');return false;">&gt;&nbsp;<?php echo $lang["action-select"]?></a>
-	<?php if (isset($zipcommand) || $collection_download) { ?>
+	<?php
+		if($download_usage && (isset($zipcommand) || $collection_download)) { ?>
+			<a href="<?php echo $baseurl_short?>pages/terms.php?url=<?php echo urlencode("pages/download_usage.php?collection=" . $collections[$n]["ref"]); ?>">&gt; <?php echo $lang["action-download"]?></a>
+		<?php
+		} else if (isset($zipcommand) || $collection_download) { ?>
 	&nbsp;<a onClick="return CentralSpaceLoad(this,true);" href="<?php echo $baseurl_short?>pages/terms.php?url=<?php echo urlencode("pages/collection_download.php?collection=" . $collections[$n]["ref"]) ?>"
 	>&gt;&nbsp;<?php echo $lang["action-download"]?></a>
 	<?php } ?>

@@ -466,7 +466,10 @@ elseif ($k!="")
 	<?php echo $lang["created"] . " " . nicedate($tempcol["created"])?><br />
   	<?php echo $count_result . " " . $lang["youfoundresources"]?><br />
   	</div>
-    <?php if ((isset($zipcommand) || $collection_download) && $count_result>0) { ?>
+    <?php
+	if ($download_usage && ((isset($zipcommand) || $collection_download) && $count_result>0)) { ?>
+		<a onclick="return CentralSpaceLoad(this,true);" href="<?php echo $baseurl_short?>pages/terms.php?k=<?php echo urlencode($k) ?>&url=<?php echo urlencode("pages/download_usage.php?collection=" .  $usercollection . "&k=" . $k)?>">&gt; <?php echo $lang["action-download"]?></a>
+	<?php } else if ((isset($zipcommand) || $collection_download) && $count_result>0) { ?>
 	<a href="<?php echo $baseurl_short?>pages/terms.php?k=<?php echo urlencode($k) ?>&url=<?php echo urlencode("pages/collection_download.php?collection=" .  $usercollection . "&k=" . $k)?>" onclick="return CentralSpaceLoad(this,true);">&gt;&nbsp;<?php echo $lang["action-download"]?></a>
 	<?php }
      if ($feedback) {?><br /><br /><a onclick="return CentralSpaceLoad(this);" href="<?php echo $baseurl_short?>pages/collection_feedback.php?collection=<?php echo urlencode($usercollection) ?>&k=<?php echo urlencode($k) ?>">&gt;&nbsp;<?php echo $lang["sendfeedback"]?></a><?php } ?>
