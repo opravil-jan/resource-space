@@ -50,7 +50,15 @@ function HookAction_datesPagestoolscron_copy_hitcountAddplugincronjob()
 		}
 	if(in_array($action_dates_deletefield, $allowable_fields))
 		{
-		$delete_resources=sql_query("select resource, value from resource_data where resource_type_field = '$action_dates_deletefield' and value <>'' and value is not null");
+		if ($action_dates_reallydelete)
+                	{
+			$delete_resources=sql_query("select resource, value from resource_data where resource_type_field = '$action_dates_deletefield' and value <>'' and value is not null");
+			}
+		else
+			{
+                        if (!isset($resource_deletion_state)){$resource_deletion_state=3;}
+			$delete_resources=sql_query("select rd.resource, rd.value from resource r left join resource_data rd on r.ref=rd.resource and r.archive!='" . $resource_deletion_state  . "' where rd.resource_type_field = '$action_dates_deletefield' and value <>'' and rd.value is not null");
+			}
 		foreach ($delete_resources as $resource)
 			{
 			$ref=$resource["resource"];                       
@@ -64,7 +72,6 @@ function HookAction_datesPagestoolscron_copy_hitcountAddplugincronjob()
 				}
                             else
                                 {
-                                if (!isset($resource_deletion_state)){$resource_deletion_state=3;}
                                 sql_query("update resource set archive='" . $resource_deletion_state . "' where ref='" . $ref . "'");
                                 }
                             # Remove the resource from any collections
