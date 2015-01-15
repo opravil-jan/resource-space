@@ -46,6 +46,7 @@ $csvdir = get_temp_dir() . DIRECTORY_SEPARATOR . "csv_upload" . DIRECTORY_SEPARA
 if ((!isset($_FILES[$fd]) || $_FILES[$fd]['error']>0) && !$process_csv)
 	{	
 	echo $lang["csv_upload_intro"];
+	echo $lang["csv_upload_encoding_notice"];
 	echo "<ul>";
 	$condition=1;
 	while(isset($lang["csv_upload_condition" . $condition]))
