@@ -705,7 +705,6 @@ var pluploadconfig = {
                                                                 }
                                                             ?>
                                                   });
-                                                  alert('Upload Complete');
                           });
                   
                                 
