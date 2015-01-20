@@ -480,6 +480,8 @@ $theme_category_levels=1;
 # $theme_category_levels must be greater than 1.
 $theme_direct_jump=false;
 
+#Force Collections lists on the Themes page to be in Descending order.
+$descthemesorder=false;
 
 ##  Advanced Search Options
 ##  Defaults (all false) shows advanced search in the search bar but not the home page or top navigation.

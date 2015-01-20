@@ -688,9 +688,13 @@ function get_themes($themes=array(""),$subthemes=false)
 	{	
 	$themes_order_by=getvalescaped("themes_order_by",getvalescaped("saved_themes_order_by","name"));
 	$sort=getvalescaped("sort",getvalescaped("saved_themes_sort","ASC"));	
-	global $themes_column_sorting,$themes_with_resources_only;
-	if (!$themes_column_sorting){$themes_order_by="name";$sort="ASC";} // necessary to avoid using a cookie that can't be changed if this is turned off.
-		
+	global $themes_column_sorting,$themes_with_resources_only,$descthemesorder;
+	if (!$themes_column_sorting && !$descthemesorder)
+		{
+		$themes_order_by="name";
+		$sort="ASC";
+		} // necessary to avoid using a cookie that can't be changed if this is turned off.
+	$sort = ($descthemesorder)? "DESC" : $sort;
 	# Return a list of themes under a given header (theme category).
 	$sql="select *,(select count(*) from collection_resource cr where cr.collection=c.ref) c from collection c  where c.theme='" . escape_check($themes[0]) . "' ";
 	
