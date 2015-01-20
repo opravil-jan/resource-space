@@ -17,6 +17,7 @@ if (!hook("replacehome")) {
 
 if (!hook("replaceslideshow")) { 
 
+
 # Count the files in the configured $homeanim_folder.
 $dir = dirname(__FILE__) . "/../" . $homeanim_folder; 
 $filecount = 0; 
@@ -27,21 +28,34 @@ $reslinks=array();
 foreach ($d as $f) { 
  if(preg_match("/[0-9]+\.(jpg)/",$f))
  	{ 
- 	$filecount++; 
+ 	$filecount++;
+
 	$checksum+=filesize($dir . "/" . $f);
 	$linkfile=substr($f,0,(strlen($f)-4)) . ".txt";
 	$reslinks[$filecount]="";
+	$linkref="";
 	if(file_exists("../" . $homeanim_folder . "/" . $linkfile))
 		{
 		$linkref=file_get_contents("../" . $homeanim_folder . "/" . $linkfile);
 		$linkaccess = get_resource_access($linkref);
 		if (($linkaccess!=="") && (($linkaccess==0) || ($linkaccess==1))){$reslinks[$filecount]=$baseurl . "/pages/view.php?ref=" . $linkref;}
-		}	
+		}
+       
+       if ($slideshow_big)
+	  {
+	  # Register with the new large slideshow.
+	  ?>
+	 <script type="text/javascript">
+	 RegisterSlideshowImage('../<?php echo $homeanim_folder ?>/<?php echo $f ?>','<?php echo $linkref ?>');
+	 </script>
+	 <?php
+	 }
+	
 	}
  } 
 
 $homeimages=$filecount;
-if ($filecount>1) { # Only add Javascript if more than one image.
+if ($filecount>1 && !$slideshow_big) { # Only add Javascript if more than one image.
 ?>
 <script type="text/javascript">
 
@@ -113,6 +127,7 @@ jQuery(document).ready( function ()
 </script>
 <?php } ?>
 
+<?php if (!$slideshow_big) { ?>
 <div class="HomePicturePanel"
 
 <?php if(!hook("replaceeditslideshowwidth")){
@@ -165,11 +180,15 @@ jQuery(document).ready( function ()
     <h1><?php echo text("welcometitle")?></h1>
     <p><?php echo text("welcometext")?></p>
 </div>
-<?php } 
+<?php }
+
+
 hook("homebeforehomepicpanelend");
 ?>
 </div>
-<?php } # End of hook replaceslideshow
+<?php
+}
+} # End of hook replaceslideshow
 ?>
 
 <?php if (checkperm("s")) {

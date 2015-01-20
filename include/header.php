@@ -68,6 +68,11 @@ http://www.resourcespace.org/
 
 <?php if ($use_zip_extension){?><script type="text/javascript" src="<?php echo $baseurl?>/lib/js/jquery-periodical-updater.js"></script><?php } ?>
 
+<?php if ($slideshow_big) { ?>
+<script type="text/javascript" src="<?php echo $baseurl?>/lib/js/slideshow_big.js"></script>
+<link type="text/css" href="<?php echo $baseurl?>/css/slideshow_big.css?css_reload_key=<?php echo $css_reload_key?>" rel="stylesheet" />
+<?php } ?>
+
 <?php if ($load_ubuntu_font) { 
 	$urlprefix="http://";
 	if (strpos($baseurl,"https://")!==false) // Change prefix as mixed content prevents linking in Firefox
