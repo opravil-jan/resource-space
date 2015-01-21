@@ -26,3 +26,12 @@ function HookNewsHomeSearchbarbottomtoolbar()
 		
 	<?php  
 	}
+function HookNewsHomeHomebeforepanels() 
+	{
+	if (getvalescaped("ajax",false))
+  		{
+		?>
+		<script>ReloadSearchBar();</script>
+		<?php
+		}
+	}
