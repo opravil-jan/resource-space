@@ -115,7 +115,7 @@ $lang["property-title"]="Title";
 $lang["property-resource_type"]="Resource type";
 $lang["property-field_type"]="Field type";
 
-$lang["property-options"]="Options";
+$lang["property-options"]="Comma seperated list of options. The first option will be the default option. If you do not wish to set a default value, use a starting comma to default to blank. E.g. <br />,Option1,Option2 - will default to blank<script>jQuery('#options').siblings('.FormHelp').hide(); jQuery('#type').click(function(){if(jQuery(this).val()==3){jQuery('#options').siblings('.FormHelp').show();}else{jQuery('#options').siblings('.FormHelp').hide();}});</script>";
 $lang["property-required"]="Required";
 $lang["property-order_by"]="Order by";
 $lang["property-indexing"]="<b>Indexing</b>";
