@@ -276,7 +276,8 @@ if(isset($usergroup))
     $curr_group = get_usergroup($usergroup);
     if (!empty($curr_group["group_specific_logo"]))
         {
-        $linkedheaderimgsrc="{$baseurl}/filestore/admin/groupheaderimg/group{$usergroup}.{$curr_group["group_specific_logo"]}";
+        $linkedheaderimgsrc = isset($storageurl)? $storageurl : $baseurl."/filestore";
+        $linkedheaderimgsrc.= "/admin/groupheaderimg/group".$usergroup.".".$curr_group["group_specific_logo"];
         if(!$slimheader)
             {
             ?>
@@ -384,7 +385,7 @@ else
         $linkUrl=isset($header_link_url) ? $header_link_url : $homepage_url;
         if($linkedheaderimgsrc !="") 
             {
-            $header_img_src = $baseurl.$linkedheaderimgsrc;
+            $header_img_src = $linkedheaderimgsrc;
             }
         else 
             {
