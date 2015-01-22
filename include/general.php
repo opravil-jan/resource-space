@@ -513,7 +513,7 @@ function add_partial_index($keywords)
 				# For each position an infix of this length can exist in the string
 				for ($o=0;$o<=strlen($keyword)-$m;$o++)
 					{
-					$infix=substr($keyword,$o,$m);
+					$infix=mb_substr($keyword,$o,$m);
 					$return[$x]['keyword']=$infix;
 					$return[$x]['position']=$position; // infix has same position as root
 					$x++;
