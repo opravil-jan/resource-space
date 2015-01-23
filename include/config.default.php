@@ -2523,6 +2523,6 @@ $remove_resources_link_on_collection_bar = FALSE;
 # Big slideshow mode - EXPERIMENTAL!
 # ----------------------------------
 # You will need to configure much bigger slideshow images with $home_slideshow_width and $home_slideshow_height, and regenerate
-# your slideshow images using the transform plugin.
+# your slideshow images using the transform plugin. This is recommended to be used along with the slim header.
 $slideshow_big=false;
 
