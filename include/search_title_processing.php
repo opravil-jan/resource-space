@@ -303,10 +303,11 @@ if ($search_titles)
 		}   
 	
 	hook("addspecialsearchtitle");
-	
-	// extra collection title links
-	if (substr($search,0,11)=="!collection"){
-		if ($k=="" && !checkperm("b") && ($userrequestmode!=2 && $userrequestmode!=3))
+	}
+    // extra collection title links
+    if (substr($search,0,11)=="!collection")
+        {
+    	if ($k=="" && !checkperm("b") && ($userrequestmode!=2 && $userrequestmode!=3))
             {
             $search_title_links = "<div class='CollectionTitleLinks'>";
             if ($k=="" && !checkperm("b") && ($userrequestmode!=2 && $userrequestmode!=3))
@@ -365,14 +366,13 @@ if ($search_titles)
             $search_title_links.="</div>";
             // END INSERT */
             }
-		if (count($result)!=0 && $k==""&&$preview_all){$search_title_links.='<a href="' . $baseurl_short.'pages/preview_all.php?ref=' . $collectiondata["ref"] . '&amp;order_by=' . urlencode($order_by) . '&amp;sort=' . urlencode($sort) . '&amp;archive=' . urlencode($archive) . '&amp;k=' . urlencode($k) . '">&gt;&nbsp;'.$lang['preview_all'].'</a>';}
-		$search_title.='</div>';
-		if ($display!="list"){$search_title_links.= '<br /><br />';}
-	}
+    	if (count($result)!=0 && $k==""&&$preview_all){$search_title_links.='<a href="' . $baseurl_short.'pages/preview_all.php?ref=' . $collectiondata["ref"] . '&amp;order_by=' . urlencode($order_by) . '&amp;sort=' . urlencode($sort) . '&amp;archive=' . urlencode($archive) . '&amp;k=' . urlencode($k) . '">&gt;&nbsp;'.$lang['preview_all'].'</a>';}
+    	$search_title.='</div>';
+    	if ($display!="list"){$search_title_links.= '<br />';}
+    }
 
-	if (!hook("replacenoresourcesfoundsearchtitle")){
-		if (!is_array($result) && empty($collections) && getvalescaped("addsmartcollection","") == '') {
-			$search_title = '<h1 class="searchcrumbs"><a href="' . $baseurl_short . 'pages/search.php">'.$lang["noresourcesfound"].'</a></h1>';
-		}
-	}
+    if (!hook("replacenoresourcesfoundsearchtitle")){
+    	if (!is_array($result) && empty($collections) && getvalescaped("addsmartcollection","") == '') {
+    		$search_title = '<h1 class="searchcrumbs"><a href="' . $baseurl_short . 'pages/search.php">'.$lang["noresourcesfound"].'</a></h1>';
+    	}
 }  
