@@ -40,3 +40,4 @@ $lang["added-photo-to-photoset"]="Added photo %photoid to photoset %photoset."; 
 $lang["setting-permissions"]="Setting permissions to %permission"; # %permission will be replaced, e.g. Setting permissions to private
 $lang["problem-with-url"]="Problem with %url, %php_errormsg"; # %url and %php_errormsg will be replaced
 $lang["problem-reading-data"]="Problem reading data from %url, %php_errormsg"; # %url and %php_errormsg will be replaced
+$lang["flickr-problem-finding-upload"]="A suitable upload for this resource cannot be found!";

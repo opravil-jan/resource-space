@@ -15,5 +15,7 @@ $flickr_caption_field=18;
 $flickr_keywords_field=1;
 
 $flickr_prefix_id_title=true;
+# option to try the next largest jpg preview size if for some reason a scr isn't avaialable and includes up to original jpgs.
+$flickr_scale_up=false;
 
 ?>

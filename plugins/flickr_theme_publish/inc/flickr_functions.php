@@ -7,7 +7,7 @@ function sync_flickr($search,$new_only=false,$photoset=0,$photoset_name="",$priv
 	{
 	# For the resources matching $search, synchronise with Flickr.
 	
-	global $flickr_api_key, $flickr_token, $flickr_caption_field, $flickr_keywords_field, $flickr_prefix_id_title, $lang;
+	global $flickr_api_key, $flickr_token, $flickr_caption_field, $flickr_keywords_field, $flickr_prefix_id_title, $lang, $flickr_scale_up;
 			
 	$results=do_search($search);
 	
@@ -32,6 +32,19 @@ function sync_flickr($search,$new_only=false,$photoset=0,$photoset_name="",$priv
 			echo "<li>" . $lang["processing"] . ": " . $title . "\n";
 	
 			$im=get_resource_path($result["ref"],true,"scr",false,"jpg");
+			if(!file_exists($im) && $flickr_scale_up){
+				$im=get_resource_path($result["ref"],true,"lrp",false,"jpg");
+				if(!file_exists($im)){
+					$im=get_resource_path($result["ref"],true,"hrp",false,"jpg");
+					if(!file_exists($im)){
+						$im=get_resource_path($result["ref"],true,"",false,$result["file_extension"]);
+					}
+				}
+			}
+			if(!file_exists($im)){
+				echo "<li>" . $lang["flickr-problem-finding-upload"];
+				continue;
+			}
 	
 			# If replacing, add the photo ID of the photo to replace.
 			if ($photoid!="")
@@ -48,11 +61,20 @@ function sync_flickr($search,$new_only=false,$photoset=0,$photoset_name="",$priv
 			if ($photoid=="")	
 				{
 
-				$url="http://api.flickr.com/services/upload/";
+				$url="https://api.flickr.com/services/upload/";
+				
+				# support > PHP 5.4
+				
+				if(function_exists("curl_file_create")){
+					$photo_curl=curl_file_create($im,'image/jpg');
+				}
+				else{
+					$photo_curl="@" . $im;
+				}
 
 				# Build paramater list for upload
 				$data=array(
-				"photo"=>"@" . $im,
+				"photo"=>$photo_curl,
 				"api_key"=>$flickr_api_key,
 				"auth_token" => $flickr_token,
 				"title" => $title,
@@ -121,7 +143,7 @@ function flickr_api($url,$params,$response_tag="",$method="GET")
 	# Run query
 	
 	$opts = array(
-	  'http'=>array(
+	  'https'=>array(
 	    'method'=>$method
 	  )
 	);
