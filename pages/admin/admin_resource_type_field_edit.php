@@ -241,7 +241,7 @@ if(getval("save","")!="" && getval("delete","")=="")
 			{
 			$sql="update resource_type_field set ";
 			}		
-		$sql.="{$column}='{$val}'";		
+		$sql.="{$column}=" . (($val=="")?"NULL":"'{$val}'");		
 		
 		// Add SQL to update synced fields if field is marked as a sync field
 		if ($sync_field!="" && $sync_field>0 && $column_detail[3]==1)
@@ -254,7 +254,7 @@ if(getval("save","")!="" && getval("delete","")=="")
 				{
 				$syncsql="update resource_type_field set ";
 				}
-			$syncsql.="{$column}='{$val}'";
+			$syncsql.="{$column}=" . (($val=="")?"NULL":"'{$val}'");
 			}
 		}
 	$sql.=" where ref='{$ref}'";
