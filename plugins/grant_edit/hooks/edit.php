@@ -130,7 +130,7 @@ function HookGrant_editEditReplacesubmitbuttons()
 						<td>" . (($grant_edituser['fullname']!="")?$grant_edituser['fullname']:$grant_edituser['username']) . "</td>
 						<td>" . (($grant_edituser['expiry']!="")?nicedate($grant_edituser['expiry']):$lang['never'])  . "</td>
 						<td><a href='#' onclick='if (confirm(\"" . $lang['grant_edit_delete_user'] . " " . (($grant_edituser['fullname']!="")?$grant_edituser['fullname']:$grant_edituser['username']) . "\")){remove_grant_edit(" . $grant_edituser['user'] . ");}'>&gt;&nbsp;" . $lang['action-delete']  . "</a></td>
-						</tr>
+					  </tr>
 					";
 				}		
 			?> 
@@ -140,7 +140,7 @@ function HookGrant_editEditReplacesubmitbuttons()
 		function remove_grant_edit(user)
 			{
 			jQuery.ajax({
-				async: false,
+				async: true,
 				url: '<?php echo $baseurl ?>/pages/edit.php',
 				type: 'POST',
 				data: { ref:'<?php echo $ref ?>', grant_edit_action:'delete', remove_user:user},
