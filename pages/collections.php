@@ -871,6 +871,7 @@ hook("thumblistextra");
 	<?php hook("addcompacttoolslabelmin");?>
 	<div id="MinSearchItem">
 	  <?php if ($collections_compact_style){
+		draw_compact_style_selector($cinfo['ref'],true,true);
 	    hook("beforetogglethumbs");
 	  	 if (/*($count_result<=$max_collection_thumbs) && */!$disable_collection_toggle) { ?>&nbsp;&nbsp;<a id="toggleThumbsLink" href="#" onClick="ToggleThumbs();return false;">&gt;&nbsp;<?php echo $lang["showthumbnails"]?></a><?php } 
 		}

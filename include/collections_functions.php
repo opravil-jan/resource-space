@@ -1692,9 +1692,10 @@ function get_home_page_promoted_collections()
 	}
 }
 if (!function_exists("draw_compact_style_selector")){
-function draw_compact_style_selector($collection,$onhover=true){
-	
-	global $baseurl,
+function draw_compact_style_selector($collection,$onhover=true,$col_min=false){
+
+	global 
+	$baseurl,
 	$baseurl_short,
 	$lang,
 	$pagename,
@@ -1720,41 +1721,39 @@ function draw_compact_style_selector($collection,$onhover=true){
 	$feedback,
 	$colresult,
 	$m,$getthemes;	
-	//if(preg_match('/(Android|iPhone|iPad)/', $_SERVER['HTTP_USER_AGENT'])) { 
-	//	$collections_compact_style_ajax=false; // omit this optimization for mobile as the hover events it relies on sometimes cause the selector to not be loaded prior to clicking.
-	//}
-	if (!$onhover || !$collections_compact_style_ajax ){
-		include(dirname(__FILE__)."/../pages/collections_compact_style.php");
-		return;
-	}
 	
 	//draw a dummy selector and then ajax load options on hover
 	
-	$tag=$pagename."-coltools-".$collection;if ($pagename=="collections"){$tag.="_usercol";}
+	$compact_style_tag=$pagename."-coltools-".$collection;
+	if ($pagename=="collections"){
+		$compact_style_tag.="_usercol";
+		if ($col_min==true){
+			$compact_style_tag.='min';
+		}
+	}
 	if ($pagename!="collections"){$hovertag="#CentralSpace";} 
 	if ($pagename=="collections"){$hovertag=".CollectBack";} 
 	
-	?>	<select readonly="readonly" <?php if ($pagename=="collections"){if ($collection_dropdown_user_access_mode){?>class="SearchWidthExp" style="margin:0;"<?php } else { ?> class="SearchWidth" style="margin:0;"<?php } } ?> class="ListDropdown" <?php if ($pagename=="search" && $display=="xlthumbs"){?>style="margin:-5px 0px 0px 5px"<?php } ?> <?php if ($pagename=="search" && ( $display=="thumbs" || $display=="smallthumbs")){?>style="margin:-5px 0px 0px 0px "<?php } ?> id="temp<?php echo urlencode($tag) ?>"><option id="tempoption<?php echo urlencode($tag) ?>"><?php echo $lang['select'];?></option></select>
+	
+	?>	<select readonly="readonly" <?php if ($pagename=="collections"){if ($collection_dropdown_user_access_mode){?>class="SearchWidthExp" style="margin:0;"<?php } else { ?> class="SearchWidth" style="margin:0;"<?php } } ?> class="ListDropdown" <?php if ($pagename=="search" && $display=="xlthumbs"){?>style="margin:-5px 0px 0px 5px"<?php } ?> <?php if ($pagename=="search" && ( $display=="thumbs" || $display=="smallthumbs")){?>style="margin:-5px 0px 0px 0px "<?php } ?> id="temp<?php echo urlencode($compact_style_tag) ?>"><option id="tempoption<?php echo urlencode($compact_style_tag) ?>"><?php echo $lang['select'];?></option></select>
 	<script>
-	<?php if (substr(getvalescaped("search",""),0,11)!="!collection" && $pagename=="search"){?>
-		jQuery('#temp<?php echo urlencode($tag) ?>').hover(function(){
-		<?php } ?>
-	jQuery('#tempoption<?php echo urlencode($tag) ?>').html('<?php echo $lang['loading']?>');
-	jQuery.ajax({
-		type: 'GET',
-		url:  '<?php echo $baseurl_short?>pages/collections_compact_style.php?collection=<?php echo urlencode($collection) ?>&pagename=<?php echo urlencode($pagename) ?>&colselectload=true',
-		success: function(msg){
-			if(msg != 0) {
-				jQuery('#temp<?php echo urlencode($tag) ?>').replaceWith(msg);
-				<?php if ($pagename=="collections"){?>jQuery('#collections-coltools-<?php echo $cinfo['ref']?>_usercol').clone().attr("id",'#collections-coltools-<?php echo $cinfo['ref']?>_usercolmin').attr('onChange',"colAction(jQuery(this).val());jQuery(this).prop('selectedIndex',0);").prependTo("#MinSearchItem");<?php } ?>
-			} 
-		}});
-	<?php if (substr(getvalescaped("search",""),0,11)!="!collection" && $pagename=="search"){?>
+
+	
+	// Always set up a hoverover-based load
+	jQuery('#temp<?php echo urlencode($compact_style_tag) ?>').hover(function(){
+			jQuery('#tempoption<?php echo urlencode($compact_style_tag) ?>').html('<?php echo $lang['loading']?>');
+			loadCompactSelector('<?php echo $collection?>','<?php echo urlencode($compact_style_tag) ?>','<?php echo urlencode($pagename)?>',<?php if ($col_min){?>true<?php } else {?>false<?php } ?>);
 		});
+
+	<?php if (substr(getvalescaped("search",""),0,11)!="!collection" && $pagename=="search"){?>
+		// do not automatically load
+	<?php } else { 
+		// load immediately
+	?>	jQuery('#tempoption<?php echo urlencode($compact_style_tag) ?>').html('<?php echo $lang['loading']?>');
+		loadCompactSelector('<?php echo $collection?>','<?php echo urlencode($compact_style_tag) ?>','<?php echo urlencode($pagename)?>',<?php if ($col_min){?>true<?php } else {?>false<?php } ?>);
 	<?php } ?>
 	
-		
-		
+	
 		</script>
 	
 	
