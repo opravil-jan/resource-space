@@ -119,7 +119,7 @@ function admin_resource_type_field_option($propertyname,$propertytitle,$helptext
 		elseif($type==1)
 			{
 			?>
-			<input name="<?php echo $propertyname ?>" type="checkbox" value="1" <?php if ($currentvalue==1) { ?> checked="checked"<?php } ?>">
+			<input name="<?php echo $propertyname ?>" type="checkbox" value="1" <?php if ($currentvalue==1) { ?> checked="checked"<?php } ?>>
 			<?php
 			}
 		elseif($type==2)
