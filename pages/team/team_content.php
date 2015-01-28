@@ -26,11 +26,11 @@ include "../../include/header.php";
 ?>
 
 
-<div class="BasicsBox"> 
+<div class="BasicsBox" style="position:relative;"> 
   <h1><?php echo $lang["managecontent"]?></h1>
-  <p><?php echo text("introtext")?></p>
- 
-<?php 
+  <?php 
+  $int_text=text("introtext");
+  echo empty($int_text)?"":"<p>".$int_text."</p>";
 $text=get_all_site_text($findpage, $findname,$findtext);
 
 # pager
@@ -41,7 +41,7 @@ $curpage=floor($offset/$per_page)+1;
 $url=$baseurl_short."pages/team/team_content.php?findpage=" . urlencode($findpage)."&findname=".urlencode($findname)."&findtext=".urlencode($findtext);
 $jumpcount=1;
 
-?><div class="TopInpageNav"><?php pager();	?></div>
+?><div style="float:right;margin-top:-5px;"><?php pager();?></div>
 
 <div class="Listview">
 <table border="0" cellspacing="0" cellpadding="0" class="ListviewStyle">
