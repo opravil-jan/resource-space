@@ -57,12 +57,12 @@ function SwapCSS(css){
 			    	<?php
 		            if($linkedheaderimgsrc=="")
 		                {
-		                $header_img_src = $baseurl.'/gfx/titles/title.png';
+		                $header_img_src = '/gfx/titles/title.png';
 		                echo "jQuery('#HeaderImg').attr(\"src\",'".$header_img_src."?css_reload_key=".$css_reload_key."');";
 		                }
 		            else
 		                {
-		                echo "jQuery('#HeaderImg').attr(\"src\",'".$baseurl.$linkedheaderimgsrc."');";
+		                echo "jQuery('#HeaderImg').attr(\"src\",'".$linkedheaderimgsrc."');";
 		                } 
 		            } ?>
 		        }
