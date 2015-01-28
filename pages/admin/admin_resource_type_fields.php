@@ -19,7 +19,7 @@ if (array_key_exists("find",$_POST)) {$offset=0;} # reset page counter when post
     
 $restypefilter=getvalescaped("restypefilter","",true);
 $restypesfilter=($restypefilter!="")?array($restypefilter):"";
-$field_order_by=getvalescaped("field_order_by",(($use_order_by_tab_view)?"order_by":"ref"));
+$field_order_by=getvalescaped("field_order_by","order_by");
 $field_sort=getvalescaped("field_sort","asc");
 
 //$url_params="ref=" . $ref . "&find=" . $find . "&restypefilter=" . $restypefilter . "&field_order_by=" . $field_order_by . "&field_sort=" . $field_sort;
@@ -104,13 +104,7 @@ $results=count($fields);
 
 <div class="BasicsBox">
 
-<?php
-if(!$allow_reorder)
-  {?>
-  <a href="<?php echo $baseurl . "/pages/admin/admin_resource_type_fields.php?restypefilter=" . (($use_order_by_tab_view)?"":$restypefilter) . "&field_order_by=order_by&field_sort=asc" ?>" onClick="return CentralSpaceLoad(this,true);">&gt;&nbsp;<?php echo $lang["admin_resource_type_field_reorder_mode"]?></a></p>  
-  <?php
-  }
-  ?>
+
 
 <div class="FormError" id="PageError"
   <?php
@@ -118,7 +112,53 @@ if(!$allow_reorder)
   else { echo ">" . $error_text ; } ?>
 </div>
 
+<?php
+if(!$allow_reorder && ($use_order_by_tab_view || $restypefilter!="" || $field_order_by!="order_by" ))
+  {
+ ?>
+  <a href="<?php echo $baseurl . "/pages/admin/admin_resource_type_fields.php?restypefilter=" . (($use_order_by_tab_view)?"":$restypefilter) . "&field_order_by=order_by&field_sort=asc" ?>" onClick="return CentralSpaceLoad(this,true);">&gt;&nbsp;<?php if($use_order_by_tab_view){echo $lang["admin_resource_type_field_reorder_mode_all"];}else{echo $lang["admin_resource_type_field_reorder_mode"];}?></a></p>  
+  <?php
+  }
+else
+    {
+    if($allow_reorder)
+	{	
+	echo "<p>" . $lang["admin_resource_type_field_reorder_information"] ."</p>";
+	}
+    else 
+	{
+	echo "<div id=\"PageInfo\"><p>" . $lang["admin_resource_type_field_reorder_select_restype"] ."</p></div>";
+	}
+    }
+  ?>
 
+<form method="post" id="AdminResourceTypeFieldForm" onSubmit="return CentralSpacePost(this,true);"  action="<?php echo generateURL($baseurl . "/pages/admin/admin_resource_type_fields.php",array("field_order_by"=>$field_order_by,"field_sort"=>$field_sort,"find" =>$find)) ?>" >
+		
+	<div class="Question">  
+		<label for="restypefilter"><?php echo $lang["property-resource_type"]; ?></label>
+		<div class="tickset">
+		  <div class="Inline">
+		  <select name="restypefilter" id="restypefilter" onChange="return CentralSpacePost(this.form,true);" >
+			<option value=""<?php if ($restypefilter == "") { echo " selected"; } ?>><?php echo $lang["all"]; ?></option>
+			<option value="0"<?php if ($restypefilter == "0") { echo " selected"; } ?>><?php echo $lang["resourcetype-global_field"]; ?></option>
+			
+			<?php
+			  for($n=0;$n<count($resource_types);$n++){
+			?>
+			<option value="<?php echo $resource_types[$n]["ref"]; ?>"<?php if ($restypefilter == $resource_types[$n]["ref"]) { echo " selected"; } ?>><?php echo i18n_get_translated($resource_types[$n]["name"]); ?></option>
+			<?php
+			  }
+			?>
+			
+			<option value="999"<?php if ($restypefilter == "999") { echo " selected"; } ?>><?php echo $lang["resourcetype-archive_only"]; ?></option>
+			</select>
+		  </div>
+		</div>
+		<div class="clearerleft"> </div>
+	  </div>
+</form>
+	
+	
 <div class="Listview">
 <table id="resource_type_field_table" border="0" cellspacing="0" cellpadding="0" class="ListviewStyle">
 <tr class="ListviewTitleStyle">
@@ -189,36 +229,23 @@ for ($n=0;$n<count($fields);$n++)
 </table>
 </div>
 
- <form method="post" id="ResourceTypeSelectForm" onSubmit="return CentralSpacePost(this,true);"  action="<?php echo $baseurl_short?>pages/admin/admin_resource_type_fields.php">
+
+<form method="post" id="AdminResourceTypeFieldForm2" onSubmit="return CentralSpacePost(this,true);"  action="<?php echo generateURL($baseurl . "/pages/admin/admin_resource_type_fields.php",array("field_order_by"=>$field_order_by,"field_sort"=>$field_sort,"restypefilter"=>$restypefilter)) ?>" >
 		
-	<div class="Question">  
-		<label for="restypefilter"><?php echo $lang["property-resource_type"]; ?></label>
-		<div class="tickset">
-		  <div class="Inline">
-		  <select name="restypefilter" id="restypefilter" onChange="return CentralSpacePost(this.form,true);" >
-			<option value=""<?php if ($restypefilter == "") { echo " selected"; } ?>><?php echo $lang["all"]; ?></option>
-			<option value="0"<?php if ($restypefilter == "0") { echo " selected"; } ?>><?php echo $lang["resourcetype-global_field"]; ?></option>
-			
-			<?php
-			  for($n=0;$n<count($resource_types);$n++){
-			?>
-			<option value="<?php echo $resource_types[$n]["ref"]; ?>"<?php if ($restypefilter == $resource_types[$n]["ref"]) { echo " selected"; } ?>><?php echo i18n_get_translated($resource_types[$n]["name"]); ?></option>
-			<?php
-			  }
-			?>
-			
-			<option value="999"<?php if ($restypefilter == "999") { echo " selected"; } ?>><?php echo $lang["resourcetype-archive_only"]; ?></option>
-			</select>
-		  </div>
-		</div>
-		<div class="clearerleft"> </div>
-	  </div>
-	
+		
 	<div class="Question">
 			<label for="find"><?php echo $lang["find"]?></label>
 			<div class="tickset">
 			 <div class="Inline"><input type=text name="find" id="find" value="<?php echo $find?>" maxlength="100" class="shrtwidth" /></div>
 			 <div class="Inline"><input name="Submit" type="submit" value="&nbsp;&nbsp;<?php echo $lang["searchbutton"]?>&nbsp;&nbsp;" /></div>
+			<?php
+			if ($find!="")
+			    {
+			    ?>
+			    <div class="Inline"><input name="resetform" class="resetform" type="submit" value="<?php echo $lang["clearbutton"]?>" onclick="CentralSpaceLoad('<?php echo generateURL($baseurl . "/pages/admin/admin_resource_type_fields.php",array("field_order_by"=>$field_order_by,"field_sort"=>$field_sort,"restypefilter"=>$restypefilter,"find"=>"")) ?>',false);" /></div>
+			    <?php
+			    }
+			?>
 			</div>
 			<div class="clearerleft"> </div>
 		</div>
@@ -232,6 +259,9 @@ for ($n=0;$n<count($fields);$n++)
 			<div class="clearerleft"> </div>
 		</div>
 	</form>
+
+
+ 
 </div><!-- End of BasicsBox -->
 
   
@@ -286,7 +316,6 @@ function enableFieldsort(){
 			  cursor: 'move',
 			  opacity: 0.6, 
 			  stop: function(event, ui) {
-			  		//("HERE");
 				  <?php
 				  if($allow_reorder)
 					{
@@ -302,14 +331,26 @@ function enableFieldsort(){
 						{
 						$errormessage=$lang["admin_resource_type_field_reorder_information_tab_order"];
 						}
+					else if (!$use_order_by_tab_view && $restypefilter=="" && $field_order_by=="order_by" )
+						{
+						$errormessage=$lang["admin_resource_type_field_reorder_select_restype"];
+						?>
+						hideinfo=true;
+						<?php						
+						}
 					else
 						{
 						$errormessage=$lang["admin_resource_type_field_reorder_information_normal_order"];
-						}
+						} 
 					?>
 					
 					jQuery('#PageError').html("<?php echo $errormessage ?>");
 					jQuery('#PageError').show();
+					if (hideinfo!==undefined)
+					    {
+					    jQuery('#PageInfo').hide();					   
+					    }
+
 					jQuery( "#resource_type_field_table_body" ).sortable( "cancel" );
 					<?php
 					}
