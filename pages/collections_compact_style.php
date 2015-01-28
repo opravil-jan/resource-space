@@ -76,6 +76,9 @@ if (count($colresult)>0 && checkperm("e" . $colresult[0]["archive"]) && allow_mu
 	$col_editable=true;
 }
 
+$tag=$pagename."-coltools-".$collection;
+if ($pagename=="collections"){$tag.="_usercol";}
+if (getvalescaped("colmin","false")=="true"){$tag.="min"; }
 
 ?>
 
@@ -85,7 +88,8 @@ if (count($colresult)>0 && checkperm("e" . $colresult[0]["archive"]) && allow_mu
 			?>class="SearchWidthExp" style="margin:0;"<?php } else { ?> class="SearchWidth" style="margin:0;"<?php 
 		} 
 		
-	} $tag=$pagename."-coltools-".$collection;if ($pagename=="collections"){$tag.="_usercol";}if (getval("col_min","")!=""){$tag.="min";}
+	} 
+	
 	$colvalue="document.getElementById('".$tag."').value";	?> class="ListDropdown" <?php if ($pagename=="search" && $display=="xlthumbs"){?>style="margin:-5px 0px 0px 5px"<?php } ?> <?php if ($pagename=="search" && ( $display=="thumbs" || $display=="smallthumbs")){?>style="margin:-5px 0px 0px 4px "<?php } ?> id="<?php echo $tag?>" onchange="colAction(<?php echo $colvalue?>);<?php echo $colvalue?>='';">
 
  
