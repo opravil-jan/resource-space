@@ -242,7 +242,7 @@ for ($n=0;$n<count($fields);$n++)
 			if ($find!="")
 			    {
 			    ?>
-			    <div class="Inline"><input name="resetform" class="resetform" type="submit" value="<?php echo $lang["clearbutton"]?>" onclick="CentralSpaceLoad('<?php echo generateURL($baseurl . "/pages/admin/admin_resource_type_fields.php",array("field_order_by"=>$field_order_by,"field_sort"=>$field_sort,"restypefilter"=>$restypefilter,"find"=>"")) ?>',false);" /></div>
+			    <div class="Inline"><input name="resetform" class="resetform" type="submit" value="<?php echo $lang["clearbutton"]?>" onclick="CentralSpaceLoad('<?php echo generateURL($baseurl . "/pages/admin/admin_resource_type_fields.php",array("field_order_by"=>$field_order_by,"field_sort"=>$field_sort,"restypefilter"=>$restypefilter,"find"=>"")) ?>',false);return false;" /></div>
 			    <?php
 			    }
 			?>
