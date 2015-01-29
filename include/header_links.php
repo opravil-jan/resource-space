@@ -1,7 +1,7 @@
 		<?php if (!hook("replaceheadernav2")) { ?>
 		<ul>
 		<?php if (!hook("replacehomelinknav")) { ?>
-		<?php if (!$use_theme_as_home && !$use_recent_as_home) { ?><li><a href="<?php echo $baseurl?>/pages/<?php echo $default_home_page?>" onClick="return CentralSpaceLoad(this,true);"><?php echo $lang["home"]?></a></li>&nbsp;<?php } 
+		<?php if (!$use_theme_as_home && !$use_recent_as_home) { ?><li><a href="<?php echo $baseurl?>/pages/<?php echo $default_home_page?>" onClick="return CentralSpaceLoad(this,true);"><?php echo $lang["home"]?></a></li> <?php } 
 		 }  
 		hook("topnavlinksafterhome");
 		?>
