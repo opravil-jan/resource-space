@@ -27,7 +27,7 @@ $restypes=getvalescaped("restypes","");
 $starsearch=getvalescaped("starsearch","");
 if (strpos($search,"!")!==false) {$restypes="";}
 $archive=getvalescaped("archive",0,true);
-
+$per_page=getvalescaped("per_page",0,true);
 $default_sort="DESC";
 if (substr($order_by,0,5)=="field"){$default_sort="ASC";}
 $sort=getval("sort",$default_sort);
@@ -56,13 +56,13 @@ if ($go!="")
 			}
 		if ($pos!=-1)
 			{
-			if (($go=="previous") && ($pos>0)) {$ref=$result[$pos-1]["ref"];}
-			if (($go=="next") && ($pos<($n-1))) {$ref=$result[$pos+1]["ref"];if (($pos+1)>=($offset+72)) {$offset=$pos+1;}} # move to next page if we've advanced far enough
+			if (($go=="previous") && ($pos>0)) {$ref=$result[$pos-1]["ref"];if (($pos-1)<$offset) {$offset=$offset-$per_page;}}
+			if (($go=="next") && ($pos<($n-1))) {$ref=$result[$pos+1]["ref"];if (($pos+1)>=($offset+$per_page)) {$offset=$pos+1;}} # move to next page if we've advanced far enough
 			}
 		elseif($curpos!="")
 			{
-			if (($go=="previous") && ($curpos>0)) {$ref=$result[$curpos-1]["ref"];}
-			if (($go=="next") && ($curpos<($n))) {$ref=$result[$curpos]["ref"];if (($curpos)>=($offset+72)) {$offset=$curpos+1;}} # move to next page if we've advanced far enough
+			if (($go=="previous") && ($curpos>0)) {$ref=$result[$curpos-1]["ref"];if (($pos-1)<$offset) {$offset=$offset-$per_page;}}
+			if (($go=="next") && ($curpos<($n))) {$ref=$result[$curpos]["ref"];if (($curpos)>=($offset+$per_page)) {$offset=$curpos+1;}}  # move to next page if we've advanced far enough
 			}
 		else
 			{
