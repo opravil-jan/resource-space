@@ -1186,6 +1186,9 @@ $log_resource_views=false;
 # For example; uploading a PHP file may allow arbirtary execution of code, depending on server security settings.
 $banned_extensions=array("php","cgi","pl","exe","asp","jsp");
 
+#Set a default access value for the upload page. This will override the default resource template value.
+$override_access_default=false;
+
 # When adding resource(s), in the upload template by the status and access fields are hidden.
 # Set the below option to 'true' to enable these options during this process.
 $show_status_and_access_on_upload=false;
