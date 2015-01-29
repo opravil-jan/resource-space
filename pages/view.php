@@ -376,9 +376,8 @@ function display_field_data($field,$valueonly=false,$fixedwidth=452)
 				eval($field['value_filter']);
 			}
 			else if (file_exists($plugin)) {include $plugin;}
-			else if ($field["type"]==4 || $field["type"]==6) { 
-				$value=NiceDate($value,false,true);
-			}
+			else if ($field["type"]==4 && strpos($value,":")!=false){$value=NiceDate($value,true,true);} // Show the time as well as date if entered
+			else if ($field["type"]==4 || $field["type"]==6) {$value=NiceDate($value,false,true);}
 			
 			# Highlight keywords
 			$value=highlightkeywords($value,$search,$field["partial_index"],$field["name"],$field["keywords_index"]);
