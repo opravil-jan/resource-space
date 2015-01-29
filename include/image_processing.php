@@ -346,7 +346,7 @@ function extract_exif_comment($ref,$extension="")
 	if (!file_exists($image)) {return false;}
 	hook("pdfsearch");
 
-	global $exif_comment,$exiftool_no_process,$exiftool_resolution_calc, $disable_geocoding, $embedded_data_user_select_fields;
+	global $exif_comment,$exiftool_no_process,$exiftool_resolution_calc, $disable_geocoding, $embedded_data_user_select_fields,$filename_field;
 	$exiftool_fullpath = get_utility_path("exiftool");
 	if (($exiftool_fullpath!=false) && !in_array($extension,$exiftool_no_process))
 		{
@@ -485,7 +485,6 @@ function extract_exif_comment($ref,$extension="")
 			foreach ($field as $subfield)
 				{
 				$subfield = strtoupper($subfield); // convert to upper case for easier comparision
-				global $filename_field;
 				if (in_array($subfield, array_keys($metadata)) && $metadata[$subfield] != "-" && trim($metadata[$subfield])!="")
 					{
 					$read=true;
