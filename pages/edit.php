@@ -1579,7 +1579,7 @@ if ($show_status_and_access_on_upload_perm &&!hook("editstatushide")) # Only dis
 	    	$resource["access"]=$override_access_default;
 	    	}
 	    	
-        if ($ref<0 && $show_status_and_access_on_upload=== false && ($show_access_on_upload === false || ($show_access_on_upload === true && !$show_access_on_upload_perm)))
+        if ($ref<0 && (($show_status_and_access_on_upload== false && $show_access_on_upload == false) || ($show_access_on_upload == false || ($show_access_on_upload == true && !$show_access_on_upload_perm))))
             { 
             # Upload template and the status and access fields are configured to be hidden on uploads.
             ?>
