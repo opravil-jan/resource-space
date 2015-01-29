@@ -1665,12 +1665,15 @@ function save_alternative_file($resource,$ref)
 		# Find the path for this resource.
     	$path=get_resource_path($resource, true, "", true, $extension, -1, 1, false, "", $ref);
 
-		# Debug
-		debug("Uploading alternative file $ref with extension $extension to $path");
-
 		if ($filename!="")
 			{
-			$result=move_uploaded_file($processfile['tmp_name'], $path);
+			if(!hook('replacemovealtfile'))
+				{
+				# Debug
+				debug("Uploading alternative file $ref with extension $extension to $path");
+				$result=move_uploaded_file($processfile['tmp_name'], $path);
+				}
+
 			if ($result==false)
 				{
 				exit("File upload error. Please check the size of the file you are trying to upload.");
