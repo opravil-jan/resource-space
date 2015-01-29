@@ -188,6 +188,10 @@ foreach ($additional_archive_states as $additional_archive_state)
 	{
 	DrawOption("e" . $additional_archive_state, $lang["edit_access_to_workflow_state"] . " '" . (isset($lang["status" . $additional_archive_state])?$lang["status" . $additional_archive_state]:$additional_archive_state) . "'", false);
 	}
+for ($n=0;$n<=($custom_access?3:2);$n++)
+    {
+    DrawOption("ea" . $n, $lang["edit_access_to_access"]. " '".$lang["access" . $n]. "'", true);
+    }
 
 DrawOption("c", $lang["can_create_resources_and_upload_files-admins"]);
 DrawOption("d", $lang["can_create_resources_and_upload_files-general_users"]);

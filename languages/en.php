@@ -1521,6 +1521,7 @@ $lang["can_see_resource_type"]="Can see resource type";
 $lang["restricted_access_only_to_resource_type"]="Restricted access only to resource type";
 $lang["restricted_upload_for_resource_of_type"]="Restricted upload for resource of type";
 $lang["edit_access_to_workflow_state"]="Edit access to workflow state";
+$lang["edit_access_to_access"]="Edit access to Access state";
 $lang["can_create_resources_and_upload_files-admins"]="Can create resources / upload files<br>(admin users; resources go to 'Active' state)";
 $lang["can_create_resources_and_upload_files-general_users"]="Can create resources / upload files<br>(normal users; resources go to 'Pending Submission' state via My Contributions)";
 $lang["can_delete_resources"]="Can delete resources<br>(to which the user has write access)";
