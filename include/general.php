@@ -3905,7 +3905,7 @@ function generateURL($url,$parameters=array(),$setparams=array())
     {
     foreach($setparams as $setparam=>$setvalue)
         {
-        if($setparam!="" && $setvalue!="")
+        if($setparam!="")
             {$parameters[$setparam]=$setvalue;}
         }
     $querystringparams=array();
