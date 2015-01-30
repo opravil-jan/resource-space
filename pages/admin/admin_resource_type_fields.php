@@ -48,7 +48,8 @@ $url=generateURL($baseurl . "/pages/admin/admin_resource_type_fields.php",$url_p
 
 if (getval("newfield","")!="")
 	{
-	sql_query("insert into resource_type_field (title) values('" . getvalescaped("newfield","") . "')");
+	$newfieldrestype=getvalescaped("newfieldrestype",0,true);
+	sql_query("insert into resource_type_field (title,resource_type) values('" . getvalescaped("newfield","") . "','$newfieldrestype')");
 	$new=sql_insert_id();
 	redirect($baseurl_short . 'pages/admin/admin_resource_type_field_edit.php?ref=' . $new);
 	}
@@ -253,6 +254,7 @@ for ($n=0;$n<count($fields);$n++)
 		<div class="Question">
 			<label for="newfield"><?php echo $lang["admin_resource_type_field_create"]?></label>
 			<div class="tickset">
+			 <input type="hidden" name="newfieldrestype" value="<?php echo htmlspecialchars($restypefilter) ?>""/>   
 			 <div class="Inline"><input type=text name="newfield" id="newtype" maxlength="100" class="shrtwidth" /></div>
 			 <div class="Inline"><input name="Submit" type="submit" value="&nbsp;&nbsp;<?php echo $lang["create"] ?>&nbsp;&nbsp;" /></div>
 			</div>
