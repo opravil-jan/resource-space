@@ -138,14 +138,10 @@ a.ResourcePanel:visited, a.ResourcePanel:active, a.ResourcePanel:link {color:#E0
 .Tab a {border: 1px solid #BBBBBB;border-bottom-style: none;color: #aaaaaa;  }
 .StyledTabbedPanel 
     {
-    background: #fefefe; /* Old browsers */
-    background: -moz-linear-gradient(top, #fff 0%, #eee 100%); /* FF3.6+ */
-    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#fff), color-stop(100%,#eee)); /* Chrome,Safari4+ */
-    background: -webkit-linear-gradient(top, #fff 0%,#eee 100%); /* Chrome10+,Safari5.1+ */
-    background: -o-linear-gradient(top, #fff 0%,#eee 100%); /* Opera 11.10+ */
-    background: -ms-linear-gradient(top, #fff 0%,#eee 100%); /* IE10+ */
-    background: linear-gradient(to bottom, #fff 0%,#eee 100%); /* W3C */
-    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#eeeeee',GradientType=0 ); /* IE6-9 */
+    background-color: #383838;
+	background: linear-gradient(#424242 , #1B1B1B);
+	border: none;
+	color: #e0e0e0;
 	border: 1px solid #BBBBBB;
     }
 .TabSelected  
