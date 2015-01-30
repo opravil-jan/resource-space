@@ -55,9 +55,9 @@ function SwapCSS(css){
 			    		jQuery("#Header").removeClass("slimheader_darken");
 			    	}
 			    	<?php
-		            if($linkedheaderimgsrc=="")
+		            if(empty($linkedheaderimgsrc))
 		                {
-		                $header_img_src = '/gfx/titles/title.png';
+		                $header_img_src = $baseurl.'/gfx/titles/title.png';
 		                echo "jQuery('#HeaderImg').attr(\"src\",'".$header_img_src."?css_reload_key=".$css_reload_key."');";
 		                }
 		            else
