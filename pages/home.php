@@ -30,10 +30,11 @@ foreach ($d as $f) {
  	{ 
  	$filecount++;
 
-	$checksum+=filesize($dir . "/" . $f);
+	$checksum+=filemtime($dir . "/" . $f);
 	$linkfile=substr($f,0,(strlen($f)-4)) . ".txt";
 	$reslinks[$filecount]="";
 	$linkref="";
+		
 	if(file_exists("../" . $homeanim_folder . "/" . $linkfile))
 		{
 		$linkref=file_get_contents("../" . $homeanim_folder . "/" . $linkfile);
@@ -44,9 +45,10 @@ foreach ($d as $f) {
        if ($slideshow_big)
 	  {
 	  # Register with the new large slideshow.
-	  ?>
+	  # Include the checksum calculated so far, to ensure a reloaded image if the image on disk has changed.
+      	  ?>
 	 <script type="text/javascript">
-	 RegisterSlideshowImage('../<?php echo $homeanim_folder ?>/<?php echo $f ?>','<?php echo $linkref ?>');
+	 RegisterSlideshowImage('../<?php echo $homeanim_folder ?>/<?php echo $f ?>?nc=<?php echo $checksum ?>','<?php echo $linkref ?>');
 	 </script>
 	 <?php
 	 }
