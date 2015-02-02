@@ -197,7 +197,9 @@ hook("homebeforehomepicpanelend");
 	hook("homebeforepanels");
 ?>
 <div id="HomePanelContainer" class="">
-<?php if ($home_themeheaders && $enable_themes) { ?>
+<?php 
+hook('homepanelcontainerstart');
+if ($home_themeheaders && $enable_themes) { ?>
 	<div class="HomePanel">
 	<div class="HomePanelIN HomePanelThemes<?php if (count($home_collections)>0) { ?> HomePanelMatchPromotedHeight<?php } ?>">
 		<a onClick="return CentralSpaceLoad(this,true);" href="<?php echo $baseurl_short?>pages/themes.php"><h2><?php echo $lang["themes"]?></h2></a>
