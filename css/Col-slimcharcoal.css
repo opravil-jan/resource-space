@@ -146,9 +146,9 @@ a.ResourcePanel:visited, a.ResourcePanel:active, a.ResourcePanel:link {color:#E0
     }
 .TabSelected  
     { 
-    background: #ffffff;  
-    border-bottom: 1px solid #ffffff; 
-    border-top: 1px solid #ffffff;
+    background: #383838;  
+    border-bottom: 1px solid #bbbbbb; 
+    border-top: 1px solid #383838;
     border-left: #bbbbbb;
     margin-right: 5px; 
     }
