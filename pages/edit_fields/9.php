@@ -4,7 +4,7 @@ global $baseurl,$pagename,$edit_autosave;
 $readonly=($pagename=="search_advanced");
 ?>
 
-<div class="dynamickeywords">
+<div class="dynamickeywords ui-front">
 <input type="text" class="stdwidth" value="<?php echo $lang["starttypingkeyword"]?>" onFocus="if (this.value=='<?php echo $lang["starttypingkeyword"]?>') {this.value='';}" onBlur="if (this.value=='') {this.value='<?php echo $lang["starttypingkeyword"]?>'};" name="<?php echo $name ?>_selector" id="<?php echo $name ?>_selector" />
 
 <input type="hidden" name="<?php echo $name ?>" id="<?php echo $name ?>" value="<?php echo htmlspecialchars($value) ?>"/>
