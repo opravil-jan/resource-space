@@ -88,6 +88,10 @@ a.ResourcePanel:visited, a.ResourcePanel:active, a.ResourcePanel:link {color:#E0
 .ListviewTitleStyle td a:active, .ListviewTitleStyle td a:link, .ListviewTitleStyle td a:visited{background: #383838; color:#E0E0E0;}
 .Listview td {border-bottom: 1px solid #d2d2d2;}
 
+#RelatedResourceData .Listview tr:nth-child(odd) {background: inherit;}
+#RelatedResourceData .Listview .ListviewStyle .RelatedResourceRow .ListTools a, #RelatedResourceData .Listview .ListviewStyle tr .ListTools a {color:#E0E0E0;}
+#RelatedResourceData .Listview .ListviewTitleStyle td {background: #1B1B1B;}
+
 /* Icons */
 .IconCollect, .KeyCollect	{background: url(../gfx/slimcharcoal/interface/IcCol.gif) no-repeat;}
 .IconCollectOut, .KeyCollectOut	{background: url(../gfx/slimcharcoal/interface/IcColOut.gif) no-repeat;}
@@ -153,6 +157,7 @@ a.ResourcePanel:visited, a.ResourcePanel:active, a.ResourcePanel:link {color:#E0
     margin-right: 5px; 
     }
 .TabSelected a { margin: 0; color: #666666; }
+.Tab.TabSelected a {background: #bbbbbb; color: #1B1B1B;}
 
 
 .NewFlag {background-color:#737373;color:#fff;}
