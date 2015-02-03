@@ -1498,7 +1498,7 @@ function render_search_field($field,$value="",$autoupdate,$class="stdwidth",$for
 				$option_trans_simple[]=$trans;
 				}
 
-			if ($auto_order_checkbox) {
+			if ($auto_order_checkbox && !hook("ajust_auto_order_checkbox","",array($field))) {
 				if($auto_order_checkbox_case_insensitive){natcasesort($option_trans);}
 				else{asort($option_trans);}
 			}
