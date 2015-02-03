@@ -184,6 +184,7 @@ document.getElementById('username').focus();
 <?php
 
 }
+hook("afterlogin");
 hook("responsivescripts");
 //include_once "./include/footer.php"; AJAX Check Ignores Footer
 ?>
