@@ -6,6 +6,7 @@ include "../../include/authenticate.php";
 include "../../include/general.php";
 
 $find=getvalescaped("term","");
+$getrefs=(getvalescaped("getrefs","")!="")?true:false;
 $first=true;
 ?> [ <?php
 $users=get_users(0,$find);
@@ -18,7 +19,7 @@ for ($n=0;$n<count($users) && $n<=20;$n++)
 		if (!$first) { ?>, <?php }
 		$first=false;
 		
-		?>{ "label": "<?php echo $users[$n]["fullname"]?>", "value": "<?php echo $users[$n]["username"]?>" } <?php
+		?>{ "label": "<?php echo $users[$n]["fullname"]?>", "value": "<?php echo $users[$n]["username"]?>" <?php if ($getrefs){?>,  "ref": "<?php echo $users[$n]["ref"]?>"<?php }?> } <?php
 		}
 	}
 ?>
@@ -40,7 +41,7 @@ for ($n=0;$n<count($groups) && $n<=20;$n++)
 		    if (!$first) { ?>, <?php }
 			$first=false;
 			
-			?>{ "label": "<?php echo $lang["group"]?>: <?php echo $groups[$n]["name"]?>", "value": "<?php echo $lang["group"]?>: <?php echo $groups[$n]["name"]?>" }<?php 
+			?>{ "label": "<?php echo $lang["group"]?>: <?php echo $groups[$n]["name"]?>", "value": "<?php echo $lang["group"]?>: <?php echo $groups[$n]["name"]?>" <?php if ($getrefs){?>,  "ref": "<?php echo $groups[$n]["ref"]?>"<?php }?> } }<?php 
 			}
 		}
 	}
