@@ -30,6 +30,9 @@ if (!$exactmatch && !$readonly)
 	{
 	$results[] = htmlspecialchars($lang["createnewentryfor"] . " " . $keyword);
 	}
+elseif($readonly && empty($results)){
+	$results[] = htmlspecialchars($lang["noentryexists"] . " " . $keyword);
+}
 
 echo json_encode($results);
 exit();
