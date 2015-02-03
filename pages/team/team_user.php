@@ -217,7 +217,7 @@ for ($n=$offset;(($n<count($users)) && ($n<($offset+$per_page)));$n++)
 
 <?php if(!$team_user_filter_top){show_team_user_filter_search();}?>
 
-
+<?php if(!hook("replace_create_user")){?>
 <div class="BasicsBox">
     <form method="post" action="<?php echo $baseurl_short?>pages/team/team_user.php">
 		<div class="Question">
@@ -230,6 +230,7 @@ for ($n=$offset;(($n<count($users)) && ($n<($offset+$per_page)));$n++)
 		</div>
 	</form>
 </div>
+<?php } ?>
 
 
 <div class="BasicsBox">
