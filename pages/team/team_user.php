@@ -21,7 +21,7 @@ $per_page=getvalescaped("per_page_list",$default_perpage_list);setcookie("per_pa
 
 if (array_key_exists("find",$_POST)) {$offset=0;} # reset page counter when posting
 
-if (getval("newuser","")!="")
+if (getval("newuser","")!="" && !hook("replace_create_user_save"))
 	{
 	$new=new_user(getvalescaped("newuser",""));
 	if ($new===false)
@@ -34,7 +34,51 @@ if (getval("newuser","")!="")
 		redirect($baseurl_short."pages/team/team_user_edit.php?ref=" . $new);
 		}
 	}
-	
+
+function show_team_user_filter_search(){
+	global $baseurl_short,$lang,$group,$find;
+	$groups=get_usergroups(true);
+	?>
+	<div class="BasicsBox">
+		<form method="post" action="<?php echo $baseurl_short?>pages/team/team_user.php">
+			<div class="Question">  
+				<label for="group"><?php echo $lang["group"]; ?></label>
+				<?php if (!hook('replaceusergroups')) { ?>
+					<div class="tickset">
+						<div class="Inline">
+							<select name="group" id="group" onChange="this.form.submit();">
+								<option value="0"<?php if ($group == 0) { echo " selected"; } ?>><?php echo $lang["all"]; ?></option>
+								<?php
+								for($n=0;$n<count($groups);$n++){
+									?>
+									<option value="<?php echo $groups[$n]["ref"]; ?>"<?php if ($group == $groups[$n]["ref"]) { echo " selected"; } ?>><?php echo $groups[$n]["name"]; ?></option>
+									<?php
+								}
+								?>
+							</select>
+						</div>
+					</div>
+				<?php } ?>
+				<div class="clearerleft"> </div>
+			</div>
+		</form>
+	</div>
+
+	<div class="BasicsBox">
+		<form method="post" action="<?php echo $baseurl_short?>pages/team/team_user.php">
+			<div class="Question">
+				<label for="find"><?php echo $lang["searchusers"]?></label>
+				<div class="tickset">
+				 <div class="Inline"><input type=text name="find" id="find" value="<?php echo $find?>" maxlength="100" class="shrtwidth" /></div>
+				 <div class="Inline"><input name="Submit" type="submit" value="&nbsp;&nbsp;<?php echo $lang["searchbutton"]?>&nbsp;&nbsp;" /></div>
+				</div>
+				<div class="clearerleft"> </div>
+			</div>
+		</form>
+	</div>
+	<?php
+}
+
 include "../../include/header.php";
 ?>
 <div class="BasicsBox"> 
@@ -51,6 +95,8 @@ include "../../include/header.php";
   <p><?php echo text("introtext")?></p>
 
 <?php if (isset($error)) { ?><div class="FormError">!! <?php echo $error?> !!</div><?php } ?>
+
+<?php if($team_user_filter_top){show_team_user_filter_search();}?>
 
 <?php 
 hook('modifyusersearch');
@@ -169,43 +215,8 @@ for ($n=$offset;(($n<count($users)) && ($n<($offset+$per_page)));$n++)
 <div class="BottomInpageNav"><?php pager(false); ?></div>
 </div>
 
+<?php if(!$team_user_filter_top){show_team_user_filter_search();}?>
 
-<div class="BasicsBox">
-  <form method="post" action="<?php echo $baseurl_short?>pages/team/team_user.php">
-  <div class="Question">  
-    <label for="group"><?php echo $lang["group"]; ?></label>
-    <?php if (!hook('replaceusergroups')) { ?>
-    <div class="tickset">
-      <div class="Inline"><select name="group" id="group" onChange="this.form.submit();">
-        <option value="0"<?php if ($group == 0) { echo " selected"; } ?>><?php echo $lang["all"]; ?></option>
-<?php
-  for($n=0;$n<count($groups);$n++){
-?>
-        <option value="<?php echo $groups[$n]["ref"]; ?>"<?php if ($group == $groups[$n]["ref"]) { echo " selected"; } ?>><?php echo $groups[$n]["name"]; ?></option>
-<?php
-  }
-?>
-        </select>
-      </div>
-    </div>
-    <?php } ?>
-	<div class="clearerleft"> </div>
-  </div>
-  </form>
-</div>
-
-<div class="BasicsBox">
-    <form method="post" action="<?php echo $baseurl_short?>pages/team/team_user.php">
-		<div class="Question">
-			<label for="find"><?php echo $lang["searchusers"]?></label>
-			<div class="tickset">
-			 <div class="Inline"><input type=text name="find" id="find" value="<?php echo $find?>" maxlength="100" class="shrtwidth" /></div>
-			 <div class="Inline"><input name="Submit" type="submit" value="&nbsp;&nbsp;<?php echo $lang["searchbutton"]?>&nbsp;&nbsp;" /></div>
-			</div>
-			<div class="clearerleft"> </div>
-		</div>
-	</form>
-</div>
 
 <div class="BasicsBox">
     <form method="post" action="<?php echo $baseurl_short?>pages/team/team_user.php">

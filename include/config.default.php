@@ -2523,6 +2523,9 @@ $ignore_collection_access = FALSE;
 # Show/ hide "Remove resources" link from collection bar:
 $remove_resources_link_on_collection_bar = FALSE;
 
+# Show group filter and user search at top of team_user.php
+$team_user_filter_top=false;
+
 # Big slideshow mode - EXPERIMENTAL!
 # ----------------------------------
 # You will need to configure much bigger slideshow images with $home_slideshow_width and $home_slideshow_height, and regenerate
