@@ -1665,6 +1665,7 @@ $lang["zipcomplete"]="Your Zip file download should have started. You may leave 
 $lang["starttypingkeyword"]="Start typing keyword...";
 $lang["createnewentryfor"]="Create new entry for";
 $lang["confirmcreatenewentryfor"]="Are you sure you wish to create a new keyword list entry for '%%'?";
+$lang["noentryexists"]="No entry exists for";
 
 $lang["editresourcepreviews"]="Edit Resource Previews";
 $lang["can_assign_resource_requests"]="Can assign resource requests to others";
