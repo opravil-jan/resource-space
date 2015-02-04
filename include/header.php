@@ -38,7 +38,7 @@ if ($display_user_rating_stars && $star_search){
 <!--<?php hook("copyrightinsert");?>
 ResourceSpace version <?php echo $productversion?>
 
-Copyright Oxfam GB, Montala, WWF International, Tom Gleason, David Dwiggins, Historic New England, Colorhythm LLC, Worldcolor, Henrik Frizén 2006-2013
+For copyright and license information see documentation/licenses/resourcespace.txt
 http://www.resourcespace.org/
 -->
 <?php } ?>
