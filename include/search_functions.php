@@ -39,7 +39,6 @@ function do_search($search,$restypes="",$order_by="relevance",$archive=0,$fetchr
 
 	hook("modifyorderarray");
 
-
 	# Recognise a quoted search, which is a search for an exact string
 	global $quoted_string;
 	$quoted_string=false;
@@ -48,7 +47,6 @@ function do_search($search,$restypes="",$order_by="relevance",$archive=0,$fetchr
 	$order_by=$order[$order_by];
 	$keywords=split_keywords($search);
 	$search=trim($search);
-
         # Dedupe keywords (not for quoted strings as the user may be looking for the same word multiple times together in this instance)
         if (!$quoted_string) {$keywords=array_values(array_unique($keywords));}
         
@@ -305,7 +303,7 @@ function do_search($search,$restypes="",$order_by="relevance",$archive=0,$fetchr
 						$datefieldinfo=sql_query("select ref from resource_type_field where name='" . escape_check($kw[0]) . "' and type IN (4,6,10)",0);
 						$datefieldinfo_cache[$kw[0]]=$datefieldinfo;
 					}
-					if (count($datefieldinfo))
+					if (count($datefieldinfo) && substr($kw[1],0,5)!="range")
 						{
 						$c++;
 						$datefieldinfo=$datefieldinfo[0];
@@ -343,20 +341,21 @@ function do_search($search,$restypes="",$order_by="relevance",$archive=0,$fetchr
 						$sql_filter.="r.field$date_field <= '" . $kw[1] . " 23:59:59' ";
 						}
 					# Additional date range filtering
-					elseif (substr($kw[0],0,5)=="range")
+					elseif (count($datefieldinfo) && substr($kw[1],0,5)=="range")
 						{
 						$c++;
-						$rangefield=substr($kw[0],6);
+						$rangefield=$datefieldinfo[0]["ref"];
 						$daterange=false;
-						if (strpos($kw[1],"start")!==FALSE )
+						$rangestring=substr($kw[1],5);
+						if (strpos($rangestring,"start")!==FALSE )
 							{
-							$rangestart=str_replace(" ","-",$kw[1]);
+							$rangestart=str_replace(" ","-",$rangestring);
 							if ($sql_filter!="") {$sql_filter.=" and ";}
 							$sql_filter.="rd" . $c . ".value >= '" . substr($rangestart,strpos($rangestart,"start")+5,10) . "'";
 							}
 						if (strpos($kw[1],"end")!==FALSE )
 							{
-							$rangeend=str_replace(" ","-",$kw[1]);
+							$rangeend=str_replace(" ","-",$rangestring);
 							if ($sql_filter!="") {$sql_filter.=" and ";}
 							$sql_filter.="rd" . $c . ".value <= '" . substr($rangeend,strpos($rangeend,"end")+3,10) . " 23:59:59'";
 							}
@@ -2063,9 +2062,8 @@ function search_form_to_search_query($fields,$fromsearchbar=false)
 			if ($datepart!="")
 				{				
 				if ($search!="") {$search.=", ";}
-				$search.="range_" . $fields[$n]["ref"] . ":" . $datepart;
+				$search.=$fields[$n]["name"] . ":range" . $datepart;
 				}
-				
 
 			break;
 
@@ -2174,12 +2172,13 @@ function refine_searchstring($search){
 	
 	$fixedkeywords=array();
 	foreach ($keywords as $keyword){
-		if (strpos($keyword,"startdate")!==false || strpos($keyword,"enddate")!==false || strpos($keyword,"range")!==false)
+		if (strpos($keyword,"startdate")!==false || strpos($keyword,"enddate")!==false)
 			{$keyword=str_replace(" ","-",$keyword);}
 		if (strpos($keyword,":")>0){
 			$keywordar=explode(":",$keyword,2);
 			$keyname=$keywordar[0];
 			if (substr($keyname,0,1)!="!"){
+				if(substr($keywordar[1],0,5)=="range"){$keywordar[1]=str_replace(" ","-",$keywordar[1]);}
 				if (!in_array($keyname,$orfields)){
 					$keyvalues=explode(" ",str_replace($keywordar[0].":","",$keywordar[1]));
 				} else {

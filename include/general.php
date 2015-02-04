@@ -346,7 +346,7 @@ if (!function_exists("split_keywords")){
 function split_keywords($search,$index=false,$partial_index=false,$is_date=false,$is_html=false)
 	{
 	# Takes $search and returns an array of individual keywords.
-	global $config_trimchars, $daterange_search;
+	global $config_trimchars;
 
 	if ($index && $is_date)
 		{
@@ -374,11 +374,12 @@ function split_keywords($search,$index=false,$partial_index=false,$is_date=false
 	if ((substr($ns,0,1)==",") ||  ($index==false && strpos($ns,":")!==false)) # special 'constructed' query type, split using comma so
 	# we support keywords with spaces.
 		{
-		if ((strpos($ns,"startdate")==false && strpos($ns,"enddate")==false && strpos($ns,"range")==false) || (!$daterange_search))
+		if (strpos($ns,"startdate")==false && strpos($ns,"enddate")==false)
 			{$ns=cleanse_string($ns,true,!$index,$is_html);}
+	
 		$return=explode(",",$ns);
 		# If we are indexing, append any values that contain spaces.
-					
+               
 		# Important! Solves the searching for keywords with spaces issue.
 		# Consider: for any keyword that has spaces, append to the array each individual word too
 		# so for example: South Asia,USA becomes South Asia,USA,South,Asia
@@ -409,15 +410,9 @@ function split_keywords($search,$index=false,$partial_index=false,$is_date=false
 	else
 		{
 		# split using spaces and similar chars (according to configured whitespace characters)
-		if (strpos($ns,"range")===false)
-			{
-			$ns=explode(" ",cleanse_string($ns,false,!$index,$is_html));
-			}
-		else
-			{
-			$ns=explode(" ",cleanse_string($ns,true,true));
-			}
-		$ns=trim_array($ns,$config_trimchars);
+		$ns=explode(" ",cleanse_string($ns,false,!$index,$is_html));                
+		
+        $ns=trim_array($ns,$config_trimchars);
 		if ($index && $partial_index) {
 			return add_partial_index($ns);
 		}
