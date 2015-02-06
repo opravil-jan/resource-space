@@ -24,16 +24,11 @@ $restypefilter=getvalescaped("restypefilter","",true);
 $field_order_by=getvalescaped("field_order_by","ref");
 $field_sort=getvalescaped("field_sort","asc");
 
-
-
-include "../../include/header.php";
-
-
 $url_params = array("ref"=>$ref,
 		    "restypefilter"=>$restypefilter,
 		    "field_sort"=>$field_sort,
 		    "find" =>$find);
-$url=generateURL($baseurl_short . "/pages/admin/admin_resource_type_field_edit.php",$url_params);
+$url=generateURL($baseurl . "/pages/admin/admin_resource_type_field_edit.php",$url_params);
 
 		
 $backurl=getvalescaped("backurl","");
@@ -286,7 +281,7 @@ if (getval("delete","")!="")
 	    //Remove all keywords	    
 	    sql_query("delete from resource_keyword where resource_type_field='$ref'");
 	    
-	    redirect($backurl);
+	    redirect(generateURL($baseurl . "/pages/admin/admin_resource_type_fields",$url_params,array("ref"=>"","deleted"=>urlencode($ref))));
 	    }
         else
 	    {	    
@@ -322,6 +317,7 @@ $resource_type_array[999]=$lang["resourcetype-archive_only"];
 
 $fielddata=get_resource_type_field($ref);
 
+include "../../include/header.php";
 
 ?>
 
@@ -353,7 +349,7 @@ if($confirm_delete)
     <input name="confirmdelete" id="confirmdelete" type="hidden" value="">
     <div class="textcenter">
 	<input name="delete" type="button" value="&nbsp;&nbsp;<?php echo $lang["action-delete"]?>&nbsp;&nbsp;" onClick="jQuery('#delete').val('yes');jQuery('#confirmdelete').val('yes');this.form.submit();" />
-	<input type="button" class="button" onClick="CentralSpaceLoad('<?php echo $baseurl . "/pages/admin/admin_resource_type_field_edit.php?ref=" . $ref ?>',true);return false;" value="&nbsp;&nbsp;<?php echo $lang["cancel"] ?>&nbsp;&nbsp;" >
+	<input type="button" class="button" onClick="CentralSpaceLoad('<?php generateURL($baseurl_short . "/pages/admin/admin_resource_type_field_edit.php",$url_params,array("ref"=>"")); ?>',true);return false;" value="&nbsp;&nbsp;<?php echo $lang["cancel"] ?>&nbsp;&nbsp;" >
     </div>
      <?php	
     }

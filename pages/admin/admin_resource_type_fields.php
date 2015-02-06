@@ -54,6 +54,12 @@ if (getval("newfield","")!="")
 	redirect($baseurl_short . 'pages/admin/admin_resource_type_field_edit.php?ref=' . $new);
 	}
 	
+if(getval("deleted","")!="")
+    {
+    $error_text=$lang["admin_field_deleted"] . "# " . htmlspecialchars(getval("deleted",""));	
+    }
+    
+	
 	
 function addColumnHeader($orderName, $labelKey)
     {

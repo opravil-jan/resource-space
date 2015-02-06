@@ -1948,3 +1948,4 @@ $lang['property-allow_preview'] = "Allow preview";
 $lang['property-allow_restricted_download'] = "Allow restricted download";
 $lang['property-orphaned'] = "Orphaned";
 $lang['property-pad_to_size'] = "Pad to size";
+$lang['admin_field_deleted'] = "Deleted field";
