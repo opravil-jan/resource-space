@@ -2143,7 +2143,7 @@ $sharing_userlists=false; // enable users to save/select predefined lists of use
 
 $public_collections_header_only=false; // show public collections page in header, omit from Themes and Manage Collections
 
-$ckeditor_toolbars="'Styles', 'Bold', 'Italic', 'Underline', 'RemoveFormat', 'PasteFromWord', 'TextColor','BGColor'";
+$ckeditor_toolbars="'Styles', 'Bold', 'Italic', 'Underline','FontSize', 'RemoveFormat', 'PasteFromWord', 'TextColor','BGColor'";
 $ckeditor_content_toolbars="
 	{ name: 'basicstyles', items : [ 'Bold','Italic','Underline','Strike','Subscript','Superscript','-','RemoveFormat' ] },
 	{ name: 'clipboard', items : [ 'Cut','Copy','Paste','PasteText','PasteFromWord','-','Undo','Redo' ] },
