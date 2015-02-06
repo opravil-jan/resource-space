@@ -1041,6 +1041,7 @@ function email_collection($colrefs,$collectionname,$fromusername,$userlist,$mess
 		}
 		if (count($emails > 1) && $list_recipients===true) {
 			$body = $lang["list-recipients"] ."\n". implode("\n",$emails) ."\n\n";
+			$templatevars['list-recipients']=$lang["list-recipients"] ."\n". implode("\n",$emails) ."\n\n";
 		}
 		else {
 			$body = "";
