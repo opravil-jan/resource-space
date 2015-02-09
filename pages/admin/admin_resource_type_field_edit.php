@@ -261,8 +261,8 @@ if(getval("save","")!="" && getval("delete","")=="")
 		sql_query($syncsql);
 		}
 	
-	//$saved_text=$lang["saved"];
-	redirect($backurl);
+	$saved_text=$lang["saved"];
+	//redirect($backurl);
 	}
 
 $confirm_delete=false;	
