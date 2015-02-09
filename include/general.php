@@ -463,7 +463,7 @@ function resolve_keyword($keyword,$create=false)
 	{	
 	debug("resolving keyword " . $keyword  . ". Create=" . (($create)?"true":"false"));
 	
-    $keyword=substr($keyword,0,100); # Trim keywords to 100 chars for indexing, as this is the length of the keywords column.
+        $keyword=substr($keyword,0,100); # Trim keywords to 100 chars for indexing, as this is the length of the keywords column.
     
 	global $quoted_string;	
 	if(!$quoted_string)
@@ -471,7 +471,15 @@ function resolve_keyword($keyword,$create=false)
 		$keyword=normalize_keyword($keyword);		
 		debug("resolving normalized keyword " . $keyword  . ".");
 		}
-		
+	
+        # Stemming support. If enabled and a stemmer is available for the current language, index the stem of the keyword not the keyword itself.
+        # This means plural/singular (and other) forms of a word are treated as equivalents.
+        global $stemming;
+        if ($stemming && function_exists("GetStem"))
+            {
+            $keyword=GetStem($keyword);
+            }
+
 	# Returns the keyword reference for $keyword, or false if no such keyword exists.
 	$return=sql_value("select ref value from keyword where keyword='" . trim(escape_check($keyword)) . "'",false);
 	if ($return===false && $create)
@@ -1973,20 +1981,20 @@ function highlightkeywords($text,$search,$partial_index=false,$field_name="",$ke
                 # else add general keywords
                 else {
                         $keyword=$s[$n];
+            
+                        global $stemming;
+                        if ($stemming && function_exists("GetStem")) // Stemming enabled. Highlight any words matching the stem.
+                            {
+                            $keyword=GetStem($keyword);
+                            }
+                        
                         if (strpos($keyword,"*")!==false) {$wildcards_found=true;$keyword=str_replace("*","",$keyword);}
                         $hlkeycache[]=$keyword;
                 }	
              }
         
 	# Parse and replace.
-	if ($partial_index || $wildcards_found)
-		{
-		return str_highlight ($text,$hlkeycache,STR_HIGHLIGHT_SIMPLE);
-		}
-	else
-		{
-		return str_highlight ($text,$hlkeycache,STR_HIGHLIGHT_WHOLEWD);
-		}
+	return str_highlight ($text,$hlkeycache,STR_HIGHLIGHT_SIMPLE);
 	}
 }
 # These lines go with str_highlight (next).

@@ -222,6 +222,10 @@ hook("initialise");
 $hook_cache = array();
 $hook_cache_hits = 0;
 
+# Load the language specific stemming algorithm, if one exists
+$stemming_file=dirname(__FILE__) . "/../lib/stemming/" . safe_file_name($language) . ".php";
+if (file_exists($stemming_file)) {include ($stemming_file);}
+	
 function hook($name,$pagename="",$params=array())
 	{
 	# Plugin architecture.  Look for hooks with this name (and corresponding page, if applicable) and run them sequentially.

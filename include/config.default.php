@@ -2532,3 +2532,5 @@ $team_user_filter_top=false;
 # your slideshow images using the transform plugin. This is recommended to be used along with the slim header.
 $slideshow_big=false;
 
+# Stemming support - at this stage, experimental. Indexes stems of words only, so plural / singular (etc) forms of keywords are indexed as if they are equivalent. Requires a full reindex.
+$stemming=false;
