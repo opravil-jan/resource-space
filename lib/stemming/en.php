@@ -1,6 +1,13 @@
 <?php
 
-function GetStem($word) {return PorterStemmer::Stem($word);}
+function GetStem($word) {
+
+    # A list of irregular plurals not supported by Porter's algorithm.
+    $irregular=array ( 'alumni' => 'alumnus', 'cacti' => 'cactus', 'foci' => 'focus', 'focuses' => 'focuses', 'fungi' => 'funguses', 'nuclei' => 'nucleus', 'radii' => 'radius', 'stimuli' => 'stimulus', 'axes' => 'axis', 'analyses' => 'analysis', 'bases' => 'basis', 'crises' => 'crisis', 'diagnoses' => 'diagnosis', 'ellipses' => 'ellipsis', 'hypotheses' => 'hypothesis', 'oases' => 'oasis', 'paralyses' => 'paralysis', 'parentheses' => 'parenthesis', 'syntheses' => 'synthesis', 'synopses' => 'synopsis', 'theses' => 'thesis', 'appendices' => 'appendix', 'indeces' => 'index', 'indexes' => 'index', 'matrixes' => 'matrix', 'beaux' => 'beau', 'bureaus' => 'bureau', 'bureaux' => 'bureau', 'tableaux' => 'tableau', 'tableaus' => 'tableau', 'children' => 'child', 'men' => 'man', 'oxen' => 'ox', 'women' => 'woman', 'bacteria' => 'bacterium', 'corpora' => 'corpus', 'criteria' => 'criterion', 'curricula' => 'curriculum', 'data' => 'datum', 'genera' => 'genus', 'media' => 'medium', 'memoranda' => 'memorandum', 'phenomena' => 'phenomenon', 'strata' => 'stratum', 'deer' => 'deer', 'feet' => 'foot', 'geese' => 'goose', 'teeth' => 'tooth', 'antennae','antennas' => 'antenna', 'formulae' => 'formula', 'formulas' => 'formula', 'nebulae' => 'nebula', 'vertebrae' => 'vertebra', 'vitae' => 'vita', 'lice' => 'louse', 'mice' => 'mouse' );
+    if (array_key_exists($word,$irregular)) { $word=$irregular[$word]; } # Replace, then still go through Porter
+
+    return PorterStemmer::Stem($word);
+    }
 
     /**
     * Copyright (c) 2005 Richard Heyes (http://www.phpguru.org/)
