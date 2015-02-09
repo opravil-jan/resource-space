@@ -41,7 +41,7 @@ for ($n=0;$n<count($groups) && $n<=20;$n++)
 		    if (!$first) { ?>, <?php }
 			$first=false;
 			
-			?>{ "label": "<?php echo $lang["group"]?>: <?php echo $groups[$n]["name"]?>", "value": "<?php echo $lang["group"]?>: <?php echo $groups[$n]["name"]?>" <?php if ($getrefs){?>,  "ref": "<?php echo $groups[$n]["ref"]?>"<?php }?> } }<?php 
+			?>{ "label": "<?php echo $lang["group"]?>: <?php echo $groups[$n]["name"]?>", "value": "<?php echo $lang["group"]?>: <?php echo $groups[$n]["name"]?>" <?php if ($getrefs){?>,  "ref": "<?php echo $groups[$n]["ref"]?>"<?php }?> }<?php 
 			}
 		}
 	}
