@@ -377,29 +377,31 @@ function do_search($search,$restypes="",$order_by="relevance",$archive=0,$fetchr
 							{
 							debug("Field short name not found.");return false;
 							}
-						elseif (in_array($fieldinfo[0]["ref"], $hidden_indexed_fields))
+						
+						# Create an array of matching field IDs.
+						$fields=array();foreach ($fieldinfo as $fi)
 							{
-							# Attempt to directly search field that the user does not have access to.
-							return false;
+							if (in_array($fi["ref"], $hidden_indexed_fields))
+								{
+								# Attempt to directly search field that the user does not have access to.
+								return false;
+								}
+							
+							# Add to search array
+							$fields[]=$fi["ref"];
 							}
-							{
-							$fieldinfo=$fieldinfo[0];
-							}
-						$field=$fieldinfo["ref"];
-
+						
 						# Special handling for dates
-						if ($fieldinfo["type"]==4 || $fieldinfo["type"]==6 || $fieldinfo["type"]==10) 
+						if ($fieldinfo[0]["type"]==4 || $fieldinfo[0]["type"]==6 || $fieldinfo[0]["type"]==10) 
 							{
 							$ckeywords=array(str_replace(" ","-",$kw[1]));
 							}
 
-
-
 						#special SQL generation for category trees to use AND instead of OR
 						if(
-							($fieldinfo["type"] == 7 && $category_tree_search_use_and)
+							($fieldinfo[0]["type"] == 7 && $category_tree_search_use_and)
 						||
-							($fieldinfo["type"] == 2 && $checkbox_and)
+							($fieldinfo[0]["type"] == 2 && $checkbox_and)
 						) {
 							for ($m=0;$m<count($ckeywords);$m++) {
 								$keyref=resolve_keyword($ckeywords[$m]);
@@ -415,7 +417,7 @@ function do_search($search,$restypes="",$order_by="relevance",$archive=0,$fetchr
 										}
 									# Form join
 									//$sql_join.=" join (SELECT distinct k".$c.".resource,k".$c.".hit_count from resource_keyword k".$c." where k".$c.".keyword='$keyref' $relatedsql) t".$c." ";
-									$sql_join.=" join resource_keyword k" . $c . " on k" . $c . ".resource=r.ref and k" . $c . ".resource_type_field='" . $field . "' and (k" . $c . ".keyword='$keyref' $relatedsql)";
+									$sql_join.=" join resource_keyword k" . $c . " on k" . $c . ".resource=r.ref and k" . $c . ".resource_type_field in ('" . join("','",$fields) . "') and (k" . $c . ".keyword='$keyref' $relatedsql)";
 
 									if ($score!="") {$score.="+";}
 									$score.="k" . $c . ".hit_count";
@@ -456,7 +458,7 @@ function do_search($search,$restypes="",$order_by="relevance",$archive=0,$fetchr
                                                                                     if ($p==$c) {$union.="true";} else {$union.="false";}
                                                                                     $union.=" as keyword_" . $p . "_found,";
                                                                                     }
-                                                                                $union.="hit_count as score from resource_keyword k" . $c . " where (k" . $c . ".keyword='$keyref' or k" . $c . ".keyword in ('" . join("','",$searchkeys) . "')) and k" . $c . ".resource_type_field='" . $field . "'";
+                                                                                $union.="hit_count as score from resource_keyword k" . $c . " where (k" . $c . ".keyword='$keyref' or k" . $c . ".keyword in ('" . join("','",$searchkeys) . "')) and k" . $c . ".resource_type_field in ('" . join("','",$fields) . "')";
                                                                                 
                                                                                  if (!empty($sql_exclude_fields)) 
 						                	{
