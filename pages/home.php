@@ -166,7 +166,7 @@ jQuery(document).ready( function ()
 	?>
 	background-image:url('<?php echo $baseurl . "/" . $homeanim_folder?>/1.jpg?checksum=<?php echo $checksum ?>');">
 	
-	<img src='<?php echo $baseurl . "/" .  $homeanim_folder?>/2.jpg?checksum=<?php echo $checksum ?>' alt='' id='image1' style="display:none;<?php
+	<img src='<?php echo $baseurl . "/" .  $homeanim_folder?>/<?php echo $homeimages>1?2:1;?>.jpg?checksum=<?php echo $checksum ?>' alt='' id='image1' style="display:none;<?php
 	if (isset($home_slideshow_width)){
 		echo"width:" .  $home_slideshow_width ."px; ";
 		}
