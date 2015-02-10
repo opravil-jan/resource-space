@@ -124,7 +124,7 @@ else
 $resource=get_resource_data($ref);
 # Allow to specify resource type from url
 $resource_type=getval("resource_type","");
-if ( ($resource_type!=$resource["resource_type"]) && !checkperm("XU{$resource_type}"))		// only if resource specified and user has permission for that resource type
+if (($resource_type!="")&&($resource_type!=$resource["resource_type"]) && !checkperm("XU{$resource_type}"))		// only if resource specified and user has permission for that resource type
 	{
 	update_resource_type($ref,$resource_type);
 	$resource["resource_type"]=$resource_type;
@@ -252,7 +252,7 @@ if ((getval("autosave","")!="") || (getval("tweak","")=="" && getval("submitted"
                 elseif (getval("single","")!="") // Test if single upload (archived or not).
 					{
 					# Save button pressed? Move to next step. if noupload is set - create resource without uploading stage
-					if (getval("noupload","")!="") {$ref=copy_resource(0-$userref);redirect($baseurl_short."pages/view.php?ref=". urlencode($ref));}
+					if ((getval("noupload","")!="")&&(getval("save","")!="")) {$ref=copy_resource(0-$userref);redirect($baseurl_short."pages/view.php?ref=". urlencode($ref));}
 					
 					if (getval("save","")!="") {redirect($baseurl_short."pages/upload.php?resource_type=". urlencode($resource_type). "&no_exif=" . $no_exif . "&autorotate=" . urlencode($autorotate) . "&archive=" . urlencode($archive) . $uploadparams );}
 					}    
