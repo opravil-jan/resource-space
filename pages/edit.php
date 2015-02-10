@@ -244,7 +244,9 @@ if ((getval("autosave","")!="") || (getval("tweak","")=="" && getval("submitted"
 					}
                 elseif (getval("single","")!="") // Test if single upload (archived or not).
 					{
-					# Save button pressed? Move to next step.
+					# Save button pressed? Move to next step. if noupload is set - create resource without uploading stage
+					if (getval("noupload","")!="") {$ref=copy_resource(0-$userref);redirect($baseurl_short."pages/view.php?ref=". urlencode($ref));}
+					
 					if (getval("save","")!="") {redirect($baseurl_short."pages/upload.php?resource_type=". urlencode($resource_type). "&no_exif=" . $no_exif . "&autorotate=" . urlencode($autorotate) . "&archive=" . urlencode($archive) . $uploadparams );}
 					}    
 				else // Hence fetching from ftp.
