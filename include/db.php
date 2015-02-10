@@ -806,6 +806,7 @@ function http_get_preferred_language($strict_mode=false)
 			$tmparray = explode(',',$language_array[$lc]);
 			foreach ($tmparray as $tlang) 
 				{
+				if($tlang=="en-GB"){$tlang="en";}
 				if(array_key_exists($tlang,$languages)) 
 					{
 					$language = $tlang;
@@ -815,6 +816,7 @@ function http_get_preferred_language($strict_mode=false)
 			}
 		else
 			{
+			if($language_array[$lc]=="en-GB"){$language_array[$lc]="en";}
 			if(array_key_exists($language_array[$lc],$languages)) 
 				{
 				$language = $language_array[$lc];
