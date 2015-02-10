@@ -1512,6 +1512,7 @@ if ($ref<0) # Upload template.
         if ($modified_defaultstatus) {$status = $modified_defaultstatus;}  # Set the modified default status - if set.
         elseif ($resource["archive"]!=2 && checkperm("e" . $resource["archive"])) {$status = $resource["archive"];} # Set status to the status stored in the user template - if the status is not Archived and if the user has the required permission.
         elseif (checkperm("c")) {$status = 0;} # Else, set status to Active - if the user has the required permission.
+        elseif (checkperm("d") && !checkperm('e-2') && checkperm('e-1')) {$status = -1;} # Else, set status to Pending Review if the user has only edit access to Pending review
         elseif (checkperm("d")) {$status = -2;} # Else, set status to Pending Submission.   
         }
 
