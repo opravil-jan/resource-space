@@ -122,6 +122,13 @@ else
 
 # Fetch resource data.
 $resource=get_resource_data($ref);
+# Allow to specify resource type from url
+$resource_type=getval("resource_type","");
+if ( ($resource_type!=$resource["resource_type"]) && !checkperm("XU{$resource_type}"))		// only if resource specified and user has permission for that resource type
+	{
+	update_resource_type($ref,$resource_type);
+	$resource["resource_type"]=$resource_type;
+	}
 
 # Allow alternative configuration settings for this resource type.
 resource_type_config_override($resource["resource_type"]);
@@ -637,10 +644,12 @@ if (!$is_template) { ?><p class="greyText noPadding"><sup>*</sup> <?php echo $la
 onChange="<?php if ($ref>0) { ?>if (confirm('<?php echo $lang["editresourcetypewarning"]; ?>')){<?php } ?>CentralSpacePost(document.getElementById('mainform'),true);<?php if ($ref>0) { ?>}else {return}<?php } ?>">
 <?php
 $types=get_resource_types();
+
+
 for ($n=0;$n<count($types);$n++)
 	{
 	if ((checkperm("XU{$types[$n]["ref"]}") || in_array($types[$n]['ref'], $hide_resource_types)) && $resource["resource_type"]!=$types[$n]["ref"]) continue;	// skip showing a resource type that we do not to have permission to change to (unless it is currently set to that)
-	?><option value="<?php echo $types[$n]["ref"]?>" <?php if (($resource["resource_type"]==$types[$n]["ref"])||(getval("resource_type","")==$types[$n]["ref"])) {?>selected<?php } ?>><?php echo htmlspecialchars($types[$n]["name"])?></option><?php
+	?><option value="<?php echo $types[$n]["ref"]?>" <?php if ($resource["resource_type"]==$types[$n]["ref"]) {?>selected<?php } ?>><?php echo htmlspecialchars($types[$n]["name"])?></option><?php
 	}
 ?></select>
 <div class="clearerleft"> </div>
