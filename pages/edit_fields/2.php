@@ -17,7 +17,7 @@ for ($m=0;$m<count($options);$m++)
 	$option_trans_simple[]=$trans;
 	}
 
-if ($auto_order_checkbox) {
+if ($auto_order_checkbox && !hook("ajust_auto_order_checkbox","",array($field))) {
 	if($auto_order_checkbox_case_insensitive){natcasesort($option_trans);}
 	else{natsort($option_trans);}
 }
