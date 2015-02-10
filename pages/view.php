@@ -1320,7 +1320,7 @@ if(empty($fields_tab_names)) {
 		$displaycondition = check_view_display_condition($fields, $i);
 
 		if($displaycondition) {
-			if(!hook('renderfield')) {
+			if(!hook('renderfield',"", array($fields[$i]))) {
 				display_field_data($fields[$i]);
 			}
 		}
