@@ -490,6 +490,10 @@ include "../include/header.php";
 
 ?>
 <div class="BasicsBox">
+<?php if($k!=""){
+	?><p><a href="<?php echo $baseurl_short?>pages/search.php?search=!collection<?php echo $collection?>&k=<?php echo $k?>" onclick="return CentralSpaceLoad(this,true);">< <?php echo $lang['back']?></a></p><?php
+}?>
+
 <h1><?php echo $lang["downloadzip"]?></h1>
 <?php if ($use_zip_extension){?>
 <script>
