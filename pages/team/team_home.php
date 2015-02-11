@@ -50,12 +50,12 @@ include "../../include/header.php";
 			}
 		else
 			{
-			?><li><a href="<?php echo $baseurl?>/pages/team/team_resource.php" onClick="return CentralSpaceLoad(this,true);"><?php echo $lang["manageresources"]?></a></li><?php
+			?><li><a href="<?php echo $baseurl_short?>pages/team/team_resource.php" onClick="return CentralSpaceLoad(this,true);"><?php echo $lang["manageresources"]?></a></li><?php
 			}
  		}
  	?>
 				
-	<?php if (checkperm("R")) { ?><li><a href="<?php echo $baseurl?>/pages/team/team_request.php" onClick="return CentralSpaceLoad(this,true);"><?php echo $lang["managerequestsorders"]?></a>
+	<?php if (checkperm("R")) { ?><li><a href="<?php echo $baseurl_short ?>pages/team/team_request.php" onClick="return CentralSpaceLoad(this,true);"><?php echo $lang["managerequestsorders"]?></a>
         &nbsp;&nbsp;<?php
         $condition = "";
         if (checkperm("Rb")) {$condition = "and assigned_to='" . $userref . "'";} # Only show pending for this user?
@@ -74,7 +74,7 @@ include "../../include/header.php";
             } ?>
     </li><?php } ?>
 
-    <?php if (checkperm("r") && $research_request) { ?><li><a href="<?php echo $baseurl?>/pages/team/team_research.php" onClick="return CentralSpaceLoad(this,true);"><?php echo $lang["manageresearchrequests"]?></a>
+    <?php if (checkperm("r") && $research_request) { ?><li><a href="<?php echo $baseurl_short?>pages/team/team_research.php" onClick="return CentralSpaceLoad(this,true);"><?php echo $lang["manageresearchrequests"]?></a>
         &nbsp;&nbsp;<?php
         $unassigned = sql_value("select count(*) value from research_request where status = 0",0);
         switch ($unassigned)
@@ -91,22 +91,22 @@ include "../../include/header.php";
             } ?> 
         </li><?php } ?>
 
-    <?php if (checkperm("u")) { ?><li><a href="<?php echo $baseurl?>/pages/team/team_user.php" onClick="return CentralSpaceLoad(this,true);"><?php echo $lang["manageusers"]?></a></li><?php } ?>
+    <?php if (checkperm("u")) { ?><li><a href="<?php echo $baseurl_short?>pages/team/team_user.php" onClick="return CentralSpaceLoad(this,true);"><?php echo $lang["manageusers"]?></a></li><?php } ?>
 
-    <?php if (checkperm("o")) { ?><li><a href="<?php echo $baseurl?>/pages/team/team_content.php" onClick="return CentralSpaceLoad(this,true);"><?php echo $lang["managecontent"]?></a></li><?php } ?>
+    <?php if (checkperm("o")) { ?><li><a href="<?php echo $baseurl_short?>pages/team/team_content.php" onClick="return CentralSpaceLoad(this,true);"><?php echo $lang["managecontent"]?></a></li><?php } ?>
     
-    <li><a href="<?php echo $baseurl?>/pages/team/team_stats.php" onClick="return CentralSpaceLoad(this,true);"><?php echo $lang["viewstatistics"]?></a></li>
+    <li><a href="<?php echo $baseurl_short?>pages/team/team_stats.php" onClick="return CentralSpaceLoad(this,true);"><?php echo $lang["viewstatistics"]?></a></li>
     
-    <li><a href="<?php echo $baseurl?>/pages/team/team_report.php" onClick="return CentralSpaceLoad(this,true);"><?php echo $lang["viewreports"]?></a></li>
+    <li><a href="<?php echo $baseurl_short?>pages/team/team_report.php" onClick="return CentralSpaceLoad(this,true);"><?php echo $lang["viewreports"]?></a></li>
 
-    <?php if (checkperm("m")) { ?><li><a href="<?php echo $baseurl?>/pages/team/team_mail.php" onClick="return CentralSpaceLoad(this,true);"><?php echo $lang["sendbulkmail"]?></a></li><?php } ?>
+    <?php if (checkperm("m")) { ?><li><a href="<?php echo $baseurl_short?>pages/team/team_mail.php" onClick="return CentralSpaceLoad(this,true);"><?php echo $lang["sendbulkmail"]?></a></li><?php } ?>
 
     	<?php hook("customteamfunction")?>
 
 	<?php
 	# Include a link to the System Setup area for those with the appropriate permissions.
 	if (checkperm("a")) { ?>
-	<li><a href="<?php echo $baseurl?>/pages/admin/admin_home.php" onClick="return CentralSpaceLoad(this,true);"><?php echo $lang["systemsetup"]?></a></li>
+	<li><a href="<?php echo $baseurl_short?>pages/admin/admin_home.php" onClick="return CentralSpaceLoad(this,true);"><?php echo $lang["systemsetup"]?></a></li>
 	<?php hook("customteamfunctionadmin")?>
 	<?php } ?>
 
