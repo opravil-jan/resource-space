@@ -756,7 +756,6 @@ function redirect($url)
 	{
 	# Redirect to the provided URL using a HTTP header Location directive.
 	global $baseurl;
-	
 	if (getval("ajax","")!="")
 		{
 		# When redirecting from an AJAX loaded page, forward the AJAX parameter automatically so headers and footers are removed.	
@@ -773,7 +772,7 @@ function redirect($url)
 	if (substr($url,0,1)=="/")
 		{
 		# redirect to an absolute URL
-		header ("Location: " . (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' ? "https://" : "http://") . $_SERVER["HTTP_HOST"] . $url);
+		header ("Location: " . str_replace('/[\\\/]/D',"",$baseurl) . $url);
 		}
 	else
 		{	
