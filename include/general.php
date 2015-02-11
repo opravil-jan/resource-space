@@ -794,16 +794,17 @@ function get_users($group=0,$find="",$order_by="u.username",$usepermissions=fals
     # The standard user group names are translated using $lang. Custom user group names are i18n translated.
 
     $sql = "";
+	$find=strtolower($find);
     if ($group != 0) {$sql = "where usergroup IN ($group)";}
     if (strlen($find)>1)
       {
       if ($sql=="") {$sql = "where ";} else {$sql.= " and ";}
-      $sql .= "(username like '%$find%' or fullname like '%$find%' or email like '%$find%')";
+      $sql .= "(LOWER(username) like '%$find%' or LOWER(fullname) like '%$find%' or LOWER(email) like '%$find%')";
       }
     if (strlen($find)==1)
       {
       if ($sql=="") {$sql = "where ";} else {$sql.= " and ";}
-      $sql .= "username like '$find%'";
+      $sql .= "LOWER(username) like '$find%'";
       }
     if ($usepermissions && checkperm("U")) {
         # Only return users in children groups to the user's group
