@@ -169,7 +169,10 @@ if ($use_plugins_manager)
 	for ($n=count($active_plugins)-1;$n>=0;$n--)
 		{
 		$plugin=$active_plugins[$n];
-		include_plugin_config($plugin['name'], $plugin['config'], $plugin['config_json']);
+		if ($plugin['enabled_groups']=='')
+			{
+			include_plugin_config($plugin['name'], $plugin['config'], $plugin['config_json']);
+			}
 		}
 	}
 else
