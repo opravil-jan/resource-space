@@ -219,7 +219,7 @@ function collection_readable($collection)
 		return true;
 	}
 	
-	$request=sql_value("select 1 value from request where collection=$collection and assigned_to=$userref", 0)
+	$request=sql_value("select 1 value from request where collection=$collection and assigned_to=$userref", 0);
 
 
 	# Access if:
