@@ -34,7 +34,20 @@ function refine_api_resource_results($results){
 		$results=$newresult;
 	}
 
-	
+	if (getval("shortnames","")!=""){
+
+		for ($n=0;$n<count($results);$n++){
+			foreach ($results[$n] as $key=>$value){
+				if (substr($key,0,5)=="field"){
+						$field=str_replace("field","",$key);
+						if (isset($field_name[$field])){
+							$results[$n][str_replace(' ', '_',$field_name[$field])]=$results[$n][$key];
+						}
+						unset ($results[$n][$key]);
+					}
+			}
+		}
+	}
 	// Prettify field titles
 	if (getval("prettyfieldnames","")!=""){
 

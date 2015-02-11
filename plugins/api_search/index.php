@@ -24,6 +24,7 @@ $original = filter_var(getvalescaped('original', FALSE), FILTER_VALIDATE_BOOLEAN
 $metadata = filter_var(getvalescaped('metadata', FALSE), FILTER_VALIDATE_BOOLEAN);
 $prettyfieldnames = filter_var(getvalescaped('prettyfieldnames', FALSE), FILTER_VALIDATE_BOOLEAN);
 $access_filter = getvalescaped('access', -999, TRUE);
+$shortnames = filter_var(getvalescaped('shortnames',FALSE), FILTER_VALIDATE_BOOLEAN);
 
 $help=getval("help","");
 if ($help!=""){
