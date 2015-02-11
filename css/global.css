@@ -73,6 +73,7 @@ input.defaultbutton {position: absolute; left: -100%; width: 0; height: 0;}
 #HeaderNav2 {text-align:right;margin-top: 28px;margin-bottom: 4px;}
 
 .headerlink {margin:20px 25px; position: absolute; display: block; width: 400px; height: 55px;  top: 0px; left: 0px;}
+.TeamCentreAlertIcon { position: relative; top: 3px;}
 
 #Footer {clear: both; margin:20px 25px;padding:0;text-align:left;}
 #FooterNavRight {float:right;text-align:right;margin-top: 10px;clear: right;}

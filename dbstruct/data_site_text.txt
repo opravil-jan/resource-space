@@ -12,10 +12,8 @@ research_request,introtext,"Our professional researchers are here to assist you 
 collection_manage,introtext,"Organise and manage your work by grouping resources together. Create ‘Collections’ to suit your way of working. You may want to group resources under projects that you are working on independently, share resources amongst a project team or simply keep your favourite resources together in one place. All the collections in your list appear in the ‘My Collections’ panel at the bottom of the screen.",12,en,,,
 collection_manage,findpublic,"Public collections are groups of resources made widely available by users of the system. Enter a collection ID, or all or part of a collection name or username to find public collections. Add them to your list of collections to access the resources.",13,en,,,
 team_home,introtext,"Welcome to the team centre. Use the links below to administer resources, respond to resource requests, manage themes and alter system settings.",14,en,,,
-help,introtext,"<p>Get the most out of ResourceSpace. These guides will help you use the system and the resources more effectively. </p>
-<p>Use ""Themes"" to browse resources by theme or use the simple search box to search for specific resources.</p>
-<p><a href=""http://www.montala.net/downloads/resourcespace-GettingStarted.pdf"">Download the user guide (PDF file)</a></p>
-<p><a target=""_blank"" href=""http://wiki.resourcespace.org/index.php/?title=main_Page"">Online Documentation (Wiki)</a></p>",15,en,,,
+help,introtext,"<p>Get the most out of ResourceSpace. The Knowledge Base will help you use the system and the resources more effectively. </p>
+<p><a target=""_blank"" href=""http://www.resourcespace.org/knowledge-base/"">ResourceSpace Knowledge Base</a></p>",15,en,,,
 "terms and conditions","terms and conditions","Your terms and conditions go here.",16,en,,,
 contribute,introtext,"You can contribute your own resources. When you initially create a resource it is in the ""Pending Submission"" status. When you have uploaded your file and edited the fields, set the status field to ""Pending Review"". It will then be reviewed by the resources team.",17,en,,,
 done,user_password,"An e-mail containing your username and password has been sent.",18,en,,,
