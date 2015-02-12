@@ -51,6 +51,7 @@ function activate_plugin($name)
                   "priority='{$plugin_yaml_esc['default_priority']}', " .
                   "update_url='{$plugin_yaml_esc['update_url']}', info_url='{$plugin_yaml_esc['info_url']}' " .
                   "WHERE name='{$plugin_yaml_esc['name']}'");
+        hook("after_activate_plugin","",array($name));
         return true;
         }
     else
