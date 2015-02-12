@@ -219,7 +219,7 @@ function collection_readable($collection)
 		return true;
 	}
 	
-	$request=sql_value("select 1 value from request where collection=$collection and assigned_to=$userref", 0);
+	//$request=sql_value("select 1 value from request where collection=$collection and assigned_to=$userref", 0);
 
 
 	# Access if:
@@ -228,7 +228,7 @@ function collection_readable($collection)
 	#	- They have the 'access and edit all collections' admin permission
 	# 	- They are attached to this collection
 	#   - Option to ignore collection access is enabled and k is empty
-	return $userref==$collectiondata["user"] || $collectiondata["public"]==1 || checkperm("h") || in_array($userref,$attached) || checkperm("R") && $request || getval("k","")!="" || (getval("k","")=="" && $ignore_collection_access);
+	return $userref==$collectiondata["user"] || $collectiondata["public"]==1 || checkperm("h") || in_array($userref,$attached) || /*(checkperm("R") && $request) ||*/ getval("k","")!="" || (getval("k","")=="" && $ignore_collection_access);
 	}
 	
 function set_user_collection($user,$collection)
