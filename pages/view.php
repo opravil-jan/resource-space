@@ -1281,7 +1281,7 @@ foreach ($fields_tab_names as $tabname) {
 		$displaycondition = check_view_display_condition($fields, $i);
 
 		if($displaycondition && $tabname == $fields[$i]['tab_name']) {
-			if(!hook('renderfield')) {
+			if(!hook('renderfield',"", array($fields[$i]))) {
 				display_field_data($fields[$i]);
 
 				// Show the fields with a display template now
