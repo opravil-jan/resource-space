@@ -100,7 +100,7 @@ function SwapCSS(css){
 		<ul>
 <?php if (!hook("replacefooterlinks")){?>
 		<?php if (!$use_theme_as_home && !$use_recent_as_home) { ?><li><a href="<?php echo $baseurl?>/pages/<?php echo $default_home_page?>" onClick="return CentralSpaceLoad(this,true);"><?php echo $lang["home"]?></a></li><?php } ?>
-		<?php if ($about_link) { ?><li><a href="<?php echo $baseurl?>/pages/about.php" onClick="return CentralSpaceLoad(this,true);"><?php echo $lang["aboutus"]?></a></li><?php } ?>
+		<?php if ($about_link) { ?><li id="footer_about_link"><a href="<?php echo $baseurl?>/pages/about.php" onClick="return CentralSpaceLoad(this,true);"><?php echo $lang["aboutus"]?></a></li><?php } ?>
 		<?php if ($contact_link || $nav2contact_link) { ?><li><a href="<?php echo $baseurl?>/pages/contact.php" onClick="return CentralSpaceLoad(this,true);"><?php echo $lang["contactus"]?></a></li><?php } ?>
 <?php } /* end hook replacefooterlinks */ ?>
 		</ul>
