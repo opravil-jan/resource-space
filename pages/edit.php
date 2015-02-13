@@ -595,33 +595,36 @@ else
 
 
 <?php } else { # Upload template: (writes to resource with ID [negative user ref])
-
-# Define the title h1:
-if (getval("uploader","")=="plupload") {$titleh1 = $lang["addresourcebatchbrowser"];} # Add Resource Batch - In Browser
-elseif (getval("uploader","")=="java") {$titleh1 = $lang["addresourcebatchbrowserjava"];} # Add Resource Batch - In Browser - Java (Legacy)
-elseif (getval("single","")!="")
-	{
-	if (getval("archive","")=="2")
-		{
-		$titleh1 = $lang["newarchiveresource"]; # Add Single Archived Resource
-		}
-	else
-		{
-		$titleh1 = $lang["addresource"]; # Add Single Resource
-		}
-	}
-elseif ((getval("local","")!="")||(getval("uploader","")=="local")) {$titleh1 = $lang["addresourcebatchlocalfolder"];} # Add Resource Batch - Fetch from local upload folder
-else $titleh1 = $lang["addresourcebatchftp"]; # Add Resource Batch - Fetch from FTP server
-
-# Define the subtitle h2:
-$titleh2 = str_replace(array("%number","%subtitle"), array("1", $lang["specifydefaultcontent"]), $lang["header-upload-subtitle"]);
-?>
-
-<h1><?php echo $titleh1 ?></h1>
-<h2><?php echo $titleh2 ?></h2>
-<p><?php echo $lang["intro-batch_edit"] ?></p>
-
-<?php
+if (!hook("replaceeditheader"))
+    {
+    # Define the title h1:
+    if (getval("uploader","")=="plupload") {$titleh1 = $lang["addresourcebatchbrowser"];} # Add Resource Batch - In Browser
+    elseif (getval("uploader","")=="java") {$titleh1 = $lang["addresourcebatchbrowserjava"];} # Add Resource Batch - In Browser - Java (Legacy)
+    elseif (getval("single","")!="")
+    	{
+    	if (getval("archive","")=="2")
+    		{
+    		$titleh1 = $lang["newarchiveresource"]; # Add Single Archived Resource
+    		}
+    	else
+    		{
+    		$titleh1 = $lang["addresource"]; # Add Single Resource
+    		}
+    	}
+    elseif ((getval("local","")!="")||(getval("uploader","")=="local")) {$titleh1 = $lang["addresourcebatchlocalfolder"];} # Add Resource Batch - Fetch from local upload folder
+    else $titleh1 = $lang["addresourcebatchftp"]; # Add Resource Batch - Fetch from FTP server
+    
+    # Define the subtitle h2:
+    $titleh2 = str_replace(array("%number","%subtitle"), array("1", $lang["specifydefaultcontent"]), $lang["header-upload-subtitle"]);
+    
+    ?>
+    
+    <h1><?php echo $titleh1 ?></h1>
+    <h2><?php echo $titleh2 ?></h2>
+    <p><?php echo $lang["intro-batch_edit"] ?></p>
+    
+    <?php
+    }
 // Upload template: Show the required fields note at the top of the form.
 if (!$is_template) { ?><p class="greyText noPadding"><sup>*</sup> <?php echo $lang["requiredfield"]?></p><?php }
 
