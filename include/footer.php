@@ -1,4 +1,6 @@
 <?php 
+hook("before_footer_always");
+
 # Do not display header / footer when dynamically loading CentralSpace contents.
 if (getval("ajax","")=="" && !hook("replace_footer")) { 
 
