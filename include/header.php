@@ -487,6 +487,8 @@ hook("afterheader");
 
 } // end if !ajax
 
+// Non-ajax specific hook 
+hook("startcentralspace");
 
 # Include theme bar?
 if ($use_theme_bar && (getval("k","")=="") && !in_array($pagename,array("themes","preview_all","done","search_advanced","login","preview","admin_header","user_password","user_request")) && ($pagename!="terms") && (getval("url","")!="index.php"))
