@@ -2535,3 +2535,6 @@ $slideshow_big=false;
 
 # Stemming support - at this stage, experimental. Indexes stems of words only, so plural / singular (etc) forms of keywords are indexed as if they are equivalent. Requires a full reindex.
 $stemming=false;
+
+# Show the > symbol in the resource tools
+$resourcetoolsGT=true;

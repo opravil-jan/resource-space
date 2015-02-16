@@ -2604,7 +2604,7 @@ function autocomplete_blank_fields($resource)
 			$value=eval($field["autocomplete_macro"]);	
 			update_field($resource,$field["ref"],$value);
 			}
-		}	
+		}
 	}
 
 
