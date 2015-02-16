@@ -112,10 +112,12 @@ class ldapAuth
 		{
 			// Active Directory, format is user@domain
 			$this->ldaprdn = $username ;//."@".$userContainer;	
+			if ($this->ldap_debug) { error_log( __FILE__ . " " . __METHOD__ . " " . __LINE__ . " Auth to AD with " . $this->ldaprdn); }
 			
 		} else {
 			// OD - requires full DN.
 			$this->ldaprdn = "uid=" . $this->userName  .",".$userContainer  .",". $this->ldapconfig['basedn'];
+			if ($this->ldap_debug) { error_log( __FILE__ . " " . __METHOD__ . " " . __LINE__ . " Auth to LDAP with " . $this->ldaprdn); }
 		}
 		
 		if (@ldap_bind($this->ldapconn, $this->ldaprdn, $this->ldappass)) {
@@ -406,10 +408,21 @@ class ldapAuth
 		// set the required parameters for each directory type:
 		if ($ldapType == 1)
 		{
+			// AD
 			$attributes = array("cn","dn");
 			$dn = $this->ldapconfig['basedn'];
 			$filter = "(&(objectCategory=group))";
+			//$groupContainer = "OU=Creative,OU=Staff,dc=shit,dc=int";
+			// Group Container override for AD
+			// This will enable a starting point in the AD to search down from.
+			if (($groupContainer != "") && ($groupContainer != null) && ($groupContainer != " ")) 
+			{
+				error_log(  __FILE__ . " " . __METHOD__ . " " . __LINE__ ." - Changed group DN to: ".$groupContainer);
+				$dn = $groupContainer;
+			} 
+
 		} else {
+			// LDAP
 			$attributes = array("cn","gidnumber");
 			
 			if (($groupContainer != "") && ($groupContainer != null) && ($groupContainer != " ")) 
@@ -417,11 +430,13 @@ class ldapAuth
 				error_log(  __FILE__ . " " . __METHOD__ . " " . __LINE__ ." - Changed group DN to: ".$groupContainer);
 				$dn = $groupContainer;
 			} else {
+				// OSX Mapping
 				$dn = "cn=groups," . $this->ldapconfig['basedn'];
 			}
 			$filter = "cn=*";
 			
 		}
+		
 		error_log(  __FILE__ . " " . __METHOD__ . " " . __LINE__ ." - ldap_search ( ". $dn . "," . $filter . ")");
 		//print_r($this->ldapconfig);
 		

@@ -72,8 +72,9 @@ function ldapsetDisplayFields()
 		showObject('trootpass');
 		showObject('taddomain');
 		showObject('tadusesingledomain');
-		hideObject('tldapgroupcontainer');
+		showObject('tldapgroupcontainer');
 		hideObject('tloginfield');
+		hideObject('tldapusercontainer');
 		
 	}
 	return;

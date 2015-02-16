@@ -185,55 +185,57 @@ function HookPosixldapauthAllExternalauth($uname, $pword)
 						}
 						
 						
-						// if we haven't managed to find a group match that is allowed to log into RS, then
-						// we return false!	- we ned to modify this to use the group set if group based is not enabled!
-						if (!($match)) return false;
-						// Create the user
-						if ($ldap_debug) { error_log(  __METHOD__ . " " . __LINE__ . "  Creating User: " . $nuser['username']) ; }
-						
-						$ref=new_user($nuser['username']);
-						
-						if ($ldap_debug) { error_log(  __METHOD__ . " " . __LINE__ . "  User Ref: " . $ref) ; }
-						if (!$ref) 
-						{
-							if ($ldap_debug) { 
-								error_log( __FILE__ . " " . __METHOD__ . " " . __LINE__ . "  Group based User creation ref NOT RETURNED, SOMETHING WEIRD HAPPENED!"); 
-								}
-							return false; # Shouldn't ever get here.  Something strange happened
-						}
-						// Update with information from LDAP
-						sql_query('update user set password="'.$nuser['password'].
-							'", fullname="'.$nuser['fullname'].'", email="'.$nuser['email'].'", usergroup="'.
-							$nuser['usergroup'].'", comments="Auto create from LDAP" where ref="'.$ref.'"');
+							// if we haven't managed to find a group match that is allowed to log into RS, then
+							// we return false!	- we ned to modify this to use the group set if group based is not enabled!
+							if (!($match)) return false;
+							// Create the user
+							if ($ldap_debug) { error_log(  __METHOD__ . " " . __LINE__ . "  Creating User: " . $nuser['username']) ; }
 							
-						$username=$nuser['username'];
-						$password=$nuser['password'];
-
-
-						// now unbind
-						$objLdapAuth->unBind();	
-						
-						if ($ldap_debug) { error_log(  __METHOD__ . " " . __LINE__ . "  returning true : successful user creation!") ; }
-						return true;
-					}
-				}	else {
-						// non group based user creation.
-	                    $ref=new_user($nuser['username']);
-	                   	if (!$ref) 
-						{
-							if ($ldap_debug) { 
-								error_log( __FILE__ . " " . __METHOD__ . " " . __LINE__ . "  NON Group based User creation ref NOT RETURNED, SOMETHING WEIRD HAPPENED!"); 
-							} 
-							return false; # Shouldn't ever get here.  Something strange happened
-						}
-	                    // Update with information from LDAP
-	                    sql_query('update user set password="'.$nuser['password'].
-	                            '", fullname="'.$nuser['fullname'].'", email="'.$nuser['email'].'", usergroup="'.
-	                            $ldapauth['newusergroup'].'", comments="Auto create from LDAP" where ref="'.$ref.'"');
+							// create the user and get a reference number back.
+							$ref=new_user($nuser['username']);
+							
+							if ($ldap_debug) { error_log(  __METHOD__ . " " . __LINE__ . "  User Ref: " . $ref) ; }
+							if (!$ref) 
+							{
+								if ($ldap_debug) { 
+									error_log( __FILE__ . " " . __METHOD__ . " " . __LINE__ . "  Group based User creation ref NOT RETURNED, SOMETHING WEIRD HAPPENED!"); 
+									}
+								return false; # Shouldn't ever get here.  Something strange happened
+							}
+							// Update with information from LDAP
+							sql_query('update user set password="'.$nuser['password'].
+								'", fullname="'.$nuser['fullname'].'", email="'.$nuser['email'].'", usergroup="'.
+								$nuser['usergroup'].'", comments="Auto create from LDAP" where ref="'.$ref.'"');
+								
+							$username=$nuser['username'];
+							$password=$nuser['password'];
+							$password_hash=$nuser['password'];
 	
-	                    $username=$nuser['username'];
-	                    $password=$nuser['password'];
-				}			
+							// now unbind
+							$objLdapAuth->unBind();	
+							
+							if ($ldap_debug) { error_log(  __METHOD__ . " " . __LINE__ . "  returning true : successful user creation!") ; }
+							return true;
+						
+					} else {
+							// non group based user creation.
+		                    $ref=new_user($nuser['username']);
+		                   	if (!$ref) 
+							{
+								if ($ldap_debug) { 
+									error_log( __FILE__ . " " . __METHOD__ . " " . __LINE__ . "  NON Group based User creation ref NOT RETURNED, SOMETHING WEIRD HAPPENED!"); 
+								} 
+								return false; # Shouldn't ever get here.  Something strange happened
+							}
+		                    // Update with information from LDAP
+		                    sql_query('update user set password="'.$nuser['password'].
+		                            '", fullname="'.$nuser['fullname'].'", email="'.$nuser['email'].'", usergroup="'.
+		                            $ldapauth['newusergroup'].'", comments="Auto create from LDAP" where ref="'.$ref.'"');
+		
+		                    $username=$nuser['username'];
+		                    $password=$nuser['password'];
+					}	
+				}		
 			} else {					
 				// username / password is wrong!
 				return false;
@@ -246,9 +248,6 @@ function HookPosixldapauthAllExternalauth($uname, $pword)
 function HookPosixldapauthAllAdditionalheaderjs(){
     global $baseurl,$baseurl_short;?>
     <script type="text/javascript" src="<?php echo $baseurl?>/plugins/posixldapauth/pages/ldap_functions.js" language="javascript"></script>
-    <script type=\"text/javascript\">
-        status_error_in = '" . preg_replace("/\r?\n/", "\\n", addslashes($lang['posixldapauth_status_error_in'])) . "';
-        server_error = '" . preg_replace("/\r?\n/", "\\n", addslashes($lang['posixldapauth_server_error'])) . "';
-    </script>
+    
 <?php
 }
