@@ -984,6 +984,9 @@ $enable_related_resources=true;
 /* $php_path MUST BE SET */
 $relate_on_upload=false;
 
+#Size of the related resource previews on the resource page. Usually requires some restyling (#RelatedResources .CollectionPanelShell)
+#Takes the preview code such as "col","thm"
+$related_resource_preview_size="col";
 
 # Enable the 'keep me logged in at this workstation' option at the login form
 # If the user then selects this, a 100 day expiry time is set on the cookie.
