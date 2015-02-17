@@ -404,13 +404,7 @@ else
    registerCollapsibleSections();
 </script>
 
-<?php if($find!="")
-		{?>
-		jQuery(document).scrollTop(jQuery("*:contains('<?php echo htmlspecialchars($find) ?>'):not(label):last").offset().top);
-		<?php
-		}
-		?>    
-</script>
+
 
 <?php
 
