@@ -2544,3 +2544,6 @@ $stemming=false;
 
 # Show the > symbol in the resource tools
 $resourcetoolsGT=true;
+
+# Initialize array for classes to be added to <body> element
+$body_classes = array();

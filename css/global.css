@@ -75,6 +75,24 @@ input.defaultbutton {position: absolute; left: -100%; width: 0; height: 0;}
 .headerlink {margin:20px 25px; position: absolute; display: block; width: 400px; height: 55px;  top: 0px; left: 0px;}
 .TeamCentreAlertIcon { position: relative; top: 3px;}
 
+/* Slimheader */
+.SlimHeader .ui-layout-container{min-width:1100px;overflow:scroll;}
+.SlimHeader #CentralSpaceContainer {margin: 20px 25px 20px;padding: 0 282px 0 0;text-align: left;}
+.SlimHeader #Header {margin: 0;padding: 5px 25px 5px 25px;background-image:none;}
+.SlimHeader #HeaderNav1, .SlimHeader #HeaderNav2 {margin:0;padding:0;line-height: 35px;}
+.SlimHeader #HeaderNav1 {float:right;}
+.SlimHeader #HeaderNav2 {float:left; padding-left: 10px;}
+.SlimHeader #HeaderNav1 ul, .SlimHeader #Headernav2 ul {padding: 0.2em 0.5em;}
+.SlimHeader .HeaderImgLink{float:left;height:100%;}
+.SlimHeader #HeaderImg{height:40px;margin:0;}
+.SlimHeader .HorizontalNav li, .SlimHeader .HorizontalNav li {display: inline-block;zoom: 1;*display: inline;}
+.SlimHeader .HorizontalNav li a, .SlimHeader .HorizontalNav li a{display: inline-block;zoom: 1;*display: inline;}
+.SlimHeader #SearchBarContainer {margin-top: 20px;}
+.SlimHeader .RecordBox {margin: 10px 20px 10px 0;}
+.SlimHeader .CollectBack h2 {display:none;}
+.SlimHeader #Header.slimheader_darken{color: #FFFFFF;background: #293340 url(../gfx/whitegry/interface/CollectBack.gif) repeat-x;}
+.SlimHeader #Header.slimheader_darken a:link, .SlimHeader #Header.slimheader_darken a:visited, .SlimHeader #Header.slimheader_darken a:active {color: #E1E8F0;}
+
 #Footer {clear: both; margin:20px 25px;padding:0;text-align:left;}
 #FooterNavRight {float:right;text-align:right;margin-top: 10px;clear: right;}
 #FooterNavRightBottom {float:right;text-align:right;margin-top: 10px;clear: right;}

@@ -265,14 +265,6 @@ $extrafooterhtml="";
 <!--[if lte IE 5.6]> <link href="<?php echo $baseurl?>/css/globalIE5.css?css_reload_key=<?php echo $css_reload_key?>" rel="stylesheet" type="text/css"  media="screen,projection,print" /> <![endif]-->
 
 <?php 
-#SlimHeader global structure changes
-if($slimheader)
-    {
-    ?>
-    <link href="<?php echo $baseurl?>/css/globalslimheader.css?css_reload_key=<?php echo $css_reload_key?>" rel="stylesheet" type="text/css" media="screen,projection,print" />
-    <?php
-    }
-    
 echo get_plugin_css($theme)
 // after loading these tags we change the class on them so a new set can be added before they are removed (preventing flickering of overridden theme)
 ?>
@@ -293,11 +285,14 @@ if ($infobox)
 	<script src="<?php echo $baseurl_short;?>lib/js/infobox.js?css_reload_key=<?php echo $css_reload_key ?>" type="text/javascript"></script>
 <?php
 	}
+endif; # !hook("customhtmlheader") 
+if($slimheader)
+    {
+    $body_classes[] = 'SlimHeader';
+    } 
 ?>
-<?php endif; # !hook("customhtmlheader") ?>
 </head>
-
-<body lang="<?php echo $language ?>" <?php if (isset($bodyattribs)) { ?><?php echo $bodyattribs?><?php } if($infobox) {?> onmousemove="InfoBoxMM(event);"<?php } ?>>
+<body lang="<?php echo $language ?>" class="<?php echo implode(' ', $body_classes); ?>" <?php if (isset($bodyattribs)) { ?><?php echo $bodyattribs?><?php } if($infobox) {?> onmousemove="InfoBoxMM(event);"<?php } ?>>
 
 <?php hook("bodystart"); ?>
 
