@@ -599,7 +599,19 @@ function do_search($search,$restypes="",$order_by="relevance",$archive=0,$fetchr
 																	//$union.="hit_count as score from resource_keyword k" . $c . " where (k" . $c . ".keyword=null $relatedsql)";
 																	$union.=" 1 as score from resource r" . $c . " left outer join resource_data rd" . $c . " on r" . $c . ".ref=rd" . $c . ".resource and rd" . $c . ".resource_type_field='$nodatafield' where  (rd" . $c . ".value ='' or rd" . $c . ".value is null or rd" . $c . ".value=',') $restypesql  and r" . $c . ".ref>0 group by r" . $c . ".ref ";
 																} else {
-																	$union.="hit_count as score from resource_keyword k" . $c . " where (k" . $c . ".keyword='$keyref' $relatedsql)";
+																	
+																	# This is a performance enhancement that will discard any keyword matches for fields that are not supposed to be indexed.
+																	$filter_by_resource_field_type = "";
+																	if (isset($search_sql_force_field_index_check) && $search_sql_force_field_index_check && count($restypes)>0)
+																		{
+																		$field_types = sql_value("select group_concat(ref) as value from resource_type_field where keywords_index=1 and resource_type in ({$restypes})",null);
+																		if ($field_types != null)
+																			{
+																			$filter_by_resource_field_type = "and k{$c}.resource_type_field in (-1,{$field_types})";  // -1 needed for global search
+																			}
+																		}
+																	$union.="hit_count as score from resource_keyword k{$c} where (k{$c}.keyword={$keyref} {$filter_by_resource_field_type} {$relatedsql})";
+
 																}
 																	
                                                                  if (!empty($sql_exclude_fields)) 
@@ -607,7 +619,7 @@ function do_search($search,$restypes="",$order_by="relevance",$archive=0,$fetchr
                                                                     $union.=" and k" . $c . ".resource_type_field not in (". $sql_exclude_fields .")";
                                                                     }
 
-                                                                                                                                                                                                                                                    if (count($hidden_indexed_fields)>0)
+																if (count($hidden_indexed_fields)>0)
                                                                     {
                                                                     $union.=" and k" . $c . ".resource_type_field not in ('". join("','",$hidden_indexed_fields) ."')";                                                                    }
 																if ($empty){
