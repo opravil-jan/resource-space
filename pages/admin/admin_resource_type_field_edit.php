@@ -281,7 +281,7 @@ if (getval("delete","")!="")
 	    //Remove all keywords	    
 	    sql_query("delete from resource_keyword where resource_type_field='$ref'");
 	    
-	    redirect(generateURL($baseurl . "/pages/admin/admin_resource_type_fields",$url_params,array("ref"=>"","deleted"=>urlencode($ref))));
+	    redirect(generateURL($baseurl . "/pages/admin/admin_resource_type_fields.php",$url_params,array("ref"=>"","deleted"=>urlencode($ref))));
 	    }
         else
 	    {	    
