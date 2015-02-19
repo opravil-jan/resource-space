@@ -41,7 +41,7 @@ echo "Preloading data... ";
 $count = 0;
 $max   = 10000;
 
-$done = sql_array("SELECT file_path value FROM resource WHERE LENGTH(file_path)>0 AND file_path AND '%/%'");
+$done = sql_array("SELECT file_path value FROM resource WHERE LENGTH(file_path)>0 AND file_path LIKE '%/%'");
 $done = array_flip($done);
 
 # Load all modification times into an array for speed
@@ -64,7 +64,6 @@ if (isset($staticsync_mapped_category_tree))
 	$field = get_field($staticsync_mapped_category_tree);
 	$tree  = explode("\n",trim($field["options"]));
 	}
-
 
 function touch_category_tree_level($path_parts)
 	{
@@ -110,7 +109,6 @@ function touch_category_tree_level($path_parts)
 		sql_query("UPDATE resource_type_field SET options='$rtf_options' WHERE ref='$staticsync_mapped_category_tree'");
 		}
 	}
-
 
 function ProcessFolder($folder)
 	{
