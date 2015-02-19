@@ -194,6 +194,11 @@ function ProcessFolder($folder)
 					{
 					if (in_array($extension,$extensions)) {$type=$rt;}
 					}
+				$modified_type = hook('modify_type', 'staticsync', array( $type ));
+				if (is_numeric($modified_type))
+					{
+					$type = $modified_type;
+					}
 				
 				# Formulate a title
 				if ($staticsync_title_includes_path)
@@ -204,6 +209,11 @@ function ProcessFolder($folder)
 				else
 					{
 					$title=str_ireplace("." . $extension,"",$file);
+					}
+				$modified_title = hook('modify_title', 'staticsync', array( $title ));
+				if ($modified_title !== false)
+					{
+					$title = $modified_title;
 					}
 				
 				# Import this file
