@@ -18,9 +18,13 @@
     {
     background:rgba(0,0,0,0.6);
     color:#fff;
-    padding:10px;
-    width:30%;
+    min-width: 250px;
+    max-width: 40%;
     border-radius:5px;	-moz-border-radius: 5px; -webkit-border-radius: 5px;
+    }
+#HomeSiteTextInner 
+    {
+    padding:15px;
     }
 #HomeSiteText h1,#HomeSiteText p
     {
