@@ -388,6 +388,9 @@ $ffmpeg_use_qscale = true;
 # Ensure the formats you are specifiying with vcodec and acodec are supported by checking 'ffmpeg -formats'.
 # "lines_min" refers to the minimum number of lines (vertical pixels / height) needed in the source file before this alternative video file will be created. It prevents the creation of alternative files that are larger than the source in the event that alternative files are being used for creating downscaled copies (e.g. for web use).
 #
+# Params examples for different cases:
+# Converting .mov to .avi use "-g 60 -vcodec msmpeg4v2 -acodec pcm_u8 -f avi";
+#
 # $ffmpeg_alternatives[0]["name"]="QuickTime H.264 WVGA";
 # $ffmpeg_alternatives[0]["filename"]="quicktime_h264";
 # $ffmpeg_alternatives[0]["extension"]="mov";
