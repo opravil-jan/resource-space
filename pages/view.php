@@ -90,6 +90,11 @@ if ($resource===false) {exit($lang['resourcenotfound']);}
 # Allow alternative configuration settings for this resource type.
 resource_type_config_override($resource["resource_type"]);
 
+# get comments count
+if($comments_resource_enable && $comments_view_panel_show_marker){
+	$resource_comments=sql_value("select count(*) value from comment where resource_ref=$ref","0");
+}
+
 // get mp3 paths if necessary and set $use_mp3_player switch
 if (!(isset($resource['is_transcoding']) && $resource['is_transcoding']==1) && (in_array($resource["file_extension"],$ffmpeg_audio_extensions) || $resource["file_extension"]=="mp3") && $mp3_player){
 		$use_mp3_player=true;
@@ -440,6 +445,9 @@ jQuery(document).ready(function () {
 	removePanel=jQuery("#Comments").parents(".RecordBox");
 	jQuery("#Comments").appendTo("#Panel1").addClass("TabPanel").hide();
 	removePanel.remove();
+	if(<?php echo $comments_view_panel_show_marker?>==true && <?php echo $resource_comments?>>'0'){
+		jQuery("[panel='Comments']").append("&#42;");
+	}
 
     jQuery("#RelatedResources").children().children(".Title").attr("panel", "RelatedResources").addClass("Selected").appendTo("#Titles2");
     removePanel=jQuery("#RelatedResources").parents(".RecordBox");
