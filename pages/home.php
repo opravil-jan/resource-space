@@ -26,7 +26,7 @@ if (!hook("replaceslideshow"))
 	$reslinks=array();
 	foreach ($d as $f) 
 		{ 
-		if(preg_match("/[0-9]+\.(jpg)/",$f))
+		if(preg_match("/[0-9]+\.(jpg)$/",$f))
 		 	{ 
 		 	$filecount++;
 

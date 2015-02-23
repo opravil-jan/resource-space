@@ -7,7 +7,7 @@
 
 include "../../include/db.php";
 include "../../include/general.php";
-include "../../include/authenticate.php"; if (!checkperm("a")) {exit("Permission denied");}
+#include "../../include/authenticate.php"; if (!checkperm("a")) {exit("Permission denied");}
 if ($use_mysqli){$function="mysql_affected_rows";} else {$function="mysqli_affected_rows";}
 
 sql_query("delete from collection where public<>1 and user not in (select ref from user)");
