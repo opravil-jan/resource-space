@@ -367,12 +367,30 @@ else
     foreach ($fieldcolumns as $column=>$column_detail)		
 		    {
 		    if ($column=="partial_index") // Start the hidden advanced section here
-			{?>
-			<h2 id="showhiddenfields" class="CollapsibleSectionHead collapsed" ><?php echo $lang["admin_advanced_field_properties"] ?></h2>
-			<div class="CollapsibleSection" id="admin_hidden_field_properties" >	 
-			<?php
-			}
+				{?>
+				<h2 id="showhiddenfields" class="CollapsibleSectionHead collapsed" ><?php echo $lang["admin_advanced_field_properties"] ?></h2>
+				<div class="CollapsibleSection" id="admin_hidden_field_properties" >	 
+				<?php
+				}
 		    admin_resource_type_field_option($column,$column_detail[0],$column_detail[1],$column_detail[2],$fielddata[$column]);
+		    if($column=="options")
+		    	{
+		    	?>
+		    	<script>
+		    	if(jQuery('#type').val()!=3){
+		    		jQuery('#options').siblings('.FormHelp').hide();
+		    	} 
+				jQuery('#type').click(function(){
+					if(jQuery(this).val()==3){
+						jQuery('#options').siblings('.FormHelp').show();
+					}
+					else{
+						jQuery('#options').siblings('.FormHelp').hide();
+					}
+				});
+				</script>
+				<?php
+		    	}
 		    }
     
     ?>
