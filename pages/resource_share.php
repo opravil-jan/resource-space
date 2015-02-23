@@ -131,6 +131,12 @@ hook("resource_share_afterheader");
         </ul>
         </div>
 
+<?php 
+# Do not allow access to the existing shares if the user has restricted access to this resource.
+if ($minaccess==0)
+	{
+	?>
+
         <h2><?php echo $lang["externalusersharing"]?></h2>
 	<div class="Question">
 	<?php
@@ -200,7 +206,9 @@ hook("resource_share_afterheader");
 		}
 	?>
 	</div>	
-        
+        <?php
+	}
+?>
 </form>
 </div>
 </div> <!-- BasicsBox -->
