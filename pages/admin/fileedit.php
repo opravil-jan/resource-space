@@ -3,6 +3,9 @@ include "../../include/db.php";?>
 <?php include "../../include/authenticate.php"; if (!checkperm("a")) {exit("Permission denied");}?>
 <?php
 
+if (!$web_config_edit)
+	exit('Feature not available');
+
 if (get_magic_quotes_gpc()) {
     $process = array(&$_GET, &$_POST, &$_COOKIE, &$_REQUEST);
     while (list($key, $val) = each($process)) {
