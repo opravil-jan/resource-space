@@ -30,7 +30,7 @@ if (!($allow_share && ($useraccess==0 || ($useraccess==1 && $restricted_share)))
 
 $errors="";
 if (getval("save","")!="")
-	{	
+	{
 	// Build a new list and insert
 	$users=getvalescaped("users","");
 	$message=getvalescaped("message","");
@@ -99,7 +99,7 @@ include "../include/header.php";
 
 <p><?php echo text("introtext")?></p>
 
-<form method=post id="resourceform" action="<?php echo $baseurl_short?>pages/resource_email.php">
+<form method=post id="resourceform" action="<?php echo $baseurl_short?>pages/resource_email.php?search=<?php echo urlencode($search)?>&offset=<?php echo $offset?>&order_by=<?php echo $order_by?>&sort=<?php echo $sort?>&archive=<?php echo $archive?>">
 <input type=hidden name=ref value="<?php echo htmlspecialchars($ref)?>">
 
 <div class="Question">
