@@ -1145,62 +1145,53 @@ function get_all_site_text($findpage="",$findname="",$findtext="")
 	{
 	# Returns a list of all available editable site text (content).
 	# If $find is specified a search is performed across page, name and text fields.
-	global $defaultlanguage;	
+	global $defaultlanguage,$lang;	
 	$findname=trim($findname);
 	$findpage=trim($findpage);
 	$findtext=trim($findtext);
-	$sql="site_text s ";
 	
-	if ($findname!="" || $findpage!="" || $findtext!=""){
-		$sql.=" where (";
-	}
-	
-	
-	if ($findname!="") {
-		$findnamearray=explode(" ",$findname);
-		for ($n=0;$n<count($findnamearray);$n++){
-		  $sql.=' name like "%'.$findnamearray[$n].'%"';
-		  if ($n+1!=count($findnamearray)){$sql.=" and ";}
-		}
-		
-	}
-	
-	if ($findpage!="") {
-		$findpagearray=explode(" ",$findpage);
-		if ($findname!=""){$sql.=" and ";}
-		for ($n=0;$n<count($findpagearray);$n++){
-		  $sql.=' page like "%'.$findpagearray[$n].'%"';
-		  if ($n+1!=count($findpagearray)){$sql.=" and ";}
-		}
-		
-	}
-	
-	if ($findtext!="") {
-		$findtextarray=explode(" ",$findtext);
-		if ($findname!="" || $findpage!=""){$sql.=" and ";}
-		for ($n=0;$n<count($findtextarray);$n++){
-		  $sql.=' text like "%'.$findtextarray[$n].'%"';
-		  if ($n+1!=count($findtextarray)){$sql.=" and ";}
-		}
-		
-	}
-	if ($findname!="" || $findpage!="" || $findtext!=""){
-		$sql.=" ) ";
-	}
-
-	return sql_query ("select distinct s.page,s.name,(select text from site_text st where st.name=s.name and st.page=s.page order by (language='$defaultlanguage') desc limit 1) text from $sql order by (s.page='all') desc,s.page,name");
+        $return=array();
+        
+        # Find language strings.
+        foreach ($lang as $key=>$text)
+            {
+            $pagename="";
+            $s=explode("__",$key);
+            if (count($s)>1) {$pagename=$s[0];$key=$s[1];}
+            
+            if
+                (
+                !is_array($text) # Do not support overrides for array values (used for months)... complex UI needed and very unlikely to need overrides.
+                &&
+                ($findname=="" || stripos($key,$findname)!==false)
+                &&            
+                ($findpage=="" || stripos($pagename,$findpage)!==false || strtolower($findpage)==strtolower($lang["all"]))
+                &&
+                ($findtext=="" || stripos($text,$findtext)!==false)
+                )
+                {
+                $row["page"]=$pagename;
+                $row["name"]=$key;
+                $row["text"]=$text;
+                $return[]=$row;
+                }
+            }
+        
+        return $return;
 	}
 
 function get_site_text($page,$name,$language,$group)
 	{
 	# Returns a specific site text entry.
+        global $lang;
 	if ($group=="") {$g="null";$gc="is";} else {$g="'" . $group . "'";$gc="=";}
 	
 	$text=sql_query ("select * from site_text where page='$page' and name='$name' and language='$language' and specific_to_group $gc $g");
 	if (count($text)==0)
 		{
-		$existing=escape_check(sql_value("select text value from site_text where page='$page' and name='$name' limit 1",""));
-		return $existing;
+		# Fall back to language strings.
+                if ($page=="") {$key=$name;} else {$key=$page . "__" . $name;}
+                if (array_key_exists($key,$lang)) {return $lang[$key];} else {return $key;}
 		}
 	return $text[0]["text"];
 	}

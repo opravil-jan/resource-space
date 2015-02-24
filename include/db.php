@@ -194,7 +194,7 @@ include dirname(__FILE__)."/../languages/en.php";
 if ($language!="en")
 	{
 	if (substr($language, 2, 1)=='-' && substr($language, 0, 2)!='en')
-		@include dirname(__FILE__)."/../languages/" . safe_file_name(substr($language, 0, 2)) . ".php";
+	@include dirname(__FILE__)."/../languages/" . safe_file_name(substr($language, 0, 2)) . ".php";
 	@include dirname(__FILE__)."/../languages/" . safe_file_name($language) . ".php";
 	}
 
@@ -211,9 +211,8 @@ if (($pagename!="download") && ($pagename!="graph")) {header("Content-Type: text
 
 
 # Pre-load all text for this page.
-$site_text=array();
-$results=sql_query("select language,name,text from site_text where (page='$pagename' or page='all') and (specific_to_group is null or specific_to_group=0)");
-for ($n=0;$n<count($results);$n++) {$site_text[$results[$n]["language"] . "-" . $results[$n]["name"]]=$results[$n]["text"];}
+$results=sql_query("select name,text,page from site_text where language='" . escape_check($language) . "' and (page='$pagename' or page='all' or page='') and (specific_to_group is null or specific_to_group=0)");
+for ($n=0;$n<count($results);$n++) {if ($results[$n]["page"]=="") {$lang[$results[$n]["name"]]=$results[$n]["text"];} else {$lang[$results[$n]["page"] . "__" . $results[$n]["name"]]=$results[$n]["text"];}}
 
 # Blank the header insert
 $headerinsert="";
@@ -893,8 +892,15 @@ function pagename()
     
 function text($name)
 	{
-	global $config_disable_nohelp_warning;
+	global $site_text,$pagename,$language,$languages,$usergroup,$lang;
+	
+	# Look for the site content in the language strings. These will already be overridden with site content if present.
+	$key=$pagename . "__" . $name;
+	if (array_key_exists($key,$lang)) {return $lang[$key];}
 
+	/*
+		Old method, commented for reference; look directly in the site content table.
+	
 	# Returns site text with name $name, or failing that returns dummy text.
 	global $site_text,$pagename,$language,$languages,$usergroup;
 	if (array_key_exists($language . "-" . $name,$site_text)) {return $site_text[$language . "-" .$name];} 
@@ -908,7 +914,8 @@ function text($name)
 		{
 		if (array_key_exists("en-" . $name,$site_text)) {return $site_text["en-" . $name];}
 		}
-
+	*/
+	
 	return "";
 	}
     

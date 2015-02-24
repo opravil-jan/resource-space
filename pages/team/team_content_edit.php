@@ -57,7 +57,7 @@ include "../../include/header.php";
 <input type=hidden name=langswitch id=langswitch value="">
 <input type=hidden name=groupswitch id=groupswitch value="">
 
-<div class="Question"><label><?php echo $lang["page"]?></label><div class="Fixed"><?php echo $page?></div><div class="clearerleft"> </div></div>
+<div class="Question"><label><?php echo $lang["page"]?></label><div class="Fixed"><?php echo ($page==""?$lang["all"]:$page) ?></div><div class="clearerleft"> </div></div>
 <?php if ($page=="help"){?>
 <div class="Question"><label for="name"><?php echo $lang["name"]?></label><input type=text name="name" class="stdwidth" value="<?php echo htmlspecialchars($name)?>">
 <?php } else { ?>
