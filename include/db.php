@@ -211,7 +211,9 @@ if (($pagename!="download") && ($pagename!="graph")) {header("Content-Type: text
 
 
 # Pre-load all text for this page.
-$results=sql_query("select name,text,page from site_text where language='" . escape_check($language) . "' and (page='$pagename' or page='all' or page='') and (specific_to_group is null or specific_to_group=0)");
+$pagefilter="and (page='$pagename' or page='all' or page='')";
+if ($pagename=="team_content") {$pagefilter="";} # Special case for the team content manager. Pull in all content from all pages so it's all overridden.
+$results=sql_query("select name,text,page from site_text where language='" . escape_check($language) . "' $pagefilter and (specific_to_group is null or specific_to_group=0)");
 for ($n=0;$n<count($results);$n++) {if ($results[$n]["page"]=="") {$lang[$results[$n]["name"]]=$results[$n]["text"];} else {$lang[$results[$n]["page"] . "__" . $results[$n]["name"]]=$results[$n]["text"];}}
 
 # Blank the header insert
