@@ -227,6 +227,9 @@ include "../include/header.php";
 
 $collections=get_user_collections($userref,$find,$col_order_by,$sort);
 
+$modified_collections=hook("modified_collections","",array($userref,$find,$col_order_by,$sort));
+if(!empty($modified_collections)){$collections=$modified_collections;}
+
 $results=count($collections);
 $totalpages=ceil($results/$per_page);
 $curpage=floor($offset/$per_page)+1;
