@@ -560,6 +560,7 @@ $download_multisize=true;
 
 # Try to find a preview file.
 $flvfile=get_resource_path($ref,true,"pre",false,$ffmpeg_preview_extension);
+
 if (!file_exists($flvfile) && $ffmpeg_preview_extension!="flv") {$flvfile=get_resource_path($ref,true,"pre",false,"flv");} # Try FLV, for legacy systems.
 if (!file_exists($flvfile)) {$flvfile=get_resource_path($ref,true,"",false,$ffmpeg_preview_extension);}
 
@@ -567,7 +568,8 @@ if (file_exists("../players/type" . $resource["resource_type"] . ".php"))
 	{
 	include "../players/type" . $resource["resource_type"] . ".php";
 	}
-elseif (!(isset($resource['is_transcoding']) && $resource['is_transcoding']!=0) && file_exists($flvfile))
+elseif (hook("replacevideoplayerlogic","",array($flvfile))){ }
+elseif ((!(isset($resource['is_transcoding']) && $resource['is_transcoding']!=0) && file_exists($flvfile)))
 	{
 	# Include the player if a video preview file exists for this resource.
 	$download_multisize=false;
@@ -743,7 +745,7 @@ function get_size_info($size, $originalSize = null)
 	$output='<p>' . $newWidth . " x " . $newHeight . " " . $lang["pixels"];
 
 	$mp=compute_megapixel($newWidth, $newHeight);
-	if ($mp>=0)
+	if ($mp>0)
 		{
 		$output.=" (" . $mp . " " . $lang["megapixel-short"] . ")";
 		}
