@@ -1865,3 +1865,25 @@ $lang['send_collection_to_admin_usercontributedcollection'] = ' hat diese Ressou
 $lang['send_collection_to_admin_additionalinformation'] = 'Zusätzliche Informationen';
 $lang['send_collection_to_admin_collectionname'] = 'Name der Kollektion: ';
 $lang['send_collection_to_admin_numberofresources'] = 'Anzahl der Ressourcen: ';
+
+# User group management
+$lang['page-title_user_group_management'] = "Benutzergruppen verwalten";
+$lang['page-subtitle_user_group_management'] = "In diesem Bereich können Sie Benutzergruppen hinzufügen, ändern und entfernen.";
+$lang['action-title_create_user_group_called'] = "Benutzergruppe mit Namen erstellen...";
+$lang['action-title_filter_by_parent_group'] = "Filter für übergeordnete Benutzergruppe";
+$lang['action-title_filter_by_permissions'] = "Berechtigungsfilter";
+$lang["fieldhelp-permissions_filter"]="Sie können eine einzelne Berechtigung oder eine mit Komma getrennte Liste eingeben. Teilnamen und Muster sind nicht erlaubt. Groß- und Kleinschreibung wird unterschieden!";
+
+# User group management edit
+$lang['page-title_user_group_management_edit'] = "Benutzergruppe ändern";
+$lang['page-subtitle_user_group_management_edit'] = "In diesem Bereich können Sie die Eigenschaften einer Benutzergruppe ändern.";
+$lang["action-title_remove_user_group_logo"]="Anwählen um das Benutzergruppenlogo zu entfernen";
+$lang["action-title_see_wiki_for_advanced_options"]="Im <a href='http://wiki.resourcespace.org/index.php?title=Main_Page#System_Administrator.27s_Guide'>WIKI</a> finden Sie Informationen für weiterführende Optionen.";
+
+$lang["fieldhelp-tick_to_delete_group"]="Sie können keine Benutzergruppen löschen, die noch Benutzer enthalten oder einer anderen Gruppe übergeordnet sind";
+$lang["fieldtitle-tick_to_delete_group"]="Anwählen um diese Gruppe zu entfernen";
+$lang["property-contains"]="Enthält";
+$lang["property-groups"]="Gruppen";
+$lang["property-user_group"]="Benutzergruppe";
+$lang["property-user_group_parent"]="Übergeordnete Benutzergruppe";
+$lang["property-user_group_remove_parent"]="(übergeordnete Gruppe entfernen)";
