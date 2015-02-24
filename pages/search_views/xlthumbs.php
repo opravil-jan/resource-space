@@ -35,7 +35,7 @@
     if (!file_exists($flvfile)) {$flvfile=get_resource_path($ref,true,"",false,$ffmpeg_preview_extension);}
     else if (!(isset($result[$n]['is_transcoding']) && $result[$n]['is_transcoding']!=0) && file_exists($flvfile) && (strpos(strtolower($flvfile),".".$ffmpeg_preview_extension)!==false)) { $show_flv=true;}
     }
-    if (isset($flvfile) && hook("replacevideoplayerlogic","",array($flvfile))){ }
+    if (isset($flvfile) && hook("replacevideoplayerlogicxl","",array($flvfile,$result,$n))){ }
     else if ($show_flv)
         {
         # Include the Flash player if an FLV file exists for this resource.
@@ -116,7 +116,7 @@
 		# xlthumbs_display_fields
 		for ($x=0;$x<count($df);$x++)
 			{
-			if(!in_array($df[$x]['ref'],$xl_thumbs_display_fields)){continue;}
+			//if(!in_array($df[$x]['ref'],$xl_thumbs_display_fields)){continue;}
 			#value filter plugin -tbd	
 			$value=@$result[$n]['field'.$df[$x]['ref']];
 			$plugin="../plugins/value_filter_" . $df[$x]['name'] . ".php";
