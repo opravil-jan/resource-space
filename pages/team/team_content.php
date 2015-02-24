@@ -46,10 +46,10 @@ $jumpcount=1;
 <div class="Listview">
 <table border="0" cellspacing="0" cellpadding="0" class="ListviewStyle">
 <tr class="ListviewTitleStyle">
-<td><?php echo $lang["page"]?></td>
-<td><?php echo $lang["name"]?></td>
-<td><?php echo $lang["text"]?></td>
-<td><div class="ListTools"><?php echo $lang["tools"]?></div></td>
+<td width="10%"><?php echo $lang["page"]?></td>
+<td width="40%"><?php echo $lang["name"]?></td>
+<td width="40%"><?php echo $lang["text"]?></td>
+<td width="10%"><div class="ListTools"><?php echo $lang["tools"]?></div></td>
 </tr>
 
 <?php
