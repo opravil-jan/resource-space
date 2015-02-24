@@ -59,7 +59,7 @@ include "../../include/header.php";
 
 <div class="Question"><label><?php echo $lang["page"]?></label><div class="Fixed"><?php echo ($page==""?$lang["all"]:$page) ?></div><div class="clearerleft"> </div></div>
 <?php if ($page=="help"){?>
-<div class="Question"><label for="name"><?php echo $lang["name"]?></label><input type=text name="name" class="stdwidth" value="<?php echo htmlspecialchars($name)?>">
+<div class="Question"><label for="name"><?php echo $lang["name"]?></label><input type=text name="name" class="stdwidth" value="<?php echo htmlspecialchars($name)?>"><div class="clearerleft"> </div></div>
 <?php } else { ?>
 <div class="Question"><label><?php echo $lang["name"]?></label><div class="Fixed"><?php echo $name?></div><div class="clearerleft"> </div></div>
 <?php } ?>
@@ -127,14 +127,24 @@ else
 <?php # add special ability to create and remove help pages
 if ($page=="help") { ?>
 <?php if ($name!="introtext"){ ?>
-	<div class="Question"><label for="deleteme"><?php echo $lang["ticktodeletehelp"]?></label><input class="deleteBox" name="deleteme" type="checkbox" value="yes"><div class="clearerleft"> </div></div>
-<?php } ?><br><br>
-<label for="newhelp"><?php echo $lang["createnewhelp"]?></label><input name="newhelp" type=text value=""><div class="clearerleft"> </div>
+	<div class="Question">
+	<label for="deleteme"><?php echo $lang["ticktodeletehelp"]?></label>
+	<input class="deleteBox" name="deleteme" type="checkbox" value="yes"><div class="clearerleft" /> </div>
+	</div>
+<?php } ?>
+<br /><br />
+<div class="Question">
+<label for="newhelp"><?php echo $lang["createnewhelp"]?></label><input name="newhelp" type=text value="" />
+<div class="clearerleft"> </div>
+</div>
 <?php } ?>
 
 <?php # add ability to delete custom page/name entries
  if ($custom==1 && $page!="help"){ ?>
-	<div class="Question"><label for="deletecustom"><?php echo $lang["ticktodeletehelp"]?></label><input class="deleteBox" name="deletecustom" type="checkbox" value="yes"><div class="clearerleft"> </div></div>
+	<div class="Question">
+	<label for="deletecustom"><?php echo $lang["ticktodeletehelp"]?></label><input class="deleteBox" name="deletecustom" type="checkbox" value="yes" />
+	<div class="clearerleft"> </div>
+	</div>
 <?php } ?>
 
 <input type=hidden id="returntolist" name="returntolist" value=''/>
