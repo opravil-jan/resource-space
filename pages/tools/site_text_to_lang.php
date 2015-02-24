@@ -17,8 +17,8 @@ header("Content-type: text/plain; charset=utf-8");
 $site_text=sql_query("select page,name,text from site_text where language='$lang' group by page,name");
 foreach ($site_text as $s)
     {
-    
-    echo "\$lang[\"" . $s["page"] . "__" . $s["name"] . "\"]=\"" . str_replace("\n","\\n",addslashes($s["text"])) . "\";\n";
-    
+    $key=$s["page"] . "__" . $s["name"];
+    if ($s["page"]=="") {$key=$s["name"];}
+    echo "\$lang[\"" . $key . "\"]=\"" . str_replace("\n","\\n",addslashes($s["text"])) . "\";\n";
     }
-    
+
