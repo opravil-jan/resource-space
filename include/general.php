@@ -1152,6 +1152,8 @@ function get_all_site_text($findpage="",$findname="",$findtext="")
 	
         $return=array();
         
+        ksort($lang);#,function ($a,$b) {return (is_array($a)?false:strpos($a,"__")===false);});
+        
         # Find language strings.
         foreach ($lang as $key=>$text)
             {

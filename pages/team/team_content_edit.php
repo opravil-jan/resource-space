@@ -47,8 +47,8 @@ $text=get_site_text($page,$name,$editlanguage,$editgroup);
 
 include "../../include/header.php";
 ?>
-<p><a href="<?php echo $baseurl_short?>pages/team/team_content.php?nc=<?php echo time()?>&findpage=<?php echo $findpage?>&findname=<?php echo $findname?>&findtext=<?php echo $findtext?>&offset=<?php echo $offset?>" onClick="return CentralSpaceLoad(this,true);">&lt;&nbsp;<?php echo $lang["backtomanagecontent"]?></a></p>
-<div class="BasicsBox">
+<div class="BasicsBox"><p><a href="<?php echo $baseurl_short?>pages/team/team_content.php?nc=<?php echo time()?>&findpage=<?php echo $findpage?>&findname=<?php echo $findname?>&findtext=<?php echo $findtext?>&offset=<?php echo $offset?>" onClick="return CentralSpaceLoad(this,true);">&lt;&nbsp;<?php echo $lang["backtomanagecontent"]?></a></p>
+
 <h1><?php echo $lang["editcontent"]?></h1>
 
 <form method= post id="mainform" action="<?php echo $baseurl_short?>pages/team/team_content_edit.php?page=<?php echo $page;?>&name=<?php echo $name;?>&editlanguage=<?php echo $editlanguage;?>&editgroup=<?php echo $editgroup;?>&findpage=<?php echo $findpage?>&findname=<?php echo $findname?>&findtext=<?php echo $findtext?>&offset=<?php echo $offset?>">

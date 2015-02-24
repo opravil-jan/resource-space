@@ -57,7 +57,7 @@ for ($n=$offset;(($n<count($text)) && ($n<($offset+$per_page)));$n++)
 	{
 	?>
 	<tr>
-	<td><div class="ListTitle"><a href="<?php echo $baseurl_short?>pages/team/team_content_edit.php?page=<?php echo $text[$n]["page"]?>&name=<?php echo $text[$n]["name"]?>&findpage=<?php echo $findpage?>&findname=<?php echo $findname?>&findtext=<?php echo $findtext?>&offset=<?php echo $offset?>" onClick="return CentralSpaceLoad(this,true);"><?php echo highlightkeywords(($text[$n]["page"]==""?$lang["all"]:$text[$n]["page"]),$findpage,true);?></a></div></td>
+	<td><div class="ListTitle"><a href="<?php echo $baseurl_short?>pages/team/team_content_edit.php?page=<?php echo $text[$n]["page"]?>&name=<?php echo $text[$n]["name"]?>&findpage=<?php echo $findpage?>&findname=<?php echo $findname?>&findtext=<?php echo $findtext?>&offset=<?php echo $offset?>" onClick="return CentralSpaceLoad(this,true);"><?php echo highlightkeywords(($text[$n]["page"]==""||$text[$n]["page"]=="all"?$lang["all"]:$text[$n]["page"]),$findpage,true);?></a></div></td>
 	
 	<td><div class="ListTitle"><a href="<?php echo $baseurl_short?>pages/team/team_content_edit.php?page=<?php echo $text[$n]["page"]?>&name=<?php echo $text[$n]["name"]?>&findpage=<?php echo $findpage?>&findname=<?php echo $findname?>&findtext=<?php echo $findtext?>&offset=<?php echo $offset?>" onClick="return CentralSpaceLoad(this,true);"><?php echo highlightkeywords($text[$n]["name"],$findname,true)?></a></div></td>
 	
