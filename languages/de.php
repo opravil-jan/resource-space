@@ -1880,6 +1880,36 @@ $lang['page-subtitle_user_group_management_edit'] = "In diesem Bereich können S
 $lang["action-title_remove_user_group_logo"]="Anwählen um das Benutzergruppenlogo zu entfernen";
 $lang["action-title_see_wiki_for_advanced_options"]="Im <a href='http://wiki.resourcespace.org/index.php?title=Main_Page#System_Administrator.27s_Guide'>WIKI</a> finden Sie Informationen für weiterführende Optionen.";
 
+# Report management
+$lang['page-title_report_management'] = "Reporte verwalten";
+$lang['page-subtitle_report_management'] = "In diesem Bereich können Sie Reporte hinzufügen, ändern und löschen.";
+$lang['action-title_create_report_called'] = "Report mit Namen erstellen...";
+
+# Report management edit
+$lang['page-title_report_management_edit'] = "Report ändern";
+$lang['page-subtitle_report_management_edit'] = "In diesem Bereich können Sie den Inhalt eines Reports festlegen.";
+$lang["fieldtitle-tick_to_delete_report"] = "Anwählen um diesen Report zu entfernen";
+
+# size management
+$lang['page-title_size_management'] = "Bildgrößen verwalten";
+$lang['page-subtitle_size_management'] = "In diesem Bereich können Sie die Bildgrößen für Vorschau und zum Herunterladen verändern.";
+$lang['action-title_create_size_with_id'] = "Größe mit " . $lang['property-id'] . " erstellen...";
+
+# size management edit
+$lang['page-title_size_management_edit'] = "Bildgröße ändern";
+$lang['page-subtitle_size_management_edit'] = "In diesem Bereich können Sie die Details zu einer Bildgröße festlegen.";
+$lang["fieldtitle-tick_to_delete_size"] = "Anwählen um diese Größe zu entfernen";
+
+##########################################################################################
+# Non page-specific items that need to be merged above when system admin project completed
+##########################################################################################
+
+$lang["admin_resource_type_field"]="Metadatenfeld verwalten";
+$lang["admin_resource_type_field_count"]="Metadatenfelder";
+$lang["admin_resource_type_field_create"]="Metadatenfeld mit Namen erstellen...";
+$lang["admin_resource_type_field_reorder_information"]="Um die Anzeigereihenfolge der Felder zu ändern, können Sie die Zeilen per Drag&Drop verschieben.";
+$lang["admin_resource_type_field_reorder_select_restype"]="Wählen Sie einen Ressourcetypen oder globale Felder aus, um das Umordnen von Feldern zu erlauben.";
+$lang["admin_resource_type_fields"]="Metadatenfelder verwalten";
 $lang["fieldhelp-tick_to_delete_group"]="Sie können keine Benutzergruppen löschen, die noch Benutzer enthalten oder einer anderen Gruppe übergeordnet sind";
 $lang["fieldtitle-tick_to_delete_group"]="Anwählen um diese Gruppe zu entfernen";
 $lang["property-contains"]="Enthält";
@@ -1887,3 +1917,5 @@ $lang["property-groups"]="Gruppen";
 $lang["property-user_group"]="Benutzergruppe";
 $lang["property-user_group_parent"]="Übergeordnete Benutzergruppe";
 $lang["property-user_group_remove_parent"]="(übergeordnete Gruppe entfernen)";
+$lang['action-move-up'] = 'Nach oben';
+$lang['action-move-down'] = 'Nach unten';
