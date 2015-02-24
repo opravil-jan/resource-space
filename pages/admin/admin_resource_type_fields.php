@@ -215,8 +215,8 @@ for ($n=0;$n<count($fields);$n++)
 			if($field_order_by=="order_by")
 				{
 				?>		
-				<a href="javascript:void(0)" class="movelink movedownlink" <?php if($n==count($fields)-1){ ?> disabled <?php } ?>>&gt;&nbsp;Move down</a>
-				<a href="javascript:void(0)" class="movelink moveuplink" <?php if($n==0){ ?> disabled <?php } ?>>&gt;&nbsp;Move up	</a>
+				<a href="javascript:void(0)" class="movelink movedownlink" <?php if($n==count($fields)-1){ ?> disabled <?php } ?>>&gt;&nbsp;<?php echo $lang['action-move-down'] ?></a>
+				<a href="javascript:void(0)" class="movelink moveuplink" <?php if($n==0){ ?> disabled <?php } ?>>&gt;&nbsp;<?php echo $lang['action-move-up'] ?></a>
 				<?php
 				}
 				?>
