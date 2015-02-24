@@ -1183,7 +1183,7 @@ function get_all_site_text($findpage="",$findname="",$findtext="")
 function get_site_text($page,$name,$language,$group)
 	{
 	# Returns a specific site text entry.
-        global $lang;
+        global $defaultlanguage;
 	if ($group=="") {$g="null";$gc="is";} else {$g="'" . $group . "'";$gc="=";}
 	
 	$text=sql_query ("select * from site_text where page='$page' and name='$name' and language='$language' and specific_to_group $gc $g");
@@ -1191,7 +1191,12 @@ function get_site_text($page,$name,$language,$group)
 		{
 		# Fall back to language strings.
                 if ($page=="") {$key=$name;} else {$key=$page . "__" . $name;}
-                if (array_key_exists($key,$lang)) {return $lang[$key];} else {return $key;}
+                
+                # Include specific language(s)
+                @include dirname(__FILE__)."/../languages/" . safe_file_name($defaultlanguage) . ".php";
+                @include dirname(__FILE__)."/../languages/" . safe_file_name($language) . ".php";
+                
+                if (array_key_exists($key,$lang)) {return $lang[$key];} else {return "";}
 		}
 	return $text[0]["text"];
 	}

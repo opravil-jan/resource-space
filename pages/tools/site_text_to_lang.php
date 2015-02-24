@@ -1,7 +1,9 @@
 <?php
 
-# Quick script to fix database entries that need commas at the beginning (dropdown fields edited using collection edit before r1940). 
-# When some values have commas and others don't, sorting doesn't work correctly!!!
+# This script takes content that is stored in site_text and outputs language strings suitable for inclusion in the language files.
+# It was used for porting from the old site_text/dbstruct method of storing default site content to the new language string system.
+# It's been included in case users have a large amount of locally translated content in site_text that needs to be pulled out in to language files.
+# ~Dan Huby, Montla Limited, Feb 2015.
 
 include "../../include/db.php";
 include "../../include/authenticate.php"; if (!checkperm("a")) {exit("Permission denied");}
