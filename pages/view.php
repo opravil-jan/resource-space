@@ -445,7 +445,7 @@ jQuery(document).ready(function () {
 	removePanel=jQuery("#Comments").parents(".RecordBox");
 	jQuery("#Comments").appendTo("#Panel1").addClass("TabPanel").hide();
 	removePanel.remove();
-	if(<?php echo $comments_view_panel_show_marker?>==true && <?php echo $resource_comments?>>'0'){
+	if(<?php echo $comments_view_panel_show_marker?>==true && <?php echo $comments_resource_enable?>==true && <?php echo $resource_comments?>>'0'){
 		jQuery("[panel='Comments']").append("&#42;");
 	}
 
