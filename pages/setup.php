@@ -434,7 +434,7 @@ h2#dbaseconfig{  min-height: 32px;}
 					$imagemagick_path = $path;
 				if (file_exists($path.'/gs'))
 					$ghostscript_path = $path;
-				if (file_exists($path.'/ffmpeg'))
+				if (file_exists($path.'/ffmpeg') || file_exists($path.'/avconv'))
 					$ffmpeg_path = $path;
 				if (file_exists($path.'/exiftool'))
 					$exiftool_path = $path;
@@ -598,7 +598,7 @@ h2#dbaseconfig{  min-height: 32px;}
 				$errors['ghostscript_path'] = true;
 			else $config_output .= "\$ghostscript_path = '$ghostscript_path';\r\n";
 		if ($ffmpeg_path!='')
-			if (!file_exists($ffmpeg_path.'/ffmpeg'.$exe_ext))
+			if (!file_exists($ffmpeg_path.'/ffmpeg'.$exe_ext) && !file_exists($ffmpeg_path.'/avconv'.$exe_ext))
 				$errors['ffmpeg_path'] = true;
 			else $config_output .= "\$ffmpeg_path = '$ffmpeg_path';\r\n";
 		if ($exiftool_path!='')
