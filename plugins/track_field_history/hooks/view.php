@@ -5,9 +5,9 @@
 function HookTrack_field_historyViewDisplay_field_modified_value($field)
 {
 
-	global $ref, $track_fields, $baseurl;
+	global $ref, $track_fields, $baseurl, $k;
 
-	if(in_array($field['ref'], $track_fields)) {
+	if($k=='' && in_array($field['ref'], $track_fields)) {
 
 		$get_params = '?ref=' . $ref . '&field=' . $field['ref'] . '&field_title=' . $field['title'];
 
