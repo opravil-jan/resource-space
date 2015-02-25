@@ -1773,45 +1773,49 @@ function user_rating_save($userref,$ref,$rating)
 	}
 }
 
-				
+function process_notify_user_contributed_submitted($ref,$htmlbreak)
+	{
+	global $use_phpmailer,$baseurl;
+	$url="";
+	$url=$baseurl . "/?r=" . $ref;
+	
+	if ($use_phpmailer){$url="<a href=\"$url\">$url</a>";}
+	
+	// Get the user (or username) of the contributor:
+	$query = "SELECT user.username, user.fullname FROM resource INNER JOIN user ON user.ref = resource.created_by WHERE resource.ref ='".$ref."'";
+	$result = sql_query($query);
+	$user = '';
+	if(trim($result[0]['fullname']) != '') 
+		{
+		$user = $result[0]['fullname'];
+		} 
+	else 
+		{
+		$user = $result[0]['username'];
+		}
+	return $htmlbreak . $user . ': ' . $url . "\n\n";
+	}
+
 function notify_user_contributed_submitted($refs)
 	{
 	// Send a notification mail to the administrators when resources are moved from "User Contributed - Pending Submission" to "User Contributed - Pending Review"
-	global $notify_user_contributed_submitted,$applicationname,$email_notify,$baseurl,$lang;
+	global $notify_user_contributed_submitted,$applicationname,$email_notify,$baseurl,$lang,$use_phpmailer;
 	if (!$notify_user_contributed_submitted) {return false;} # Only if configured.
 	
 	$htmlbreak="";
-	global $use_phpmailer;
 	if ($use_phpmailer){$htmlbreak="<br><br>";}
 	
 	$list="";
-	for ($n=0;$n<count($refs);$n++)
+	if(is_array($refs))
 		{
-		$url="";
-		$url=$baseurl . "/?r=" . $refs[$n];
-		
-		if ($use_phpmailer){$url="<a href=\"$url\">$url</a>";}
-		
-		// Get the user (or username) of the contributor:
-		$query = sprintf('
-				    SELECT user.username,
-				           user.fullname
-				      FROM resource
-				INNER JOIN user ON user.ref = resource.created_by
-				     WHERE resource.ref = %d;
-			',
-			$refs[$n]
-		);
-		$result = sql_query($query);
-
-		$user = '';
-		if(trim($result[0]['fullname']) != '') {
-			$user = $result[0]['fullname'];
-		} else {
-			$user = $result[0]['username'];
+		for ($n=0;$n<count($refs);$n++)
+			{
+			$list .= process_notify_user_contributed_submitted($refs[$n],$htmlbreak);
+			}
 		}
-
-		$list .= $htmlbreak . $user . ': ' . $url . "\n\n";
+	else
+		{
+		$list=process_notify_user_contributed_submitted($refs,$htmlbreak);
 		}
 		
 	$list.=$htmlbreak;	
@@ -1823,27 +1827,34 @@ function notify_user_contributed_submitted($refs)
 	
 	send_mail($email_notify,$applicationname . ": " . $lang["status-1"],$message,"","","emailnotifyresourcessubmitted",$templatevars);
 	}
-	
 function notify_user_contributed_unsubmitted($refs)
 	{
 	// Send a notification mail to the administrators when resources are moved from "User Contributed - Pending Submission" to "User Contributed - Pending Review"
 	
-	global $notify_user_contributed_unsubmitted,$applicationname,$email_notify,$baseurl,$lang;
+	global $notify_user_contributed_unsubmitted,$applicationname,$email_notify,$baseurl,$lang,$use_phpmailer;
 	if (!$notify_user_contributed_unsubmitted) {return false;} # Only if configured.
 	
 	$htmlbreak="";
-	global $use_phpmailer;
 	if ($use_phpmailer){$htmlbreak="<br><br>";}
 	
 	$list="";
-
-	for ($n=0;$n<count($refs);$n++)
+	if(is_array($refs))
+		{
+		for ($n=0;$n<count($refs);$n++)
+			{
+			$url="";	
+			$url=$baseurl . "/?r=" . $refs[$n];
+			
+			if ($use_phpmailer){$url="<a href=\"$url\">$url</a>";}
+			
+			$list.=$htmlbreak . $url . "\n\n";
+			}
+		}
+	else
 		{
 		$url="";	
-		$url=$baseurl . "/?r=" . $refs[$n];
-		
+		$url=$baseurl . "/?r=" . $refs;
 		if ($use_phpmailer){$url="<a href=\"$url\">$url</a>";}
-		
 		$list.=$htmlbreak . $url . "\n\n";
 		}
 	
