@@ -39,26 +39,30 @@ if ($theme=="black") {$bgcolor1="666666";$bgcolor2="111111";$buttoncolor="999999
 $width=$ffmpeg_preview_max_width;
 $height=$ffmpeg_preview_max_height;
 if ($pagename=="search"){$width="355";$height=355/$ffmpeg_preview_max_width*$ffmpeg_preview_max_height;}
-?>
-<?php if(!hook("swfplayer")){ ?>
 
-<?php if (!$videojs) { ?>
-<object type="application/x-shockwave-flash" data="<?php echo $baseurl_short?>lib/flashplayer/player_flv_maxi.swf?t=<?php echo time() ?>" width="<?php echo $width?>" height="<?php echo $height?>" class="Picture">
-     <param name="allowFullScreen" value="true" />
-     <param name="movie" value="<?php echo $baseurl_short?>lib/flashplayer/player_flv_maxi.swf" />
-     <param name="FlashVars" value="flv=<?php echo $flashpath?>&amp;width=<?php echo $width?>&amp;height=<?php echo $height?>&amp;margin=0&amp;showvolume=1&amp;volume=200&amp;showtime=2&amp;autoload=1&amp;<?php if ($pagename!=="search"){?>showfullscreen=1<?php } ?>&amp;showstop=1&amp;buttoncolor=<?php echo $buttoncolor?>&playercolor=<?php echo $color?>&bgcolor=<?php echo $color?>&bgcolor1=<?php echo $bgcolor1?>&bgcolor2=<?php echo $bgcolor2?>&startimage=<?php echo $thumb?>&playeralpha=75&autoload=1&buffermessage=&buffershowbg=0" />
-</object>
-<?php } else { ?>
-
-<!-- START VIDEOJS -->
-<link href="<?php echo $baseurl_short?>lib/videojs/video-js.css" rel="stylesheet">
-<script src="<?php echo $baseurl_short?>lib/videojs/video.js"></script>
-<video id="introvideo" controls width="<?php echo $width?>" height="<?php echo $height?>" data-setup="" class="video-js vjs-default-skin vjs-big-play-centered" poster="<?php echo $thumb_raw?>" preload="auto" >
-     <source src="<?php echo $flashpath_raw?>" type="video/flv" />
-     <p class="vjs-no-js">To view this video please enable JavaScript, and consider upgrading to a web browser that <a href="http://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a></p>
-</video>
-<!-- END VIDEOJS -->
-<?php } ?>
-
-<?php } ?>
-
+if(!hook("swfplayer"))
+	{
+	if (!$videojs) 
+		{ ?>
+		<object type="application/x-shockwave-flash" data="<?php echo $baseurl_short?>lib/flashplayer/player_flv_maxi.swf?t=<?php echo time() ?>" width="<?php echo $width?>" height="<?php echo $height?>" class="Picture">
+		     <param name="allowFullScreen" value="true" />
+		     <param name="movie" value="<?php echo $baseurl_short?>lib/flashplayer/player_flv_maxi.swf" />
+		     <param name="FlashVars" value="flv=<?php echo $flashpath?>&amp;width=<?php echo $width?>&amp;height=<?php echo $height?>&amp;margin=0&amp;showvolume=1&amp;volume=200&amp;showtime=2&amp;autoload=1&amp;<?php if ($pagename!=="search"){?>showfullscreen=1<?php } ?>&amp;showstop=1&amp;buttoncolor=<?php echo $buttoncolor?>&playercolor=<?php echo $color?>&bgcolor=<?php echo $color?>&bgcolor1=<?php echo $bgcolor1?>&bgcolor2=<?php echo $bgcolor2?>&startimage=<?php echo $thumb?>&playeralpha=75&autoload=1&buffermessage=&buffershowbg=0" />
+		</object>
+		<?php 
+		} 
+	else 
+		{ 
+		global $ffmpeg_preview_extension;
+		?>
+		<!-- START VIDEOJS -->
+		<link href="<?php echo $baseurl_short?>lib/videojs/video-js.css" rel="stylesheet">
+		<script src="<?php echo $baseurl_short?>lib/videojs/video.js"></script>
+		<video id="introvideo" controls width="<?php echo $width?>" height="<?php echo $height?>" data-setup="" class="video-js vjs-default-skin vjs-big-play-centered" poster="<?php echo $thumb_raw?>" preload="auto" >
+		     <source src="<?php echo $flashpath_raw?>" type="video/<?=$ffmpeg_preview_extension?>" />
+		     <p class="vjs-no-js">To view this video please enable JavaScript, and consider upgrading to a web browser that <a href="http://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a></p>
+		</video>
+		<!-- END VIDEOJS -->
+		<?php 
+		}
+	}
