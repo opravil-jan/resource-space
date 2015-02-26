@@ -12,7 +12,7 @@ $plugin_name = 'track_field_history';
 $page_heading = "Track Field History Configuration";
 
 # Build the $page_def array of descriptions of each configuration variable the plugin uses.
-$page_def[] = config_add_text_list_input('track_fields', $lang['track_fields']);
+$page_def[] = config_add_multi_ftype_select('track_fields', $lang['track_fields']);
 
 
 # Do the page generation ritual
