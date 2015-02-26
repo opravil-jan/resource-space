@@ -387,6 +387,11 @@ function display_field_data($field,$valueonly=false,$fixedwidth=452)
 			
 			# Highlight keywords
 			$value=highlightkeywords($value,$search,$field["partial_index"],$field["name"],$field["keywords_index"]);
+			
+			$value_mod_after_highlight=hook('value_mod_after_highlight', '', array($field,$value));
+			if($value_mod_after_highlight){
+				$value=$value_mod_after_highlight;
+			}
 
 			# Use a display template to render this field
 			$template=$field["display_template"];
@@ -413,6 +418,12 @@ function display_field_data($field,$valueonly=false,$fixedwidth=452)
 				
 				# Highlight keywords
 				$value=highlightkeywords($value,$search,$field["partial_index"],$field["name"],$field["keywords_index"]);
+				
+				$value_mod_after_highlight=hook('value_mod_after_highlight', '', array($field,$value));
+				if($value_mod_after_highlight){
+					$value=$value_mod_after_highlight;
+				}
+				
 				?><div <?php if (!$valueonly){echo "class=\"itemNarrow\""; } elseif (isset($fixedwidth)) {echo "style=\"width:" . $fixedwidth . "px\""; } ?>>
 				<h3><?php echo $title?></h3><p><?php echo $value?></p></div><?php
 				}
