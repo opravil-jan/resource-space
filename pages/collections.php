@@ -933,6 +933,7 @@ hook("thumblistextra");
 	  </ul>
 	  <?php } ?>
 	</div>
+	</div>
 	<!--Collection Dropdown-->
 	<?php if(!hook("replace_collectionmindroptitle")){?>
 	<div id="CollectionMinDropTitle"><?php echo $lang["currentcollection"]?>:&nbsp;</div>
