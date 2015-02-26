@@ -730,53 +730,57 @@ function compute_megapixel($width, $height)
 	}
 
 function get_size_info($size, $originalSize = null)
-{
-	global $lang;
-	global $ffmpeg_supported_extensions;
-	
-	$newWidth = intval($size['width']);
-	$newHeight = intval($size['height']);
+	{
+    global $lang, $ffmpeg_supported_extensions;
+    
+    $newWidth  = intval($size['width']);
+    $newHeight = intval($size['height']);
 
-	if ($originalSize != null && $size !== $originalSize)
-		{
-		// Compute actual pixel size
-		$imageWidth = $originalSize['width'];
-		$imageHeight = $originalSize['height'];
-		if ($imageWidth > $imageHeight)
-			{
-			// landscape
-			$newWidth = $size['width'];
-			$newHeight = round(($imageHeight * $newWidth + $imageWidth - 1) / $imageWidth);
-			}
-		else
-			{
-			// portrait or square
-			$newHeight = $size['height'];
-			$newWidth = round(($imageWidth * $newHeight + $imageHeight - 1) / $imageHeight);
-			}
-		}
+    if ($originalSize != null && $size !== $originalSize)
+        {
+        // Compute actual pixel size
+        $imageWidth  = $originalSize['width'];
+        $imageHeight = $originalSize['height'];
+        if ($imageWidth > $imageHeight)
+            {
+            // landscape
+            if ($imageWidth == 0) return '<p>&ndash;</p>';
+            $newWidth = $size['width'];
+            $newHeight = round(($imageHeight * $newWidth + $imageWidth - 1) / $imageWidth);
+            }
+        else
+            {
+            // portrait or square
+            if ($imageHeight == 0) return '<p>&ndash;</p>';
+            $newHeight = $size['height'];
+            $newWidth = round(($imageWidth * $newHeight + $imageHeight - 1) / $imageHeight);
+            }
+        }
 
-	$output='<p>' . $newWidth . " x " . $newHeight . " " . $lang["pixels"];
+    $output = "<p>$newWidth &times; $newHeight {$lang["pixels"]}";
 
-	$mp=compute_megapixel($newWidth, $newHeight);
-	if ($mp>0)
-		{
-		$output.=" (" . $mp . " " . $lang["megapixel-short"] . ")";
-		}
+    if (!hook('replacemp'))
+        {
+        $mp = compute_megapixel($newWidth, $newHeight);
+        if ($mp >= 0)
+            {
+            $output .= " ($mp {$lang["megapixel-short"]})";
+            }
+        }
 
-	$output.='</p>';
+    $output .= '</p>';
 
-	if (!isset($size['extension']) || !in_array(strtolower($size['extension']), $ffmpeg_supported_extensions))
-	    {
-		if (!hook("replacedpi")){	
-	    # Do DPI calculation only for non-videos
-	    compute_dpi($newWidth, $newHeight, $dpi, $dpi_unit, $dpi_w, $dpi_h);
-	    $output.= '<p>' . $dpi_w . " " . $dpi_unit . " x " . $dpi_h . " " . $dpi_unit . " " . $lang["at-resolution"]
-		   . " " . $dpi ." " . $lang["ppi"] . '</p>';
-		}
-	    }
+    if (!isset($size['extension']) || !in_array(strtolower($size['extension']), $ffmpeg_supported_extensions))
+        {
+        if (!hook("replacedpi"))
+            {   
+            # Do DPI calculation only for non-videos
+            compute_dpi($newWidth, $newHeight, $dpi, $dpi_unit, $dpi_w, $dpi_h);
+            $output .= "<p>$dpi_w $dpi_unit &times; $dpi_h $dpi_unit {$lang["at-resolution"]} $dpi {$lang["ppi"]}</p>";
+            }
+        }
 
-	return $output;
+    return $output;
 }
 
 # Get display price for basket request modes
