@@ -213,20 +213,24 @@ if (($pagename!="download") && ($pagename!="graph")) {header("Content-Type: text
 # Pre-load all text for this page.
 $pagefilter="and (page='$pagename' or page='all' or page='')";
 if ($pagename=="team_content") {$pagefilter="";} # Special case for the team content manager. Pull in all content from all pages so it's all overridden.
+
 $site_text=array();
+$results=sql_query("select language,name,text from site_text where (page='$pagename' or page='all') and (specific_to_group is null or specific_to_group=0)");
+for ($n=0;$n<count($results);$n++) {$site_text[$results[$n]["language"] . "-" . $results[$n]["name"]]=$results[$n]["text"];}
+
 $results=sql_query("select name,text,page from site_text where language='" . escape_check($language) . "' $pagefilter and (specific_to_group is null or specific_to_group=0)");
 for ($n=0;$n<count($results);$n++) 
-	{
-	$site_text[$results[$n]["language"] . "-" . $results[$n]["name"]]=$results[$n]["text"]; 
-	if ($results[$n]["page"]=="") 
 		{
-		$lang[$results[$n]["name"]]=$results[$n]["text"];
-		} 
-	else 
-		{
-		$lang[$results[$n]["page"] . "__" . $results[$n]["name"]]=$results[$n]["text"];
+		if ($results[$n]["page"]=="") 
+			{
+			$lang[$results[$n]["name"]]=$results[$n]["text"];
+			} 
+		else 
+			{
+			$lang[$results[$n]["page"] . "__" . $results[$n]["name"]]=$results[$n]["text"];
+			}
 		}
-	}
+
 # Blank the header insert
 $headerinsert="";
 
