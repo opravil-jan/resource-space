@@ -315,10 +315,10 @@ for ($n=$offset;(($n<count($collections)) && ($n<($offset+$per_page)));$n++)
 	?><tr <?php hook("collectionlistrowstyle");?>>
 	<td class="name"><div class="ListTitle">
 		<a <?php if ($collections[$n]["public"]==1 && (strlen($collections[$n]["theme"])>0)) { ?>style="font-style:italic;"<?php } ?> href="<?php echo $baseurl_short?>pages/search.php?search=<?php echo urlencode("!collection" . $collections[$n]["ref"])?>" onClick="return CentralSpaceLoad(this);"><?php echo highlightkeywords(i18n_get_collection_name($collections[$n]),$find) ?></a></div></td>
-	<td class="fullname"><?php echo htmlspecialchars(highlightkeywords($colusername,$find)) ?></td>
-	<td class="ref"><?php echo htmlspecialchars(highlightkeywords($collection_prefix . $collections[$n]["ref"],$find)) ?></td>
-	<td class="created"><?php echo htmlspecialchars(nicedate($collections[$n]["created"],true)) ?></td>
-	<td class="count"><?php echo htmlspecialchars($collections[$n]["count"]) ?></td>
+	<td class="fullname"><?php echo highlightkeywords($colusername,$find) ?></td>
+	<td class="ref"><?php echo highlightkeywords($collection_prefix . $collections[$n]["ref"],$find) ?></td>
+	<td class="created"><?php echo nicedate($collections[$n]["created"],true) ?></td>
+	<td class="count"><?php echo $collections[$n]["count"] ?></td>
 <?php if (! $hide_access_column){ ?>	<td class="access"><?php
 # Work out the correct access mode to display
 if (!hook('collectionaccessmode')) {
