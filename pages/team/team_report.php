@@ -9,7 +9,7 @@ include "../../include/db.php";
 include "../../include/authenticate.php";if (!checkperm("t")) {exit ("Permission denied.");}
 include "../../include/general.php";
 include "../../include/reporting_functions.php";
-
+set_time_limit(0);
 $report=getvalescaped("report","");
 $period=getvalescaped("period",$reporting_periods_default[0]);
 $period_init=$period;
