@@ -554,9 +554,10 @@ if ($resource["file_extension"]!="") { ?><strong><?php echo str_replace_formatte
 </div>
 <div class="clearerleft"> </div>
 </div>
-<?php } ?>
+<?php }
+hook("beforeimagecorrection");
 
-<?php if (!checkperm("F*")) { ?>
+if (!checkperm("F*")) { ?>
 <div class="Question" id="question_imagecorrection">
 <label><?php echo $lang["imagecorrection"]?><br/><?php echo $lang["previewthumbonly"]?></label><select class="stdwidth" name="tweak" id="tweak" onChange="CentralSpacePost(document.getElementById('mainform'),true);">
 <option value=""><?php echo $lang["select"]?></option>
