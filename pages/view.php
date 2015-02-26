@@ -91,6 +91,7 @@ if ($resource===false) {exit($lang['resourcenotfound']);}
 resource_type_config_override($resource["resource_type"]);
 
 # get comments count
+$resource_comments=0;
 if($comments_resource_enable && $comments_view_panel_show_marker){
 	$resource_comments=sql_value("select count(*) value from comment where resource_ref=$ref","0");
 }
@@ -433,7 +434,9 @@ if ($view_panels) {
 
 jQuery(document).ready(function () {		
     
-	
+	var comments_marker='<?php echo $comments_view_panel_show_marker?>';
+	var comments_resource_enable='<?php echo $comments_resource_enable?>';
+	var resource_comments='<?php echo $resource_comments?>';
     
     jQuery("#Metadata").appendTo("#Panel1");
     jQuery("#Metadata").addClass("TabPanel");
@@ -445,7 +448,7 @@ jQuery(document).ready(function () {
 	removePanel=jQuery("#Comments").parents(".RecordBox");
 	jQuery("#Comments").appendTo("#Panel1").addClass("TabPanel").hide();
 	removePanel.remove();
-	if(<?php echo $comments_view_panel_show_marker?>==true && <?php echo $comments_resource_enable?>==true && <?php echo $resource_comments?>>'0'){
+	if(comments_marker==true && comments_resource_enable==true && resource_comments>'0'){
 		jQuery("[panel='Comments']").append("&#42;");
 	}
 
