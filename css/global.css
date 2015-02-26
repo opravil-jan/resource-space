@@ -373,7 +373,7 @@ a.HomePanel {cursor:pointer;}
 .infotable {border-top: 1px solid #999999;}
 .infotable td,.infotable th {border-bottom: 1px solid #999999;}
 
-.RecordStory .highlight {background-color:black;padding:2px;}
+.RecordStory .highlight {color:black;padding:2px;}
 
 #InfoBox {display:none;position:absolute;top:0px;left:0px;width:362px;height:303px;background-repeat:no-repeat;
 behavior: url('../css/iepngfix.htc');
