@@ -3076,9 +3076,15 @@ function filesize_unlimited($path)
 
 		return exec('for %I in (' . escapeshellarg($path) . ') do @echo %~zI' );
         }
+	else if(PHP_OS == 'Darwin') 
+    	{
+        $bytesize = exec("stat -f '%z' " . escapeshellarg($path));
+    	}
+    else 
+    	{
+		$bytesize = exec("stat -c '%s' " . escapeshellarg($path));
+    	}
 
-	#Use stat
-	$bytesize = exec("stat -c '%s' " . escapeshellarg($path));
 	if(!is_int($bytesize))
 		{
 		return @filesize($path); # Bomb out, the output wasn't as we expected. Return the filesize() output.
