@@ -1192,7 +1192,7 @@ function display_field($n, $field, $newtab=false)
 		<option value="FR"><?php echo $lang["findandreplace"]?></option>
 		<?php } ?>
 		<?php
-		if ($field["type"]==0 || $field["type"]==1 || $field["type"]==5) {
+		if (in_array($field["type"], array("0","1","5","8"))) {
 		# Prepend applies to text boxes only.
 		?>
 		<option value="PP"><?php echo $lang["prependtext"]?></option>
