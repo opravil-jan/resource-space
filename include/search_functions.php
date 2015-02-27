@@ -1258,7 +1258,7 @@ function render_search_field($field,$value="",$autoupdate,$class="stdwidth",$for
 			global $fields;
 			for ($cf=0;$cf<count($fields);$cf++) # Check each field to see if needs to be checked
 				{
-				if ($s[0]==$fields[$cf]["name"]) # this field needs to be checked
+				if ($s[0]==$fields[$cf]["name"] && ($fields[$cf]["resource_type"]==0 || $fields[$cf]["resource_type"]==$field["resource_type"])) # this field needs to be checked
 					{
 					$scriptconditions[$condref]["field"] = $fields[$cf]["ref"];  # add new jQuery code to check value
 					$scriptconditions[$condref]['type'] = $fields[$cf]['type'];
