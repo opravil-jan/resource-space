@@ -2554,3 +2554,10 @@ $resourcetoolsGT=true;
 
 # Initialize array for classes to be added to <body> element
 $body_classes = array();
+
+# Manage requests automatically using $manage_request_admin[resource type ID] = user ID;
+# IMPORTANT: the admin user needs to have permissions R and Rb set otherwise this will not work.
+// $manage_request_admin[1] = 1; // Photo
+// $manage_request_admin[2] = 1; // Document
+// $manage_request_admin[3] = 1; // Video
+// $manage_request_admin[4] = 1; // Audio

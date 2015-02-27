@@ -227,7 +227,7 @@ function managed_collection_request($ref,$details,$ref_is_resource=false)
 	# Managed via the administrative interface
 	
 	# An e-mail is still sent.
-	global $applicationname,$email_from,$baseurl,$email_notify,$username,$useremail,$userref,$lang,$request_senduserupdates,$watermark,$filename_field,$view_title_field,$access,$resource_type_request_emails;
+	global $applicationname,$email_from,$baseurl,$email_notify,$username,$useremail,$userref,$lang,$request_senduserupdates,$watermark,$filename_field,$view_title_field,$access,$resource_type_request_emails, $manage_request_admin;
 
 	# Has a resource reference (instead of a collection reference) been passed?
 	# Manage requests only work with collections. Create a collection containing only this resource.
@@ -311,12 +311,190 @@ function managed_collection_request($ref,$details,$ref_is_resource=false)
 		}
 	
 	# Create the request
-	sql_query("insert into request(user,collection,created,request_mode,status,comments) values ('$userref','$ref',now(),1,0,'" . escape_check($message) . "')");
+	$request_query = "insert into request(user,collection,created,request_mode,status,comments) values ('$userref','$ref',now(),1,0,'" . escape_check($message) . "')";
+
+	$notify_manage_request_admin = false;
+
+	// Manage individual requests of resources:
+	if(isset($manage_request_admin) && !isset($collectiondata)) {
+
+		$query = sprintf("
+				    SELECT DISTINCT r.resource_type AS value
+				      FROM collection_resource AS cr
+				INNER JOIN resource r ON cr.resource = r.ref
+				     WHERE cr.collection = '%s';
+			",
+			$ref
+		);
+		$request_resource_type = sql_value($query, 0);
+
+		if($request_resource_type != 0 && array_key_exists($request_resource_type, $manage_request_admin)) {
+		
+			$request_query = sprintf("
+					INSERT INTO request(
+					                        user,
+					                        collection,
+					                        created,
+					                        request_mode,
+					                        `status`,
+					                        comments,
+					                        assigned_to
+					                   )
+					     VALUES (
+					                 '%s',
+					                 '%s',
+					                 NOW(),
+					                 1,
+					                 0,
+					                 '%s',
+					                 '%s'
+					            );
+				",
+				$userref,
+				$ref,
+				escape_check($message),
+				$manage_request_admin[$request_resource_type]
+			);
+
+			$assigned_to_user = get_user($manage_request_admin[$request_resource_type]);
+			$notify_manage_request_admin = true;
+		
+		}
+	
+	}
+
+	// Manage collection requests:
+	if(isset($manage_request_admin) && isset($collectiondata)) {
+
+		$all_r_types = get_resource_types();
+		foreach ($all_r_types as $r_type) {
+			$all_resource_types[] = $r_type['ref'];	
+		}	
+
+		$resources = get_collection_resources($collectiondata['ref']);
+
+		// Get distinct resource types found in this collection:
+		$resource_types = array();
+		$collection_resources_by_type = array();
+		foreach ($resources as $resource_id) {
+			$resource_data = get_resource_data($resource_id);
+			$resource_types[$resource_id] = $resource_data['resource_type'];
+
+			// Create a list of resource IDs based on type to separate them into different collections:
+			$collection_resources_by_type[$resource_data['resource_type']][] = $resource_id;
+		}
+
+		// Split into collections based on resource type:
+		foreach ($collection_resources_by_type as $collection_type => $collection_resources) {
+			
+			// Store all resources of unmanaged type in one collection which will be sent to the system administrator:
+			if(!isset($manage_request_admin[$collection_type])) {
+				$collections['not_managed'] = create_collection($userref, $collectiondata['name'] . ' for unmanaged types');
+				foreach ($collection_resources as $collection_resource_id) {
+					add_resource_to_collection($collection_resource_id, $collections['not_managed']);
+				}
+				continue;
+			}
+			
+			$collections[$collection_type] = create_collection($userref, $collectiondata['name'] . ' for type ' . $collection_type);
+			foreach ($collection_resources as $collection_resource_id) {
+				add_resource_to_collection($collection_resource_id, $collections[$collection_type]);
+			}
+
+		}
+	
+		if(isset($collections) && count($collections) > 1) {
+			foreach ($collections as $request_resource_type => $collection_id) {
+
+				$assigned_to = '';
+				$assigned_to_user['email'] = $email_notify;
+				if(array_key_exists($request_resource_type, $manage_request_admin)) {
+					$assigned_to = $manage_request_admin[$request_resource_type];
+					$assigned_to_user = get_user($manage_request_admin[$request_resource_type]);
+				}
+
+				$request_query = sprintf("
+						INSERT INTO request(
+						                        user,
+						                        collection,
+						                        created,
+						                        request_mode,
+						                        `status`,
+						                        comments,
+						                        assigned_to
+						                   )
+						     VALUES (
+						                 '%s',
+						                 '%s',
+						                 NOW(),
+						                 1,
+						                 0,
+						                 '%s',
+						                 '%s'
+						            );
+					",
+					$userref,
+					$collection_id,
+					escape_check($message),
+					$assigned_to
+				);
+
+				if(trim($assigned_to) == '') {
+					$request_query = sprintf("
+						INSERT INTO request(
+						                        user,
+						                        collection,
+						                        created,
+						                        request_mode,
+						                        `status`,
+						                        comments
+						                   )
+						     VALUES (
+						                 '%s',
+						                 '%s',
+						                 NOW(),
+						                 1,
+						                 0,
+						                 '%s'
+						            );
+					",
+					$userref,
+					$collection_id,
+					escape_check($message)
+				);
+				}
+
+				sql_query($request_query);
+				$request = sql_insert_id();
+
+				// Send the mail:
+				$email_message = $lang['requestassignedtoyoumail'] . "\n\n" . $baseurl . "/?q=" . $request . "\n";
+				send_mail($assigned_to_user['email'], $applicationname . ': ' . $lang['requestassignedtoyou'], $email_message);
+
+				unset($email_message);
+
+			}
+
+			$notify_manage_request_admin = false;
+
+		} else {
+			$ref = implode('', $collections);
+		}
+
+	}
+		
+	sql_query($request_query);
 	$request=sql_insert_id();
 	$templatevars["request_id"]=$request;
 	$templatevars["requesturl"]=$baseurl."/?q=".$request;
 	$templatevars["requestreason"]=$message;
 	hook("afterrequestcreate", "", array($request));
+
+	# Automatically notify the admin who was assigned the request:
+	if(isset($manage_request_admin) && $notify_manage_request_admin) {
+		$message = $lang['requestassignedtoyoumail'] . "\n\n" . $baseurl . "/?q=" . $request . "\n";
+		send_mail($assigned_to_user['email'], $applicationname . ': ' . $lang['requestassignedtoyou'], $message);
+	}
 	
 	# Check if alternative request email notification address is set, only valid if collection contains resources of the same type 
 	$admin_notify_email=$email_notify;
