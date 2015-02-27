@@ -34,7 +34,7 @@ if ($ref<0)
         ?>
         <div class="Question" id="question_related">
         <label for="relateonupload"><?php echo $lang["relatedresources_onupload"]?></label>
-        <input name="relateonupload" id="relateonupload" type="checkbox" value="1" style="margin-top:7px;"/> 
+        <input name="relateonupload" id="relateonupload" type="checkbox" value="1" style="margin-top:7px;" <?php if($relate_on_upload_default){echo " checked ";} ?>/> 
         <div class="clearerleft"> </div>
         </div><?php
         }

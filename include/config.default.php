@@ -987,6 +987,9 @@ $enable_related_resources=true;
 /* $php_path MUST BE SET */
 $relate_on_upload=false;
 
+# Option to make relating all resources at upload the default option if $relate_on_upload is set
+$relate_on_upload_default=false;
+
 #Size of the related resource previews on the resource page. Usually requires some restyling (#RelatedResources .CollectionPanelShell)
 #Takes the preview code such as "col","thm"
 $related_resource_preview_size="col";
