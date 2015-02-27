@@ -449,7 +449,7 @@ include (dirname(__FILE__) . "/header_links.php");
 $omit_searchbar_pages=array("index","preview_all","search_advanced","preview","admin_header","login");
 $modified_omit_searchbar_pages=hook("modifyomitsearchbarpages");
 if ($modified_omit_searchbar_pages){$omit_searchbar_pages=$modified_omit_searchbar_pages;}
-if (!in_array($pagename,$omit_searchbar_pages) && ($loginterms==false) && getvalescaped('k', '') == '') 	
+if (!in_array($pagename,$omit_searchbar_pages) && ($loginterms==false) && getvalescaped('k', '') == '' && !hook("replace_searchbarcontainer")) 	
 	{
 	?>
     <div id="SearchBarContainer">
