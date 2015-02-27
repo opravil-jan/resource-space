@@ -24,10 +24,8 @@ foreach($data as $key => $val) {if ($val==$dupval) {$nb++;}}
 return $nb;
 }
 
-if ($use_zip_extension){
-	// set the time limit to unlimited, default 300 is not sufficient here.
-	set_time_limit(0);
-}
+// set the time limit to unlimited, default 300 is not sufficient here.
+set_time_limit(0);
 
 function update_zip_progress_file($note){
 	global $progress_file;
