@@ -102,7 +102,7 @@ function admin_resource_type_field_option($propertyname,$propertytitle,$helptext
 					{
 					if($field["ref"]!=$ref && isset($resource_type_array[$field["resource_type"]])) // Don't show itself as an option to sync with
 					    {?>
-					    <option value="<?php echo $field["ref"] ?>"<?php if ($currentvalue == $field["ref"]) { echo " selected"; } ?>><?php echo i18n_get_translated($field["title"])  . "&nbsp;(" . i18n_get_translated($resource_type_array[$field["resource_type"]]) . ")" ?></option>
+					    <option value="<?php echo $field["ref"] ?>"<?php if ($currentvalue == $field["ref"]) { echo " selected"; } ?>><?php echo i18n_get_translated($field["title"])  . "&nbsp;(" . (($field["name"]=="")?"":htmlspecialchars($field["name"]) . " - ") . i18n_get_translated($resource_type_array[$field["resource_type"]]) . ")"?></option>
 					    <?php
 					    }
 					}

@@ -126,7 +126,7 @@ foreach ($fields as $field)
 	{
 	if (!in_array("f*",$permissions))
 		{
-		DrawOption("f" . $field["ref"], "&nbsp;&nbsp; - " . $lang["can_see_field"] . " '" . lang_or_i18n_get_translated($field["title"], "fieldtitle-") . "'");
+		DrawOption("f" . $field["ref"], "&nbsp;&nbsp; - " . $lang["can_see_field"] . " '" . lang_or_i18n_get_translated($field["title"], "fieldtitle-") . "'" . (($field["name"]=="")?"":"<em> (" . htmlspecialchars($field["name"]) . ")</em>"));
 		}
 	else
 		{
@@ -141,7 +141,7 @@ foreach ($fields as $field)
 	{
 	if (in_array("F*",$permissions))	
 		{
-		DrawOption("F-" . $field["ref"], "&nbsp;&nbsp; - " . $lang["can_edit_field"] . " '" . lang_or_i18n_get_translated($field["title"], "fieldtitle-") . "'", false);
+		DrawOption("F-" . $field["ref"], "&nbsp;&nbsp; - " . $lang["can_edit_field"] . " '" . lang_or_i18n_get_translated($field["title"], "fieldtitle-") . "'"  . (($field["name"]=="")?"":"<em> (" . htmlspecialchars($field["name"]) . ")</em>"), false);
 		}
 	else
 		{
