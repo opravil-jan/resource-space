@@ -100,10 +100,10 @@ if ($exiftool_fullpath!=false)
 	if ($extension=="indd" && !isset($newfile))
 		{
 		$indd_thumbs = extract_indd_pages ($file);
-
+		$pagescommand="";
 		if (is_array($indd_thumbs))
 			{
-			$pagescommand="";
+			
 			$n=0;
 			foreach ($indd_thumbs as $indd_page){
 				echo $indd_page;
@@ -112,25 +112,28 @@ if ($exiftool_fullpath!=false)
 				
 				$n++;
 			}
-		}
+		} 
 		
 		
 		// process jpgs as a pdf so the existing pdf paging code can be used.	
-		$file=get_resource_path($ref,true,"",false,"pdf");		
-		$jpg2pdfcommand = $convert_fullpath . " ".$pagescommand." " . $file; 
-		
-		$output=run_command($jpg2pdfcommand);
+		if (is_array($indd_thumbs)){
+			$file=get_resource_path($ref,true,"",false,"pdf");		
+			$jpg2pdfcommand = $convert_fullpath . " ".$pagescommand." " . $file; 
 			
-		$n=0;
-		foreach ($indd_thumbs as $indd_page){
+			$output=run_command($jpg2pdfcommand);
 				
-			unlink($target."_".$n);
-			$n++;
-		}
-		
-		$extension="pdf";
-		$dUseCIEColor=false;
-		$n=0;	
+			$n=0;
+			foreach ($indd_thumbs as $indd_page){
+				if (file_exists($target."_".$n)){	
+					unlink($target."_".$n);
+				}
+				$n++;
+			}
+			
+			$extension="pdf";
+			$dUseCIEColor=false;
+			$n=0;	
+			}
 		}
 	}	
 	
@@ -479,6 +482,7 @@ if ($extension=="txt" && !isset($newfile))
    ----------------------------------------
 */
 $ffmpeg_fullpath = get_utility_path("ffmpeg");
+$ffprobe_fullpath = get_utility_path("ffprobe");
 global $ffmpeg_preview,$ffmpeg_preview_seconds,$ffmpeg_preview_extension,$ffmpeg_preview_options, $ffmpeg_preview_min_width,$ffmpeg_preview_min_height,$ffmpeg_preview_max_width,$ffmpeg_preview_max_height, $php_path, $ffmpeg_preview_async, $ffmpeg_preview_force;
 
 
@@ -492,9 +496,11 @@ if (($ffmpeg_fullpath!=false) && $snapshotcheck && in_array($extension, $ffmpeg_
 
 
 else if (($ffmpeg_fullpath!=false) && !isset($newfile) && in_array($extension, $ffmpeg_supported_extensions))
-        {
+        {   
+			
+
         $snapshottime = 1;
-        $out = run_command($ffmpeg_fullpath . " -i " . escapeshellarg($file), true);
+        $out = run_command($ffprobe_fullpath . " -i " . escapeshellarg($file), true);
 
         if(preg_match("/Duration: (\d+):(\d+):(\d+)\.\d+, start/", $out, $match))
         	{
@@ -512,9 +518,9 @@ else if (($ffmpeg_fullpath!=false) && !isset($newfile) && in_array($extension, $
 	if ($extension=="mxf")
 		{ $snapshottime = 0; }
 
-   if(!hook("previewpskipthumb","",array($file))){
-     
-   $output = run_command($ffmpeg_fullpath . " $ffmpeg_global_options -i " . escapeshellarg($file) . " -f image2 -vframes 1 -ss ".$snapshottime." " . escapeshellarg($target));
+
+ 	if(!hook("previewpskipthumb","",array($file))){    
+   $output = run_command($ffmpeg_fullpath . " $ffmpeg_global_options -y -i " . escapeshellarg($file) . " -f image2 -vframes 1 -ss ".$snapshottime." " . escapeshellarg($target));
 	}
         if (file_exists($target)) 
             {

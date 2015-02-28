@@ -3656,6 +3656,16 @@ function get_utility_path($utilityname, &$checked_path = null)
                 }
             else { return $return; }
             break;
+        case "ffprobe":
+            if (!isset($ffmpeg_path)) {return false;} # FFmpeg path not configured.
+            $return=get_executable_path($ffmpeg_path, array("unix"=>"ffprobe", "win"=>"ffprobe.exe"), $checked_path);
+            if ($return===false)
+                {
+                # Support 'avconv' also
+                return get_executable_path($ffmpeg_path, array("unix"=>"avconv", "win"=>"avconv.exe"), $checked_path);
+                }
+            else { return $return; }
+            break;        
         case "exiftool":
             //if (!isset($exiftool_path)) {return false;} # Exiftool path not configured.
             return get_executable_path($exiftool_path, array("unix"=>"exiftool", "win"=>"exiftool.exe"), $checked_path);
