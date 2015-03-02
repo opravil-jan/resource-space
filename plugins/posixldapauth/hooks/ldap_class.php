@@ -57,7 +57,7 @@ class ldapAuth
 	function connect()
 	{
 		global $lang;
-		$this->ldapconn = ldap_connect($this->ldapconfig['host'])
+		$this->ldapconn = ldap_connect($this->ldapconfig['host'], $this->ldapconfig['port'])
 	    	or die($lang['posixldapauth_could_not_connect_to_ldap_server']);
 		ldap_set_option($this->ldapconn, LDAP_OPT_PROTOCOL_VERSION, 3);
 		// set referals to 0 to search the entire AD! - Added April 2014
@@ -138,6 +138,7 @@ class ldapAuth
 				
 				// search from the base dn down for the user:
 				if ($this->ldap_debug) { error_log( __FILE__ . " " . __METHOD__ . " " . __LINE__ . " Searching  " . $this->ldapconfig['basedn'] . " for " . $filter); }
+
 				if (!($search = ldap_search($this->ldapconn, $this->ldapconfig['basedn'], $filter,$attributes))) {
 				     die($lang['posixldapauth_unable_to_search_ldap_server']);
 				}	
@@ -146,7 +147,7 @@ class ldapAuth
 				
 				if ($number_returned == 0) 
 				{
-					// Houston we have a problem, we hae not managed to find the account even though we can bind with it !
+					// Houston we have a problem, we have not managed to find the account even though we can bind with it !
 					// We are going to guess that samaccountname (pre windows 2000 logon name) is not the same as the 
 					// user portion of the userPrincipalName.
 					if ($this->ldap_debug) { error_log( __FILE__ . " " . __METHOD__ . " " . __LINE__ . " Num entries returned = " . $number_returned ); }

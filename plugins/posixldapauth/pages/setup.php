@@ -109,6 +109,9 @@ if ($ldapauth['enable'])
   include_once ("../hooks/ldap_class.php");
   $ldapConf['host'] = $ldapauth['ldapserver'];
 	$ldapConf['basedn'] = $ldapauth['basedn'];
+	$ldapConf['port'] = $ldapauth['port'];
+	$ldapConf['addomain'] = $ldapauth['addomain'];
+	$ldapConf['adusesingledomain'] = $ldapauth['adusesingledomain'];
 	
 	$objLDAP = new ldapAuth($ldapConf);
 	if ($ldap_debug) { $objLDAP->ldap_debug = true; };
@@ -119,7 +122,7 @@ if ($ldapauth['enable'])
 		if ($ldapauth['ldaptype'] == 1 )
 		{
 			// we need to bind!
-			if (!$objLDAP->auth($ldapauth['rootdn'],$ldapauth['rootpass'],1,$ldapauth['addomain']))
+			if (!$objLDAP->auth($ldapauth['rootdn'],$ldapauth['rootpass'],1,$ldapauth['addomain'],$ldapauth['adusesingledomain']))
 			{
 				$errmsg["auth"] = $lang['posixldapauth_could_not_bind_to_ad_check_credentials'];
 			}	
@@ -194,7 +197,7 @@ include "../../../include/header.php";
       <p><label for="enable"><?php echo $lang['posixldapauth_enabled'] ?></label><input type="checkbox" name="enable" id="enable" accesskey="e" tabindex="1" <?php echo $enabled ?> /></p>
 
       <p><label for="ldapserver"><?php echo $lang['posixldapauth_ldap_server'] ?></label><input id="ldapserver" name="ldapserver" type="text" value="<?php echo $ldapauth['ldapserver']; ?>" size="30" />
-      <label for="ldapauth">:</label><input name="port" type="text" value="<?php echo $ldapauth['port']; ?>" size="6" /></p>
+      <label for="port">:</label><input name="port" id="port" type="text" value="<?php echo $ldapauth['port']; ?>" size="6" /></p>
 		
       <fieldset>
         <legend><?php echo $lang['posixldapauth_ldap_information'] ?></legend>

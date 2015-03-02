@@ -35,6 +35,10 @@ function HookPosixldapauthAllExternalauth($uname, $pword)
 		{
 			$ldapauth['ldapgroupcontainer'] = "";
 		}
+		if (!isset($ldapauth['port']))
+		{
+			$ldapauth['port'] = 389;
+		}
 		if (!isset($ldapauth['ldapmemberfield']))
 		{
 			$ldapauth['ldapmemberfield'] = "";	
@@ -69,6 +73,7 @@ function HookPosixldapauthAllExternalauth($uname, $pword)
 		$ldapConf['host'] = $ldapauth['ldapserver'];
 		$ldapConf['basedn'] = $ldapauth['basedn'];
 		$ldapConf['addomain']	= $ldapauth['addomain'];
+		$ldapConf['port']	= $ldapauth['port'];
 		
 		if ($ldapauth['adusesingledomain']) {
 			$singleDomain=true;
