@@ -2561,3 +2561,6 @@ $body_classes = array();
 // $manage_request_admin[2] = 1; // Document
 // $manage_request_admin[3] = 1; // Video
 // $manage_request_admin[4] = 1; // Audio
+
+# Number of seconds for slideshow to wait before changing image (must be greater than 1)
+#$slideshow_photo_delay = 7;

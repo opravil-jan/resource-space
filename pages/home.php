@@ -17,6 +17,8 @@ if (!hook("replacehome")) {
 
 if (!hook("replaceslideshow")) 
 	{
+		global $slideshow_photo_delay;
+
 	# Count the files in the configured $homeanim_folder.
 	$dir = dirname(__FILE__) . "/../" . $homeanim_folder; 
 	$filecount = 0; 
@@ -48,6 +50,12 @@ if (!hook("replaceslideshow"))
 				  # Include the checksum calculated so far, to ensure a reloaded image if the image on disk has changed.
 			      	  ?>
 				 <script type="text/javascript">
+				 var big_slideshow_timer = 6;
+				 <?php
+				 if(isset($slideshow_photo_delay) && $slideshow_photo_delay > 1) { ?>
+				 	big_slideshow_timer = <?php echo $slideshow_photo_delay; ?>;
+				 <?php }
+				 ?>
 				 RegisterSlideshowImage('../<?php echo $homeanim_folder ?>/<?php echo $f ?>?nc=<?php echo $checksum ?>','<?php echo $linkref ?>');
 				 </script>
 				 <?php
@@ -63,6 +71,11 @@ if (!hook("replaceslideshow"))
 
 		var num_photos=<?php echo $homeimages?>;  // <---- number of photos (/images/slideshow?.jpg)
 		var photo_delay=5; // <---- photo delay in seconds
+		<?php
+		if(isset($slideshow_photo_delay) && $slideshow_photo_delay > 1) { ?>
+			photo_delay = <?php echo $slideshow_photo_delay; ?>;
+		<?php }
+		?>
 		var link = new Array();
 
 		<?php 
