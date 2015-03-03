@@ -1222,7 +1222,7 @@ hook ("resourceactions") ?>
 				} 
 			else 
 				{
-				echo $lang["action-delete"];
+				echo ($resourcetoolsGT?"&gt; ":"") . $lang["action-delete"];
 				}?>
 			</a>
 			</li>

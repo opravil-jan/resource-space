@@ -169,7 +169,7 @@ hook("editbeforeheader");
 # -----------------------------------
 # 			PERFORM SAVE
 # -----------------------------------
-if ((getval("autosave","")!="") || (getval("tweak","")=="" && getval("submitted","")!="" && getval("resetform","")=="" && getval("copyfromsubmit","")==""))
+if ((getval("autosave","")!="") || (getval("tweak","")=="" && getval("submitted","")!="" && getval("resetform","")=="" && getval("copyfrom","")==""))
 	{
 		
 	if(($embedded_data_user_select && getval("exif_option","")=="custom") || isset($embedded_data_user_select_fields))	
@@ -682,18 +682,6 @@ for ($n=0;$n<count($types);$n++)
 <?php
 $lastrt=-1;
 
-# "copy data from" feature
-if ($enable_copy_data_from && !$multiple && !checkperm("F*"))
-	{ 
-	?>
-	<div class="Question" id="question_copyfrom">
-	<label for="copyfrom"><?php echo $lang["batchcopyfrom"]?></label>
-	<input class="stdwidth" type="text" name="copyfrom" id="copyfrom" value="" style="width:80px;">
-	<input type="submit" name="copyfromsubmit" value="<?php echo $lang["copy"]?>" onClick="event.preventDefault();CentralSpacePost(document.getElementById('mainform'),true);">
-	</div><!-- end of question_copyfrom -->
-	<?php
-	}
-
 if (isset($metadata_template_resource_type) && !$multiple && !checkperm("F*"))
 	{
 	# Show metadata templates here
@@ -1144,7 +1132,7 @@ function display_field($n, $field, $newtab=false)
 			if ($original_field["ref"]==$field["ref"]) {$value=$original_field["value"];}
 			}
 		}
-
+	
 	$displaycondition=true;
 	if ($field["display_condition"]!="")
 		{
@@ -1159,7 +1147,7 @@ function display_field($n, $field, $newtab=false)
 		if (array_key_exists($language,$translations)) {$value=$translations[$language];} else {$value="";}
 		}
 
-	if ($multiple) {$value="";} # Blank the value for multi-edits.
+	if ($multiple && (getval("copyfrom","")=="" || str_replace(array(" ",","),"",$value)=="")) {$value="";} # Blank the value for multi-edits  unless copying data from resource.
 
 	if ($field["resource_type"]!=$lastrt && $lastrt!=-1 && $collapsible_sections)
 		{
@@ -1175,14 +1163,14 @@ function display_field($n, $field, $newtab=false)
 
 	?>
 	<?php if ($multiple && !hook("replace_edit_all_checkbox","",array($field["ref"]))) { # Multiple items, a toggle checkbox appears which activates the question
-	?><div class="edit_multi_checkbox"><input name="editthis_<?php echo htmlspecialchars($name)?>" id="editthis_<?php echo $n?>" type="checkbox" value="yes" onClick="var q=document.getElementById('question_<?php echo $n?>');var m=document.getElementById('modeselect_<?php echo $n?>');var f=document.getElementById('findreplace_<?php echo $n?>');if (this.checked) {q.style.display='block';m.style.display='block';} else {q.style.display='none';m.style.display='none';f.style.display='none';document.getElementById('modeselectinput_<?php echo $n?>').selectedIndex=0;}">&nbsp;<label for="editthis<?php echo $n?>"><?php echo htmlspecialchars($field["title"])?></label></div><!-- End of edit_multi_checkbox --><?php } ?>
+	?><div class="edit_multi_checkbox"><input name="editthis_<?php echo htmlspecialchars($name) ?>" id="editthis_<?php echo $n?>" type="checkbox" value="yes" onClick="var q=document.getElementById('question_<?php echo $n?>');var m=document.getElementById('modeselect_<?php echo $n?>');var f=document.getElementById('findreplace_<?php echo $n?>');if (this.checked) {q.style.display='block';m.style.display='block';} else {q.style.display='none';m.style.display='none';f.style.display='none';document.getElementById('modeselectinput_<?php echo $n?>').selectedIndex=0;}" <?php if(getval("copyfrom","")!="" && $value!=""){echo " checked" ;} ?>>&nbsp;<label for="editthis<?php echo $n?>"><?php echo htmlspecialchars($field["title"]) ?></label></div><!-- End of edit_multi_checkbox --><?php } ?>
 
 	<?php
 	if ($multiple && !hook("replace_edit_all_mode_select","",array($field["ref"])))
 		{
 		# When editing multiple, give option to select Replace All Text or Find and Replace
 		?>
-		<div class="Question" id="modeselect_<?php echo $n?>" style="display:none;padding-bottom:0;margin-bottom:0;">
+		<div class="Question" id="modeselect_<?php echo $n?>" style="<?php if($value==""){echo "display:none;";} ?>padding-bottom:0;margin-bottom:0;">
 		<label for="modeselectinput"><?php echo $lang["editmode"]?></label>
 		<select id="modeselectinput_<?php echo $n?>" name="modeselect_<?php echo $field["ref"]?>" class="stdwidth" onChange="var fr=document.getElementById('findreplace_<?php echo $n?>');var q=document.getElementById('question_<?php echo $n?>');if (this.value=='FR') {fr.style.display='block';q.style.display='none';} else {fr.style.display='none';q.style.display='block';}<?php hook ("edit_all_mode_js"); ?>">
 		<option value="RT"><?php echo $lang["replacealltext"]?></option>
@@ -1233,7 +1221,7 @@ function display_field($n, $field, $newtab=false)
 	<div class="Question <?php if($field_save_error) { echo 'FieldSaveError'; } ?>" id="question_<?php echo $n?>" <?php
 	if ($multiple || !$displaycondition || $newtab)
 		{?>style="border-top:none;<?php 
-		if ($multiple || !$displaycondition) # Hide this
+		if (($multiple && $value=="") || !$displaycondition) # Hide this
 			{?>
 			display:none;
 			<?php }
@@ -1386,6 +1374,17 @@ for ($n=0;$n<count($fields);$n++)
 	}
 if ($display_any_fields)
 	{
+	# "copy data from" feature
+	if ($enable_copy_data_from && !checkperm("F*"))
+		{ ?>
+		<div class="Question" id="question_copyfrom">
+		<label for="copyfrom"><?php echo $lang["batchcopyfrom"]?></label>
+		<input class="stdwidth" type="text" name="copyfrom" id="copyfrom" value="" style="width:80px;">
+		<input type="submit" name="copyfromsubmit" value="<?php echo $lang["copy"]?>" onClick="event.preventDefault();CentralSpacePost(document.getElementById('mainform'),true);">
+		</div><!-- end of question_copyfrom -->
+		<?php
+		}
+	
 	?><h2  <?php if($collapsible_sections){echo'class="CollapsibleSectionHead"';}?> id="ResourceMetadataSectionHead"><?php echo $lang["resourcemetadata"]?></h2><?php
 	?><div <?php if($collapsible_sections){echo'class="CollapsibleSection"';}?> id="ResourceMetadataSection<?php if ($ref<0) echo "Upload"; ?>"><?php
 	}
@@ -1459,7 +1458,6 @@ if($tabs_on_edit)
 
 $tabname="";
 $tabcount=0;	
-
 for ($n=0;$n<count($fields);$n++)
 	{
 	# Should this field be displayed?
@@ -1479,6 +1477,7 @@ for ($n=0;$n<count($fields);$n++)
 			}
 		$tabname=$fields[$n]["tab_name"];
 		$fieldcount++;
+		
 		display_field($n, $fields[$n], $newtab);
 		}
 	}
