@@ -59,7 +59,7 @@ if(!hook("swfplayer"))
 		<link href="<?php echo $baseurl_short?>lib/videojs/video-js.css" rel="stylesheet">
 		<script src="<?php echo $baseurl_short?>lib/videojs/video.js"></script>
 		<video id="introvideo" controls width="<?php echo $width?>" height="<?php echo $height?>" data-setup="" class="video-js vjs-default-skin vjs-big-play-centered" poster="<?php echo $thumb_raw?>" preload="auto" >
-		     <source src="<?php echo $flashpath_raw?>" type="video/<?=$ffmpeg_preview_extension?>" />
+		     <source src="<?php echo $flashpath_raw?>" type="video/<?php echo $ffmpeg_preview_extension; ?>" />
 		     <p class="vjs-no-js">To view this video please enable JavaScript, and consider upgrading to a web browser that <a href="http://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a></p>
 		</video>
 		<!-- END VIDEOJS -->
