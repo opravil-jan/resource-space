@@ -281,7 +281,7 @@ function display_field($n, $field)
 		}
 
 	// Don't show this if user is an admin viewing proposed changes, needs to be on form so that form is still submitted with all data
-	if ($editaccess && !isset($proposed_value))
+	if ($editaccess && $proposed_value=="")
 		{
 		?>
 		<div style="display:none" >
@@ -317,7 +317,7 @@ function display_field($n, $field)
 	// ------------------------------
 	// Show existing value so can edit
 	
-	$value=$field["value"];
+	$value=preg_replace("/^,/","",$field["value"]);
     $realvalue=$value; // Store this in case it gets changed by view processing
 	if ($value!="")
             {
@@ -331,20 +331,20 @@ function display_field($n, $field)
                             $value=NiceDate($value,false,true);
                     }
             
-            ?><div class="propose_changes_current stdwidth"><?php echo $value ?></div><?php                        
+            ?><div class="propose_changes_current ProposeChangesCurrent"><?php echo $value ?></div><?php                        
                                              
             }
                         
         else
             {
-            ?><div class="propose_changes_current stdwidth"><?php echo $lang["propose_changes_novalue"] ?></div>    
+            ?><div class="propose_changes_current ProposeChangesCurrent"><?php echo $lang["propose_changes_novalue"] ?></div>    
             <?php
             }
             ?>
            
         
         <?php
-        if(!$editaccess && !isset($proposed_value))
+        if(!$editaccess && $proposed_value=="")
             {
             ?>
             <div class="propose_change_button" id="propose_change_button_<?php echo $field["ref"] ?>">
@@ -353,8 +353,8 @@ function display_field($n, $field)
             <?php
             }?>  
         
-	<div class="proposed_change" <?php if(!isset($proposed_value)){echo "style=\"display:none;\""; } ?> id="proposed_change_<?php echo $field["ref"] ?>">
-    <input type="hidden" id="propose_change_<?php echo $field["ref"] ?>" name="propose_change_<?php echo $field["ref"] ?>" value="true" <?php if(!isset($proposed_value)){echo "disabled=\"disabled\""; } ?> />                                                          
+	<div class="proposed_change proposed_change_value proposed ProposeChangesProposed" <?php if($proposed_value==""){echo "style=\"display:none;\""; } ?> id="proposed_change_<?php echo $field["ref"] ?>">
+    <input type="hidden" id="propose_change_<?php echo $field["ref"] ?>" name="propose_change_<?php echo $field["ref"] ?>" value="true" <?php if($proposed_value==""){echo "disabled=\"disabled\""; } ?> />                                                          
         <?php                                                            
 	# ----------------------------  Show field -----------------------------------
 
@@ -415,7 +415,7 @@ function display_field($n, $field)
 	
 	
 	// Don't show this if user is an admin viewing proposed changes
-	if ($editaccess && !isset($proposed_value))
+	if ($editaccess && $proposed_value=="")
 		{
 		?>
 		</div><!-- End of hidden field -->
@@ -508,8 +508,8 @@ if (isset($resulttext))
                 <div class="Question ProposeChangesQuestion" id="propose_changes_field_header" >
                         
                 <div class="ProposeChangesTitle ProposeChangesLabel" ><?php echo $lang["propose_changes_field_name"] ?></div>                
-                <div class="ProposeChangesTitle ProposeChangesTitlestdwidth"><?php echo $lang["propose_changes_current_value"] ?></div>
-                <div class="ProposeChangesTitle" ><?php echo $lang["propose_changes_proposed_value"] ?></div>
+                <div class="ProposeChangesTitle ProposeChangesCurrent"><?php echo $lang["propose_changes_current_value"] ?></div>
+                <div class="ProposeChangesTitle ProposeChangesProposed" ><?php echo $lang["propose_changes_proposed_value"] ?></div>
                 
                 <?php
                 if($editaccess)
