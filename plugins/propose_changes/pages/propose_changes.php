@@ -270,7 +270,7 @@ function display_field($n, $field)
 	$name="field_" . $field["ref"];
 	$value=$field["value"];
 	$value=trim($value);
-                                        
+    $proposed_value="";            
 	# is there a proposed value set for this field?
 	foreach($proposed_changes as $proposed_change)
 		{
@@ -279,6 +279,7 @@ function display_field($n, $field)
 			$proposed_value=$proposed_change["value"]; 
 			}                
 		}
+
 	// Don't show this if user is an admin viewing proposed changes, needs to be on form so that form is still submitted with all data
 	if ($editaccess && !isset($proposed_value))
 		{
@@ -317,7 +318,7 @@ function display_field($n, $field)
 	// Show existing value so can edit
 	
 	$value=$field["value"];
-        $realvalue=$value; // Store this in case it gets changed by view processing
+    $realvalue=$value; // Store this in case it gets changed by view processing
 	if ($value!="")
             {
             # Draw this field normally.			
@@ -356,9 +357,9 @@ function display_field($n, $field)
     <input type="hidden" id="propose_change_<?php echo $field["ref"] ?>" name="propose_change_<?php echo $field["ref"] ?>" value="true" <?php if(!isset($proposed_value)){echo "disabled=\"disabled\""; } ?> />                                                          
         <?php                                                            
 	# ----------------------------  Show field -----------------------------------
-	
+
 	# Checkif we have a proposed value for this field
-	if (isset($proposed_value))
+	if ($proposed_value!="")
 		{
 		$value=$proposed_value;
 		}
@@ -366,7 +367,6 @@ function display_field($n, $field)
 		{
 		$value = $realvalue;   
 		}
-	
         
 	$type=$field["type"];
 	if ($type=="") {$type=0;} # Default to text type.
@@ -544,7 +544,7 @@ if (isset($resulttext))
 		if (is_field_displayed($proposefields[$n]))
 			{	
 			$fieldcount++;
-			display_field($n, $proposefields[$n], false);
+			display_field($n, $proposefields[$n]);
 			}
 		}	
 

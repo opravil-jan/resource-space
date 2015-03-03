@@ -5,7 +5,6 @@
 
 $options = trim_array(explode(",",$field["options"]));
 $set = trim($value);
-
 // Translate the options:
 for($i = 0; $i < count($options); $i++) {
     $options[$i] = i18n_get_translated($options[$i]);
@@ -58,40 +57,43 @@ if ($edit_autosave) { ?>
         </script>
 <?php } 
 
-if($display_as_radiobuttons) {
-?>
+if($display_as_radiobuttons) 
+    {
+    ?>
     <table id="" class="radioOptionTable" cellpadding="3" cellspacing="3">                    
             <tbody>
                     <tr>
                             <?php 
                             $row = 1;
                             $col = 1;
-                            foreach ($options as $key => $value) {
-                                    if($col > $cols) {
-                                            $col = 1;
-                                            $row++; ?>
-                                            </tr>
-                                            <tr>
-                                    <?php }
-                                    $col++;
-                                    ?>
-                    
-                            <td width="10" valign="middle">
-                                    <input type="radio" id="field_<?php echo $field["ref"] . '_' . sha1($value); ?>" name="field_<?php echo $field["ref"]; ?>" value="<?php echo $value; ?>" <?php if(',' . $value == $set) {?>checked<?php } ?> <?php if($edit_autosave) {?>onChange="AutoSave('<?php echo $field["ref"] ?>');"<?php } if ($autoupdate) { ?>onChange="UpdateResultCount();"<?php } echo $help_js; ?>/>
-                            </td>
-                            <td align="left" valign="middle">
-                                     <label class="customFieldLabel" for="field_<?php echo $field["ref"] . '_' . sha1($value); ?>" <?php if($edit_autosave) { ?>onmousedown="radio_allow_save();" <?php } ?>><?php echo $value; ?></label>
-                            </td>
-
-                            <?php } ?>
+                            foreach ($options as $key => $val) 
+                                {
+                                if($col > $cols) 
+                                    {
+                                    $col = 1;
+                                    $row++; ?>
+                                    </tr>
+                                    <tr>
+                                    <?php 
+                                    }
+                                $col++;
+                                ?>
+                                <td width="10" valign="middle">
+                                    <input type="radio" id="field_<?php echo $field["ref"] . '_' . sha1($val); ?>" name="field_<?php echo $field["ref"]; ?>" value="<?php echo $val; ?>" <?php if($val==$set || ','.$val == $set) {?>checked<?php } ?> <?php if($edit_autosave) {?>onChange="AutoSave('<?php echo $field["ref"] ?>');"<?php } if ($autoupdate) { ?>onChange="UpdateResultCount();"<?php } echo $help_js; ?>/>
+                                </td>
+                                <td align="left" valign="middle">
+                                    <label class="customFieldLabel" for="field_<?php echo $field["ref"] . '_' . sha1($val); ?>" <?php if($edit_autosave) { ?>onmousedown="radio_allow_save();" <?php } ?>><?php echo $val; ?></label>
+                                </td>
+                                <?php 
+                                } 
+                            ?>
                     </tr>
             </tbody>
     </table>
-<?php
-}
-
-// On advanced search, by default, show as checkboxes:
-if($display_as_checkbox) { ?>
+    <?php
+    }
+else if($display_as_checkbox) // On advanced search, by default, show as checkboxes:
+    { ?>
     <table cellpadding=2 cellspacing=0>
         <tbody>
             <tr>
@@ -119,11 +121,10 @@ if($display_as_checkbox) { ?>
             </tr>
         </tbody>
     </table>
-<?php
-}
-
-// On advanced search, display it as a dropdown, if set like this:
-if($display_as_dropdown) { ?>
+    <?php
+    }
+else if($display_as_dropdown) // On advanced search, display it as a dropdown, if set like this:
+    { ?>
     <select class="<?php echo $class ?>" name="field_<?php echo $field["ref"]?>" id="field_<?php echo $field["ref"]?>" <?php if ($autoupdate) { ?>onChange="UpdateResultCount();"<?php } ?>><option value=""></option><?php
     foreach ($options as $key => $value) {
         
@@ -133,5 +134,5 @@ if($display_as_dropdown) { ?>
         }
     } ?>
     </select><?php
-}
+    }
 ?>
