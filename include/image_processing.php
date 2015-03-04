@@ -1080,7 +1080,7 @@ function create_previews($ref,$thumbonly=false,$extension="jpg",$previewonly=fal
 
 function create_previews_using_im($ref,$thumbonly=false,$extension="jpg",$previewonly=false,$previewbased=false,$alternative=-1,$ingested=false)
 	{
-	global $keep_for_hpr,$imagemagick_path,$imagemagick_preserve_profiles,$imagemagick_quality,$imagemagick_colorspace,$default_icc_file,$autorotate_no_ingest,$always_make_previews;
+	global $keep_for_hpr,$imagemagick_path,$imagemagick_preserve_profiles,$imagemagick_quality,$imagemagick_colorspace,$default_icc_file,$autorotate_no_ingest,$always_make_previews,$lean_preview_generation;
 
 	$icc_transform_complete=false;
 	debug("create_previews_using_im(ref=$ref,thumbonly=$thumbonly,extension=$extension,previewonly=$previewonly,previewbased=$previewbased,alternative=$alternative,ingested=$ingested)");
@@ -1146,6 +1146,17 @@ function create_previews_using_im($ref,$thumbonly=false,$extension="jpg",$previe
 		# Get image's dimensions.
 		$identcommand = $identify_fullpath . ' -format %wx%h '. escapeshellarg($prefix . $file) .'[0]';
 		$identoutput=run_command($identcommand);
+		if($lean_preview_generation){
+			$all_sizes=false;
+			if(!$thumbonly && !$previewonly){
+				// seperate width and height
+				$all_sizes=true;
+				$wh=explode("x",$identoutput);
+				$o_width=$wh[0];
+				$o_height=$wh[1];
+			}
+		}
+		
 		preg_match('/^([0-9]+)x([0-9]+)$/ims',$identoutput,$smatches);
 				if ((@list(,$sw,$sh) = $smatches)===false) { return false; }
 
@@ -1155,6 +1166,19 @@ function create_previews_using_im($ref,$thumbonly=false,$extension="jpg",$previe
 		if ($previewonly) {$sizes=" where id='thm' or id='col' or id='pre' or id='scr'";}
 
 		$ps=sql_query("select * from preview_size $sizes order by width desc, height desc");
+		if($lean_preview_generation && $all_sizes){
+			$count=count($ps)-1;
+			$oversized=0;
+			for($s=$count;$s>0;$s--){
+				if($ps[$s]['width']>$o_width && $ps[$s]['height']>$o_height){
+					$oversized++;
+				}
+				if($oversized>0){
+					unset($ps[$s]);
+				}
+			}
+			$ps = array_values($ps);
+		}
 		$created_count=0;
 		for ($n=0;$n<count($ps);$n++)
 			{ 

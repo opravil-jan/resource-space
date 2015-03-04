@@ -1187,6 +1187,10 @@ $feedback_resource_select=false;
 # The value is in MB.
 # $preview_generate_max_file_size=100;
 
+# Prevent previews from creating versions that result in the same size?
+# If true pre, thm, and col sizes will not be considered.
+$lean_preview_generation=false;
+
 # Should resource views be logged for reporting purposes?
 # Note that general daily statistics for each resource are logged anyway for the statistics graphs
 # - this option relates to specific user tracking for the more detailed report.
