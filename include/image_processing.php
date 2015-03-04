@@ -2024,6 +2024,23 @@ function AutoRotateImage ($src_image,$ref=false){
 		}
 	}
 	if (file_exists($new_image)){
+		if(!$ref){
+			// preserve custom metadata fields with exiftool
+			$exiftool_fullpath=get_utility_path("exiftool");
+			// save the new orientation
+			//$new_orientation=run_command($exiftool_fullpath.' -s -s -s -orientation -n '.$new_image);
+			$old_orientation=run_command($exiftool_fullpath.' -s -s -s -orientation -n '.$src_image);
+			
+			$exiftool_copy_command=$exiftool_fullpath." -TagsFromFile ".$src_image." -all:all ".$new_image;
+			run_command($exiftool_copy_command);
+			// If orientation was empty there's no telling if rotation happened, so don't assume.
+			// Also, don't go through this step if the old orientation was set to normal
+			if($old_orientation!='' && $old_orientation!=1){
+				$fix_orientation = $exiftool_fullpath. ' Orientation=1 -n '. escapeshellarg($new_image);
+				run_command($fix_orientation);
+			}
+		}
+
 		unlink($src_image);
 		rename($new_image,$src_image);
 		return true;
