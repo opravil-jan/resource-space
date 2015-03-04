@@ -45,20 +45,29 @@ if (getval("save","")!="")
 	if (!$use_user_email){$from_name=$applicationname;} else {$from_name=$userfullname;} // make sure from_name matches system name
 	
 	if (getval("ccme",false)){ $cc=$useremail;} else {$cc="";}
-		
-	if(getval("sharerelatedresources","")!="")
+	
+	$sharing_related=false;
+	if(getval("sharerelatedresources","")!=""){$sharing_related=true;}
+	if($sharing_related || $share_resource_as_collection)
 		{
-		// User has chosen to includ related resources, so treat as sharing a new collection
-		$relatedshares=explode(",",getvalescaped("sharerelatedresources",""));
+		if($sharing_related)
+			{
+			// User has chosen to include related resources, so treat as sharing a new collection
+			$relatedshares=explode(",",getvalescaped("sharerelatedresources",""));
+			}
 		// Create new collection
 		$allow_changes=(getval("allow_changes","")!=""?1:0);
 		$sharedcollection=create_collection($userref,i18n_get_translated($resource["field".$view_title_field]) . " Share " . nicedate(date("Y-m-d H:i:s")),$allow_changes);
 		
 		add_resource_to_collection($ref,$sharedcollection);
-		foreach($relatedshares as $relatedshare)
+		if($sharing_related)
 			{
-			add_resource_to_collection($relatedshare,$sharedcollection);
-			}			
+			foreach($relatedshares as $relatedshare)
+				{
+				add_resource_to_collection($relatedshare,$sharedcollection);
+				}			
+			}
+			
 		$errors=email_collection($sharedcollection,i18n_get_collection_name($sharedcollection),$userfullname,$users,$message,false,$access,$expires,$user_email,$from_name,$cc,false,"","",$list_recipients,$add_internal_access);
 		// Hide from drop down by default
 		show_hide_collection($sharedcollection, false, $userref);

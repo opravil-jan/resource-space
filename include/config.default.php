@@ -920,6 +920,9 @@ $save_as=false;
 $allow_share=true;
 $enable_theme_category_sharing=false;
 
+# Always create a collection when sharing an individual resource via email
+$share_resource_as_collection=false;
+
 # Use a custom stylesheet when sharing externally.
 # Note: $custom_stylesheet_external_share_path can be set anywhere inside websites' root folder.
 # eg.: '/plugins/your plugin name/css/external_shares.css'
