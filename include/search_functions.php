@@ -547,6 +547,10 @@ function do_search($search,$restypes="",$order_by="relevance",$archive=0,$fetchr
                                                         }
                                                 else
                                                         {
+														if($keyref===false){
+															# make a new keyword
+															$keyref=resolve_keyword(str_replace('*','',$keyword),true);
+														}
                                                         # Key match, add to query.
                                                         $c++;
 
