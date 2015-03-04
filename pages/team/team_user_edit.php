@@ -9,9 +9,11 @@ include "../../include/db.php";
 include "../../include/authenticate.php"; 
 $url=$baseurl_short."pages/team/team_user_edit.php?ref=" .getvalescaped("ref","",true);
 if (!checkperm("u")) {redirect($baseurl_short ."login.php?error=error-permissions-login&url=".urlencode($url));}
+
 include "../../include/general.php";
 
 $ref=getvalescaped("ref","",true);
+
 $backurl=getval("backurl","");
 
 if (getval("unlock","")!="")
@@ -42,6 +44,24 @@ elseif ((getval("save","")!="") || (getval("suggest","")!=""))
 $user=get_user($ref);
 if (($user["usergroup"]==3) && ($usergroup!=3)) {redirect($baseurl_short ."login.php?error=error-permissions-login&url=".urlencode($url));}
 
+if (checkperm("U")) 
+	{
+	if ($U_perm_strict) 
+		{
+        $sql= "where find_in_set('" . $usergroup . "',parent)";
+        }
+    else
+		{
+        $sql= "where (ref='$usergroup' or find_in_set('" . $usergroup . "',parent))";
+        }
+	$validgroups=sql_array("select ref value from usergroup $sql");
+	if(!in_array($user["usergroup"],$validgroups))
+		{
+		redirect($baseurl_short ."login.php?error=error-permissions-login&url=".urlencode($url));
+		exit();
+		}
+	}
+	
 include "../../include/header.php";
 
 
