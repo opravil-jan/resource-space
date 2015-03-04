@@ -914,6 +914,7 @@ function text($name)
 	# Look for the site content in the language strings. These will already be overridden with site content if present.
 	$key=$pagename . "__" . $name;
 	if (array_key_exists($key,$lang)) {return $lang[$key];}
+	else if(array_key_exists("all__" . $name,$lang)) {return $lang["all__" . $name];}
 
 	/*
 		Old method, commented for reference; look directly in the site content table.
