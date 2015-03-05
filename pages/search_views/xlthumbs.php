@@ -7,8 +7,16 @@
      <div class="ResourceTypeIcon IconResourceType<?php echo $result[$n]["resource_type"];  ?>"></div>
     <?php }  ?>
 <?php if (!hook("renderimagelargethumb")) {
-	$access=get_resource_access($result[$n]);
-	$use_watermark=check_use_watermark();?>
+	
+	if(isset($watermark))
+		{
+		$use_watermark=check_use_watermark();
+		}
+	else
+		{
+		$use_watermark=false;	
+		}
+		?>
 	<table border="0" class="ResourceAlignLarge icon_type_<?php echo $result[$n]["resource_type"]; ?> icon_extension_<?php echo $result[$n]['file_extension']; ?><?php if(!hook("replaceresourcetypeicon")){  if (in_array($result[$n]["resource_type"],$videotypes)) { ?> IconVideoLarge<?php } ?><?php } hook('searchdecorateresourcetableclass'); ?>">
 	<?php hook("resourcetop")?>
 	<tr><td>

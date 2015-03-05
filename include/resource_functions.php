@@ -2115,13 +2115,14 @@ function get_resource_access($resource)
 		return 0; 
 		}	
 
-
+        $customgroupaccess=false;
 	if ($access==3)
 		{
 		# Load custom access level
 		if ($passthru=="no"){ 
 			global $usergroup;
 			$access=get_custom_access($resource,$usergroup);
+                        $customgroupaccess=true;
 			//echo "checked group access: ".$access;
 			} 
 		else {
@@ -2208,9 +2209,9 @@ function get_resource_access($resource)
                 if (count($results)==0) {return 2;} # Not found in results, so deny
                 }
 		
-	if ($access==0 && !checkperm("g"))
+	if ($access==0 && !checkperm("g") && !$customgroupaccess)
 		{
-		# User does not have the 'g' permission. Always return restricted for active resources.
+		# User does not have the 'g' permission. Return restricted for active resources unless group has been granted overide access.
 		$access=1; 
 		}
 	

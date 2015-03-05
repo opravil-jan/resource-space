@@ -848,9 +848,24 @@ if (true) # Always show search header now.
 			}
 			
             $ref = $result[$n]["ref"];
-            $GLOBALS['get_resource_data_cache'][$ref] = $result[$n];
-            $url = $baseurl_short."pages/view.php?ref=" . $ref . "&amp;search=" . urlencode($search) . "&amp;order_by=" . urlencode($order_by) . "&amp;sort=". urlencode($sort) . "&amp;offset=" . urlencode($offset) . "&amp;archive=" . urlencode($archive) . "&amp;k=" . urlencode($k) . "&amp;curpos=" . urlencode($n);
-
+	    
+			$GLOBALS['get_resource_data_cache'][$ref] = $result[$n];
+			$url = $baseurl_short."pages/view.php?ref=" . $ref . "&amp;search=" . urlencode($search) . "&amp;order_by=" . urlencode($order_by) . "&amp;sort=". urlencode($sort) . "&amp;offset=" . urlencode($offset) . "&amp;archive=" . urlencode($archive) . "&amp;k=" . urlencode($k) . "&amp;curpos=" . urlencode($n);
+			
+			if ($result[$n]["access"]==0 && !checkperm("g"))
+				{
+				# Resource access is open but user does not have the 'g' permission. Set access to restricted. If they have been granted specific access this will be added next
+				$result[$n]["access"]=1; 
+				}			
+			
+			// Check if user or group has been granted specific access level as set in array returned from do_search function. 
+			if($result[$n]["user_access"]!="")
+				{$result[$n]["access"]=$result[$n]["user_access"];}
+			elseif ($result[$n]["group_access"]!="")
+				{$result[$n]["access"]=$result[$n]["group_access"];}
+			// Global $access needs to be set to check watermarks in search views (and may be used in hooks)		
+			$access=$result[$n]["access"];
+	    
             if (isset($result[$n]["url"])) {$url = $result[$n]["url"];} # Option to override URL in results, e.g. by plugin using process_Search_results hook above
  
             $rating = "";

@@ -7,8 +7,15 @@
 		<div class="ResourceTypeIcon IconResourceType<?php echo $result[$n]["resource_type"];  ?>"></div>
 		<?php }  ?>
 		<?php if (!hook("renderimagesmallthumb")) {
-		$access=get_resource_access($result[$n]);
-		$use_watermark=check_use_watermark();
+			
+		if(isset($watermark))
+			{
+			$use_watermark=check_use_watermark();
+			}
+		else
+			{
+			$use_watermark=false;	
+		}
 
 		# Work out the preview image path
 		$col_url=get_resource_path($ref,false,"col",false,$result[$n]["preview_extension"],-1,1,$use_watermark,$result[$n]["file_modified"]);

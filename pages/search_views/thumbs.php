@@ -9,8 +9,15 @@
 	<?php hook ("resourcethumbtop");?>
 	<?php if (!hook("renderimagethumb")) {
 	# Work out image to use.
-	$access=get_resource_access($result[$n]);
-	$use_watermark=check_use_watermark();
+	if(isset($watermark))
+		{
+		$use_watermark=check_use_watermark();
+		}
+	else
+		{
+		$use_watermark=false;	
+		}
+	
 	$thm_url=get_resource_path($ref,false,"thm",false,$result[$n]["preview_extension"],-1,1,$use_watermark,$result[$n]["file_modified"]);
 
 	if (isset($result[$n]["thm_url"])) {$thm_url=$result[$n]["thm_url"];} # Option to override thumbnail image in results, e.g. by plugin using process_Search_results hook above
