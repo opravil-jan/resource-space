@@ -10,12 +10,18 @@ a:hover {color:#878787}
 a:active {color:#383838;}
 
 /* Header */
-#Header {
-	background-color: #383838;
+.SlimHeader #Header {
 	background: linear-gradient(#424242 , #1B1B1B) !important;
+}
+#Header {
+	margin:0 0 10px 0;
+	padding:10px 20px 10px 20px; 
+	background-color: #383838; 
+	background: #1B1B1B 10px 15px url(../gfx/titles/title_large.png) no-repeat;
 	border: none;
 	color: #e0e0e0;
 }
+
 #Header a:link, #Header a:visited,#Header a:active {color:#E0E0E0;}
 #Header a:hover{color:#FFF; text-decoration: none;}
 
