@@ -1,0 +1,1 @@
+sysvars,0,PRIMARY,1,name,A,10,,,,BTREE,,
