@@ -181,10 +181,15 @@ if (!hook("replaceloginform")) {
 <script type="text/javascript">
 document.getElementById('username').focus();
 </script>
-<?php
 
+<?php
 }
 hook("afterlogin");
 hook("responsivescripts");
 //include_once "./include/footer.php"; AJAX Check Ignores Footer
+//Closing tags as the footer has not been included
 ?>
+</div>
+</div>
+</body>
+</html>
