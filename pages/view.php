@@ -695,10 +695,11 @@ if ($download_summary) {include "../include/download_summary.php";}
 <div class="RecordDownloadSpace">
 <?php if (!hook("renderinnerresourcedownloadspace")) { 
 	hook("beforeresourcetoolsheader");
+	if (!hook('replaceresourcetoolsheader')) {
 ?>
 <h2 id="resourcetools"><?php echo $lang["resourcetools"]?></h2>
-
-<?php 
+<?php
+	}
 
 # DPI calculations
 function compute_dpi($width, $height, &$dpi, &$dpi_unit, &$dpi_w, &$dpi_h)
@@ -1149,7 +1150,6 @@ if ($use_mp3_player && file_exists($mp3realpath) && $access==0){
 hook("additionalresourcetools3");
  } 
 if(!hook("replaceactionslistopen")){?>
-<br />
 <ul id="ResourceToolsContainer">
 <?php
 } # end hook("replaceactionslistopen")
