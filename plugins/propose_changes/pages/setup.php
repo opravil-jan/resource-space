@@ -16,6 +16,7 @@ $plugin_page_heading = $lang['propose_changes_configuration'];
 
 
 $page_def[] = config_add_boolean_select('propose_changes_always_allow',$lang['propose_changes_always_allow']);
+$page_def[] = config_add_boolean_select('propose_changes_allow_open',$lang['propose_changes_allow_open']);
 $page_def[] = config_add_boolean_select('propose_changes_notify_admin',$lang['propose_changes_notify_admin']);
 $page_def[] = config_add_boolean_select('propose_changes_notify_contributor',$lang['propose_changes_notify_contributor']);
 $page_def[] = config_add_text_list_input('propose_changes_notify_addresses', $lang['propose_changes_notify_addresses']);

@@ -28,15 +28,20 @@ if(!$propose_changes_always_allow)
 	{
 	# Check user has permission.
 	$proposeallowed=sql_value("select r.ref value from resource r left join collection_resource cr on r.ref='$ref' and cr.resource=r.ref left join user_collection uc on uc.user='$userref' and uc.collection=cr.collection left join collection c on c.ref=uc.collection where c.propose_changes=1","");
+        if($proposeallowed=="" && $propose_changes_allow_open)
+            {
+            $proposeallowed=(get_resource_access($ref)==0)?$ref:"";
+            }
 	}
 	
-if(!$propose_changes_always_allow && $proposeallowed=="" && !get_edit_access($ref))
+if(!$propose_changes_always_allow && $proposeallowed=="" && !$editaccess)
     {
     # The user is not allowed to edit this resource or the resource doesn't exist.
     $error=$lang['error-permissiondenied'];
     error_alert($error);
     exit();
     }
+    
 if($editaccess)
     {
     $userproposals= sql_query("select pc.user, u.username from propose_changes_data pc left join user u on u.ref=pc.user where resource='$ref' group by pc.user order by u.username asc");
