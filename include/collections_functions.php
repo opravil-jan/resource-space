@@ -1747,9 +1747,10 @@ function draw_compact_style_selector($collection,$onhover=true,$col_min=false){
 	jQuery('#temp<?php echo urlencode($compact_style_tag) ?>').hover(function(){
 			jQuery('#tempoption<?php echo urlencode($compact_style_tag) ?>').html('<?php echo $lang['loading']?>');
 			loadCompactSelector('<?php echo $collection?>','<?php echo urlencode($compact_style_tag) ?>','<?php echo urlencode($pagename)?>',<?php if ($col_min){?>true<?php } else {?>false<?php } ?>);
+			jQuery(this).unbind('mouseenter mouseleave');
 		});
 
-	<?php if (substr(getvalescaped("search",""),0,11)!="!collection" && $pagename=="search"){?>
+	<?php if ($pagename=="collection_manage" || $pagename=="resource_collection_list" || (substr(getvalescaped("search",""),0,11)!="!collection" && $pagename=="search")){?>
 		// do not automatically load
 	<?php } else { 
 		// load immediately
