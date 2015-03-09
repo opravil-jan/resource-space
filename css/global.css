@@ -319,7 +319,7 @@ input.defaultbutton {position: absolute; left: -100%; width: 0; height: 0;}
 .RecordPanel .RecordDownload td {padding: 5px;margin: 0;}
 .RecordPanel .RecordDownload .DownloadDBlend td {margin: 0;vertical-align: middle;}
 .RecordPanel .RecordDownloadSpace {padding: 6px;}
-.RecordPanel .RecordDownloadSpace ul {padding:0.2em 0;margin:0;list-style:none;}
+.RecordPanel .RecordDownloadSpace ul {padding:0.2em 0;margin:0;margin-top: 10px;list-style:none;}
 .RecordPanel .RecordDownloadSpace li {padding:0;margin:0 8px 1px 0;float:left;}
 .RecordPanel .RecordDownloadSpace .DownloadDBlend .DownloadButton {text-align: center;font-weight: bold;}
 .RecordPanel .RecordDownloadSpace .DownloadDBlend h2 {margin:0;padding:0;font-size: 1em;	text-align: left;}
