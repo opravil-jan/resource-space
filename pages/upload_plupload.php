@@ -373,6 +373,13 @@ if ($_FILES)
                                     }
                             
                             echo "SUCCESS " . htmlspecialchars($alternative) . ", " . htmlspecialchars($aref);
+							// Check to see if we need to notify users of this change							
+							if($notify_on_resource_change_days!=0)
+								{								
+								// we don't need to wait for this..
+								ob_flush();flush();	
+								notify_resource_change($replace_resource);
+								}
                             exit();
                             }
                     if ($replace=="" && $replace_resource=="")
@@ -416,6 +423,14 @@ if ($_FILES)
                             $status=upload_file($replace_resource,(getval("no_exif","")=="yes" && getval("exif_override","")==""),false,(getval('autorotate','')!=''));
                             hook("additional_replace_existing");
                             echo "SUCCESS: " . htmlspecialchars($replace_resource);
+											
+							// Check to see if we need to notify users of this change							
+							if($notify_on_resource_change_days!=0)
+								{								
+								// we don't need to wait for this..
+								ob_flush();flush();	
+								notify_resource_change($replace_resource);
+								}							
                             exit();
                             }
                     else
@@ -429,6 +444,13 @@ if ($_FILES)
 									// A single resource has been found with the same filename
 									$status=upload_file($target_resource[0],(getval("no_exif","")=="yes" && getval("exif_override","")==""),false,(getval('autorotate','')!='')); # Upload to the specified ref.
 									echo "SUCCESS: " . htmlspecialchars($target_resource[0]);
+									// Check to see if we need to notify users of this change							
+									if($notify_on_resource_change_days!=0)
+										{								
+										// we don't need to wait for this..
+										ob_flush();flush();	
+										notify_resource_change($replace_resource);
+										}
 									exit();
 									}
 								elseif(count($target_resource)==0)

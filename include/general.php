@@ -3937,3 +3937,32 @@ function generateURL($url,$parameters=array(),$setparams=array())
     return $returnurl;
      
     }
+
+function notify_resource_change($resource)
+	{
+	debug("notify_resource_change " . $resource);
+	global $notify_on_resource_change_days;
+	// Check to see if we need to notify users of this change
+	if($notify_on_resource_change_days==0 || !is_int($notify_on_resource_change_days))
+		{
+		return false;
+		}
+		
+	debug("notify_resource_change - checking for users that have downloaded this resource " . $resource);
+	$download_users=sql_array("select u.email value from resource_log rl left join user u on rl.user=u.ref where rl.type='d' and rl.resource=$resource and u.email<>'' and datediff(now(),date)<'$notify_on_resource_change_days'","");
+	
+	if(count($download_users>0))
+		{
+		global $applicationname, $lang, $baseurl;
+		foreach ($download_users as $download_user)
+			{
+			if($download_user!="")
+				{
+				//send_mail($email,$subject,$message,$from="",$reply_to="",$html_template="",$templatevars=null,$from_name="",$cc="",$bcc="")
+				send_mail($download_user,$applicationname . ": " . $lang["notify_resource_change_email_subject"],str_replace(array("[days]","[url]"),array($notify_on_resource_change_days,$baseurl . "/?r=" . $resource),$lang["notify_resource_change_email"]),"","",array("days"=>$notify_on_resource_change_days,"url"=>$baseurl . "/?r=" . $resource));
+				}
+			}
+		}
+	}
+	
+	

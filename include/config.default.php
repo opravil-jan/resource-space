@@ -2571,3 +2571,8 @@ $body_classes = array();
 
 # Number of seconds for slideshow to wait before changing image (must be greater than 1)
 #$slideshow_photo_delay = 7;
+
+# Notify on resource change. If the primary resource file is replaced or an alternative file is added, users who have 
+# downloaded the resource in the last X days will be sent an email notifying them that there has been a change with a link to the resource view page
+# Set to 0 to disable this functionality;
+$notify_on_resource_change_days=0;

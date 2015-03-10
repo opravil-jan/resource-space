@@ -36,6 +36,11 @@ if (getval("name","")!="")
 	hook("markmanualupload");
 	# Save file data
 	save_alternative_file($resource,$ref);
+	// Check to see if we need to notify users of this change							
+	if($notify_on_resource_change_days!=0)
+		{								
+		notify_resource_change($resource);
+		}
 	hook ("savealternatefiledata");
 	redirect ($baseurl_short."pages/alternative_files.php?ref=$resource&search=".urlencode($search)."&offset=$offset&order_by=$order_by&sort=$sort&archive=$archive");
 	}

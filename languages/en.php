@@ -2038,6 +2038,7 @@ $lang["user_password__introtext"]="Enter your e-mail address and your username a
 $lang["user_preferences__introtext"]="Enter a new password below to change your password.";
 $lang["user_request__introtext"]="Please complete the form below to request a user account.";
 $lang["view__storyextract"]="Story extract:";
-
+$lang["notify_resource_change_email_subject"]="A resource has been modified";
+$lang["notify_resource_change_email"]="A resource that you downloaded in the past [days] days has been modified . Click the link below to view the resource.<br /><br /><a href='[url]'>[url]</a>";
 
 
