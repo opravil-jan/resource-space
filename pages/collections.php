@@ -939,7 +939,7 @@ hook("thumblistextra");
 	<div id="CollectionMinDropTitle"><?php echo $lang["currentcollection"]?>:&nbsp;</div>
     <?php } # end hook replace_collectionmindroptitle ?>				
 	<div id="CollectionMinDrop">
-	 <form method="get" id="colselect2" onsubmit="newcolname=encodeURIComponent(jQuery('#entername2').val());CollectionDivLoad('<?php echo $baseurl_short?>pages/collections.php?thumbs=<?php echo urlencode($thumbs) ?>&collection=-1&k=<?php echo urlencode($k) ?>&entername='+newcolname);return false;">
+	 <form method="get" id="colselect2" onsubmit="newcolname=encodeURIComponent(jQuery('#entername2').val());CollectionDivLoad('<?php echo $baseurl_short?>pages/collections.php?thumbs=hide&collection=-1&k=<?php echo urlencode($k) ?>&entername='+newcolname);return false;">
 			<div class="MinSearchItem" id="MinColDrop">
 			
 			<input type=text id="entername2" name="entername" placeholder="<?php echo $lang['entercollectionname']?>" style="display:inline;display:none;" class="SearchWidthExp">
