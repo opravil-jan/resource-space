@@ -163,16 +163,7 @@ var global_cookies = "<?php echo $global_cookies?>";
 
 <script src="<?php echo $baseurl_short?>lib/js/global.js?css_reload_key=<?php echo $css_reload_key?>" type="text/javascript"></script>
 
-<script type="text/javascript">
-jQuery(document).ready(function() {
-    var state = {
-        title: document.title,
-        content: jQuery('#CentralSpace').html()
-    }
-    try{top.history.replaceState(state, applicationname);}
-    catch(e){console.log(e);}
-});
-</script>
+
 
 <?php if ($keyboard_navigation) { 
 global $k;?>

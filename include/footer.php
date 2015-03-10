@@ -446,6 +446,17 @@ else {?><div class="ui-layout-south" ></div><script>myLayout=jQuery('body').layo
 <?php hook("afteruilayout");?>
 <?php hook("responsivescripts"); ?>
 
+<script type="text/javascript">
+
+try{
+	top.history.replaceState(document.title+'&&&'+jQuery('#CentralSpace').html(), applicationname);
+	}
+ catch(e){console.log(e);
+	 console.log("failed to load state");
+	}
+
+</script>
+
 </body>
 </html>
 <?php } // end if !ajax ?>
