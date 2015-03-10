@@ -105,6 +105,8 @@ for ($n=0;$n<count($users);$n++)
 <input name="delete" type="checkbox" value="yes">
 <div class="clearerleft"> </div></div>
 
+<?php hook('research_request_extra_fields'); ?>
+
 <div class="QuestionSubmit">
 <label for="buttons"> </label>			
 <input name="savexxx" type="submit" value="&nbsp;&nbsp;<?php echo $lang["save"]?>&nbsp;&nbsp;" />
