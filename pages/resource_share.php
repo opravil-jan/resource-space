@@ -19,6 +19,10 @@ $default_sort="DESC";
 if (substr($order_by,0,5)=="field"){$default_sort="ASC";}
 $sort=getval("sort",$default_sort);
 
+# Check if editing existing external share
+$editaccess=getvalescaped("editaccess","");
+($editaccess=="")?$editing=false:$editing=true;
+
 # Work out the access to the resource, which is the minimum permitted share level.
 $minaccess=get_resource_access($ref);
 if ($minaccess>=1 && !$restricted_share) # Minimum access is restricted or lower and sharing of restricted resources is not allowed. The user cannot share this collection.
@@ -48,36 +52,48 @@ hook("resource_share_afterheader");
 <div class="BasicsBox">
 <p><a href="<?php echo $baseurl_short?>pages/view.php?ref=<?php echo urlencode($ref)?>&search=<?php echo urlencode($search)?>&offset=<?php echo urlencode($offset)?>&order_by=<?php echo urlencode($order_by) ?>&sort=<?php echo urlencode($sort)?>&archive=<?php echo urlencode($archive)?>"  onClick="return CentralSpaceLoad(this,true);">&lt;&nbsp;<?php echo $lang["backtoresourceview"]?></a></p>
 
-<h1><?php echo $lang["share-resource"] ?></h1>
+<h1><?php echo $lang["share-resource"]; if($editing){echo " - ".$lang["editingexternalshare"]." ".$editaccess;}?></h1>
 
 <div class="BasicsBox"> 
-<form method=post id="resourceshareform" action="<?php echo $baseurl_short?>pages/resource_share.php" onSubmit="return CentralSpacePost(this);">
+<form method=post id="resourceshareform" action="<?php echo $baseurl_short?>pages/resource_share.php">
 <input type="hidden" name="ref" id="ref" value="<?php echo htmlspecialchars($ref) ?>">
 <input type="hidden" name="generateurl" id="generateurl" value="<?php echo getval("generateurl","") ?>">
 <input type="hidden" name="deleteaccess" id="deleteaccess" value="">
-            
+<input type="hidden" name="editaccess" id="editaccess" value="<?php echo htmlspecialchars($editaccess)?>">
+<input type="hidden" name="editexpiration" id="editexpiration" value="">
+<input type="hidden" name="editaccesslevel" id="editaccesslevel" value="">
 	<div class="VerticalNav">
 	<ul>
-
-        <?php if ($email_sharing) { ?><li><a href="<?php echo $baseurl_short?>pages/resource_email.php?ref=<?php echo urlencode($ref)?>&search=<?php echo urlencode($search)?>&offset=<?php echo urlencode($offset)?>&order_by=<?php echo urlencode($order_by)?>&sort=<?php echo urlencode($sort)?>&archive=<?php echo urlencode($archive)?>"  onClick="return CentralSpaceLoad(this,true);"><?php echo $lang["emailresource"]?></a></li> <?php } ?>
-
-        <?php if(!$hide_resource_share_generate_url){?><li><a onClick="return CentralSpaceLoad(this,true);" href="<?php echo $baseurl_short?>pages/resource_share.php?ref=<?php echo urlencode($ref) ?>&generateurl=true&search=<?php echo urlencode($search)?>&offset=<?php echo urlencode($offset)?>&order_by=<?php echo urlencode($order_by) ?>&sort=<?php echo urlencode($sort)?>&archive=<?php echo urlencode($archive)?>"><?php echo $lang["generateurl"]?></a></li> <?php } ?>
-
-        <?php
-        if (getval("generateurl","")!="" && getval("deleteaccess","")=="")
+	<?php
+	if(!$editing)
 		{
-                ?>
-                <p><?php echo $lang["generateurlinternal"]?></p>
-                <p><input class="URLDisplay" type="text" value="<?php echo $baseurl?>/?r=<?php echo $ref?>"></p>
-                <?php
-                
-                       
-                $access=getvalescaped("access","");
-		$expires=getvalescaped("expires","");
-		if ($access=="")
+		if ($email_sharing) 
+			{ ?>
+			<li><a href="<?php echo $baseurl_short?>pages/resource_email.php?ref=<?php echo urlencode($ref)?>&search=<?php echo urlencode($search)?>&offset=<?php echo urlencode($offset)?>&order_by=<?php echo urlencode($order_by)?>&sort=<?php echo urlencode($sort)?>&archive=<?php echo urlencode($archive)?>"  onClick="return CentralSpaceLoad(this,true);"><?php echo $lang["emailresource"]?></a></li> 
+			<?php 
+			}
+        if(!$hide_resource_share_generate_url)
+        	{?>
+        	<li><a onClick="return CentralSpaceLoad(this,true);" href="<?php echo $baseurl_short?>pages/resource_share.php?ref=<?php echo urlencode($ref) ?>&generateurl=true&search=<?php echo urlencode($search)?>&offset=<?php echo urlencode($offset)?>&order_by=<?php echo urlencode($order_by) ?>&sort=<?php echo urlencode($sort)?>&archive=<?php echo urlencode($archive)?>"><?php echo $lang["generateurl"]?></a></li> 
+        	<?php 
+        	}
+        }
+       if ($editing || getval("generateurl","")!="" && getval("deleteaccess","")=="")
+		{
+			if(!$editing)
+				{
+            	?>
+            	<p><?php echo $lang["generateurlinternal"];?></p>
+            	<p><input class="URLDisplay" type="text" value="<?php echo $baseurl?>/?r=<?php echo $ref?>"></p>
+            	<?php
+            	}
+                     
+            $access=getvalescaped("access","");
+			$expires=getvalescaped("expires","");
+		if ($access=="" || $editing)
 			{
 			?>
-			<p><?php echo $lang["selectgenerateurlexternal"]; ?></p>
+			<p><?php if (!$editing){echo $lang["selectgenerateurlexternal"];} ?></p>
 			
 			<?php if(!hook('replaceemailaccessselector')): ?>
 			<div class="Question" id="question_access">
@@ -111,12 +127,23 @@ hook("resource_share_afterheader");
 			</div>
 			
 			<div class="QuestionSubmit" style="padding-top:0;margin-top:0;">
-                            <label for="buttons"> </label>
-                            <input name="generateurl" type="submit" value="&nbsp;&nbsp;<?php echo $lang["generateexternalurl"]?>&nbsp;&nbsp;" />
+	            <label for="buttons"> </label>
+	            <?php
+	            if (!$editing)
+					{?>
+					<input name="generateurl" type="submit" value="&nbsp;&nbsp;<?php echo $lang["generateexternalurl"]?>&nbsp;&nbsp;" />
+					<?php 
+					}
+				else
+					{?>
+					<input name="editexternalurl" type="submit" value="&nbsp;&nbsp;<?php echo $lang["save"]?>&nbsp;&nbsp;" />
+					<?php
+					}
+				?>
 			</div>
 			<?php
 			}
-		else
+		else if (getvalescaped("editaccess","")=="")
 			{
 			# Access has been selected. Generate a new URL.
 			?>
@@ -125,7 +152,13 @@ hook("resource_share_afterheader");
 			<p><input class="URLDisplay" type="text" value="<?php echo $baseurl?>/?r=<?php echo urlencode($ref) ?>&k=<?php echo generate_resource_access_key($ref,$userref,$access,$expires,"URL")?>">
 			<?php
 			}
-                }
+			# Process editing of external share
+		if (getval("editexternalurl","")!="")
+			{
+			$editsuccess=edit_resource_external_access($editaccess,$access,$expires);
+			if($editsuccess){echo $lang['saved'];}
+			}
+        }
         ?>
         
         </ul>
@@ -137,7 +170,7 @@ if ($minaccess==0)
 	{
 	?>
 
-        <h2><?php echo $lang["externalusersharing"]?></h2>
+    <h2><?php echo $lang["externalusersharing"]?></h2>
 	<div class="Question">
 	<?php
 	$keys=get_resource_external_access($ref);
@@ -191,6 +224,7 @@ if ($minaccess==0)
 				{
 				?>
 				<a href="#" onClick="if (confirm('<?php echo $lang["confirmdeleteaccessresource"]?>')) {document.getElementById('deleteaccess').value='<?php echo htmlspecialchars($keys[$n]["access_key"]) ?>';document.getElementById('resourceshareform').submit(); }">&gt;&nbsp;<?php echo $lang["action-delete"]?></a>      
+				<a href="#" onClick="document.getElementById('editaccess').value='<?php echo htmlspecialchars($keys[$n]["access_key"]) ?>';document.getElementById('editexpiration').value='<?php echo htmlspecialchars($keys[$n]["expires"]) ?>';document.getElementById('editaccesslevel').value='<?php echo htmlspecialchars($keys[$n]["access"]) ?>';CentralSpacePost(document.getElementById('resourceshareform'),true);">&gt;&nbsp;<?php echo $lang["action-edit"]?></a>
 				<?php
 				}
 			    ?>
