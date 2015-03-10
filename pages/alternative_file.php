@@ -22,6 +22,8 @@ $resource=getvalescaped("resource","",true);
 
 # Fetch resource data.
 $resourcedata=get_resource_data($resource);
+# Load the configuration for the selected resource type. Allows for alternative notification addresses, etc.
+resource_type_config_override($resourcedata["resource_type"]);
 
 # Not allowed to edit this resource?
 if ((!get_edit_access($resource, $resourcedata["archive"],false,$resourcedata) || checkperm('A')) && $resource>0) {exit ("Permission denied.");}
