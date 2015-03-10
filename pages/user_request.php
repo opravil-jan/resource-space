@@ -98,7 +98,7 @@ if (isset($custom_registration_fields))
 		else
 			{
 			?>
-			<div class="Question">
+			<div class="Question" id="Question<?php echo $n?>">
 			<label for="custom<?php echo $n?>"><?php echo htmlspecialchars(i18n_get_translated($custom[$n]))?>
 			<?php if (in_array($custom[$n],$required)) { ?><sup>*</sup><?php } ?>
 			</label>
