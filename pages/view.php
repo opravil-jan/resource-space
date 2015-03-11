@@ -1252,7 +1252,7 @@ hook ("resourceactions") ?>
 		<?php echo ($resourcetoolsGT?"&gt; ":"").$lang["downloadmetadata"]?>
 		</a></li><?php 
 		} 
-	if (!checkperm('v')) 
+	if (checkperm('v')) 
 		{ ?>
 		<li><a href="<?php echo $baseurl_short?>pages/log.php?ref=<?php echo urlencode($ref)?>&amp;search=<?php echo urlencode($search)?>&amp;search_offset=<?php echo urlencode($offset)?>&amp;order_by=<?php echo urlencode($order_by)?>&amp;sort=<?php echo urlencode($sort)?>&amp;archive=<?php echo urlencode($archive)?>" onClick="return CentralSpaceLoad(this,true);">
 		<?php echo ($resourcetoolsGT?"&gt; ":"").$lang["log"]?>
