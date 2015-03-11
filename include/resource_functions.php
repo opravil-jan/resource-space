@@ -3074,7 +3074,7 @@ function get_original_imagesize($ref="",$path="", $extension="jpg")
 			global $ffmpeg_supported_extensions;
 			if (in_array(strtolower($extension), $ffmpeg_supported_extensions) && function_exists('json_decode'))
 			    {
-			    $ffprobe_fullpath = str_replace("ffmpeg","ffprobe",get_utility_path("ffmpeg"));
+			    $ffprobe_fullpath = get_utility_path("ffprobe");
 
 			    $file=get_resource_path($ref,true,"",false,$extension);
 			    $ffprobe_output=run_command($ffprobe_fullpath . " -v 0 " . escapeshellarg($file) . " -show_streams -of json");
