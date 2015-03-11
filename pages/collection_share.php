@@ -28,7 +28,8 @@ if (checkperm("b") || !$allow_share) {
 # Check if editing existing external share
 $editaccess=getvalescaped("editaccess","");
 ($editaccess=="")?$editing=false:$editing=true;
-	
+
+$editexternalurl = (getval("editexternalurl","")!="");
 
 #Check if any resources are not approved
 $collectionstates=is_collection_approved($ref);
@@ -92,7 +93,7 @@ include "../include/header.php";
 	<input type="hidden" name="editaccesslevel" id="editaccesslevel" value="">
 	<input type="hidden" name="generateurl" id="generateurl" value="">
 
-	<h1><?php echo $lang["sharecollection"]; if($editing){echo " - ".$lang["editingexternalshare"]." ".$editaccess;}?></h1>
+	<h1><?php echo $lang["sharecollection"]; if($editing && !$editexternalurl){echo " - ".$lang["editingexternalshare"]." ".$editaccess;}?></h1>
 	<?php
 	if(isset($warningtext))
 		{
@@ -103,7 +104,7 @@ include "../include/header.php";
 	<ul>
 	<?php
 	
-	if(!$editing)
+	if(!$editing || $editexternalurl)
 		{?>
 		<?php if ($email_sharing) { ?><li><a onClick="return CentralSpaceLoad(this,true);" href="<?php echo $baseurl_short?>pages/collection_email.php?ref=<?php echo urlencode($ref) ?>"><?php echo $lang["emailcollection"]?></a></li><?php } ?>
 
@@ -111,10 +112,10 @@ include "../include/header.php";
 
 		<?php hook("extra_share_options");
 		}
-	if (getval("generateurl","")!="" || $editing)
+	if ($editing || getval("generateurl","")!="")
 		{
 			global $ignore_collection_access;
-		if (!($hide_internal_sharing_url) && !$editing && $collection["public"]==1 || $ignore_collection_access)
+		if (!($hide_internal_sharing_url) && (!$editing || $editexternalurl) && $collection["public"]==1 || $ignore_collection_access)
 			{
 			?>
 			<p><?php echo $lang["generateurlinternal"]?></p>
@@ -125,10 +126,10 @@ include "../include/header.php";
 			
 		$access=getvalescaped("access","");
 		$expires=getvalescaped("expires","");
-		if ($access=="" || $editing)
+		if ($access=="" || ($editing && !$editexternalurl))
 			{
 			?>
-			<p><?php if (!$editing){echo $lang["selectgenerateurlexternal"];} ?></p>
+			<p><?php if (!$editing || $editexternalurl){echo $lang["selectgenerateurlexternal"];} ?></p>
 			
 			<?php if(!hook('replaceemailaccessselector')): ?>
 			<div class="Question" id="question_access">
@@ -164,16 +165,17 @@ include "../include/header.php";
 			<div class="QuestionSubmit" style="padding-top:0;margin-top:0;">
 			<label for="buttons"> </label>
 			<?php 
-			if (!$editing)
+			if ($editing  && !$editexternalurl)
+				{?>
+				<input name="editexternalurl" type="submit" value="&nbsp;&nbsp;<?php echo $lang["save"]?>&nbsp;&nbsp;" />
+				<?php
+				}
+			else
 				{?>
 				<input name="generateurl" type="submit" value="&nbsp;&nbsp;<?php echo $lang["generateexternalurl"]?>&nbsp;&nbsp;" />
 				<?php 
 				}
-			else
-				{?>
-				<input name="editexternalurl" type="submit" value="&nbsp;&nbsp;<?php echo $lang["save"]?>&nbsp;&nbsp;" />
-				<?php
-				}?>
+				?>
 			</div>
 			<?php
 			}
@@ -187,10 +189,10 @@ include "../include/header.php";
 			<?php
 			}
 		# Process editing of external share
-		if (getval("editexternalurl","")!="")
+		if ($editexternalurl)
 			{
 			$editsuccess=edit_collection_external_access($editaccess,$access,$expires);
-			if($editsuccess){echo $lang['saved'];}
+			if($editsuccess){echo "<span style='font-weight:bold;'>".$lang['changessaved']." - <em>".$editaccess."</em>";}
 			}
 		}
 
@@ -202,7 +204,7 @@ include "../include/header.php";
 <?php if (collection_writeable($ref)||
 	(isset($collection['savedsearch']) && $collection['savedsearch']!=null && ($userref==$collection["user"] || checkperm("h"))))
 	{
-	if (!($hide_internal_sharing_url) && !$editing)
+	if (!($hide_internal_sharing_url) && (!$editing || $editexternalurl))
 		{
 		?>
 		<h2><?php echo $lang["internalusersharing"]?></h2>

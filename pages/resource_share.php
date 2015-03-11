@@ -23,6 +23,8 @@ $sort=getval("sort",$default_sort);
 $editaccess=getvalescaped("editaccess","");
 ($editaccess=="")?$editing=false:$editing=true;
 
+$editexternalurl = (getval("editexternalurl","")!="");
+
 # Work out the access to the resource, which is the minimum permitted share level.
 $minaccess=get_resource_access($ref);
 if ($minaccess>=1 && !$restricted_share) # Minimum access is restricted or lower and sharing of restricted resources is not allowed. The user cannot share this collection.
@@ -52,7 +54,7 @@ hook("resource_share_afterheader");
 <div class="BasicsBox">
 <p><a href="<?php echo $baseurl_short?>pages/view.php?ref=<?php echo urlencode($ref)?>&search=<?php echo urlencode($search)?>&offset=<?php echo urlencode($offset)?>&order_by=<?php echo urlencode($order_by) ?>&sort=<?php echo urlencode($sort)?>&archive=<?php echo urlencode($archive)?>"  onClick="return CentralSpaceLoad(this,true);">&lt;&nbsp;<?php echo $lang["backtoresourceview"]?></a></p>
 
-<h1><?php echo $lang["share-resource"]; if($editing){echo " - ".$lang["editingexternalshare"]." ".$editaccess;}?></h1>
+<h1><?php echo $lang["share-resource"]; if($editing && !$editexternalurl){echo " - ".$lang["editingexternalshare"]." ".$editaccess;}?></h1>
 
 <div class="BasicsBox"> 
 <form method=post id="resourceshareform" action="<?php echo $baseurl_short?>pages/resource_share.php">
@@ -65,7 +67,7 @@ hook("resource_share_afterheader");
 	<div class="VerticalNav">
 	<ul>
 	<?php
-	if(!$editing)
+	if(!$editing || $editexternalurl)
 		{
 		if ($email_sharing) 
 			{ ?>
@@ -90,10 +92,10 @@ hook("resource_share_afterheader");
                      
             $access=getvalescaped("access","");
 			$expires=getvalescaped("expires","");
-		if ($access=="" || $editing)
+		if ($access=="" || ($editing && !$editexternalurl))
 			{
 			?>
-			<p><?php if (!$editing){echo $lang["selectgenerateurlexternal"];} ?></p>
+			<p><?php if (!$editing || $editexternalurl){echo $lang["selectgenerateurlexternal"];} ?></p>
 			
 			<?php if(!hook('replaceemailaccessselector')): ?>
 			<div class="Question" id="question_access">
@@ -129,15 +131,15 @@ hook("resource_share_afterheader");
 			<div class="QuestionSubmit" style="padding-top:0;margin-top:0;">
 	            <label for="buttons"> </label>
 	            <?php
-	            if (!$editing)
-					{?>
-					<input name="generateurl" type="submit" value="&nbsp;&nbsp;<?php echo $lang["generateexternalurl"]?>&nbsp;&nbsp;" />
-					<?php 
+	            if ($editing  && !$editexternalurl)
+	            	{?>
+					<input name="editexternalurl" type="submit" value="&nbsp;&nbsp;<?php echo $lang["save"]?>&nbsp;&nbsp;" />
+					<?php
 					}
 				else
 					{?>
-					<input name="editexternalurl" type="submit" value="&nbsp;&nbsp;<?php echo $lang["save"]?>&nbsp;&nbsp;" />
-					<?php
+					<input name="generateurl" type="submit" value="&nbsp;&nbsp;<?php echo $lang["generateexternalurl"]?>&nbsp;&nbsp;" />
+					<?php 
 					}
 				?>
 			</div>
@@ -153,17 +155,15 @@ hook("resource_share_afterheader");
 			<?php
 			}
 			# Process editing of external share
-		if (getval("editexternalurl","")!="")
+		if ($editexternalurl)
 			{
 			$editsuccess=edit_resource_external_access($editaccess,$access,$expires);
-			if($editsuccess){echo $lang['saved'];}
+			if($editsuccess){echo "<span style='font-weight:bold;'>".$lang['changessaved']." - <em>".$editaccess."</em>";}
 			}
         }
         ?>
-        
         </ul>
         </div>
-
 <?php 
 # Do not allow access to the existing shares if the user has restricted access to this resource.
 if ($minaccess==0)
