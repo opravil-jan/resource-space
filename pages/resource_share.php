@@ -57,7 +57,7 @@ hook("resource_share_afterheader");
 <h1><?php echo $lang["share-resource"]; if($editing && !$editexternalurl){echo " - ".$lang["editingexternalshare"]." ".$editaccess;}?></h1>
 
 <div class="BasicsBox"> 
-<form method=post id="resourceshareform" action="<?php echo $baseurl_short?>pages/resource_share.php">
+<form method=post id="resourceshareform" action="<?php echo $baseurl_short?>pages/resource_share.php?ref=<?=urlencode($ref)?>">
 <input type="hidden" name="ref" id="ref" value="<?php echo htmlspecialchars($ref) ?>">
 <input type="hidden" name="generateurl" id="generateurl" value="<?php echo getval("generateurl","") ?>">
 <input type="hidden" name="deleteaccess" id="deleteaccess" value="">
@@ -223,8 +223,8 @@ if ($minaccess==0)
 			    else
 				{
 				?>
-				<a href="#" onClick="if (confirm('<?php echo $lang["confirmdeleteaccessresource"]?>')) {document.getElementById('deleteaccess').value='<?php echo htmlspecialchars($keys[$n]["access_key"]) ?>';document.getElementById('resourceshareform').submit(); }">&gt;&nbsp;<?php echo $lang["action-delete"]?></a>      
-				<a href="#" onClick="document.getElementById('editaccess').value='<?php echo htmlspecialchars($keys[$n]["access_key"]) ?>';document.getElementById('editexpiration').value='<?php echo htmlspecialchars($keys[$n]["expires"]) ?>';document.getElementById('editaccesslevel').value='<?php echo htmlspecialchars($keys[$n]["access"]) ?>';CentralSpacePost(document.getElementById('resourceshareform'),true);">&gt;&nbsp;<?php echo $lang["action-edit"]?></a>
+				<a href="#" onClick="if (confirm('<?php echo $lang["confirmdeleteaccessresource"]?>')) {document.getElementById('deleteaccess').value='<?php echo htmlspecialchars($keys[$n]["access_key"]) ?>';document.getElementById('resourceshareform').submit(); return false;}">&gt;&nbsp;<?php echo $lang["action-delete"]?></a>      
+				<a href="#" onClick="document.getElementById('editaccess').value='<?php echo htmlspecialchars($keys[$n]["access_key"]) ?>';document.getElementById('editexpiration').value='<?php echo htmlspecialchars($keys[$n]["expires"]) ?>';document.getElementById('editaccesslevel').value='<?php echo htmlspecialchars($keys[$n]["access"]) ?>';CentralSpacePost(document.getElementById('resourceshareform'),true);return false;">&gt;&nbsp;<?php echo $lang["action-edit"]?></a>
 				<?php
 				}
 			    ?>
