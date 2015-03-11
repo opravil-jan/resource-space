@@ -1,5 +1,5 @@
 <div class="Question">
-<label for="groupselect"><?php echo $lang["group"]?></label><select id="groupselect" name="groupselect" class="shrtwidth"
+<label for="groupselect"><?php echo $lang["group"]?></label><select id="groupselect" name="groupselect" class="stdwidth"
 onchange="if (this.value=='viewall') {document.getElementById('groupselector').style.display='none';}
 else {document.getElementById('groupselector').style.display='block';}">
 <?php if (!checkperm("U")) { ?><option <?php if ($groupselect=="viewall") { ?>selected<?php } ?> value="viewall"><?php echo $lang["allgroups"]?></option><?php } ?>
