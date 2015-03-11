@@ -9,7 +9,7 @@ $ref=getvalescaped("ref","",true);
 $k=getvalescaped("k","");
 
 // Logs can sometimes contain confidential information and the user looking at them must have admin permissions set
-if(checkperm('v'))
+if(!checkperm('v'))
 {
 	die($lang['log-adminpermissionsrequired']);
 }
