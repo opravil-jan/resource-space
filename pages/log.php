@@ -8,6 +8,12 @@ include "../include/search_functions.php";
 $ref=getvalescaped("ref","",true);
 $k=getvalescaped("k","");
 
+// Logs can sometimes contain confidential information and the user looking at them must have admin permissions set
+if(!checkperm('v'))
+{
+	die($lang['log-adminpermissionsrequired']);
+}
+
 # fetch the current search (for finding simlar matches)
 $search=getvalescaped("search","");
 $order_by=getvalescaped("order_by","relevance");

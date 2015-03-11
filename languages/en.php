@@ -527,6 +527,7 @@ $lang["log-a"]="Change access";
 $lang["log-r"]="Reverted metadata";
 $lang["log-b"]="Created alternate";
 $lang["log-missinglang"]="[type] (missing lang)"; # [type] will be replaced.
+$lang['log-adminpermissionsrequired'] = 'Full admin permission required!';
 
 $lang["backtoresourceview"]="Back to resource view";
 $lang["continuetoresourceview"]="Continue to resource view";
