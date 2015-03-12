@@ -2,12 +2,18 @@
 // Script to purge all resources in the deletion state (status 3)
 // set following line to true to enable this script
 $PURGE_ENABLED = false;
-
+// set php maximum execution time to make sure the script finishes nicely
+$php_time_limit = 1800;
 
 
 if (!$PURGE_ENABLED){
 echo "Script is disabled -- edit the script file and set \$PURGE_ENABLED to use it.\n";
 exit;
+}
+
+if(ini_get('max_execution_time') < 1800 || $php_time_limit < 1800) {
+	echo "Script maximum execution time should be set to at least 1800 seconds! Edit the script file and set \$php_time_limit.";
+	exit;
 }
 
 $sapi_type = php_sapi_name();
