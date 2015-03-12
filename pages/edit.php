@@ -22,7 +22,7 @@ $sort=getval("sort",$default_sort);
 
 $archive=getvalescaped("archive",0,true);
 if($show_status_and_access_on_upload) {
-	$archive = getvalescaped('status', 0, TRUE);
+	$archive = getvalescaped('status', $archive, TRUE);
 }
 
 $uploadparams="";
