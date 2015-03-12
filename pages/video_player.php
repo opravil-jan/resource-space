@@ -1,7 +1,7 @@
 <?php
 # Video player - plays the preview file created to preview video resources.
 
-global $alternative;
+global $alternative,$css_reload_key;
 
 # First we look for a preview video with the expected extension.
 $flashfile=get_resource_path($ref,true,"pre",false,$ffmpeg_preview_extension,-1,1,false,"",$alternative);
@@ -56,8 +56,8 @@ if(!hook("swfplayer"))
 		global $ffmpeg_preview_extension;
 		?>
 		<!-- START VIDEOJS -->
-		<link href="<?php echo $baseurl_short?>lib/videojs/video-js.css" rel="stylesheet">
-		<script src="<?php echo $baseurl_short?>lib/videojs/video.js"></script>
+		<link href="<?php echo $baseurl_short?>lib/videojs/video-js.css?r=<?=$css_reload_key?>" rel="stylesheet">
+		<script src="<?php echo $baseurl_short?>lib/videojs/video.js?r=<?=$css_reload_key?>"></script>
 		<video id="introvideo" controls width="<?php echo $width?>" height="<?php echo $height?>" data-setup="" class="video-js vjs-default-skin vjs-big-play-centered" poster="<?php echo $thumb_raw?>" preload="auto" >
 		     <source src="<?php echo $flashpath_raw?>" type="video/<?php echo $ffmpeg_preview_extension; ?>" />
 		     <p class="vjs-no-js">To view this video please enable JavaScript, and consider upgrading to a web browser that <a href="http://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a></p>
