@@ -1210,6 +1210,10 @@ function resource_log($resource,$type,$field,$notes="",$fromvalue="",$tovalue=""
 
 	$modifiedlogtype=hook("modifylogtype","",array($type));
 	if ($modifiedlogtype) {$type=$modifiedlogtype;}
+	
+	$modifiedlognotes=hook("modifylognotes","",array($notes,$type,$resource));
+	if($modifiedlognotes){$notes=$modifiedlognotes;}
+	
 	sql_query("insert into resource_log(date,user,resource,type,resource_type_field,notes,diff,usageoption,purchase_size,purchase_price,access_key,previous_value) values (now()," . (($userref!="")?"'$userref'":"null") . ",'$resource','$type'," . (($field!="")?"'$field'":"null") . ",'" . escape_check($notes) . "','" . escape_check($diff) . "','$usage','$purchase_size','$purchase_price'," . (isset($k)?"'$k'":"null") . ",'" . escape_check($fromvalue) . "')");
         $log_ref=sql_insert_id();
 
