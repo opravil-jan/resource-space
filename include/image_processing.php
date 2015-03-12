@@ -1167,10 +1167,14 @@ function create_previews_using_im($ref,$thumbonly=false,$extension="jpg",$previe
 
 		$ps=sql_query("select * from preview_size $sizes order by width desc, height desc");
 		if($lean_preview_generation && $all_sizes){
+			$force_make=array("pre","thm","col");
+			if($extension!="jpg" || $extension!="jpeg"){
+				array_push($force_make,"hpr","scr");
+			}
 			$count=count($ps)-1;
 			$oversized=0;
 			for($s=$count;$s>0;$s--){
-				if($ps[$s]['width']>$o_width && $ps[$s]['height']>$o_height){
+				if(!in_array($ps[$s]['id'],$force_make) && !in_array($ps[$s]['id'],$always_make_previews) && $ps[$s]['width']>$o_width && $ps[$s]['height']>$o_height){
 					$oversized++;
 				}
 				if($oversized>0){
