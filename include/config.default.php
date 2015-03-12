@@ -1509,6 +1509,7 @@ $ffmpeg_supported_extensions = array(
 		'wmv',
 		'divx',
 		'xvid',
+		'm4v',
 	);
 
 # A list of extensions which will be ported to mp3 format for preview.
