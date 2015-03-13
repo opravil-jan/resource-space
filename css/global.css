@@ -368,7 +368,6 @@ a.HomePanel {cursor:pointer;}
 .Tab a:hover {text-decoration: none;}
 .Tab {display:inline;}
 .StyledTabbedPanel {padding:10px 5px 5px 5px;clear:left;border-bottom-right-radius:10px;border-bottom-left-radius:10px; border-top-right-radius:10px;}
-.TabSelected a {padding-bottom: 1px;}
 
 .infotable {border-top: 1px solid #999999;}
 .infotable td,.infotable th {border-bottom: 1px solid #999999;}
