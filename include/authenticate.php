@@ -350,17 +350,25 @@ else
 		}
 	}	/* end replacesitetextloader */
 
-# Load group specific plugins
-$active_plugins = (sql_query("SELECT name,enabled_groups, config, config_json FROM plugins WHERE inst_version>=0 AND length(enabled_groups)>0 ORDER BY priority"));
+# Load group specific plugins and reorder plugins list
+$plugins = array();
+$active_plugins = (sql_query("SELECT name,enabled_groups, config, config_json FROM plugins WHERE inst_version>=0 ORDER BY priority"));
 foreach($active_plugins as $plugin)
 	{ 
 	# Check group access, only enable for global access at this point
-	$s=explode(",",$plugin['enabled_groups']);
-	if (isset($usergroup) && in_array($usergroup,$s))
+	if($plugin['enabled_groups']!='')
 		{
-		include_plugin_config($plugin['name'],$plugin['config'],$plugin['config_json']);
-		register_plugin($plugin['name']);
-		register_plugin_language($plugin['name']);
+		$s=explode(",",$plugin['enabled_groups']);
+		if (isset($usergroup) && in_array($usergroup,$s))
+			{
+			include_plugin_config($plugin['name'],$plugin['config'],$plugin['config_json']);
+			register_plugin($plugin['name']);
+			register_plugin_language($plugin['name']);
+			$plugins[]=$plugin['name'];
+			}
+		}
+	else
+		{
 		$plugins[]=$plugin['name'];
 		}
 	}
