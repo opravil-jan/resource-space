@@ -1515,19 +1515,20 @@ $ffmpeg_supported_extensions = array(
 # A list of extensions which will be ported to mp3 format for preview.
 # Note that if an mp3 file is uploaded, the original mp3 file will be used for preview.
 $ffmpeg_audio_extensions = array(
-	'wav',
-	'ogg',
-	'aiff',
-	'au',
-	'cdda',
-	'm4a',
-	'wma',
-	'mp2',
-	'aac',
-	'ra',
-	'rm',
-	'gsm'
-	);
+    'wav',
+    'ogg',
+    'aif',
+    'aiff',
+    'au',
+    'cdda',
+    'm4a',
+    'wma',
+    'mp2',
+    'aac',
+    'ra',
+    'rm',
+    'gsm'
+    );
 	
 # The audio settings for mp3 previews
 $ffmpeg_audio_params = "-acodec libmp3lame -ab 64k -ac 1"; # Default to 64Kbps mono
