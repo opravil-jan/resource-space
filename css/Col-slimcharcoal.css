@@ -11,7 +11,7 @@ a:active {color:#383838;}
 
 /* Header */
 .SlimHeader #Header {
-	background: linear-gradient(#424242 , #1B1B1B) !important;
+	background: linear-gradient(#424242 , #1B1B1B);
 }
 #Header {
 	margin:0 0 10px 0;

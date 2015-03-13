@@ -329,14 +329,12 @@ if(isset($usergroup))
         $linkedheaderimgsrc = (isset($storageurl)? $storageurl : $baseurl."/filestore"). "/admin/groupheaderimg/group".$usergroup.".".$curr_group["group_specific_logo"];
         }
     }
-$currenttheme = (isset($userfixedtheme)&&$userfixedtheme!='') ? $userfixedtheme : $defaulttheme;
-$colourcss = getval('colourcss',''); 
-$currenttheme = $colourcss!='' ? $colourcss : $currenttheme;
+
 $linkUrl=isset($header_link_url) ? $header_link_url : $homepage_url;
 if($slimheader)
     {
     ?>
-    <div id="Header" <?php echo ($currenttheme=="whitegry"||$currenttheme==="multi") ? "class='slimheader_darken'":"";?>>
+    <div id="Header" <?php echo ($theme=="whitegry"||$theme=="multi") ? "class='slimheader_darken'":"";?>>
     <?php hook("responsiveheader");
     if($header_text_title) 
         {?>
