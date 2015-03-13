@@ -83,7 +83,7 @@ if ((getval("logout","")!="") && array_key_exists("user",$_COOKIE))
     #fetch username and update logged in status
     $session=escape_check($_COOKIE["user"]);
     sql_query("update user set logged_in=0,session='' where session='$session'");
-        
+    hook("removeuseridcookie");
     #blank cookie
     rs_setcookie("user", "", time() - 3600);
 
@@ -124,8 +124,8 @@ if (!hook("replaceloginform")) {
   <h1><?php echo text("welcomelogin")?></h1>
   <p><?php echo text(getvalescaped("text","defaultintro"))?></p>
   <p>
-  <?php if ($allow_account_request) { ?><a href="pages/user_request.php">&gt; <?php echo $lang["nopassword"]?> </a><?php } ?>
-  <?php if ($allow_password_reset) { ?><br/><a href="pages/user_password.php">&gt; <?php echo $lang["forgottenpassword"]?></a><?php } ?>
+  <?php if ($allow_account_request) { ?><a id="account_apply" href="pages/user_request.php">&gt; <?php echo $lang["nopassword"]?> </a><?php } ?>
+  <?php if ($allow_password_reset) { ?><br/><a id="account_pw_reset" href="pages/user_password.php">&gt; <?php echo $lang["forgottenpassword"]?></a><?php } ?>
   <?php hook("loginformlink") ?> 
   </p>
   
