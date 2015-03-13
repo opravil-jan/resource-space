@@ -116,7 +116,11 @@ if(!$allow_reorder)
   }
   ?>
 
-<div class="FormError" id="PageError" ><?php if (isset($error_text)) { echo $error_text;}?></div>
+<div class="FormError" id="PageError"
+  <?php
+  if (!isset($error_text)) { ?> style="display:none;"> <?php }
+  else { echo ">" . $error_text ; } ?>
+</div>
 
 <div class="Listview ListviewTight">
 <table border="0" cellspacing="0" cellpadding="0" class="ListviewStyle">
@@ -296,7 +300,7 @@ function enableRestypesort(){
 					{
 					$errormessage=$lang["admin_resource_type_reorder_information_tab_order"];
 					?>
-					jQuery('#PageError').html("<?php echo $errormessage ?>");
+					jQuery('#PageError').html("<?php echo $errormessage ?>").show();
 					jQuery( "#resource_type_table_body" ).sortable( "cancel" );
 					<?php
 					}
