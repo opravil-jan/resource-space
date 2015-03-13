@@ -1556,6 +1556,10 @@ function collection_log($collection,$type,$resource,$notes = "")
 	global $userref;
 	$modifiedcollogtype=hook("modifycollogtype","",array($type,$resource));
 	if ($modifiedcollogtype) {$type=$modifiedcollogtype;}
+	
+	$modifiedcollognotes=hook("modifycollognotes","",array($type,$resource,$notes));
+	if ($modifiedcollognotes) {$notes=$modifiedcollognotes;}
+	
 	sql_query("insert into collection_log(date,user,collection,type,resource, notes) values (now()," . (($userref!="")?"'$userref'":"null") . ",'$collection','$type'," . (($resource!="")?"'$resource'":"null") . ", '$notes')");
 	}
 /*  Log entry types  
