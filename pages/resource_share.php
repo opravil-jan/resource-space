@@ -57,7 +57,7 @@ hook("resource_share_afterheader");
 <h1><?php echo $lang["share-resource"]; if($editing && !$editexternalurl){echo " - ".$lang["editingexternalshare"]." ".$editaccess;}?></h1>
 
 <div class="BasicsBox"> 
-<form method=post id="resourceshareform" action="<?php echo $baseurl_short?>pages/resource_share.php?ref=<?=urlencode($ref)?>">
+<form method=post id="resourceshareform" action="<?php echo $baseurl_short?>pages/resource_share.php?ref=<?php echo urlencode($ref)?>">
 <input type="hidden" name="ref" id="ref" value="<?php echo htmlspecialchars($ref) ?>">
 <input type="hidden" name="generateurl" id="generateurl" value="<?php echo getval("generateurl","") ?>">
 <input type="hidden" name="deleteaccess" id="deleteaccess" value="">

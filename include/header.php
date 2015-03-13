@@ -77,8 +77,8 @@ if ($slideshow_big)
     }
 if($videojs)
     {?>
-    <link href="<?php echo $baseurl_short?>lib/videojs/video-js.css?r=<?=$css_reload_key?>" rel="stylesheet" />
-    <script src="<?php echo $baseurl_short?>lib/videojs/video.js?r=<?=$css_reload_key?>"></script>
+    <link href="<?php echo $baseurl_short?>lib/videojs/video-js.css?r=<?php echo $css_reload_key?>" rel="stylesheet" />
+    <script src="<?php echo $baseurl_short?>lib/videojs/video.js?r=<?php echo $css_reload_key?>"></script>
     <?php
     }
 if ($load_ubuntu_font) { 

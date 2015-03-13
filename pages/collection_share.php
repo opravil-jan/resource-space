@@ -85,7 +85,7 @@ include "../include/header.php";
 ?>
   
 	<div class="BasicsBox"> 	
-	<form method=post id="collectionform" action="<?php echo $baseurl_short?>pages/collection_share.php?ref=<?=urlencode($ref)?>">
+	<form method=post id="collectionform" action="<?php echo $baseurl_short?>pages/collection_share.php?ref=<?php echo urlencode($ref)?>">
 	<input type="hidden" name="ref" id="ref" value="<?php echo htmlspecialchars($ref) ?>">
 	<input type="hidden" name="deleteaccess" id="deleteaccess" value="">
 	<input type="hidden" name="editaccess" id="editaccess" value="<?php echo htmlspecialchars($editaccess)?>">

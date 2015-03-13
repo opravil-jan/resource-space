@@ -66,7 +66,7 @@ if(!hook("swfplayer"))
 			class="video-js vjs-default-skin vjs-big-play-centered" 
 			poster="<?php echo $thumb_raw?>"
 		>
-		    <source src="<?=$flashpath_raw?>" type="video/<?=$ffmpeg_preview_extension?>" >
+		    <source src="<?php echo $flashpath_raw?>" type="video/<?php echo $ffmpeg_preview_extension?>" >
 		    <p class="vjs-no-js">To view this video please enable JavaScript, and consider upgrading to a web browser that <a href="http://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a></p>
 		</video>
 		<!-- END VIDEOJS -->
