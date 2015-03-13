@@ -292,7 +292,11 @@ endif; # !hook("customhtmlheader")
 if($slimheader)
     {
     $body_classes[] = 'SlimHeader';
-    } 
+    }
+if($pagename=="home")
+    {
+    $body_classes[] = $pagename;
+    }
 ?>
 </head>
 <body lang="<?php echo $language ?>" class="<?php echo implode(' ', $body_classes); ?>" <?php if (isset($bodyattribs)) { ?><?php echo $bodyattribs?><?php } if($infobox) {?> onmousemove="InfoBoxMM(event);"<?php } ?>>
