@@ -144,7 +144,7 @@ a.ResourcePanel:visited, a.ResourcePanel:active, a.ResourcePanel:link {color:#E0
 .BasicsBox .VerticalNav li, .ThemeBox li {list-style: url(../gfx/slimcharcoal/interface/bullet.gif) none inside;}
 .ThemeBox {border-bottom: 1px solid #BBBBBB;}
 .highlight {color: #990000;}
-.Tab a {border: 1px solid #BBBBBB;border-bottom-style: none;color: #aaaaaa;  }
+.Tab a {border: 1px solid #BBBBBB;border-bottom-style: none;color: #aaaaaa;}
 .StyledTabbedPanel 
     {
     background-color: #383838;
@@ -156,7 +156,6 @@ a.ResourcePanel:visited, a.ResourcePanel:active, a.ResourcePanel:link {color:#E0
 .TabSelected  
     { 
     background: #383838;  
-    border-bottom: 1px solid #bbbbbb; 
     border-top: 1px solid #383838;
     border-left: #bbbbbb;
     margin-right: 5px; 

@@ -364,10 +364,10 @@ a.HomePanel h2:hover{text-decoration:underline;}
 a.HomePanel {cursor:pointer;}
 
 .TabBar {padding:10px 0 0 0;}
-.Tab a {margin:0 5px 0 0;padding:2px 5px 0 5px;}
+.Tab a {margin:0 5px 0 0;padding:5px;display:inline-block; border-top-right-radius:5px;border-top-left-radius:5px; }
 .Tab a:hover {text-decoration: none;}
 .Tab {display:inline;}
-.StyledTabbedPanel {padding:10px 5px 5px 5px;clear:left;}
+.StyledTabbedPanel {padding:10px 5px 5px 5px;clear:left;border-bottom-right-radius:10px;border-bottom-left-radius:10px; border-top-right-radius:10px;}
 .TabSelected a {padding-bottom: 1px;}
 
 .infotable {border-top: 1px solid #999999;}
@@ -497,27 +497,6 @@ div.autocomplete ul li {
 	{
 	border-radius:5px;	-moz-border-radius: 5px; -webkit-border-radius: 5px;
 	}
-
-.TabSelected a 
-        {       
-        border-top-right-radius:5px;border-top-left-radius:5px; 
-        -moz-border-radius-topleft: 5px;-moz-border-radius-topright: 5px; 
-        -webkit-border-top-left-radius: 5px;-webkit-border-top-right-radius: 5px;
-        }
-        
-.Tab a 
-        {       
-        border-top-right-radius:5px;border-top-left-radius:5px; 
-        -moz-border-radius-topleft: 5px;-moz-border-radius-topright: 5px; 
-        -webkit-border-top-left-radius: 5px;-webkit-border-top-right-radius: 5px;
-        }
-        
-.StyledTabbedPanel 
-        {       
-        border-bottom-right-radius:10px;border-bottom-left-radius:10px; border-top-right-radius:10px;
-        -moz-border-radius-bottomleft: 10px;-moz-border-radius-bottomright: 10px; -moz-border-radius-topright: 10px; 
-        -webkit-border-bottom-left-radius: 10px;-webkit-border-bottom-right-radius: 10px;-moz-border-radius-topright: 10px; 
-        }
 		
 #easyTooltip{
 	padding:5px;
