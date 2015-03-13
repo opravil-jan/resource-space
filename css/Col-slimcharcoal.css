@@ -38,8 +38,7 @@ a:active {color:#383838;}
 .CollectBack a:hover{color:#FFF;}
 .CollectBack h2 a:link, .CollectBack h2 a:visited, .CollectBack h2 a:active, .CollectBack h2 a:hover {color:white;}
 
-/* TextHeader */
-#TextHeader, #TextHeader a {color:#616161;}
+/* TextHeader #TextHeader, #TextHeader a {color:#616161;}
 #TextDesc{color:#616161;}
 
 /* Panels */
@@ -82,7 +81,7 @@ a.ResourcePanel:visited, a.ResourcePanel:active, a.ResourcePanel:link {color:#E0
 .RecordPanel .RecordDownloadSpace .DownloadDBlend a {text-align: left;}
 .RecordPanel .RecordDownloadSpace a:visited, .RecordPanel .RecordDownloadSpace a:active, .RecordPanel .RecordDownloadSpace a:link {color:#383838;}
 .RecordPanel .RecordDownloadSpace .DownloadDBlend h2 {color:#383838;}
-
+.DownloadDisabled{color:#E0E0E0;}
 /* List View */
 .RecordBox .Listview .ListviewTitleStyle td {background: #F3F3F3;}
 .RecordBox .ListviewBoxedTitleStyle{background: #E0E0E0;color: #383838;text-decoration:underline;}
