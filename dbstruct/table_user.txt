@@ -1,6 +1,6 @@
 ref,int(11),NO,PRI,,auto_increment
 username,varchar(50),YES,,,
-password,varchar(50),YES,,,
+password,varchar(64),YES,,,
 fullname,varchar(100),YES,,,
 email,varchar(100),YES,,,
 usergroup,int(11),YES,,,
@@ -21,3 +21,4 @@ approved,int(11),NO,,1,
 lang,varchar(11),YES,,,
 created,timestamp,YES,,CURRENT_TIMESTAMP,
 hidden_collections,text,YES,,,
+password_reset_hash,varchar(100),YES,,,

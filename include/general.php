@@ -942,7 +942,7 @@ function get_user($ref)
 if (!function_exists("save_user")){	
 function save_user($ref)
 	{
-	global $lang;
+	global $lang, $allow_password_email;
 		
 	# Save user details, data is taken from the submitted form.
 	if (getval("deleteme","")!="")
@@ -983,10 +983,15 @@ function save_user($ref)
 		sql_query("update user set username='" . trim(getvalescaped("username","")) . "'" . $passsql . ",fullname='" . getvalescaped("fullname","") . "',email='" . getvalescaped("email","") . "',usergroup='" . getvalescaped("usergroup","") . "',account_expires=$expires,ip_restrict='" . getvalescaped("ip_restrict","") . "',comments='" . getvalescaped("comments","") . "',approved='" . ((getval("approved","")=="")?"0":"1") . "' $additional_sql where ref='$ref'");
 		}
 		
-	if (getval("emailme","")!="")
+	if ($allow_password_email && getval("emailme","")!="")
 		{
 		email_user_welcome(getval("email",""),getval("username",""),getval("password",""),getvalescaped("usergroup",""));
 		}
+	elseif (getval("emailresetlink","")!="")
+		{
+		email_reset_link(getvalescaped("email",""), true);
+		}	
+	
 	return true;
 	}
 }
@@ -1001,21 +1006,23 @@ function email_user_welcome($email,$username,$password,$usergroup)
 	
 	$templatevars['welcome']=$welcome;
 	$templatevars['username']=$username;
-	$templatevars['password']=$password;
-	if (trim($email_url_save_user)!=""){$templatevars['url']=$email_url_save_user;}
-	else {$templatevars['url']=$baseurl;}
 	
-	$message=$templatevars['welcome'] . $lang["newlogindetails"] . "\n\n" . $lang["username"] . ": " . $templatevars['username'] . "\n" . $lang["password"] . ": " . $templatevars['password']."\n\n".$templatevars['url'];
-	
+        $templatevars['password']=$password;
+        if (trim($email_url_save_user)!=""){$templatevars['url']=$email_url_save_user;}
+        else {$templatevars['url']=$baseurl;}
+        $message=$templatevars['welcome'] . $lang["newlogindetails"] . "\n\n" . $lang["username"] . ": " . $templatevars['username'] . "\n" . $lang["password"] . ": " . $templatevars['password'] . "\n\n". $templatevars['url'];
+          	
 	send_mail($email,$applicationname . ": " . $lang["youraccountdetails"],$message,"","","emaillogindetails",$templatevars);
 	}
+        
+
 
 if (!function_exists("email_reminder")){
 function email_reminder($email)
 	{
 	# Send a password reminder.
-	global $password_brute_force_delay;
-	if ($email=="") {return false;}
+	global $password_brute_force_delay, $allow_password_email;
+	if ($allow_password_email || $email=="") {return false;}
 	$details=sql_query("select username from user where email like '$email' and approved=1");
 	if (count($details)==0) {sleep($password_brute_force_delay);return false;}
 	$details=$details[0];
@@ -1033,6 +1040,41 @@ function email_reminder($email)
 	
 	$message=$lang["newlogindetails"] . "\n\n" . $lang["username"] . ": " . $templatevars['username'] . "\n" . $lang["password"] . ": " . $templatevars['password'] . "\n\n". $templatevars['url'];
 	send_mail($email,$applicationname . ": " . $lang["newpassword"],$message,"","","emailreminder",$templatevars);
+	return true;
+	}
+}
+
+if (!function_exists("email_reset_link")){
+function email_reset_link($email,$newuser=false)
+	{
+        debug("password_reset - checking for email: " . $email);
+	# Send a link to reset password
+	global $password_brute_force_delay, $scramble_key;
+	if ($email=="") {return false;}
+	$details=sql_query("select username from user where email like '$email' and approved=1 and (account_expires is null or account_expires>now())");
+	if (count($details)==0) {sleep($password_brute_force_delay);return false;}
+	$details=$details[0];
+	global $applicationname,$email_from,$baseurl,$lang,$email_url_remind_user;
+        $resetuniquecode=make_password();
+    	$password_reset_hash=hash('sha256', date("Ymd") . md5("RS" . $resetuniquecode . $details["username"] . $scramble_key));  
+	sql_query("update user set password_reset_hash='$password_reset_hash' where username='" . escape_check($details["username"]) . "'");
+	
+        $password_reset_url_key=hash('sha256', date("Ymd") . $password_reset_hash . $details["username"] . $scramble_key);        
+        $templatevars['url']=$baseurl . "/pages/user_preferences.php?resetuser=" . urlencode($email) . "&resetkey=" . $password_reset_url_key;
+        
+	if($newuser)
+            {
+                debug("NEW");
+            $templatevars['username']=$details["username"];
+            $message=$lang["newlogindetails"] . "\n\n" . $baseurl . "\n\n" . $lang["username"] . ": " . $templatevars['username'] . "\n\n" .  $lang["passwordnewemail"] . "\n" . $templatevars['url'];
+            send_mail($email,$applicationname . ": " . $lang["newlogindetails"],$message,"","","passwordnewemail",$templatevars);
+            }
+        else
+            {
+            $message=$lang["passwordresetemail"] . "\n\n" . $templatevars['url'];
+            send_mail($email,$applicationname . ": " . $lang["resetpassword"],$message,"","","passwordresetemail",$templatevars);
+            }	
+	
 	return true;
 	}
 }
@@ -1308,20 +1350,20 @@ if (!function_exists("change_password")){
 function change_password($password)
 	{
 	# Sets a new password for the current user.
-	global $userref,$username,$lang,$userpassword;
+	global $userref,$username,$lang,$userpassword, $password_reset_mode;
 
 	# Check password
 	$message=check_password($password);
 	if ($message!==true) {return $message;}
 
 	# Generate new password hash
-	$password_hash=md5("RS" . $username . $password);
+	$password_hash=hash('sha256', md5("RS" . $username . $password));
 	
 	# Check password is not the same as the current
 	if ($userpassword==$password_hash) {return $lang["password_matches_existing"];}
 	
-	sql_query("update user set password='$password_hash',password_last_change=now() where ref='$userref' limit 1");
-	return true;
+	sql_query("update user set password='$password_hash', password_reset_hash=NULL, password_last_change=now() where ref='$userref' limit 1");
+        return true;
 	}
 }
 	

@@ -90,6 +90,11 @@ if ($api && $enable_remote_apis ){
 			{
 			$username=$u_p_array[0];
 			$password=$u_p_array[1];
+			
+			if(strlen($password)==32) // We need to maintain support for old API Access now we are using sha256 hashes
+				{
+				$password=hash('sha256', $password);	
+				}
 
 			$result=perform_login();
 			if ($result['valid'])

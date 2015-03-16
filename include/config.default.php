@@ -2578,3 +2578,9 @@ $body_classes = array();
 # downloaded the resource in the last X days will be sent an email notifying them that there has been a change with a link to the resource view page
 # Set to 0 to disable this functionality;
 $notify_on_resource_change_days=0;
+
+# Allow passwords to be emailed directly to users. Settign this to true is a security risk so should be used with caution.
+$allow_password_email=false;
+
+# Do not show any notification text if a password reset attempt fails to find a valid user. Setting this to false means potential hackers can discover valid email addresses
+$hide_failed_reset_text=true;

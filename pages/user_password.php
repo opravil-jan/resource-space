@@ -5,9 +5,9 @@ if (!$allow_password_reset) {exit("Password requests have been disabled.");} # U
 
 if (getval("save","")!="")
 	{
-	if (email_reminder(getvalescaped("email","")))
+	if (email_reset_link(getvalescaped("email","")) || $hide_failed_reset_text)
 		{
-		redirect("pages/done.php?text=user_password");
+		redirect("pages/done.php?text=user_password_link_sent");
 		}
 	else
 		{
@@ -18,14 +18,14 @@ include "../include/header.php";
 ?>
 
     <h1><?php echo $lang["requestnewpassword"]?></h1>
-    <p><?php echo text("introtext")?></p>
+    <p><?php echo text("introtextreset")?></p>
 	
 	  
 	<form method="post" action="<?php echo $baseurl_short?>pages/user_password.php">  
 	<div class="Question">
 	<label for="email"><?php echo $lang["youremailaddress"]?></label>
 	<input type=text name="email" id="email" class="stdwidth" value="<?php echo htmlspecialchars(getval("email",""))?>">
-	<?php if (isset($error)) { ?><div class="FormError">!! <?php echo $lang["emailnotfound"]?> !!</div><?php hook("userpasswdextramsg"); ?><?php } ?>
+	<?php if (isset($error) && !$hide_failed_reset_text) { ?><div class="FormError">!! <?php echo $lang["emailnotfound"]?> !!</div><?php hook("userpasswdextramsg"); ?><?php } ?>
 	<div class="clearerleft"> </div>
 	</div>
 	

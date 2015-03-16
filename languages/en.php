@@ -580,7 +580,7 @@ $lang["emailnotfound"]="The e-mail address specified could not be found";
 $lang["yourname"]="Your full name";
 $lang["youremailaddress"]="Your e-mail address";
 $lang["sendreminder"]="Send reminder";
-$lang["sendnewpassword"]="Send new password";
+$lang["sendnewpassword"]="Send email";
 $lang["requestuserlogin"]="Request user login";
 $lang["accountlockedstatus"]="Account is locked";
 $lang["accountunlock"]="Unlock";
@@ -2042,5 +2042,10 @@ $lang["user_request__introtext"]="Please complete the form below to request a us
 $lang["view__storyextract"]="Story extract:";
 $lang["notify_resource_change_email_subject"]="A resource has been modified";
 $lang["notify_resource_change_email"]="A resource that you downloaded in the past [days] days has been modified . Click the link below to view the resource.<br /><br /><a href='[url]'>[url]</a>";
-
-
+$lang["passwordresetemail"]="Please click on the link below to reset your passsword.";
+$lang["passwordnewemail"]="Please click on the link below to set a new passsword for your account.";
+$lang["passwordlinkexpired"]="Password reset link has either expired or been used. Please log in or request a new link."; 
+$lang["done__user_password_link_sent"]="If your email address was recognised as belonging to a valid account then an e-mail containing a link to reset your password has been sent.<br /><br /> If you do not receive an email and you believe your account is valid please check your email filters before contacting your system administrator.";
+$lang["user_password__introtextreset"]="Enter your e-mail address and a link you can use to reset your password will be sent to you.";
+$lang["ticktoemaillink"]="E-mail user a link so that they can reset their password";
+$lang["resetpassword"]="Reset password";
