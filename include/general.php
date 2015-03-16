@@ -1051,7 +1051,7 @@ function email_reset_link($email,$newuser=false)
 	# Send a link to reset password
 	global $password_brute_force_delay, $scramble_key;
 	if ($email=="") {return false;}
-	$details=sql_query("select username from user where email like '$email' and approved=1 and (account_expires is null or account_expires>now())");
+	$details=sql_query("select ref, username from user where email like '$email' and approved=1 and (account_expires is null or account_expires>now())");
 	if (count($details)==0) {sleep($password_brute_force_delay);return false;}
 	$details=$details[0];
 	global $applicationname,$email_from,$baseurl,$lang,$email_url_remind_user;
@@ -1060,7 +1060,7 @@ function email_reset_link($email,$newuser=false)
 	sql_query("update user set password_reset_hash='$password_reset_hash' where username='" . escape_check($details["username"]) . "'");
 	
         $password_reset_url_key=hash('sha256', date("Ymd") . $password_reset_hash . $details["username"] . $scramble_key);        
-        $templatevars['url']=$baseurl . "/pages/user_preferences.php?resetuser=" . urlencode($email) . "&resetkey=" . $password_reset_url_key;
+        $templatevars['url']=$baseurl . "/?rp=" . $details["ref"] . substr($password_reset_url_key,0,15);
         
 	if($newuser)
             {

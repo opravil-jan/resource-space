@@ -2,17 +2,21 @@
 include "../include/db.php";
 
 $password_reset_mode=false;
-$resetkey=getvalescaped("resetkey","");
-if($resetkey!="")
+$resetvalues=getvalescaped("rp","");
+if($resetvalues!="")
     {
-    $resetuseremail=getvalescaped("resetuser","");
-    $resetvaliduser=sql_query("select ref, username, fullname, usergroup, password, password_reset_hash from user where email='" . escape_check($resetuseremail)  . "'",""); 
-    
-    $resetuser=$resetvaliduser[0];
-    //hash('sha256', date("Ymd") . $password_reset_hash . $details["username"] . $scramble_key); 
-    $keycheck=hash('sha256', date("Ymd") .  $resetuser["password_reset_hash"] . $resetuser["username"] . $scramble_key); 
+    $rplength=strlen($resetvalues);
+    $resetuserref=substr($resetvalues,0,$rplength-15);
+    $resetkey=substr($resetvalues,$rplength-15);
+    $resetvaliduser=sql_query("select ref, username, fullname, usergroup, password, password_reset_hash from user where ref='" . escape_check($resetuserref)  . "'",""); 
 
-    if($keycheck==$resetkey)
+    $resetuser=$resetvaliduser[0];
+    
+    $keycheck=array();
+    $keycheck[]=substr(hash('sha256', date("Ymd") .  $resetuser["password_reset_hash"] . $resetuser["username"] . $scramble_key),0,15); 
+    $keycheck[]=substr(hash('sha256', date("Ymd", time() + 60 * 60 * 24 ) .  $resetuser["password_reset_hash"] . $resetuser["username"] . $scramble_key),0,15); 
+
+    if(in_array($resetkey, $keycheck))
 	{
 	$userref=$resetuser["ref"];
 	$username=$resetuser["username"];
@@ -90,9 +94,7 @@ include "../include/header.php";
 	    }
 	else
 	    {?>
-	    <input type="hidden" name="resetkey" id="resetkey" value="<?php echo htmlspecialchars($resetkey) ?>" />
-	    <input type="hidden" name="resetuser" id="resetuser" value="<?php echo htmlspecialchars($resetuseremail) ?>" />
-	    
+	    <input type="hidden" name="rp" id="resetkey" value="<?php echo htmlspecialchars($resetuserref) . htmlspecialchars($resetkey)  ?>" />    
 	    
 	    <?php
 	    }

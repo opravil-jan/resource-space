@@ -69,5 +69,12 @@ if (getval("ur","")!="")
 	$topurl="pages/team/team_report.php?unsubscribe=" . $ur;
 	}
 
+if (getval("rp","")!="")
+	{
+	# quick redirect to reset password
+	$rp=getvalescaped("rp","");
+	$topurl="pages/user_preferences.php?rp=" . $rp;
+	}
+
 # Redirect.
 redirect($topurl);
