@@ -487,9 +487,11 @@ global $ffmpeg_preview,$ffmpeg_preview_seconds,$ffmpeg_preview_extension,$ffmpeg
 
 
 // If a snapshot has already been created and $ffmpeg_no_new_snapshots, never revert the snapshot (this is usually a custom preview)
-
+debug('FFMPEG-VIDEO: ####################################################################');
+debug('FFMPEG-VIDEO: Start trying FFMPeg for video files -- resource ID ' . $ref);
 if (($ffmpeg_fullpath!=false) && $snapshotcheck && in_array($extension, $ffmpeg_supported_extensions) && $ffmpeg_no_new_snapshots)
 	{
+		debug('FFMPEG-VIDEO: Create a preview for this video by going straight to ffmpeg_processing.php');
 		$target=get_resource_path($ref,true,"pre",false,'jpg',-1,1,false,"");
 		include (dirname(__FILE__)."/ffmpeg_processing.php");
 	}
@@ -497,10 +499,12 @@ if (($ffmpeg_fullpath!=false) && $snapshotcheck && in_array($extension, $ffmpeg_
 
 else if (($ffmpeg_fullpath!=false) && !isset($newfile) && in_array($extension, $ffmpeg_supported_extensions))
         {   
-			
+		debug('FFMPEG-VIDEO: Start process for creating previews...');
 
         $snapshottime = 1;
         $out = run_command($ffprobe_fullpath . " -i " . escapeshellarg($file), true);
+
+        debug('FFMPEG-VIDEO: Running information command: ' . $ffprobe_fullpath . ' -i ' . $file);
 
         if(preg_match("/Duration: (\d+):(\d+):(\d+)\.\d+, start/", $out, $match))
         	{
@@ -521,16 +525,20 @@ else if (($ffmpeg_fullpath!=false) && !isset($newfile) && in_array($extension, $
 
  	if(!hook("previewpskipthumb","",array($file))){    
    $output = run_command($ffmpeg_fullpath . " $ffmpeg_global_options -y -i " . escapeshellarg($file) . " -f image2 -vframes 1 -ss ".$snapshottime." " . escapeshellarg($target));
+   debug('FFMPEG-VIDEO: Get snapshot: ' . $ffmpeg_fullpath . ' ' . $ffmpeg_global_options . ' -y -i ' . $file . ' -f image2 -vframes 1 -ss ' . $snapshottime . ' ' . $target);
 	}
         if (file_exists($target)) 
             {
             $newfile=$target;
+            debug('FFMPEG-VIDEO: $newfile = ' . $newfile);
            
 
             if ($ffmpeg_preview && ($extension!=$ffmpeg_preview_extension || $ffmpeg_preview_force) )
                 {
+                	debug('FFMPEG-VIDEO: Before running the actual preview command...');
                 	if ($ffmpeg_preview_async && isset($php_path) && file_exists($php_path . "/php"))
 	                	{
+	                		debug('FFMPEG-VIDEO: Create preview asynchronously...');
 	                	global $scramble_key;
 	                	exec($php_path . "/php " . dirname(__FILE__)."/ffmpeg_processing.php " . 
 	                		escapeshellarg($scramble_key) . " " . 
@@ -544,10 +552,12 @@ else if (($ffmpeg_fullpath!=false) && !isset($newfile) && in_array($extension, $
 	                	}
                 	else 
 	                	{
+	                		debug('FFMPEG-VIDEO: include ffmpeg_processing.php file...');
 	                	include (dirname(__FILE__)."/ffmpeg_processing.php");
 	                	}
                 }
-            } 
+            }
+            debug('FFMPEG-VIDEO: ####################################################################'); 
         } 
 
 
