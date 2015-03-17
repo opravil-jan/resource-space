@@ -1151,9 +1151,11 @@ function create_previews_using_im($ref,$thumbonly=false,$extension="jpg",$previe
 			if(!$thumbonly && !$previewonly){
 				// seperate width and height
 				$all_sizes=true;
-				$wh=explode("x",$identoutput);
-				$o_width=$wh[0];
-				$o_height=$wh[1];
+				if(!empty($identoutput)){
+					$wh=explode("x",$identoutput);
+					$o_width=$wh[0];
+					$o_height=$wh[1];
+				}
 			}
 		}
 		
@@ -1174,7 +1176,7 @@ function create_previews_using_im($ref,$thumbonly=false,$extension="jpg",$previe
 			$count=count($ps)-1;
 			$oversized=0;
 			for($s=$count;$s>0;$s--){
-				if(!in_array($ps[$s]['id'],$force_make) && !in_array($ps[$s]['id'],$always_make_previews) && $ps[$s]['width']>$o_width && $ps[$s]['height']>$o_height){
+				if(!in_array($ps[$s]['id'],$force_make) && !in_array($ps[$s]['id'],$always_make_previews) && (isset($o_width) && isset($o_height) && $ps[$s]['width']>$o_width && $ps[$s]['height']>$o_height)){
 					$oversized++;
 				}
 				if($oversized>0){
