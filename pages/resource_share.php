@@ -25,13 +25,14 @@ $editaccess=getvalescaped("editaccess","");
 
 $editexternalurl = (getval("editexternalurl","")!="");
 
-# Work out the access to the resource, which is the minimum permitted share level.
 $minaccess=get_resource_access($ref);
-if ($minaccess>=1 && !$restricted_share) # Minimum access is restricted or lower and sharing of restricted resources is not allowed. The user cannot share this collection.
-        {
-        $show_error=true;
-        $error=$lang["restrictedsharecollection"];
-        }
+
+// Check if sharing permitted
+if (!can_share_resource($ref,$minaccess)) 
+	{
+	$show_error=true;
+	$error=$lang["error-permissiondenied"];
+	}
         
 # Process deletion of access keys
 if (getval("deleteaccess","")!="")

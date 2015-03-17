@@ -938,6 +938,9 @@ $enable_theme_category_edit=true;
 # Should those with 'restricted' access to a resource be able to share the resource?
 $restricted_share=false;
 
+# Should those that have been granted open access to an otherwise restricted resource be able to share the resource?
+$allow_custom_access_share=false;
+
 # Should a user that has contributed a resource always have open access to it?
 $open_access_for_contributor=false;
 
@@ -1666,7 +1669,7 @@ $edit_show_save_clear_buttons_at_top=false;
 # Allow empty collections to be shared?
 $collection_allow_empty_share=false;
 
-# Allow collections with not approved resources to be shared?
+# Allow collections containing resources that are not active to be shared?
 $collection_allow_not_approved_share=false;
 
 # Image preview zoom using jQuery.zoom (hover over the preview image to zoom in on the resource view page)

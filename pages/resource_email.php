@@ -22,11 +22,10 @@ $default_sort="DESC";
 if (substr($order_by,0,5)=="field"){$default_sort="ASC";}
 $sort=getval("sort",$default_sort);
 
-
-// Load access level and check.
 $useraccess=get_resource_access($ref);
-if (!($allow_share && ($useraccess==0 || ($useraccess==1 && $restricted_share)))) {exit("Access denied.");}
-//if (!checkperm("g") && !checkperm("v")) {exit ("Permission denied.");} // Cannot e-mail if can't see hi-res images. To avoid loophole whereby users could email resources to an external address, and hence download hi-res versions.
+
+// Check if sharing permitted
+if (!can_share_resource($ref,$useraccess)) {exit($lang["error-permissiondenied"]);}
 
 $errors="";
 if (getval("save","")!="")

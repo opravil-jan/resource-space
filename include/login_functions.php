@@ -34,7 +34,7 @@ function perform_login()
 		}
 
 	// ------- Automatic migration of md5 hashed or plain text passwords to SHA256 hashed passwords ------------
-	// This is necessary because older systems being upgraded may still have passwords stored usign md5 hashes or even possibly stored in plain text.
+	// This is necessary because older systems being upgraded may still have passwords stored using md5 hashes or even possibly stored in plain text.
 	// Updated March 2015 - select password_reset_hash to force dbstruct that will update password column varchar(100) if not already
 	$accountstoupdate=sql_query("select username, password, password_reset_hash from user where length(password)<>64");
 	foreach($accountstoupdate as $account)

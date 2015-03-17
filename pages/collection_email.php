@@ -67,7 +67,7 @@ if (!$allow_share) {
         $error=$lang["error-permissiondenied"];
         }
 	
-#Check if any resources are not approved
+#Check if any resources are not in the active state
 foreach ($refArray as $colref){
 if (!$collection_allow_not_approved_share && !is_collection_approved(trim($colref)))
 	{	
@@ -259,9 +259,8 @@ else
 <?php } ?>
 
 <?php
-
-$minaccess=collection_min_access($ref);
-if($minaccess==0)
+$allow_edit=allow_multi_edit($ref);
+if($allow_edit)
 	{ ?>
 	<div class="Question">
 	<label for="grant_internal_access"><?php echo $lang["internal_share_grant_access"] ?></label>

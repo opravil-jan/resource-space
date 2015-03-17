@@ -2097,6 +2097,11 @@ function get_resource_access($resource)
 	$access=$resourcedata["access"];
 	$resource_type=$resourcedata['resource_type'];
 	
+	// Set a couple of flags now that we can check later on if e need to check whether sharing is permitted based on whether access has been specifically granted to user/group
+    global $customgroupaccess,$customuseraccess;
+	$customgroupaccess=false;
+	$customuseraccess=false;
+	
 	global $k;
 	if ($k!="")
 		{
@@ -2119,15 +2124,13 @@ function get_resource_access($resource)
 		return 0; 
 		}	
 
-        $customgroupaccess=false;
 	if ($access==3)
 		{
+		$customgroupaccess=true;
 		# Load custom access level
 		if ($passthru=="no"){ 
 			global $usergroup;
 			$access=get_custom_access($resource,$usergroup);
-                        $customgroupaccess=true;
-			//echo "checked group access: ".$access;
 			} 
 		else {
 			$access=$resource['group_access'];
@@ -2152,9 +2155,8 @@ function get_resource_access($resource)
 	global $userref;
 
 	if ($passthru=="no")
-                {
+        {
 		$userspecific=get_custom_access_user($resource,$userref);	
-		//echo "checked user access: ".$userspecific;
 		} 
 	else
                 {
@@ -2164,6 +2166,7 @@ function get_resource_access($resource)
 	
 	if ($userspecific!="")
 		{
+		$customuseraccess=true;
 		return $userspecific;
 		}
         
@@ -2249,7 +2252,7 @@ function get_resource_access($resource)
 			
 		if($matchedfilter){$access=0;}
         }
-
+		
 	return $access;	
 	}
 }
@@ -3248,6 +3251,22 @@ function update_related_resource($ref,$related,$add=true)
 		}
 	return true;
 	}
+
+function can_share_resource($ref, $access="")
+	{
+	global $allow_share, $restricted_share, $customgroupaccess,$customuseraccess, $allow_custom_access_share;
+	if($access=="" || !isset($customgroupaccess)){$access=get_resource_access($ref);}
 	
+	if(!$allow_share || $access==2 || ($access==1 && !$restricted_share))
+		{return false;} // return false asap
+	
+	if ($restricted_share){return true;} // If sharing of restricted resources is permitted we should allow sharing whether access is open or restricted
+	
+	// User is not permitted to share if open access has been specifically granted for an otherwise restrcited resource to the user/group.	
+	if(!$allow_custom_access_share && ($customgroupaccess || $customuseraccess)){return false;} 
+	
+	// Must have open access and sharing is permitted
+	return true;	
+	}
 
 

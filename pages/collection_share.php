@@ -30,7 +30,7 @@ $editaccess=getvalescaped("editaccess","");
 ($editaccess=="")?$editing=false:$editing=true;
 
 $editexternalurl = (getval("editexternalurl","")!="");
-
+	
 #Check if any resources are not approved
 $collectionstates=is_collection_approved($ref);
 if (!$collection_allow_not_approved_share && $collectionstates==false) {
@@ -47,15 +47,20 @@ if(is_array($collectionstates) && (count($collectionstates)>1 || !in_array(0,$co
 		}
 	}
 
-
 # Get min access to this collection
 $minaccess=collection_min_access($ref);
 
-if ($minaccess>=1 && !$restricted_share) # Minimum access is restricted or lower and sharing of restricted resources is not allowed. The user cannot share this collection.
+if (($minaccess>=1 && !$restricted_share)) # Minimum access is restricted or lower and sharing of restricted resources is not allowed. The user cannot share this collection.
         {
         $show_error=true;
-    $error=$lang["restrictedsharecollection"];
+        $error=$lang["restrictedsharecollection"];
         }
+		
+if(!$allow_custom_access_share && ($customgroupaccess || $customuseraccess))
+	{ 
+	$show_error=true;
+	$error=$lang["customaccesspreventshare"];
+	}
 
 if (!$collection_allow_empty_share && count(get_collection_resources($ref))==0) # Sharing an empty collection?
         {

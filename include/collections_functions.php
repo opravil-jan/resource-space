@@ -129,7 +129,10 @@ function add_resource_to_collection($resource,$collection,$smartadd=false,$size=
 			{
 			$archivestatus=sql_value("select archive as value from resource where ref='$resource'","");
 			if ($archivestatus<0 && !$collection_allow_not_approved_share) {global $lang; $lang["cantmodifycollection"]=$lang["notapprovedresources"] . $resource;return false;}
-
+			
+			// Check if user has open access, we shouldn't add this if they have restrictd access or only been granted access
+			if (!can_share_resource($resource)){return false;}
+			
 			# Set the flag so a warning appears.
 			global $collection_share_warning;
 			# Check to see if all shares have expired
@@ -1070,7 +1073,10 @@ function generate_collection_access_key($collection,$feedback=0,$email="",$acces
 	for ($m=0;$m<count($r);$m++)
 		{
 		# Add the key to each resource in the collection
-		sql_query("insert into external_access_keys(resource,access_key,collection,user,request_feedback,email,date,access,expires) values ('" . $r[$m] . "','$k','$collection','$userref','$feedback','" . escape_check($email) . "',now(),$access," . (($expires=="")?"null":"'" . $expires . "'"). ");");
+		if(can_share_resource($r[$m]))
+			{
+			sql_query("insert into external_access_keys(resource,access_key,collection,user,request_feedback,email,date,access,expires) values ('" . $r[$m] . "','$k','$collection','$userref','$feedback','" . escape_check($email) . "',now(),$access," . (($expires=="")?"null":"'" . $expires . "'"). ");");
+			}
 		}
 		
 	hook("generate_collection_access_key","",array($collection,$k,$userref,$feedback,$email,$access,$expires));

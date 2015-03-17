@@ -2049,3 +2049,4 @@ $lang["done__user_password_link_sent"]="If your email address was recognised as 
 $lang["user_password__introtextreset"]="Enter your e-mail address and a link you can use to reset your password will be sent to you.";
 $lang["ticktoemaillink"]="E-mail user a link so that they can reset their password";
 $lang["resetpassword"]="Reset password";
+$lang["customaccesspreventshare"]="You do not have permission to share one or more resources in this collection";
