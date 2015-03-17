@@ -44,7 +44,7 @@ elseif ((getval("save","")!="") || (getval("suggest","")!=""))
 $user=get_user($ref);
 if (($user["usergroup"]==3) && ($usergroup!=3)) {redirect($baseurl_short ."login.php?error=error-permissions-login&url=".urlencode($url));}
 
-if (checkperm("U")) 
+if (checkperm("U") && $user["usergroup"]!="") # If using "U" parent/child restriction and NOT a newly created usergroup
 	{
 	if ($U_perm_strict) 
 		{
