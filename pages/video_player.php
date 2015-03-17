@@ -1,7 +1,7 @@
 <?php
 # Video player - plays the preview file created to preview video resources.
 
-global $alternative;
+global $alternative,$css_reload_key;
 
 # First we look for a preview video with the expected extension.
 $flashfile=get_resource_path($ref,true,"pre",false,$ffmpeg_preview_extension,-1,1,false,"",$alternative);
@@ -55,6 +55,8 @@ if(!hook("swfplayer"))
 		{ 
 		global $ffmpeg_preview_extension,$css_reload_key;
 		?>
+		<link href="<?php echo $baseurl_short?>lib/videojs/video-js.css?r=<?=$css_reload_key?>" rel="stylesheet">
+        <script src="<?php echo $baseurl_short?>lib/videojs/video.js?r=<?=$css_reload_key?>"></script>
 		<!-- START VIDEOJS -->
 		<video 
 			id="introvideo" 

@@ -75,13 +75,8 @@ if ($slideshow_big)
     <link type="text/css" href="<?php echo $baseurl?>/css/slideshow_big.css?css_reload_key=<?php echo $css_reload_key?>" rel="stylesheet" />
     <?php 
     }
-if($videojs)
-    {?>
-    <link href="<?php echo $baseurl_short?>lib/videojs/video-js.css?r=<?php echo $css_reload_key?>" rel="stylesheet" />
-    <script src="<?php echo $baseurl_short?>lib/videojs/video.js?r=<?php echo $css_reload_key?>"></script>
-    <?php
-    }
-if ($load_ubuntu_font) { 
+if ($load_ubuntu_font) 
+    { 
 	$urlprefix="http://";
 	if (strpos($baseurl,"https://")!==false) // Change prefix as mixed content prevents linking in Firefox
 		{$urlprefix="https://";}
