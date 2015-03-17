@@ -1939,7 +1939,7 @@ function highlightkeywords($text,$search,$partial_index=false,$field_name="",$ke
 	{
 	# do not highlight if the field is not indexed, so it is clearer where results came from.	
 	if ($keywords_index!=1){return $text;}
-        
+
 	# Highlight searched keywords in $text
 	# Optional - depends on $highlightkeywords being set in config.php.
 	global $highlightkeywords;
@@ -1998,7 +1998,7 @@ function str_highlight($text, $needle, $options = null, $highlight = null)
     
     // Default highlighting
     if ($highlight === null) {
-        $highlight = '<span class="highlight">\1</span>';
+        $highlight = '||<||\1||>||';
     }
  
     // Select pattern to use
@@ -2042,6 +2042,11 @@ function str_highlight($text, $needle, $options = null, $highlight = null)
     }
 	$text=str_replace("♠","_",$text);
 	$text=str_replace("♣","#zwspace;",$text);
+
+	# Fix - do the final replace at the end - fixes a glitch whereby the highlight HTML itself gets highlighted if it matches search terms, and you get nested HTML.
+	$text=str_replace("||<||",'<span class="highlight">',$text);
+	$text=str_replace("||>||",'</span>',$text);
+
     return $text;
 	}
 
