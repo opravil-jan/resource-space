@@ -140,11 +140,11 @@ if (getval("save","")!="")
 
 			if ($custom_field_sub_value_list != "")		# we found sub values
 				{
-				$customContents.=i18n_get_translated($custom[$n] . ": " . $custom_field_sub_value_list) . "\n\n";		# append with list of all sub values found
+				$customContents.=i18n_get_translated($custom[$n]) . ": " . i18n_get_translated($custom_field_sub_value_list) . "\n\n";		# append with list of all sub values found
 				}
 			elseif ($custom_field_value != "")		# if no sub values found then treat as normal field
 				{
-				$customContents.=i18n_get_translated($custom[$n] . ": " . $custom_field_value) . "\n\n";		# there is a value so append it
+				$customContents.=i18n_get_translated($custom[$n]) . ": " . i18n_get_translated($custom_field_value) . "\n\n";		# there is a value so append it
 				}
 			elseif (isset($required) && in_array($custom[$n],$required))		# if the field was mandatory and a value or sub value(s) not set then we return false
 				{
