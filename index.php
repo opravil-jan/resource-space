@@ -3,6 +3,16 @@ include "include/db.php";
 include "include/general.php";
 include "include/collections_functions.php";
 
+
+
+if (getval("rp","")!="")
+	{
+	# quick redirect to reset password
+	$rp=getvalescaped("rp","");
+	$topurl="pages/user_preferences.php?rp=" . $rp;
+        redirect($topurl);
+	}
+        
 # External access support (authenticate only if no key provided, or if invalid access key provided)
 $k=getvalescaped("k","");if (($k=="") || (!check_access_key_collection(getvalescaped("c",""),$k) && !check_access_key(getvalescaped("r",""),$k))) {include "include/authenticate.php";}
 
@@ -69,12 +79,6 @@ if (getval("ur","")!="")
 	$topurl="pages/team/team_report.php?unsubscribe=" . $ur;
 	}
 
-if (getval("rp","")!="")
-	{
-	# quick redirect to reset password
-	$rp=getvalescaped("rp","");
-	$topurl="pages/user_preferences.php?rp=" . $rp;
-	}
 
 # Redirect.
 redirect($topurl);
