@@ -21,9 +21,3 @@ else {document.getElementById('groupselector').style.display='block';}">
 	?></table>
 	<div class="clearerleft"> </div>
 </div>
-
-<div class="Question" >
-<label for="groups">&nbsp;</label>
-
-<div class="clearerleft"> </div>
-</div>
