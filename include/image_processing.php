@@ -20,10 +20,11 @@ function upload_file($ref,$no_exif=false,$revert=false,$autorotate=false)
 	hook ("removeannotations","",array($ref));
 
 	$exiftool_fullpath = get_utility_path("exiftool");
+
+	global $filename_field;
 	
 	# Process file upload for resource $ref
 	if ($revert==true){
-		global $filename_field;
 		$original_filename=get_data_by_field($ref,$filename_field);
 		
 		# Field 8 is used in a special way for staticsync, don't overwrite.
@@ -63,8 +64,13 @@ function upload_file($ref,$no_exif=false,$revert=false,$autorotate=false)
 			}
 		else {$filename=$processfile['name'];}
 
+		if($no_exif && isset($filename_field)) {
+			$user_set_filename = get_data_by_field($ref, $filename_field);
+			if(trim($user_set_filename) != '') {
+				$filename = $user_set_filename;
+			}
+		}
 	}
-
     # Work out extension
 	if (!isset($extension)){
 		# first try to get it from the filename
