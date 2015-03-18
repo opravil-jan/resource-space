@@ -34,7 +34,7 @@ hook("pageevaluation");
 
 if (getval("save","")!="")
 	{
-	if ($delete_requires_password && md5("RS" . $username . getvalescaped("password",""))!=$userpassword)
+	if ($delete_requires_password && hash('sha256', md5('RS' . $username . getvalescaped('password', ''))) != $userpassword)
 		{
 		$error=$lang["wrongpassword"];
 		}
