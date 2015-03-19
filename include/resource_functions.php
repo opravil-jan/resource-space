@@ -352,10 +352,12 @@ function set_resource_defaults($ref)
 			if (count($f)==0) {exit ("Field(s) with short name '" . $e[0] . "' not found in resource defaults for this user group.");}
 			for ($m=0;$m<count($f);$m++)
 				{
-					// Note: we are doing these checks to make sure users can override the resource defaults when they can edit the field
-					if((checkperm('F*') && !checkperm('F-' . $f[$m]) && !($ref < 0 && checkperm('P' . $f[$m]))) || checkperm('F' . $f[$m])) {
-						update_field($ref, $f[$m], $e[1]);
-					}
+				// Note: we are doing these checks to make sure users can override the resource defaults when they can edit the field
+                if((checkperm('F*') && !checkperm('F-' . $f[$m]["ref"]) && !($ref < 0 && checkperm('P' . $f[$m]["ref"]))) || checkperm('F' . $f[$m]["ref"])) 
+                	{
+                    update_field($ref, $f[$m], $e[1]);
+                	}
+
 				}
 			}
 		}
