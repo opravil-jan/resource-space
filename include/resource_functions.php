@@ -2097,7 +2097,7 @@ function get_resource_access($resource)
 	$access=$resourcedata["access"];
 	$resource_type=$resourcedata['resource_type'];
 	
-	// Set a couple of flags now that we can check later on if e need to check whether sharing is permitted based on whether access has been specifically granted to user/group
+	// Set a couple of flags now that we can check later on if we need to check whether sharing is permitted based on whether access has been specifically granted to user/group
     global $customgroupaccess,$customuseraccess;
 	$customgroupaccess=false;
 	$customuseraccess=false;
