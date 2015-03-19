@@ -1099,6 +1099,9 @@ $password_brute_force_delay=4;
 # Use imperial instead of metric for the download size guidelines
 $imperial_measurements=false;
 
+# Use day-month-year format? If set to false format will be month-day-year.
+$date_d_m_y=true;
+
 # What is the default resource type to use for batch upload templates?
 $default_resource_type=1;
 
