@@ -353,7 +353,7 @@ function set_resource_defaults($ref)
 			for ($m=0;$m<count($f);$m++)
 				{
 				// Note: we are doing these checks to make sure users can override the resource defaults when they can edit the field
-                if((checkperm('F*') && !checkperm('F-' . $f[$m]["ref"]) && !($ref < 0 && checkperm('P' . $f[$m]["ref"]))) || checkperm('F' . $f[$m]["ref"])) 
+                if(checkperm('F' . $f[$m]) || (checkperm('F*') && !checkperm('F-' . $f[$m]) && !($ref < 0 && checkperm('P' . $f[$m])))) 
                 	{
                     update_field($ref, $f[$m], $e[1]);
                 	}
