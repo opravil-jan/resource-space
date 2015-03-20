@@ -352,12 +352,13 @@ function set_resource_defaults($ref)
 			if (count($f)==0) {exit ("Field(s) with short name '" . $e[0] . "' not found in resource defaults for this user group.");}
 			for ($m=0;$m<count($f);$m++)
 				{
-				// Note: we are doing these checks to make sure users can override the resource defaults when they can edit the field
-                if(checkperm('F' . $f[$m]) || (checkperm('F*') && !checkperm('F-' . $f[$m]) && !($ref < 0 && checkperm('P' . $f[$m])))) 
-                	{
-                    update_field($ref, $f[$m], $e[1]);
-                	}
-
+				// Note: we are doing these checks to make sure users can override
+                                // the resource defaults when they can edit the field.
+                                // We always set defaults for an upload template as any defaults can be overridden by save_resource_data later on
+                                if($ref<0 || (checkperm('F' . $f[$m]) || (checkperm('F*') && !checkperm('F-' . $f[$m]))))
+                                    {
+                                    update_field($ref, $f[$m], $e[1]);
+                                    }
 				}
 			}
 		}
