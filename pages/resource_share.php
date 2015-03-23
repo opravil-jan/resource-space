@@ -64,7 +64,9 @@ hook("resource_share_afterheader");
 <input type="hidden" name="deleteaccess" id="deleteaccess" value="">
 <input type="hidden" name="editaccess" id="editaccess" value="<?php echo htmlspecialchars($editaccess)?>">
 <input type="hidden" name="editexpiration" id="editexpiration" value="">
+<input type="hidden" name="editgroup" id="editgroup" value="">
 <input type="hidden" name="editaccesslevel" id="editaccesslevel" value="">
+
 	<div class="VerticalNav">
 	<ul>
 	<?php
@@ -129,6 +131,25 @@ hook("resource_share_afterheader");
 			<div class="clearerleft"> </div>
 			</div>
 			
+			<?php if (checkperm("x")) {
+			# Allow the selection of a user group to inherit permissions from for this share (the default is to use the current user's user group).
+			?>
+			<div class="Question">
+			<label for="groupselect"><?php echo $lang["share_using_permissions_from_user_group"] ?></label>
+			<select id="groupselect" name="usergroup" class="stdwidth">
+			<?php $grouplist=get_usergroups(true);
+			foreach ($grouplist as $group)
+				{
+				?>
+				<option value="<?php echo $group["ref"] ?>" <?php if (getval("editgroup","")==$group["ref"] || (getval("editgroup","")=="" && $usergroup==$group["ref"])) { ?>selected<?php } ?>><?php echo $group["name"] ?></option>
+				<?php
+				}
+			?>
+			</select>
+			<div class="clearerleft"> </div>
+			</div>
+			<?php } ?>
+			
 			<div class="QuestionSubmit" style="padding-top:0;margin-top:0;">
 	            <label for="buttons"> </label>
 	            <?php
@@ -152,19 +173,21 @@ hook("resource_share_afterheader");
 			?>
 			<p><?php echo $lang["generateurlexternal"]?></p>
 		
-			<p><input class="URLDisplay" type="text" value="<?php echo $baseurl?>/?r=<?php echo urlencode($ref) ?>&k=<?php echo generate_resource_access_key($ref,$userref,$access,$expires,"URL")?>">
+			<p><input class="URLDisplay" type="text" value="<?php echo $baseurl?>/?r=<?php echo urlencode($ref) ?>&k=<?php echo generate_resource_access_key($ref,$userref,$access,$expires,"URL",getvalescaped("usergroup",""))?>">
 			<?php
 			}
 			# Process editing of external share
 		if ($editexternalurl)
 			{
-			$editsuccess=edit_resource_external_access($editaccess,$access,$expires);
+			$editsuccess=edit_resource_external_access($editaccess,$access,$expires,getvalescaped("usergroup",""));
 			if($editsuccess){echo "<span style='font-weight:bold;'>".$lang['changessaved']." - <em>".$editaccess."</em>";}
 			}
         }
         ?>
         </ul>
         </div>
+	
+	
 <?php 
 # Do not allow access to the existing shares if the user has restricted access to this resource.
 if ($minaccess==0)
@@ -225,7 +248,7 @@ if ($minaccess==0)
 				{
 				?>
 				<a href="#" onClick="if (confirm('<?php echo $lang["confirmdeleteaccessresource"]?>')) {document.getElementById('deleteaccess').value='<?php echo htmlspecialchars($keys[$n]["access_key"]) ?>';document.getElementById('resourceshareform').submit(); return false;}">&gt;&nbsp;<?php echo $lang["action-delete"]?></a>      
-				<a href="#" onClick="document.getElementById('editaccess').value='<?php echo htmlspecialchars($keys[$n]["access_key"]) ?>';document.getElementById('editexpiration').value='<?php echo htmlspecialchars($keys[$n]["expires"]) ?>';document.getElementById('editaccesslevel').value='<?php echo htmlspecialchars($keys[$n]["access"]) ?>';CentralSpacePost(document.getElementById('resourceshareform'),true);return false;">&gt;&nbsp;<?php echo $lang["action-edit"]?></a>
+				<a href="#" onClick="document.getElementById('editaccess').value='<?php echo htmlspecialchars($keys[$n]["access_key"]) ?>';document.getElementById('editexpiration').value='<?php echo htmlspecialchars($keys[$n]["expires"]) ?>';document.getElementById('editaccesslevel').value='<?php echo htmlspecialchars($keys[$n]["access"]) ?>';document.getElementById('editgroup').value='<?php echo htmlspecialchars($keys[$n]["usergroup"]) ?>';CentralSpacePost(document.getElementById('resourceshareform'),true);return false;">&gt;&nbsp;<?php echo $lang["action-edit"]?></a>
 				<?php
 				}
 			    ?>

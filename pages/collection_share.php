@@ -95,6 +95,7 @@ include "../include/header.php";
 	<input type="hidden" name="editaccess" id="editaccess" value="<?php echo htmlspecialchars($editaccess)?>">
 	<input type="hidden" name="editexpiration" id="editexpiration" value="">
 	<input type="hidden" name="editaccesslevel" id="editaccesslevel" value="">
+	<input type="hidden" name="editgroup" id="editgroup" value="">
 	<input type="hidden" name="generateurl" id="generateurl" value="">
 
 	<h1><?php echo $lang["sharecollection"]; if($editing && !$editexternalurl){echo " - ".$lang["editingexternalshare"]." ".$editaccess;}?></h1>
@@ -166,6 +167,29 @@ include "../include/header.php";
 			<div class="clearerleft"> </div>
 			</div>
 			
+			
+			
+			<?php if (checkperm("x")) {
+			# Allow the selection of a user group to inherit permissions from for this share (the default is to use the current user's user group).
+			?>
+			<div class="Question">
+			<label for="groupselect"><?php echo $lang["share_using_permissions_from_user_group"] ?></label>
+			<select id="groupselect" name="usergroup" class="stdwidth">
+			<?php $grouplist=get_usergroups(true);
+			foreach ($grouplist as $group)
+				{
+				?>
+				<option value="<?php echo $group["ref"] ?>" <?php if (getval("editgroup","")==$group["ref"] || (getval("editgroup","")=="" && $usergroup==$group["ref"])) { ?>selected<?php } ?>><?php echo $group["name"] ?></option>
+				<?php
+				}
+			?>
+			</select>
+			<div class="clearerleft"> </div>
+			</div>
+			<?php } ?>
+			
+			
+			
 			<div class="QuestionSubmit" style="padding-top:0;margin-top:0;">
 			<label for="buttons"> </label>
 			<?php 
@@ -189,13 +213,13 @@ include "../include/header.php";
 			?>
 			<p><?php echo $lang["generateurlexternal"]?></p>
 		
-			<p><input class="URLDisplay" type="text" value="<?php echo $baseurl?>/?c=<?php echo urlencode($ref) ?>&k=<?php echo generate_collection_access_key($ref,0,"URL",$access,$expires)?>">
+			<p><input class="URLDisplay" type="text" value="<?php echo $baseurl?>/?c=<?php echo urlencode($ref) ?>&k=<?php echo generate_collection_access_key($ref,0,"URL",$access,$expires,getval("usergroup",""))?>">
 			<?php
 			}
 		# Process editing of external share
 		if ($editexternalurl)
 			{
-			$editsuccess=edit_collection_external_access($editaccess,$access,$expires);
+			$editsuccess=edit_collection_external_access($editaccess,$access,$expires,getvalescaped("usergroup",""));
 			if($editsuccess){echo "<span style='font-weight:bold;'>".$lang['changessaved']." - <em>".$editaccess."</em>";}
 			}
 		}
@@ -264,7 +288,7 @@ include "../include/header.php";
 			<td><?php echo htmlspecialchars(($keys[$n]["access"]==-1)?"":$lang["access" . $keys[$n]["access"]]); ?></td>
 			<td><div class="ListTools">
 			<a href="#" onClick="if (confirm('<?php echo $lang["confirmdeleteaccess"]?>')) {document.getElementById('deleteaccess').value='<?php echo htmlspecialchars($keys[$n]["access_key"]) ?>';document.getElementById('collectionform').submit(); return false;}">&gt;&nbsp;<?php echo $lang["action-delete"]?></a>
-			<a href="#" onClick="document.getElementById('editaccess').value='<?php echo htmlspecialchars($keys[$n]["access_key"]) ?>';document.getElementById('editexpiration').value='<?php echo htmlspecialchars($keys[$n]["expires"]) ?>';document.getElementById('editaccesslevel').value='<?php echo htmlspecialchars($keys[$n]["access"]) ?>';CentralSpacePost(document.getElementById('collectionform'),true);return false;">&gt;&nbsp;<?php echo $lang["action-edit"]?></a>
+			<a href="#" onClick="document.getElementById('editaccess').value='<?php echo htmlspecialchars($keys[$n]["access_key"]) ?>';document.getElementById('editexpiration').value='<?php echo htmlspecialchars($keys[$n]["expires"]) ?>';document.getElementById('editaccesslevel').value='<?php echo htmlspecialchars($keys[$n]["access"]) ?>';document.getElementById('editgroup').value='<?php echo htmlspecialchars($keys[$n]["usergroup"]) ?>';CentralSpacePost(document.getElementById('collectionform'),true);return false;">&gt;&nbsp;<?php echo $lang["action-edit"]?></a>
 			</div></td>
 			</tr>
 			<?php

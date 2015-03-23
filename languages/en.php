@@ -2050,3 +2050,7 @@ $lang["user_password__introtextreset"]="Enter your e-mail address and a link you
 $lang["ticktoemaillink"]="E-mail user a link so that they can reset their password";
 $lang["resetpassword"]="Reset password";
 $lang["customaccesspreventshare"]="You do not have permission to share one or more resources in this collection";
+
+
+$lang["allow_user_group_selection_for_access_when_sharing_externally"]="Allow user group select for determining access level when sharing externally";
+$lang["share_using_permissions_from_user_group"]="Share using permissions from user group";

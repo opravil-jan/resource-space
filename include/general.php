@@ -2361,7 +2361,7 @@ function check_access_key($resource,$key)
 	# Option to plugin in some extra functionality to check keys
 	if (hook("check_access_key","",array($resource,$key))===true) {return true;}
 	
-	$keys=sql_query("select user,expires from external_access_keys where resource='$resource' and access_key='$key' and (expires is null or expires>now())");
+	$keys=sql_query("select user,usergroup,expires from external_access_keys where resource='$resource' and access_key='$key' and (expires is null or expires>now())");
 
 	if (count($keys)==0)
 		{
@@ -2373,7 +2373,7 @@ function check_access_key($resource,$key)
 		
 		$user=$keys[0]["user"];
 		$expires=$keys[0]["expires"];
-		
+                
 		# Has this expired?
 		if ($expires!="" && strtotime($expires)<time())
 			{
@@ -2388,10 +2388,16 @@ function check_access_key($resource,$key)
 			}
 		
 		global $usergroup,$userpermissions,$userrequestmode,$userfixedtheme,$usersearchfilter;
-		$userinfo=sql_query("select u.usergroup,g.permissions,g.fixed_theme,g.search_filter from user u join usergroup g on u.usergroup=g.ref where u.ref='$user'");
+                $groupjoin="u.usergroup=g.ref";
+                if ($keys[0]["usergroup"]!="")
+                    {
+                    # Select the user group from the access key instead.
+                    $groupjoin="g.ref='" . escape_check($keys[0]["usergroup"]) . "'";
+                    }
+		$userinfo=sql_query("select g.ref usergroup,g.permissions,g.fixed_theme,g.search_filter from user u join usergroup g on $groupjoin where u.ref='$user'");
 		if (count($userinfo)>0)
 			{
-			$usergroup=$userinfo[0]["usergroup"];
+                        $usergroup=$userinfo[0]["usergroup"]; # Older mode, where no user group was specified, find the user group out from the table.
 			$userpermissions=explode(",",$userinfo[0]["permissions"]);
 			$usersearchfilter=$userinfo[0]["search_filter"];
 			if (trim($userinfo[0]["fixed_theme"])!="") {$userfixedtheme=$userinfo[0]["fixed_theme"];} # Apply fixed theme also
