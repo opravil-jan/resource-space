@@ -27,12 +27,11 @@ $editexternalurl = (getval("editexternalurl","") != "");
 $access       = getvalescaped("access","");
 $expires      = getvalescaped("expires","");
 
-# Work out the access to the resource, which is the minimum permitted share level.
-$minaccess    = get_resource_access($ref);
-if ($minaccess >= 1 && !$restricted_share) 
+# Check if sharing permitted
+if (!can_share_resource($ref,$minaccess)) 
     {
     $show_error = true;
-    $error      = $lang["restrictedsharecollection"];
+    $error      = $lang["error-permissiondenied"];
     }
         
 # Process deletion of access keys
@@ -47,8 +46,8 @@ hook("resource_share_afterheader");
 if (isset($show_error))
     { ?>
     <script type="text/javascript">
-	    alert('<?php echo $error;?>');
-	    history.go(-1);
+        alert('<?php echo $error;?>');
+        history.go(-1);
     </script>
     <?php
     exit();
@@ -74,7 +73,7 @@ if($editing && !$editexternalurl)
             <input type="hidden" name="deleteaccess" id="deleteaccess" value="">
             <input type="hidden" name="editaccess" id="editaccess" value="<?php echo htmlspecialchars($editaccess)?>">
             <input type="hidden" name="editexpiration" id="editexpiration" value="">
-			<input type="hidden" name="editgroup" id="editgroup" value="">
+            <input type="hidden" name="editgroup" id="editgroup" value="">
             <input type="hidden" name="editaccesslevel" id="editaccesslevel" value="">
 
             <div class="VerticalNav">
