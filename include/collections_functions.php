@@ -862,15 +862,15 @@ function populate_smart_theme_tree_node($tree,$node,$return,$indent,$levels)
 	}
 
 if (!function_exists("email_collection")){
-function email_collection($colrefs,$collectionname,$fromusername,$userlist,$message,$feedback,$access=-1,$expires="",$useremail="",$from_name="",$cc="",$themeshare=false,$themename="",$themeurlsuffix="",$list_recipients=false, $add_internal_access=false)
+function email_collection($colrefs,$collectionname,$fromusername,$userlist,$message,$feedback,$access=-1,$expires="",$useremail="",$from_name="",$cc="",$themeshare=false,$themename="",$themeurlsuffix="",$list_recipients=false, $add_internal_access=false,$group="")
 	{
 	# Attempt to resolve all users in the string $userlist to user references.
 	# Add $collection to these user's 'My Collections' page
 	# Send them an e-mail linking to this collection
 	#  handle multiple collections (comma seperated list)
-	global $baseurl,$email_from,$applicationname,$lang,$userref, $email_multi_collections ;
-	
+	global $baseurl,$email_from,$applicationname,$lang,$userref, $email_multi_collections,$usergroup;
 	if ($useremail==""){$useremail=$email_from;}
+	if ($group==""){$group=$usergroup;}
 	
 	if (trim($userlist)=="") {return ($lang["mustspecifyoneusername"]);}
 	$userlist=resolve_userlist_groups($userlist);
@@ -990,7 +990,7 @@ function email_collection($colrefs,$collectionname,$fromusername,$userlist,$mess
 				# Do we need to add an external access key for this user (e-mail specified rather than username)?
 				if ($key_required[$nx1])
 					{
-					$k=generate_collection_access_key($reflist[$nx2],$feedback,$emails[$nx1],$access,$expires);
+					$k=generate_collection_access_key($reflist[$nx2],$feedback,$emails[$nx1],$access,$expires,$group);
 					$key="&k=". $k;
 					$emailcollectionmessageexternal=true;
 					}

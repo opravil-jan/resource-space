@@ -106,13 +106,14 @@ if (getval("save","")!="")
 	$expires=getvalescaped("expires","");	
 	$feedback=getvalescaped("request_feedback","");	if ($feedback=="") {$feedback=false;} else {$feedback=true;}
 	$list_recipients=getvalescaped("list_recipients",""); if ($list_recipients=="") {$list_recipients=false;} else {$list_recipients=true;}
+	$group=getvalescaped("usergroup","");
 	
 	$use_user_email=getvalescaped("use_user_email",false);
 	if ($use_user_email){$user_email=$useremail;} else {$user_email="";} // if use_user_email, set reply-to address
 	if (!$use_user_email){$from_name=$applicationname;} else {$from_name=$userfullname;} // make sure from_name matches email
 	
 	if (getval("ccme",false)){ $cc=$useremail;} else {$cc="";}
-	$errors=email_collection($ref,i18n_get_collection_name($collection),$userfullname,$users,$message,$feedback,$access,$expires,$user_email,$from_name,$cc,$themeshare,$themename,$linksuffix,$list_recipients,$add_internal_access);
+	$errors=email_collection($ref,i18n_get_collection_name($collection),$userfullname,$users,$message,$feedback,$access,$expires,$user_email,$from_name,$cc,$themeshare,$themename,$linksuffix,$list_recipients,$add_internal_access,$group);
 
 	if ($errors=="")
 		{
@@ -299,6 +300,29 @@ for ($n=$minaccess;$n<=1;$n++) { ?>
 <div class="clearerleft"> </div>
 </div>
 <?php } # end hook replaceemailexpiryselector ?>
+
+
+
+<?php if (checkperm("x")) {
+# Allow the selection of a user group to inherit permissions from for this share (the default is to use the current user's user group).
+?>
+<div class="Question">
+<label for="groupselect"><?php echo $lang["externalshare_using_permissions_from_user_group"] ?></label>
+<select id="groupselect" name="usergroup" class="stdwidth">
+<?php $grouplist=get_usergroups(true);
+foreach ($grouplist as $group)
+	{
+	?>
+	<option value="<?php echo $group["ref"] ?>" <?php if ($usergroup==$group["ref"]) { ?>selected<?php } ?>><?php echo $group["name"] ?></option>
+	<?php
+	}
+?>
+</select>
+<div class="clearerleft"> </div>
+</div>
+<?php } ?>
+
+
 
 <?php if ($collection["user"]==$userref) { # Collection owner can request feedback.
 ?>

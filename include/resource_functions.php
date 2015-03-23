@@ -889,14 +889,15 @@ function update_field($resource,$field,$value)
 	}
 
 if (!function_exists("email_resource")){	
-function email_resource($resource,$resourcename,$fromusername,$userlist,$message,$access=-1,$expires="",$useremail="",$from_name="",$cc="",$list_recipients=false, $open_internal_access=false, $useraccess=2)
+function email_resource($resource,$resourcename,$fromusername,$userlist,$message,$access=-1,$expires="",$useremail="",$from_name="",$cc="",$list_recipients=false, $open_internal_access=false, $useraccess=2,$group="")
 	{
 	# Attempt to resolve all users in the string $userlist to user references.
 
-	global $baseurl,$email_from,$applicationname,$lang,$userref;
+	global $baseurl,$email_from,$applicationname,$lang,$userref,$usergroup;
 	
 	if ($useremail==""){$useremail=$email_from;}
-	
+	if ($group=="") {$group=$usergroup;}
+        
 	# remove any line breaks that may have been entered
 	$userlist=str_replace("\\r\\n",",",$userlist);
 
@@ -930,7 +931,7 @@ function email_resource($resource,$resourcename,$fromusername,$userlist,$message
 		# Do we need to add an external access key for this user (e-mail specified rather than username)?
 		if ($key_required[$n])
 			{
-			$k=generate_resource_access_key($resource,$userref,$access,$expires,$emails[$n]);
+			$k=generate_resource_access_key($resource,$userref,$access,$expires,$emails[$n],$group);
 			$key="&k=". $k;
 			}
                 elseif ($useraccess==0 && $open_internal_access)

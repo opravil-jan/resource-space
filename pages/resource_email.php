@@ -37,6 +37,7 @@ if (getval("save","")!="")
 	$add_internal_access=(getvalescaped("grant_internal_access","")!="");
 	if (hook("modifyresourceaccess")){$access=hook("modifyresourceaccess");}
 	$expires=getvalescaped("expires","");
+	$group=getvalescaped("usergroup","");
 	$list_recipients=getvalescaped("list_recipients",""); if ($list_recipients=="") {$list_recipients=false;} else {$list_recipients=true;}
 	
 	$use_user_email=getvalescaped("use_user_email",false);
@@ -87,7 +88,7 @@ if (getval("save","")!="")
 	else
 		{		
 		// Email single resource
-		$errors=email_resource($ref,i18n_get_translated($resource["field".$view_title_field]),$userfullname,$users,$message,$access,$expires,$user_email,$from_name,$cc,$list_recipients,$add_internal_access,$useraccess);
+		$errors=email_resource($ref,i18n_get_translated($resource["field".$view_title_field]),$userfullname,$users,$message,$access,$expires,$user_email,$from_name,$cc,$list_recipients,$add_internal_access,$useraccess,$group);
 		if ($errors=="")
 			{
 			// Log this			
@@ -296,6 +297,27 @@ for ($n=$useraccess;$n<=1;$n++)  { ?>
 <div class="clearerleft"> </div>
 </div>
 <?php } ?>
+
+
+<?php if (checkperm("x")) {
+# Allow the selection of a user group to inherit permissions from for this share (the default is to use the current user's user group).
+?>
+<div class="Question">
+<label for="groupselect"><?php echo $lang["externalshare_using_permissions_from_user_group"] ?></label>
+<select id="groupselect" name="usergroup" class="stdwidth">
+<?php $grouplist=get_usergroups(true);
+foreach ($grouplist as $group)
+	{
+	?>
+	<option value="<?php echo $group["ref"] ?>" <?php if ($usergroup==$group["ref"]) { ?>selected<?php } ?>><?php echo $group["name"] ?></option>
+	<?php
+	}
+?>
+</select>
+<div class="clearerleft"> </div>
+</div>
+<?php } ?>
+
 
 <?php if ($email_from_user && !$always_email_from_user){?>
 <?php if ($useremail!="") { // Only allow this option if there is an email address available for the user.

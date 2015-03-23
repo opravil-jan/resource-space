@@ -2054,3 +2054,4 @@ $lang["customaccesspreventshare"]="You do not have permission to share one or mo
 
 $lang["allow_user_group_selection_for_access_when_sharing_externally"]="Allow user group select for determining access level when sharing externally";
 $lang["share_using_permissions_from_user_group"]="Share using permissions from user group";
+$lang["externalshare_using_permissions_from_user_group"]="If you are e-mailing external users, please select the user group to use for access";
