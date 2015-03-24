@@ -1114,8 +1114,22 @@ function copy_resource($from,$resource_type=-1)
 	
 	# copy joined fields to the resource column
 	$joins=get_resource_table_joins();
+
+	// Filter the joined columns so we only have the ones relevant to this resource type
+	$query = sprintf('
+			    SELECT rtf.ref AS value
+			      FROM resource_type_field AS rtf
+			INNER JOIN resource AS r ON (rtf.resource_type != r.resource_type AND rtf.resource_type != 0)
+			     WHERE r.ref = "%s";
+		',
+		$from
+	);
+	$irrelevant_rtype_fields = sql_array($query);
+	$irrelevant_rtype_fields = array_values(array_intersect($joins, $irrelevant_rtype_fields));
+	$filtered_joins = array_values(array_diff($joins, $irrelevant_rtype_fields));
+
 	$joins_sql="";
-	foreach ($joins as $join){
+	foreach ($filtered_joins as $join){
 		$joins_sql.=",field$join ";
 	}
 	
