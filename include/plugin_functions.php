@@ -1140,7 +1140,7 @@ function config_single_ftype_select($name, $label, $current, $width=300, $ftype=
   <div class="Question">
     <label for="<?php echo $name?>" title="<?php echo str_replace('%cvn', $name, $lang['plugins-configvar'])?>"><?php echo $label?></label>
     <select name="<?php echo $name?>" id="<?php echo $name?>" style="width:<?php echo $width ?>px">
-    <option value="" . (($current=="")?' selected':'') . '></option>';
+    <option value="" <?php echo (($current=="")?' selected':'') ?>></option>
 <?php
     foreach($fields as $field)
         {
