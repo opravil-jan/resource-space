@@ -27,6 +27,8 @@ $editexternalurl = (getval("editexternalurl","") != "");
 $access       = getvalescaped("access","");
 $expires      = getvalescaped("expires","");
 
+$minaccess=get_resource_access($ref);
+
 # Check if sharing permitted
 if (!can_share_resource($ref,$minaccess)) 
     {
