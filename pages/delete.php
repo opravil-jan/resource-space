@@ -68,7 +68,7 @@ else
 <div class="BasicsBox"> 
   <p><a onClick="return CentralSpaceLoad(this,true);" href="<?php echo $baseurl_short?>pages/view.php?ref=<?php echo urlencode($ref) ?>&search=<?php echo urlencode($search)?>&offset=<?php echo urlencode($offset) ?>&order_by=<?php echo urlencode($order_by) ?>&sort=<?php echo urlencode($sort) ?>&archive=<?php echo urlencode($archive) ?>">&lt;&nbsp;<?php echo $lang["backtoresourceview"]?></a></p>
   <h1><?php echo $lang["deleteresource"]?></h1>
-  <p><?php echo text("introtext")?></p>
+  <p><?php if($delete_requires_password){text("introtext");}else{echo $lang["delete__nopassword"];} ?></p>
   
   <?php if ($resource["archive"]==3) { ?><p><strong><?php echo $lang["finaldeletion"] ?></strong></p><?php } ?>
   

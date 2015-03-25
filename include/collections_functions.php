@@ -1781,10 +1781,11 @@ function draw_compact_style_selector($collection,$onhover=true,$col_min=false){
 function is_collection_approved($collection)
 		{
 		if (is_array($collection)){$result=$collection;}
-		else {
+		else
+			{
 			$result=do_search("!collection" . $collection,"","relevance",0,-1,"desc",false,"",false,"");
 			}	
-		if (!is_array($result)){return true;}
+		if (!is_array($result) || count($result)==0){return true;}
 		
 		$collectionstates=array();
 		global $collection_allow_not_approved_share;

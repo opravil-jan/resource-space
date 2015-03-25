@@ -31,7 +31,7 @@ $editaccess=getvalescaped("editaccess","");
 
 $editexternalurl = (getval("editexternalurl","")!="");
 	
-#Check if any resources are not approved
+#Check if any resources are not active
 $collectionstates=is_collection_approved($ref);
 if (!$collection_allow_not_approved_share && $collectionstates==false) {
         $show_error=true;
@@ -61,7 +61,8 @@ if (!$collection_allow_empty_share && count(get_collection_resources($ref))==0) 
     $show_error=true;
     $error=$lang["cannotshareemptycollection"];
     }
-elseif(!$allow_custom_access_share && ($customgroupaccess || $customuseraccess))
+
+if(!$allow_custom_access_share && isset($customgroupaccess) && isset($customuseraccess)  && ($customgroupaccess || $customuseraccess))
 	{ 
 	$show_error=true;
 	$error=$lang["customaccesspreventshare"];
