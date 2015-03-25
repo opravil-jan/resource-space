@@ -930,30 +930,34 @@ if (true) # Always show search header now.
             } /* end hook replacesearchkey */
         }        
     }
+$url=$baseurl_short."pages/search.php?search=" . urlencode($search) . "&amp;order_by=" . urlencode($order_by) . "&amp;sort=" . urlencode($sort) . "&amp;archive=" . urlencode($archive) . "&amp;daylimit=" . urlencode($daylimit) . "&amp;k=" . urlencode($k) . "&amp;restypes=" . urlencode($restypes);	
 ?>
 <!--Bottom Navigation - Archive, Saved Search plus Collection-->
 <div class="BottomInpageNav">
 	<div class="BottomInpageNavLeft">
-	<?php if(!hook("replacesearchbottomnav")){ ?>
-	<?php if (!checkperm("b") && $k=="") { ?>
-	<?php if($allow_save_search) { ?><div class="InpageNavLeftBlock"><a onClick="return CollectionDivLoad(this);" href="<?php echo $baseurl_short?>pages/collections.php?addsearch=<?php echo urlencode($search)?>&amp;restypes=<?php echo urlencode($restypes)?>&amp;archive=<?php echo urlencode($archive) ?>&amp;daylimit=<?php echo urlencode($daylimit) ?>">&gt;&nbsp;<?php echo $lang["savethissearchtocollection"]?></a></div><?php } ?>
-	<?php if($allow_smart_collections && substr($search,0,11)!="!collection") { ?><div class="InpageNavLeftBlock"><a onClick="return CollectionDivLoad(this);" href="<?php echo $baseurl_short?>pages/collections.php?addsmartcollection=<?php echo urlencode($search)?>&amp;restypes=<?php echo urlencode($restypes)?>&amp;archive=<?php echo urlencode($archive) ?>&amp;starsearch=<?php echo urlencode($starsearch) ?>">&gt;&nbsp;<?php echo $lang["savesearchassmartcollection"]?></a></div><?php } ?>
-	<?php global $smartsearch; if($allow_smart_collections && substr($search,0,11)=="!collection" && (is_array($smartsearch[0]) && !empty($smartsearch[0]))) { $smartsearch=$smartsearch[0];?><div class="InpageNavLeftBlock"><a onClick="return CentralSpaceLoad(this,true);" href="search.php?search=<?php echo urlencode($smartsearch['search'])?>&amp;restypes=<?php echo urlencode($smartsearch['restypes'])?>&amp;archive=<?php echo urlencode($smartsearch['archive']) ?>&amp;starsearch=<?php echo urlencode($smartsearch['starsearch']) ?>&amp;daylimit=<?php echo urlencode($daylimit) ?>">&gt;&nbsp;<?php echo $lang["dosavedsearch"]?></a></div><?php } ?>
-	
-	<?php if ($resources_count!=0){?>
-	<div class="InpageNavLeftBlock"><a onClick="return CollectionDivLoad(this);" href="<?php echo $baseurl_short?>pages/collections.php?addsearch=<?php echo urlencode($search)?>&amp;restypes=<?php echo urlencode($restypes)?>&amp;archive=<?php echo urlencode($archive) ?>&amp;mode=resources&amp;daylimit=<?php echo urlencode($daylimit) ?>">&gt;&nbsp;<?php echo $lang["savesearchitemstocollection"]?></a></div>
-	<?php if($show_searchitemsdiskusage) {?>
-	<div class="InpageNavLeftBlock"><a onClick="return CentralSpaceLoad(this, true);" href="<?php echo $baseurl_short?>pages/search_disk_usage.php?search=<?php echo urlencode($search)?>&amp;restypes=<?php echo urlencode($restypes)?>&amp;offset=<?php echo urlencode($offset) ?>&amp;order_by=<?php echo urlencode($order_by)?>&amp;sort=<?php echo urlencode($sort)?>&amp;archive=<?php echo urlencode($archive) ?>&amp;daylimit=<?php echo urlencode($daylimit) ?>&amp;k=<?php echo urlencode($k)?>&amp;restypes=<?php echo urlencode($restypes) ?>">&gt;&nbsp;<?php echo $lang["searchitemsdiskusage"]?></a></div>
-	<?php } ?>
-	<?php } ?>
-
-	<?php } ?>
-	
-	<?php hook("resultsbottomtoolbar"); ?>
-	<?php } ?>  <!--End of hook("replacesearchbottomnav")-->	
 	<?php 
-	$url=$baseurl_short."pages/search.php?search=" . urlencode($search) . "&amp;order_by=" . urlencode($order_by) . "&amp;sort=" . urlencode($sort) . "&amp;archive=" . urlencode($archive) . "&amp;daylimit=" . urlencode($daylimit) . "&amp;k=" . urlencode($k) . "&amp;restypes=" . urlencode($restypes);	
-	?>
+	if(!hook("replacesearchbottomnav"))
+		{
+		if (!checkperm("b") && $k=="") 
+			{
+			if($allow_save_search) { ?><div class="InpageNavLeftBlock"><a onClick="return CollectionDivLoad(this);" href="<?php echo $baseurl_short?>pages/collections.php?addsearch=<?php echo urlencode($search)?>&amp;restypes=<?php echo urlencode($restypes)?>&amp;archive=<?php echo urlencode($archive) ?>&amp;daylimit=<?php echo urlencode($daylimit) ?>">&gt;&nbsp;<?php echo $lang["savethissearchtocollection"]?></a></div><?php }
+			if($allow_smart_collections && substr($search,0,11)!="!collection") { ?><div class="InpageNavLeftBlock"><a onClick="return CollectionDivLoad(this);" href="<?php echo $baseurl_short?>pages/collections.php?addsmartcollection=<?php echo urlencode($search)?>&amp;restypes=<?php echo urlencode($restypes)?>&amp;archive=<?php echo urlencode($archive) ?>&amp;starsearch=<?php echo urlencode($starsearch) ?>">&gt;&nbsp;<?php echo $lang["savesearchassmartcollection"]?></a></div><?php }
+			global $smartsearch; 
+			if($allow_smart_collections && substr($search,0,11)=="!collection" && (is_array($smartsearch[0]) && !empty($smartsearch[0]))) { $smartsearch=$smartsearch[0];?><div class="InpageNavLeftBlock"><a onClick="return CentralSpaceLoad(this,true);" href="search.php?search=<?php echo urlencode($smartsearch['search'])?>&amp;restypes=<?php echo urlencode($smartsearch['restypes'])?>&amp;archive=<?php echo urlencode($smartsearch['archive']) ?>&amp;starsearch=<?php echo urlencode($smartsearch['starsearch']) ?>&amp;daylimit=<?php echo urlencode($daylimit) ?>">&gt;&nbsp;<?php echo $lang["dosavedsearch"]?></a></div><?php }
+			if ($resources_count!=0)
+				{?>
+				<div class="InpageNavLeftBlock"><a onClick="return CollectionDivLoad(this);" href="<?php echo $baseurl_short?>pages/collections.php?addsearch=<?php echo urlencode($search)?>&amp;restypes=<?php echo urlencode($restypes)?>&amp;archive=<?php echo urlencode($archive) ?>&amp;mode=resources&amp;daylimit=<?php echo urlencode($daylimit) ?>">&gt;&nbsp;<?php echo $lang["savesearchitemstocollection"]?></a></div>
+				<?php 
+				if($show_searchitemsdiskusage) 
+					{?>
+					<div class="InpageNavLeftBlock"><a onClick="return CentralSpaceLoad(this, true);" href="<?php echo $baseurl_short?>pages/search_disk_usage.php?search=<?php echo urlencode($search)?>&amp;restypes=<?php echo urlencode($restypes)?>&amp;offset=<?php echo urlencode($offset) ?>&amp;order_by=<?php echo urlencode($order_by)?>&amp;sort=<?php echo urlencode($sort)?>&amp;archive=<?php echo urlencode($archive) ?>&amp;daylimit=<?php echo urlencode($daylimit) ?>&amp;k=<?php echo urlencode($k)?>&amp;restypes=<?php echo urlencode($restypes) ?>">&gt;&nbsp;<?php echo $lang["searchitemsdiskusage"]?></a></div>
+					<?php 
+					}
+				}
+			}
+		hook("resultsbottomtoolbar");
+		}?>
+	<!--End of hook("replacesearchbottomnav")-->	
 	</div>
 	<div class="BottomInpageNavRight">	
 	<?php 
@@ -974,4 +978,4 @@ hook("endofsearchpage");?>
 <div id="InfoBox"><div id="InfoBoxInner"> </div></div>
 <?php
 include "../include/footer.php";
-?>
+
