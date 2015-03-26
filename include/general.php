@@ -792,6 +792,7 @@ function get_users($group=0,$find="",$order_by="u.username",$usepermissions=fals
 {
     # Returns a user list. Group or search term is optional.
     # The standard user group names are translated using $lang. Custom user group names are i18n translated.
+    global $usergroup, $U_perm_strict;
 
     $sql = "";
 	$find=strtolower($find);
@@ -806,15 +807,25 @@ function get_users($group=0,$find="",$order_by="u.username",$usepermissions=fals
       if ($sql=="") {$sql = "where ";} else {$sql.= " and ";}
       $sql .= "LOWER(username) like '$find%'";
       }
-    if ($usepermissions && checkperm("U")) {
+    if ($usepermissions && checkperm("U") && $U_perm_strict) {
         # Only return users in children groups to the user's group
-        global $usergroup;
         if ($sql=="") {$sql = "where ";} else {$sql.= " and ";}
         $sql.= "find_in_set('" . $usergroup . "',g.parent) ";
         $sql.= hook("getuseradditionalsql");
     }
+
+    // Return users in both user's user group and children groups
+    if ($usepermissions && checkperm('U') && !$U_perm_strict) {
+    	$sql .= sprintf('
+    			%1$s (g.ref = "%2$s" OR find_in_set("%2$s", g.parent))
+    		',
+    		($sql == '') ? 'WHERE' : ' AND',
+    		$usergroup
+    	);
+    }
+    $query = "select u.*,g.name groupname,g.ref groupref,g.parent groupparent,u.approved,u.created from user u left outer join usergroup g on u.usergroup=g.ref $sql order by $order_by";
     # Executes query.
-    $r = sql_query("select u.*,g.name groupname,g.ref groupref,g.parent groupparent,u.approved,u.created from user u left outer join usergroup g on u.usergroup=g.ref $sql order by $order_by",false,$fetchrows);
+    $r = sql_query($query, false, $fetchrows);
 
     # Translates group names in the newly created array.
     for ($n = 0;$n<count($r);$n++) {
