@@ -62,6 +62,7 @@ if (!checkperm("b"))
 <?php
 for ($n=$offset;(($n<count($log)) && ($n<($offset+$per_page)));$n++)
 	{
+	if (!isset($lang["collectionlog-".$log[$n]["type"]])){$lang["collectionlog-".$log[$n]["type"]]="";}	
 	?>
 	<!--List Item-->
 	<tr>
