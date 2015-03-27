@@ -27,6 +27,15 @@ for ($n=0;$n<count($fields);$n++)
 $simple_fields[]="year";$simple_fields[]="month";$simple_fields[]="day";
 hook("simplesearch_stripsimplefields");
 
+# Check for fields with the same short name and add to an array used for deduplication.
+$f=array();
+$duplicate_fields=array();
+for ($n=0;$n<count($fields);$n++)
+	{
+	if (in_array($fields[$n]["name"],$f)) {$duplicate_fields[]=$fields[$n]["name"];}
+	$f[]=$fields[$n]["name"];
+	}
+			
 # Process all keywords, putting set fieldname/value pairs into an associative array ready for setting later.
 # Also build a quicksearch string.
 
@@ -238,13 +247,21 @@ if (!$basic_simple_search)
 	if (!$basic_simple_search) {
 	// Include simple search items (if any)
 	$optionfields=array();
+	$rendered_names=array();
 	for ($n=0;$n<count($fields);$n++)
 		{
+		$render=true;
+		if (in_array($fields[$n]["name"],$duplicate_fields) && in_array($fields[$n]["name"],$rendered_names)) {$render=false;} # Render duplicate fields only once.
+		if ($render)
+			{
+			$rendered_names[]=$fields[$n]["name"];
+			
 		hook("modifysearchfieldtitle");?>
 		<div class="SearchItem" id="simplesearch_<?php echo $fields[$n]["ref"] ?>" <?php if (strlen($fields[$n]["tooltip_text"])>=1){echo "title=\"" . htmlspecialchars(lang_or_i18n_get_translated($fields[$n]["tooltip_text"], "fieldtooltip-")) . "\"";}?>><?php echo htmlspecialchars($fields[$n]["title"]) ?><br />
 		<?php
 		
-		$value=""; # to do, fetch set value.
+		# Fetch current value
+		$value="";
 		if (isset($set_fields[$fields[$n]["name"]])) {$value=$set_fields[$fields[$n]["name"]];}
 		
 	#hook to modify field type in special case. Returning zero (to get a standard text box) doesn't work, so return 1 for type 0, 2 for type 1, etc.
@@ -401,7 +418,8 @@ if (!$basic_simple_search)
 			}
 		?>
 		</div>	
-		<?php		
+		<?php
+		}
 		}
 	?>
 	<script type="text/javascript">
@@ -463,7 +481,9 @@ if (!$basic_simple_search)
 		# Consider each of the fields. Hide if the resource type for this field is not checked
 		for ($n=0;$n<count($fields);$n++)
 			{
-			if ($fields[$n]["resource_type"]!=0)
+			# Check it's not a global field, we don't need to hide those
+			# Also check it's not a duplicate field as those should not be toggled.
+			if ($fields[$n]["resource_type"]!=0 && !in_array($fields[$n]["name"],$duplicate_fields))
 				{
 				?>
 				if (reset)
