@@ -480,7 +480,7 @@ function index_collection($ref,$index_string='')
 	if (!strlen($index_string) > 0){
 		$indexarray = sql_query("select $indexfields from collection c join user u on u.ref=c.user and c.ref = '$ref'");
 		for ($i=0; $i<count($indexarray); $i++){
-			$index_string = implode(' ',$indexarray[$i]);
+			$index_string = "," . implode(',',$indexarray[$i]);
 		} 
 	}
 
