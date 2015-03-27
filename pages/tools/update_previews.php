@@ -61,7 +61,7 @@ if ($collectionid == false){
     if ($ref<$max && getval("only","")=="")
     	{
     	?>
-    	<meta http-equiv="refresh" content="1;url=<?php echo $baseurl?>/pages/tools/update_previews.php?ref=<?php echo $ref+1?>&previewbased=<?php echo $previewbased?>"/>
+    	<meta http-equiv="refresh" content="0;url=<?php echo $baseurl?>/pages/tools/update_previews.php?ref=<?php echo $ref+1?>&previewbased=<?php echo $previewbased?>"/>
     	<?php
     	}
     else
