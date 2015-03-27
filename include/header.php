@@ -182,7 +182,7 @@ jQuery(document).ready(function() {
     }
     else
     { 
-        var share='<?php echo $k ?>';
+        var share='<?php echo htmlspecialchars($k) ?>';
         var modAlt=e.altKey;
         var modShift=e.shiftKey;
         var modCtrl=e.ctrlKey;
