@@ -76,7 +76,7 @@ function upload_file($ref,$no_exif=false,$revert=false,$autorotate=false)
 		# first try to get it from the filename
 		$extension=explode(".",$filename);
 		if(count($extension)>1){
-			$extension=trim(strtolower($extension[count($extension)-1]));
+			$extension=escape_check(trim(strtolower($extension[count($extension)-1])));
 			} 
 		# if not, try exiftool	
 		else if ($exiftool_fullpath!=false)
