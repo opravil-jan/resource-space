@@ -33,6 +33,27 @@ function ResolveKB($value)
 <table class="InfoTable">
 <?php
 
+
+# Check ResourceSpace Build
+$build = '';
+if ($productversion == 'SVN'){
+ $p_version = 'Trunk (SVN)'; # Should not be translated as this information is sent to the bug tracker.
+ //Try to run svn info to determine revision number
+ $out = array();
+ exec('svn info ../', $out);
+ foreach($out as $outline){
+  $matches = array();
+  if (preg_match('/^Revision: (\d+)/i', $outline, $matches)!=0){
+   $build = "r" . $matches[1];
+  }
+ } 
+}
+
+# ResourceSpace version
+$p_version = $productversion == 'SVN'?'Subversion ' . $build:$productversion; # Should not be translated as this information is sent to the bug tracker.
+
+?><tr><td nowrap="true"><?php echo str_replace("?", "ResourceSpace", $lang["softwareversion"]); ?></td><td><?php echo $p_version?></td><td><br /></td></tr><?php
+
 # Check PHP version
 $phpversion=phpversion();
 $phpinifile=php_ini_loaded_file();
