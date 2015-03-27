@@ -325,10 +325,12 @@ function get_resource_top_keywords($resource,$count)
 	{
 	# Return the top $count keywords (by hitcount) used by $resource.
 	# This is for the 'Find Similar' search.
-	# Keywords that are too short or too long, or contain numbers are dropped - they are probably not as meaningful in
-	# the contexts of this search (consider being offered "12" or "OKB-34" as an option?)
-	$return=array();
-	$keywords=sql_query("select distinct k.ref,k.keyword keyword,f.ref field,f.resource_type from keyword k,resource_keyword r,resource_type_field f where k.ref=r.keyword and r.resource='$resource' and f.ref=r.resource_type_field and f.use_for_similar=1 and length(k.keyword)>=3 and length(k.keyword)<=15 and k.keyword not like '%0%' and k.keyword not like '%1%' and k.keyword not like '%2%' and k.keyword not like '%3%' and k.keyword not like '%4%' and k.keyword not like '%5%' and k.keyword not like '%6%' and k.keyword not like '%7%' and k.keyword not like '%8%' and k.keyword not like '%9%' order by k.hit_count desc limit $count");
+
+        # These are now derived from resource data for fixed keyword lists, rather than from the resource_keyword table
+        # which produced very mixed results and didn't work with stemming or diacritic normalisation.
+        
+        $return=array();
+	$keywords=sql_query("select distinct rd.value keyword,f.ref field,f.resource_type from resource_data rd,resource_type_field f where rd.resource='$resource' and f.ref=rd.resource_type_field and f.type in (2,3,7,9,11,12) and f.keywords_index=1 and f.use_for_similar=1 and length(rd.value)>0 limit $count");
 	foreach ($keywords as $keyword)
 		{
 		# Apply permissions and strip out any results the user does not have access to.
@@ -336,7 +338,13 @@ function get_resource_top_keywords($resource,$count)
 		&& !checkperm("f-" . $keyword["field"]) && !checkperm("T" . $keyword["resource_type"]))
 			{
 			# Has access to this field.
-			$return[]=$keyword["keyword"];
+                        $r=$keyword["keyword"];
+                        if (substr($r,0,1)==",") {$r=substr($r,1);}
+                        $s=explode(",",$r);
+                        foreach ($s as $a)
+                            {
+                            $return[]=$a;
+                            }
 			}
 		}
 	return $return;

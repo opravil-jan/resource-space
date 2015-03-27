@@ -1872,14 +1872,12 @@ function UpdateFSResultCount()
 <input type="hidden" name="resource_type" value="<?php echo $resource["resource_type"]?>">
 <input type="hidden" name="countonly" id="countonly" value="">
 <?php
-$keywords=get_resource_top_keywords($ref,30);
-$keywords = array_values(array_unique($keywords));
-$searchwords=split_keywords($search);
+$keywords=get_resource_top_keywords($ref,50);
 for ($n=0;$n<count($keywords);$n++)
 	{
 	?>
 	<div class="SearchSimilar"><input type=checkbox id="similar_search_<?php echo urlencode($keywords[$n])?>" name="keyword_<?php echo urlencode($keywords[$n])?>" value="yes"
-	<?php if (in_array($keywords[$n],$searchwords)) {?>checked<?php } ?> onClick="UpdateFSResultCount();"><label for="similar_search_<?php echo urlencode($keywords[$n])?>">&nbsp;<?php echo htmlspecialchars($keywords[$n])?></label></div>
+	onClick="UpdateFSResultCount();"><label for="similar_search_<?php echo urlencode($keywords[$n])?>">&nbsp;<?php echo htmlspecialchars(i18n_get_translated($keywords[$n]))?></label></div>
 	<?php
 	}
 ?>
