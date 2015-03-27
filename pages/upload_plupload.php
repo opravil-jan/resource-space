@@ -75,7 +75,7 @@ $alternative = getvalescaped("alternative",""); # Batch upload alternative files
 $replace = getvalescaped("replace",""); # Replace Resource Batch
 
 $replace_resource=getvalescaped("replace_resource",""); # Option to replace existing resource file
-
+if($replace_resource && !get_edit_access($replace_resource)){$replace_resource=false;}
 
 
 # Create a new collection?
@@ -206,7 +206,7 @@ if ($_FILES)
 	global $banned_extensions;
 	if (in_array($extension,$banned_extensions) || ($allowed_extensions!="" && !in_array($extension,explode(",",$allowed_extensions))))
 		{
-                debug("PLUPLOAD - invalid file extension received from user " . $username . ",  filename " . $plfilename . ", chunk " . $chunk . " of " . $chunks);
+            debug("PLUPLOAD - invalid file extension received from user " . $username . ",  filename " . $plfilename . ", chunk " . $chunk . " of " . $chunks);
        		die('{"jsonrpc" : "2.0", "error" : {"code": 105, "message": "Banned file extension."}, "id" : "id"}');
 		}
 
