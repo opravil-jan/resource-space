@@ -72,6 +72,7 @@ o	Can manage content
 m	Can bulk-mail users
 u	Can manage users
 k	Can manage keywords (add/remove keyword relationships and add/remove/rename checkbox/dropdown list options)
+bdk?	Cannot add dynamic keywords to the list straight from the field (ie. when on Upload or Edit page)
 
 Restrictive group permissions (allows isolated groups to be created)
 -----
