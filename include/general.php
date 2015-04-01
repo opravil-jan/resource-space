@@ -369,8 +369,7 @@ function split_keywords($search,$index=false,$partial_index=false,$is_date=false
 			return $search;
 			}
 		}
-
-
+		
 	# Remove any real / unescaped lf/cr
 	$search=str_replace("\r"," ",$search);
 	$search=str_replace("\n"," ",$search);
@@ -387,7 +386,7 @@ function split_keywords($search,$index=false,$partial_index=false,$is_date=false
 	
 		$return=explode(",",$ns);
 		# If we are indexing, append any values that contain spaces.
-               
+        
 		# Important! Solves the searching for keywords with spaces issue.
 		# Consider: for any keyword that has spaces, append to the array each individual word too
 		# so for example: South Asia,USA becomes South Asia,USA,South,Asia
@@ -406,6 +405,7 @@ function split_keywords($search,$index=false,$partial_index=false,$is_date=false
 					for ($m=0;$m<count($words);$m++) {$return2[]=trim($words[$m]);}
 					}
 				}
+
 			$return2=trim_array($return2,$config_trimchars);
 			if ($partial_index) {return add_partial_index($return2);}
 			return $return2;
@@ -468,7 +468,7 @@ function cleanse_string($string,$preserve_separators,$preserve_hyphen=false,$is_
 
 if (!function_exists("resolve_keyword")){
 function resolve_keyword($keyword,$create=false)
-	{	
+	{
 	debug("resolving keyword " . $keyword  . ". Create=" . (($create)?"true":"false"));
 	
         $keyword=substr($keyword,0,100); # Trim keywords to 100 chars for indexing, as this is the length of the keywords column.
@@ -684,18 +684,22 @@ function get_image_sizes($ref,$internal=false,$extension="jpg",$onlyifexists=tru
 
 function trim_array($array,$trimchars='')
 	{
+	$array = array_filter($array);
+	$array_trimmed=array();
+	$index=0;
 	# removes whitespace from the beginning/end of all elements in an array
-	
-	for ($n=0;$n<count($array);$n++)
+	foreach($array as $el)
 		{
-		$array[$n]=trim($array[$n]);
+		$el=trim($el);
 		if (strlen($trimchars) > 0)
 			{
 			// also trim off extra characters they want gone
-			$array[$n]=trim($array[$n],$trimchars);
+			$el=trim($el,$trimchars);
 			}
+		$array_trimmed[$index]=$el;
+		$index++;
 		}
-	return $array;
+	return $array_trimmed;
 	}
 
 
