@@ -56,7 +56,7 @@ if (!hook("replaceslideshow"))
 				 	big_slideshow_timer = <?php echo $slideshow_photo_delay; ?>;
 				 <?php }
 				 ?>
-				 RegisterSlideshowImage('../<?php echo $homeanim_folder ?>/<?php echo $f ?>?nc=<?php echo $checksum ?>','<?php echo $linkref ?>');
+				 RegisterSlideshowImage('<?php echo $baseurl_short . $homeanim_folder ?>/<?php echo $f ?>?nc=<?php echo $checksum ?>','<?php echo $linkref ?>');
 				 </script>
 				 <?php
 				 }
