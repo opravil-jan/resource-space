@@ -138,8 +138,11 @@ function csv_upload_process($filename,&$meta,$resource_types,&$messages,$overrid
 			
 		$cell_count=-1;		
 		
-		// Now process the actual data
+		global $additional_archive_states;
+		$valid_archive_states=array_merge (array(-2,-1,0,1,2,3),$additional_archive_states);
+					
 		
+		// Now process the actual data
 		
 		foreach ($header as $field_name)	
 			{			
@@ -169,8 +172,6 @@ function csv_upload_process($filename,&$meta,$resource_types,&$messages,$overrid
 			if($field_name=="STATUS" && $processcsv)
 				{
 				//echo "Checking status<br>";
-				global $additional_archive_states;
-				$valid_archive_states=array_merge (array(-2,-1,0,1,2,3),$additional_archive_states);
 				$selectedarchivestatus=(in_array(getvalescaped("status","",true),$valid_archive_states)) ? getvalescaped("status","",true) : "default"; // Must be a valid status value						
 				if($selectedarchivestatus=="default"){continue 2;} // Ignore this and the system will use default				
 				$cellarchivestatus=(in_array($cell_value,$valid_archive_states)) ? $cell_value : ""; // value from CSV
@@ -291,8 +292,29 @@ function csv_upload_process($filename,&$meta,$resource_types,&$messages,$overrid
 				
 		ob_flush();	
 			}	// end of cell loop
-			
-		//sleep(5);
+		
+		
+		// Set archive state if no header found in CSV
+		if($processcsv && !in_array("STATUS",$header)) // We don't have a value but we still need to process the selected value
+			{
+			$selectedarchivestatus=(in_array(getvalescaped("status",""),$valid_archive_states)) ? getvalescaped("status","") : "default"; // Must be a valid status value						
+						
+			if($selectedarchivestatus!="default")
+				{
+				update_archive_status($newref,$selectedarchivestatus);
+				}
+			}
+				
+		// Set access if no header found in CSV
+		if($processcsv && !in_array("ACCESS",$header)) // We don't have a value but we still need to process the selected value
+			{
+			$selectedaccess=(in_array(getvalescaped("access","",true),array(0,1,2))) ? getvalescaped("access","",true) : "default"; // Must be a valid access value						
+			if($selectedaccess!="default")
+				{
+				sql_query("update resource set access='$selectedaccess' where ref='$newref'");
+				}
+			}
+		
 		}  // end of loop through lines
 	
 	fclose($file);
