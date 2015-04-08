@@ -2590,3 +2590,6 @@ $allow_password_email=false;
 
 # Do not show any notification text if a password reset attempt fails to find a valid user. Setting this to false means potential hackers can discover valid email addresses
 $hide_failed_reset_text=true;
+
+# Show and allow to remove custom access for users when editing a resource
+$delete_resource_custom_access = false;
