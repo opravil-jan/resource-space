@@ -684,6 +684,7 @@ function get_image_sizes($ref,$internal=false,$extension="jpg",$onlyifexists=tru
 
 function trim_array($array,$trimchars='')
 	{
+	if(empty($array[0])){$unshiftblank=true;}
 	$array = array_filter($array);
 	$array_trimmed=array();
 	$index=0;
@@ -699,6 +700,7 @@ function trim_array($array,$trimchars='')
 		$array_trimmed[$index]=$el;
 		$index++;
 		}
+	if(isset($unshiftblank)){array_unshift($array_trimmed,"");}
 	return $array_trimmed;
 	}
 
