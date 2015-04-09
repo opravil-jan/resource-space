@@ -45,7 +45,7 @@ function do_search($search,$restypes="",$order_by="relevance",$archive=0,$fetchr
 	if (substr($search,0,1)=="\"" && substr($search,-1,1)=="\"") {$quoted_string=true;$search=substr($search,1,-1);}
 
 	$order_by=$order[$order_by];
-	$keywords=split_keywords($search);
+	$keywords=$quoted_string ? array($search) : split_keywords($search);		// take the keyword verbatim if quoted - i.e. do not split it
 	$search=trim($search);
         # Dedupe keywords (not for quoted strings as the user may be looking for the same word multiple times together in this instance)
         if (!$quoted_string) {$keywords=array_values(array_unique($keywords));}
