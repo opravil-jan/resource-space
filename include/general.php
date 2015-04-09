@@ -329,7 +329,7 @@ function get_resource_top_keywords($resource,$count)
         # These are now derived from resource data for fixed keyword lists, rather than from the resource_keyword table
         # which produced very mixed results and didn't work with stemming or diacritic normalisation.
         
-        $return=array();
+    $return=array();
 	$keywords=sql_query("select distinct rd.value keyword,f.ref field,f.resource_type from resource_data rd,resource_type_field f where rd.resource='$resource' and f.ref=rd.resource_type_field and f.type in (2,3,7,9,11,12) and f.keywords_index=1 and f.use_for_similar=1 and length(rd.value)>0 limit $count");
 	foreach ($keywords as $keyword)
 		{
@@ -343,7 +343,8 @@ function get_resource_top_keywords($resource,$count)
                         $s=explode(",",$r);
                         foreach ($s as $a)
                             {
-                            $return[]=$a;
+                            if(!empty($a))
+                            	{$return[]=$a;}
                             }
 			}
 		}
