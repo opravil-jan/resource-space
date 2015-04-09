@@ -201,7 +201,7 @@ $fieldcolumns=array("title"=>array($lang["property-title"],"",0,1),
 					"exiftool_filter"=>array($lang["property-exiftool_filter"],"",2,1),
 					"display_as_dropdown"=>array($lang["property-display_as_dropdown"],$lang["information-display_as_dropdown"],1,1),
 					"external_user_access"=>array($lang["property-external_user_access"],"",1,1),
-					"autocomplete_macro"=>array($lang["property-autocomplete_macro"],"",0,1),
+					"autocomplete_macro"=>array($lang["property-autocomplete_macro"],"",2,1),
 					"omit_when_copying"=>array($lang["property-omit_when_copying"],"",1,1),
 					"sync_field"=>array($lang["property-sync_with_field"],"",0,0),
 					"onchange_macro"=>array($lang["property-onchange_macro"],$lang["information-onchange_macro"],2,1)				
