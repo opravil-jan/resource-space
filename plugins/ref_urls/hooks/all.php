@@ -14,7 +14,7 @@ function HookRef_urlsAllGet_resource_path_override($ref, $getfilepath, $size, $g
 	if ($alternative != -1)
 		$url .= "&alternative=$alternative";
 	if ($watermarked)
-		$url .= "&wm=$watermarked";
+		$url .= "&watermark=$watermarked";
 	if (!empty($k))
 		$url .= '&k=' . urlencode($k);
 
