@@ -160,7 +160,7 @@ if (!$config_search_for_number || !is_numeric($search)) # Don't do this when the
 			else
 				{
 				# Standard field
-				$values=explode(" ",$value);
+				$values =  explode(' ', mb_strtolower(trim_spaces(str_replace($config_separators, ' ', $value)), 'UTF-8'));
 				foreach ($values as $value)
 					{
 					# Standard field
