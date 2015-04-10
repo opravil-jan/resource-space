@@ -1291,6 +1291,11 @@ $config_separators=array("/","_",".","; ","-","(",")","'","\"","\\", "?");
 # leave blank for no extra trimming.
 $config_trimchars="";
 
+# Resource field verbatim keyword regex
+# Using the index value of [resource field], specifies regex criteria for adding verbatim strings to keywords.
+# It solves the problem, for example, indexing an entire "nnn.nnn.nnn" string value when '.' are used in $config_separators.
+# $resource_field_verbatim_keyword_regex[1] = '/\d+\.\d+\w\d+\.\d+/';		// this example would add 994.1a9.93 to indexed keywords for field 1.  This can be found using quoted search.
+
 # Global permissions
 # Permissions that will be prefixed to all user group permissions
 # Handy for setting global options, e.g. for fields
@@ -2593,3 +2598,4 @@ $hide_failed_reset_text=true;
 
 # Show and allow to remove custom access for users when editing a resource
 $delete_resource_custom_access = false;
+
