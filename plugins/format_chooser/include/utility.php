@@ -113,7 +113,7 @@ function convertImage($resource, $page, $alternative, $target, $width, $height, 
 		$info = run_command($command);
 		$basePath = dirname(__FILE__) . '/../../../';
 		if (preg_match("/Profile-icc:/", $info) != 1)
-			$command .= ' -profile "' . $basePath . 'config/sRGB_IEC61966-2-1_black_scaled.icc"';
+			$command .= ' -profile "' . $basePath . 'iccprofiles/sRGB_IEC61966-2-1_black_scaled.icc"';
 		$command .= ' -profile "' . $basePath . $profile . '"';
 		}
 
