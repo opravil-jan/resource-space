@@ -45,7 +45,13 @@ function do_search($search,$restypes="",$order_by="relevance",$archive=0,$fetchr
 	if (substr($search,0,1)=="\"" && substr($search,-1,1)=="\"") {$quoted_string=true;$search=substr($search,1,-1);}
 
 	$order_by=$order[$order_by];
-	$keywords=$quoted_string ? array($search) : split_keywords($search);		// take the keyword verbatim if quoted - i.e. do not split it
+	$keywords=split_keywords($search);
+
+	foreach (get_indexed_resource_type_fields() as $resource_type_field)
+		{
+		add_verbatim_keywords($keywords,$search,$resource_type_field);		// add any regex matched verbatim keywords for those indexed resource type fields
+		}
+
 	$search=trim($search);
         # Dedupe keywords (not for quoted strings as the user may be looking for the same word multiple times together in this instance)
         if (!$quoted_string) {$keywords=array_values(array_unique($keywords));}

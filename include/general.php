@@ -3783,6 +3783,11 @@ function validate_html($html)
         }
     }
 
+function get_indexed_resource_type_fields()
+	{
+	return sql_array("select ref as value from resource_type_field where keywords_index=1");
+	}
+
 function get_resource_type_fields($restypes="", $field_order_by="ref", $field_sort="asc", $find="")
 	{
 	// Gets all metadata fields, optionally for a specified array of resource types 
