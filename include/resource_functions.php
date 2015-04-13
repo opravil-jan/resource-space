@@ -3294,23 +3294,3 @@ function can_share_resource($ref, $access="")
 	return true;	
 	}
 
-# Takes a string and add verbatim regex matches to the keywords list on found matches (for that field)
-# It solves the problem, for example, indexing an entire "nnn.nnn.nnn" string value when '.' are used as a keyword separator.
-# Uses config option $resource_field_verbatim_keyword_regex[resource type field] = '/regex/'
-function add_verbatim_keywords(&$keywords, $string, $resource_type_field)
-	{
-	global $resource_field_verbatim_keyword_regex;
-	if (empty($resource_field_verbatim_keyword_regex[$resource_type_field]))
-		{
-		return;		// return if regex not found or is blank
-		}
-	preg_match_all($resource_field_verbatim_keyword_regex[$resource_type_field], $string, $matches);
-	foreach ($matches as $match)
-		{
-		foreach ($match as $sub_match)
-			{
-			array_push($keywords,$sub_match);		// note that the keywords array is passed in by reference.
-			}
-		}
-	}
-
