@@ -146,6 +146,37 @@ if ($submitted != "")
 	// set up an array to store the filenames as they are found (to analyze dupes)
 	$filenames=array();
 	
+	
+	# Estimate the total volume of files to zip
+	$totalsize=0;
+	for ($n=0;$n<count($result);$n++)
+		{
+		$usesize = ($size == 'original') ? "" : $usesize=$size;
+		$use_watermark=check_use_watermark();
+		
+		# Find file to use
+		$f=get_resource_path($ref,true,$usesize,false,$pextension,-1,1,$use_watermark);
+		if (!file_exists($f))
+			{
+			# Selected size doesn't exist, use original file
+			$f=get_resource_path($ref,true,'',false,$result[$n]['file_extension'],-1,1,$use_watermark);
+			}
+		if (file_exists($f))
+			{
+			$totalsize+=filesize_unlimited($f);
+			}
+		}
+	if ($totalsize>$collection_download_max_size)
+		{
+		?>
+		<script>
+		alert("<?php echo $lang["collection_download_too_large"] ?>");
+		history.go(-1);
+		</script>
+		<?php
+		exit();
+		}
+	
 	# Build a list of files to download
 	for ($n=0;$n<count($result);$n++)
 		{

@@ -589,6 +589,9 @@ $orderbyrating=false;
 # (And don't forget to set $archiver_path etc. in the path section.)
 $collection_download = false;
 
+# The total size, in bytes, of the collection download possible PRIOR to zipping. Prevents users attempting very large downloads.
+$collection_download_max_size = 1024 * 1024 * 1024; # default 1GB.
+
 # Example given for Linux with the zip utility:
 # $collection_download_settings[0]["name"] = 'ZIP';
 # $collection_download_settings[0]["extension"] = 'zip';
