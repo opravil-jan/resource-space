@@ -858,7 +858,14 @@ function create_previews($ref,$thumbonly=false,$extension="jpg",$previewonly=fal
 	# Debug
 	debug("create_previews(ref=$ref,thumbonly=$thumbonly,extension=$extension,previewonly=$previewonly,previewbased=$previewbased,alternative=$alternative,ingested=$ingested)");
 
-	if (!$previewonly) {generate_file_checksum($ref,$extension);}
+	if (!$previewonly) {
+		// make sure the extension is the same as the original so checksums aren't done for previews
+		$o_ext=sql_value("select file_extension value from resource where ref={$ref}","");
+		if($extension==$o_ext){
+			debug("create_previews - generate checksum for $ref");
+			generate_file_checksum($ref,$extension);
+		}
+	}
 	# first reset preview tweaks to 0
 	sql_query("update resource set preview_tweaks = '0|1' where ref = '$ref'");
 
