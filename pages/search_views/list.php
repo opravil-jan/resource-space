@@ -26,7 +26,7 @@
 				<?php } 
 				} //end replace list title
 			}
-		
+		hook("beforesearchstars");
 		if ($display_user_rating_stars && $k==""){ 
 			if (!hook("replacesearchstars")){?>?>
 			<td <?php hook("listviewcolumnstyle");?>>

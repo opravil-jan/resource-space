@@ -37,7 +37,7 @@
 		</tr></table>
 <?php } ?> <!-- END HOOK Renderimagethumb-->
 
-
+<?php hook("beforesearchstars");?>
 <?php if ($display_user_rating_stars && $k==""){ 
 		if (!hook("replacesearchstars")){?>
 		<?php if ($result[$n]['user_rating']=="") {$result[$n]['user_rating']=0;}

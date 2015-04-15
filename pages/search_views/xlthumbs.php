@@ -94,8 +94,8 @@
         
 <?php } ?> <!-- END HOOK Renderimagelargethumb-->
 
-
-<?php if ($display_user_rating_stars && $k==""){
+<?php hook("beforesearchstars");?>
+<?php if ($display_user_rating_stars && $k==""){ 
 		if (!hook("replacesearchstars")){?>
 		<?php if ($result[$n]['user_rating']=="") {$result[$n]['user_rating']=0;}
 		$modified_user_rating=hook("modifyuserrating");
