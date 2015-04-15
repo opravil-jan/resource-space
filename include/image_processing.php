@@ -67,7 +67,17 @@ function upload_file($ref,$no_exif=false,$revert=false,$autorotate=false)
 		if($no_exif && isset($filename_field)) {
 			$user_set_filename = get_data_by_field($ref, $filename_field);
 			if(trim($user_set_filename) != '') {
+				// Get extension of file just in case the user didn't provide one
+				$path_parts = pathinfo($filename);
+				$original_extension = $path_parts['extension'];
+
 				$filename = $user_set_filename;
+
+				// If the user filename doesn't have an extension add the original one
+				$path_parts = pathinfo($filename);
+				if(!isset($path_parts['extension'])) {
+					$filename .= '.' . $original_extension;
+				}
 			}
 		}
 	}
