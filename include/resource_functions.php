@@ -1943,7 +1943,7 @@ function get_field_options_with_stats($field)
 	$rawoptions=trim_array(explode(",",$rawoptions));
 	
 	# For the given field, fetch a stats count for each keyword.
-	$usage=sql_query("select rk.resource_type_field,k.keyword,count(*) c from resource_keyword rk join keyword k on rk.keyword=k.ref where resource_type_field='$field' group by k.keyword");
+	$usage=sql_query("SELECT rk.resource_type_field, k.keyword, count(DISTINCT rk.resource) c FROM resource_keyword rk join keyword k ON rk.keyword = k.ref WHERE resource_type_field = '$field' GROUP BY k.keyword");
 	
 	$return=array();
 	for ($n=0;$n<count($options);$n++)
