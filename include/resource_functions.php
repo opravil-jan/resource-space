@@ -2078,6 +2078,12 @@ function get_keyword_from_option($option)
 	{
 	# For the given field option, return the keyword that will be indexed.
 	$keywords=split_keywords("," . $option);
+
+	global $stemming;
+	if($stemming && function_exists('GetStem')) {
+		$keywords[1] = GetStem($keywords[1]);
+	}
+
 	return $keywords[1];
 	}
 	
