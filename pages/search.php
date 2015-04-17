@@ -945,9 +945,11 @@ $url=$baseurl_short."pages/search.php?search=" . urlencode($search) . "&amp;orde
 			global $smartsearch; 
 			if($allow_smart_collections && substr($search,0,11)=="!collection" && (is_array($smartsearch[0]) && !empty($smartsearch[0]))) { $smartsearch=$smartsearch[0];?><div class="InpageNavLeftBlock"><a onClick="return CentralSpaceLoad(this,true);" href="search.php?search=<?php echo urlencode($smartsearch['search'])?>&amp;restypes=<?php echo urlencode($smartsearch['restypes'])?>&amp;archive=<?php echo urlencode($smartsearch['archive']) ?>&amp;starsearch=<?php echo urlencode($smartsearch['starsearch']) ?>&amp;daylimit=<?php echo urlencode($daylimit) ?>">&gt;&nbsp;<?php echo $lang["dosavedsearch"]?></a></div><?php }
 			if ($resources_count!=0)
-				{?>
+				{
+				if (!hook('replacesavesearchitemstocollection')) { ?>
 				<div class="InpageNavLeftBlock"><a onClick="return CollectionDivLoad(this);" href="<?php echo $baseurl_short?>pages/collections.php?addsearch=<?php echo urlencode($search)?>&amp;restypes=<?php echo urlencode($restypes)?>&amp;archive=<?php echo urlencode($archive) ?>&amp;mode=resources&amp;daylimit=<?php echo urlencode($daylimit) ?>">&gt;&nbsp;<?php echo $lang["savesearchitemstocollection"]?></a></div>
-				<?php 
+				<?php
+				}
 				if($show_searchitemsdiskusage) 
 					{?>
 					<div class="InpageNavLeftBlock"><a onClick="return CentralSpaceLoad(this, true);" href="<?php echo $baseurl_short?>pages/search_disk_usage.php?search=<?php echo urlencode($search)?>&amp;restypes=<?php echo urlencode($restypes)?>&amp;offset=<?php echo urlencode($offset) ?>&amp;order_by=<?php echo urlencode($order_by)?>&amp;sort=<?php echo urlencode($sort)?>&amp;archive=<?php echo urlencode($archive) ?>&amp;daylimit=<?php echo urlencode($daylimit) ?>&amp;k=<?php echo urlencode($k)?>&amp;restypes=<?php echo urlencode($restypes) ?>">&gt;&nbsp;<?php echo $lang["searchitemsdiskusage"]?></a></div>
