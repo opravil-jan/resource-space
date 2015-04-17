@@ -759,7 +759,7 @@ function get_smart_themes($field,$node=0,$themebar=false)
 	
 	# Return a list of keywords that are in use for this field
     global $smart_themes_omit_archived;
-	$inuse=sql_array("select distinct k.keyword value from keyword k join resource_keyword rk on k.ref=rk.keyword ".(($smart_themes_omit_archived)?"join resource r on rk.resource=r.ref":"")." where resource_type_field='$field' and resource>0 ".(($smart_themes_omit_archived)?"and archive=0":""));
+	$inuse=sql_array("SELECT DISTINCT LOWER(k.keyword) value FROM keyword k JOIN resource_keyword rk ON k.ref = rk.keyword " . (($smart_themes_omit_archived) ? "JOIN resource r ON rk.resource = r.ref" : "") . " WHERE resource_type_field = '$field' AND resource > 0 " . (($smart_themes_omit_archived) ? "AND archive= 0 " : ""));
 
 	if ($fielddata["type"]==7)
 		{
