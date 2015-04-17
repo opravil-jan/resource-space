@@ -54,17 +54,8 @@ function youtube_publish_initialize()
                         }                   
                     
                     debug("YouTube plugin: Retrieved access token: " . $access_token);               
-                    sql_query("update user set youtube_access_token='$access_token' where ref='$userref'");
-                                                       
-                    # Get user account details and store these so we can tell which account they will be uploading to
-                            
-                    // Call the API's channels.list method with mine parameter to fetch authorized user's channel.
-                    $listResponse = $youtube->channels->listChannels('snippet', array(
-                             'mine' => 'true',
-                          ));        
-        
-                     $youtube_username = escape_check($listResponse[0]['snippet']['title']);
-                            sql_query("update user set youtube_username='$youtube_username' where ref='$userref'");
+                    sql_query("update user set youtube_access_token='$access_token' where ref='$userref'");                                                       
+                    
                      }
             }
                 
@@ -92,7 +83,16 @@ function youtube_publish_initialize()
     // Define an object that will be used to make all API requests.
     try
         {
-        $youtube = new Google_Service_YouTube($client);  
+        $youtube = new Google_Service_YouTube($client);
+        # Get user account details and store these so we can tell which account they will be uploading to
+                            
+        // Call the API's channels.list method with mine parameter to fetch authorized user's channel.
+        $listResponse = $youtube->channels->listChannels('snippet', array(
+                 'mine' => 'true',
+              ));        
+
+         $youtube_username = escape_check($listResponse[0]['snippet']['title']);
+                sql_query("update user set youtube_username='$youtube_username' where ref='$userref'");
         }
      catch (Google_ServiceException $e)
         {
