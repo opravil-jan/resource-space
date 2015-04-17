@@ -22,7 +22,7 @@ if (getval("countonly","")!="")
 		}
 	else
 		{
-		$search=join(",",$search);
+		$search = i18n_get_translated(join(',', $search));
 		$result=do_search($search,$resource_type,"relevance",0,1);
 		if (is_array($result))
 			{
@@ -50,7 +50,7 @@ if (getval("countonly","")!="")
 else
 	{
 	# redirect to the search page.
-	redirect ($baseurl_short."pages/search.php?search=" . urlencode(join(", ",$search)) . "&resetrestypes=yes&resource" . urlencode($resource_type) . "=yes");
+	redirect ($baseurl_short."pages/search.php?search=" . urlencode(i18n_get_translated(join(',', $search))) . "&resetrestypes=yes&resource" . urlencode($resource_type) . "=yes");
 	}
 
 ?>
