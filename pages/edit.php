@@ -1589,7 +1589,7 @@ if ($show_status_and_access_on_upload_perm &&!hook("editstatushide")) # Only dis
     hook("beforeaccessselector");
     if (!hook("replaceaccessselector"))
         {
-        if($ref<0 && $override_access_default!=false)
+        if($ref<0 && $override_access_default!==false)
             {
             $resource["access"]=$override_access_default;
             }
