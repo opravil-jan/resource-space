@@ -1166,7 +1166,7 @@ function add_saved_search_items($collection)
 	{
 	# Adds resources from a search to the collection.
 	$results=do_search(getvalescaped("addsearch",""), getvalescaped("restypes",""), "relevance", getvalescaped("archive","",true),-1,'',false,'',false,false,getvalescaped("daylimit",""));
-	
+
 	# Check if this collection has already been shared externally. If it has, we must add a further entry
 	# for this specific resource, and warn the user that this has happened.
 	$keys=get_collection_external_access($collection);
@@ -1186,7 +1186,7 @@ function add_saved_search_items($collection)
 				{
 				$resource=$results[$r]["ref"];
 				$archivestatus=$results[$r]["archive"];
-				if ($archivestatus<0 && !$collection_allow_not_approved_share) {array_push($resourcesnotadded,$resource);continue;}
+				if ($archivestatus<0 && !$collection_allow_not_approved_share) {$resourcesnotadded[$resource] = $results[$r];continue;}
 				sql_query("insert into external_access_keys(resource,access_key,user,collection,date) values ('$resource','" . escape_check($keys[$n]["access_key"]) . "','$userref','$collection',now())");
 				#log this
 				collection_log($collection,"s",$resource, $keys[$n]["access_key"]);
@@ -1195,18 +1195,34 @@ function add_saved_search_items($collection)
 		}
 
 	if (is_array($results))
-                {
-                for ($n=0;$n<count($results);$n++)
-                        {
-                        $resource=$results[$n]["ref"];
-       			if (!in_array($resource,$resourcesnotadded))
+		{
+		$modifyNotAdded = hook('modifynotaddedsearchitems', '', array($results, $resourcesnotadded));
+		if (is_array($modifyNotAdded))
+			$resourcesnotadded = $modifyNotAdded;
+
+		for ($n=0;$n<count($results);$n++)
+			{
+            $resource=$results[$n]["ref"];
+			if (!isset($resourcesnotadded[$resource]))
 				{
 				sql_query("delete from collection_resource where resource='$resource' and collection='$collection'");
 				sql_query("insert into collection_resource(resource,collection) values ('$resource','$collection')");
 				}
-                        }
-                }
-	return $resourcesnotadded;
+			}
+		}
+
+	if (!empty($resourcesnotadded))
+		{
+		# Translate to titles only for displaying them to the user
+		global $view_title_field;
+		$titles = array();
+		foreach ($resourcesnotadded as $resource)
+			{
+			$titles[] = i18n_get_translated($resource['field' . $view_title_field]);
+			}
+		return $titles;
+		}
+	return array();
 	}
 
 if (!function_exists("allow_multi_edit")){
