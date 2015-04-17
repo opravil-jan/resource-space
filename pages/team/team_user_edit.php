@@ -190,7 +190,7 @@ if (!hook("ticktoemailpassword"))
 		{
 		?>
 		<div class="Question"><label><?php echo $lang["ticktoemaillink"]?></label>
-		<input name="emailresetlink" type="checkbox" value="yes">
+		<input name="emailresetlink" type="checkbox" value="yes" <?php if ($user["approved"]==0) { ?>checked<?php } ?>>
 		<div class="clearerleft"> </div></div>
 		<?php
 		}

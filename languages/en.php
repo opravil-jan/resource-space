@@ -2059,3 +2059,4 @@ $lang["externalshare_using_permissions_from_user_group"]="If you are e-mailing e
 $lang["delete__nopassword"]="Please confirm that you would like to delete this resource.";
 
 $lang["collection_download_too_large"]="Sorry, this collection is too large to download as one file. Try reducing the size of the collection or selecting a smaller image size.";
+$lang["all__passwordnewemailhtml"]="[img_gfx/whitegry/titles/title.gif]<br /><br />Please click on the link below to set a new passsword for your account.<br /><br />URL: <a href=\"[url]\" target=\"_blank\" >[url]</a><br />username: [username]<br />[text_footer]" ;

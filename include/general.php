@@ -1090,10 +1090,9 @@ function email_reset_link($email,$newuser=false)
         
 	if($newuser)
             {
-                debug("NEW");
             $templatevars['username']=$details["username"];
             $message=$lang["newlogindetails"] . "\n\n" . $baseurl . "\n\n" . $lang["username"] . ": " . $templatevars['username'] . "\n\n" .  $lang["passwordnewemail"] . "\n" . $templatevars['url'];
-            send_mail($email,$applicationname . ": " . $lang["newlogindetails"],$message,"","","passwordnewemail",$templatevars);
+            send_mail($email,$applicationname . ": " . $lang["newlogindetails"],$message,"","","passwordnewemailhtml",$templatevars);
             }
         else
             {
@@ -1616,8 +1615,7 @@ function send_mail($email,$subject,$message,$from="",$reply_to="",$html_template
 if (!function_exists("send_mail_phpmailer")){
 function send_mail_phpmailer($email,$subject,$message="",$from="",$reply_to="",$html_template="",$templatevars=null,$from_name="",$cc="",$bcc="")
 	{
-	
-	# if ($use_phpmailer==true) this function is used instead.
+        # if ($use_phpmailer==true) this function is used instead.
 	# Mail templates can include lang, server, site_text, and POST variables by default
 	# ex ( [lang_mycollections], [server_REMOTE_ADDR], [text_footer] , [message]
 	
@@ -1683,8 +1681,7 @@ function send_mail_phpmailer($email,$subject,$message="",$from="",$reply_to="",$
 		for ($n=0;$n<count($results);$n++) {$site_text[$results[$n]["language"] . "-" . $results[$n]["name"]]=$results[$n]["text"];} 
 				
 		$language=$to_usergrouplang;
-
-
+                                
 		if (array_key_exists($language . "-" . $html_template,$site_text)) 
 			{
 			$template=$site_text[$language . "-" .$html_template];
@@ -1699,8 +1696,10 @@ function send_mail_phpmailer($email,$subject,$message="",$from="",$reply_to="",$
 				{
 				if (array_key_exists($key . "-" . $html_template,$site_text)) {$template= $site_text[$key . "-" . $html_template];break;} 		
 				}
-			}	
-			
+                        // Fall back to language file if not in site text
+                        global $lang;
+                        if(isset($lang[$html_template])){$template=$lang[$html_template];}
+			}		
 
 
 		if (isset($template) && $template!="")
