@@ -830,6 +830,9 @@ function http_get_preferred_language($strict_mode=false)
 	$accepted_languages=preg_split('/,\s*/',$_SERVER['HTTP_ACCEPT_LANGUAGE']);
 	$current_lang=false;
 	$current_quality=0;
+	$language_map = array();
+	foreach ($languages as $key => $value)
+		$language_map[strtolower($key)] = $key;
 
 	foreach ($accepted_languages as $accepted_language)
 		{
@@ -847,25 +850,17 @@ function http_get_preferred_language($strict_mode=false)
 
 		while (count($lang_code))
 			{
-			$found=false;
-			foreach ($languages as $short => $name)
+			$short=strtolower(join('-', $lang_code));
+			if (array_key_exists($short, $language_map) && $lang_quality > $current_quality)
 				{
-				if (strtolower($short)==strtolower(join('-', $lang_code)))
-					{
-					if ($lang_quality > $current_quality)
-						{
-						$current_lang=$short;
-						$current_quality=$lang_quality;
-						$found=true;
-						break;
-						}
-					}
+				$current_lang=$language_map[$short];
+				$current_quality=$lang_quality;
 				}
 
-				if ($strict_mode || $found)
-					break;
+			if ($strict_mode)
+				break;
 
-				array_pop($lang_code);
+			array_pop($lang_code);
 			}
 		}
 
