@@ -86,8 +86,15 @@ function youtube_publish_initialize()
 			{
 			delete_youtube_tokens();
 			get_youtube_authorization_code();
-            		exit();
+            exit();
 			}
+		catch (Google_Exception $e)
+			{
+			delete_youtube_tokens();
+			get_youtube_authorization_code();
+            exit();
+			}
+
         }
     
     // Define an object that will be used to make all API requests.
