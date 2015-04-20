@@ -49,6 +49,7 @@ function youtube_publish_initialize()
                         }
                     else
                         {
+						delete_youtube_tokens();
                         get_youtube_authorization_code();
                         exit();
                         }                   
@@ -77,7 +78,16 @@ function youtube_publish_initialize()
        
     if($client->isAccessTokenExpired())
         {
-        $client->refreshToken($refresh_token);
+		try
+			{
+			$client->refreshToken($refresh_token);
+			}
+		catch (Google_ServiceException $e)
+			{
+			delete_youtube_tokens();
+			get_youtube_authorization_code();
+            		exit();
+			}
         }
     
     // Define an object that will be used to make all API requests.
