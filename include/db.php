@@ -823,38 +823,53 @@ function redirect($url)
 function http_get_preferred_language($strict_mode=false)
 	{
 	global $languages;
-	if (!isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) || empty($_SERVER['HTTP_ACCEPT_LANGUAGE'])){return "";}
-	$language_array = explode(';',$_SERVER['HTTP_ACCEPT_LANGUAGE']);
-	$lc = 0;
-	$langflag = 0;
-	$language="";
-	while($langflag < 1 && $lc < count($language_array))
+
+	if (empty($_SERVER['HTTP_ACCEPT_LANGUAGE']))
+		return null;
+
+	$accepted_languages=preg_split('/,\s*/',$_SERVER['HTTP_ACCEPT_LANGUAGE']);
+	$current_lang=false;
+	$current_quality=0;
+
+	foreach ($accepted_languages as $accepted_language)
 		{
-		if(strpos($language_array[$lc],','))
+		$res=preg_match('/^([a-z]{1,8}(?:-[a-z]{1,8})*)(?:;\s*q=(0(?:\.[0-9]{1,3})?|1(?:\.0{1,3})?))?$/i',$accepted_language,$matches);
+		if (!$res)
+			continue;
+
+		$lang_code=explode('-',$matches[1]);
+
+		// Use specified quality, if any
+		if (isset($matches[2]))
+			$lang_quality=(float)$matches[2];
+		else
+			$lang_quality=1.0;
+
+		while (count($lang_code))
 			{
-			$tmparray = explode(',',$language_array[$lc]);
-			foreach ($tmparray as $tlang) 
+			$found=false;
+			foreach ($languages as $short => $name)
 				{
-				if($tlang=="en-GB"){$tlang="en";}
-				if(array_key_exists($tlang,$languages)) 
+				if (strtolower($short)==strtolower(join('-', $lang_code)))
 					{
-					$language = $tlang;
-					$langflag = 1;
+					if ($lang_quality > $current_quality)
+						{
+						$current_lang=$short;
+						$current_quality=$lang_quality;
+						$found=true;
+						break;
+						}
 					}
 				}
+
+				if ($strict_mode || $found)
+					break;
+
+				array_pop($lang_code);
 			}
-		else
-			{
-			if($language_array[$lc]=="en-GB"){$language_array[$lc]="en";}
-			if(array_key_exists($language_array[$lc],$languages)) 
-				{
-				$language = $language_array[$lc];
-				$langflag = 1;
-				}	
-			}
-		$lc++;
 		}
-	return $language;
+
+        return $current_lang;
 	}
 
 function setLanguage()
@@ -892,7 +907,7 @@ function setLanguage()
 	if(!$disable_languages && $browser_language && isset($_SERVER['HTTP_ACCEPT_LANGUAGE']))
 		{
 		$language = http_get_preferred_language();
-		if($language!==""){return $language;}
+		if(!empty($language)){return $language;}
 		} 
 	if(($disable_languages || $language ==="") && isset($defaultlanguage)) {return $defaultlanguage;}
 	if($language===""){return 'en';}else{return $language;}
