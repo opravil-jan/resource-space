@@ -136,7 +136,7 @@ $lang["property-regexp_filter"]="Regexp filter";
 $lang["information-regexp_filter"]="Regular Expression filtering - e.g. '[A-Z]+' will ensure only upper case letters can be entered.";
 $lang["information-regexp_fail"]="The entered value was not in the required format.";
 $lang["property-tab_name"]="Tab name";
-$lang["property-smart_theme_name"]="Smart theme name";
+$lang["property-smart_theme_name"]="Smart featured collection name";
 $lang["property-exiftool_field"]="Exiftool field";
 $lang["property-exiftool_filter"]="Exiftool filter";
 $lang["property-help_text"]="Help text";
@@ -182,7 +182,7 @@ $lang["contactus"]="Contact us";
 # next line
 $lang["home"]="Home";
 $lang["searchresults"]="Search results";
-$lang["themes"]="Themes";
+$lang["themes"]="Featured collections";
 $lang["mycollections"]="My collections";
 $lang["myrequests"]="My requests";
 $lang["collections"]="Collections";
@@ -224,7 +224,7 @@ $lang["researchrequestservice"]="Research request service";
 $lang["manageresources"]="Manage resources";
 $lang["overquota"]="Over disk space quota; cannot add resources";
 $lang["managearchiveresources"]="Manage archive resources";
-$lang["managethemes"]="Manage themes";
+$lang["managethemes"]="Manage featured collections";
 $lang["manageresearchrequests"]="Manage research requests";
 $lang["manageusers"]="Manage users";
 $lang["managecontent"]="Manage content";
@@ -314,9 +314,9 @@ $lang["access"]="Access";
 $lang["private"]="Private";
 $lang["public"]="Public";
 $lang["attachedusers"]="Attached users";
-$lang["themecategory"]="Theme category";
-$lang["theme"]="Theme";
-$lang["newcategoryname"]="OR: Enter a new theme category name...";
+$lang["themecategory"]="Featured collection category";
+$lang["theme"]="Featured collection";
+$lang["newcategoryname"]="OR: Enter a new featured collection category name...";
 $lang["allowothersaddremove"]="Allow other users to add/remove resources";
 $lang["resetarchivestatus"]="Reset archive status for all resources in collection";
 $lang["editallresources"]="Edit all resources in collection";
@@ -373,7 +373,7 @@ $lang["purgeanddelete"]="Purge";
 $lang["purgecollectionareyousure"]="Are you sure you want to remove this collection AND DELETE all resources in it?";
 $lang["collectionsdeleteempty"]="Delete empty collections";
 $lang["collectionsdeleteemptyareyousure"]="Are you sure you want to delete all of your own empty collections?";
-$lang["collectionsnothemeselected"]="You must select or enter a theme category name.";
+$lang["collectionsnothemeselected"]="You must select or enter a featured collection category name.";
 $lang["downloaded"]="Downloaded";
 $lang["contents"]="Contents";
 $lang["forthispackage"]="for this package";
@@ -381,10 +381,10 @@ $lang["didnotinclude"]="Did not include";
 $lang["selectcollection"]="Select collection";
 $lang["total"]="Total";
 $lang["ownedbyyou"]="owned by you";
-$lang["edit_theme_category"]="Edit theme category";
+$lang["edit_theme_category"]="Edit featured collection category";
 $lang["emailthemecollectionmessageexternal"]="has e-mailed you collections of resources from $applicationname."; 
-$lang["emailthememessage"]="has e-mailed you a selection of themes from $applicationname which have been added to your 'My collections' page.";
-$lang["clicklinkviewthemes"]="Click the link below to view the themes.";
+$lang["emailthememessage"]="has e-mailed you a selection of featured collections from $applicationname which have been added to your 'My collections' page.";
+$lang["clicklinkviewthemes"]="Click the link below to view the featured collections.";
 $lang["clicklinkviewcollections"]="Click the links below to view the collections.";
 
 # Lightbox
@@ -777,9 +777,9 @@ $lang["plugin_field_fmt"]="%A (%B)"; // %A and %B are replaced by content define
 $lang["share"]="Share";
 $lang["sharecollection"]="Share collection";
 $lang["sharecollection-name"]="Share collection - %collectionname"; # %collectionname will be replaced, e.g. Share Collection - Cars
-$lang["share_theme_category"]="Share theme category";
-$lang["share_theme_category_subcategories"]="Include themes in subcategories for external users?";
-$lang["email_theme_category"]="E-mail theme category";
+$lang["share_theme_category"]="Share featured collection category";
+$lang["share_theme_category_subcategories"]="Include featured collections in subcategories for external users?";
+$lang["email_theme_category"]="E-mail featured collection category";
 $lang["generateurl"]="Generate URL";
 $lang["generateurls"]="Generate URLs";
 $lang["generateexternalurl"]="Generate external URL";
@@ -787,7 +787,7 @@ $lang["generateexternalurls"]="Generate external URLs";
 $lang["generateurlinternal"]="The below URL will work for existing users only.";
 $lang["generateurlexternal"]="The below URL will work for everyone and does not require a login.";
 $lang["generatethemeurlsexternal"]="The below URLs will work for everyone and do not require a login.";
-$lang["showexistingthemeshares"]="Show existing shares for themes in this category";
+$lang["showexistingthemeshares"]="Show existing shares for featured collections in this category";
 $lang["internalusersharing"]="Internal user sharing";
 $lang["externalusersharing"]="External user sharing";
 $lang["externalusersharing-name"]="External user sharing - %collectionname%"; # %collectionname will be replaced, e.g. External User Sharing - Cars
@@ -821,7 +821,7 @@ $lang["removeallresourcesfromcollection"]="Remove all resources from this collec
 $lang["deleteallresourcesfromcollection"]="Delete all resources in this collection";
 $lang["deleteallsure"]="Are you sure you wish to DELETE these resources? This will delete the resources themselves, not just remove them from this collection.";
 $lang["batchdonotaddcollection"]="(do not add to a collection)";
-$lang["collectionsthemes"]="Related themes and public collections";
+$lang["collectionsthemes"]="Related featured and public collections";
 $lang["recent"]="Recently added";
 $lang["n_recent"]="%qty Recently added resources";
 $lang["batchcopyfrom"]="Copy the data below from resource with ID";
@@ -1064,7 +1064,7 @@ $lang["setup-if_enableremoteapis"]="Allow remote access to API plugins.";
 $lang["setup-allow_account_requests"]="Allow users to request accounts?";
 $lang["setup-display_research_request"]="Display the Research Request functionality?";
 $lang["setup-if_displayresearchrequest"]="Allows users to request resources via a form, which is e-mailed.";
-$lang["setup-themes_as_home"]="Use the themes page as the home page?";
+$lang["setup-themes_as_home"]="Use the featured collections page as the home page?";
 $lang["setup-remote_storage_locations"]="Remote Storage Locations";
 $lang["setup-use_remote_storage"]="Use remote storage?";
 $lang["setup-if_useremotestorage"]="Check this box to configure remote storage locations for RS. (To use another server for filestore.)";
@@ -1114,7 +1114,7 @@ $lang["videoplaylist"]="Video playlist";
 $lang["collection"]="Collection";
 $lang["idecline"]="I decline"; # For terms and conditions
 
-$lang["mycollection_notpublic"]="You cannot make your 'My Collection' into a public collection or theme. Please create a new collection for this purpose.";
+$lang["mycollection_notpublic"]="You cannot make your 'My Collection' into a featured or public collection. Please create a new collection for this purpose.";
 
 $lang["resourcemetadata"]="Resource metadata";
 $lang["columnheader-expires"]=$lang["expires"]="Expires";
@@ -1140,7 +1140,7 @@ $lang["resourcerequeststatus2"]="Declined";
 
 $lang["ppi"]="PPI"; # (Pixels Per Inch - used on the resource download options list).
 
-$lang["useasthemethumbnail"]="Use this resource as a theme category thumbnail?";
+$lang["useasthemethumbnail"]="Use this resource as a featured collection category thumbnail?";
 $lang["sessionexpired"]="You have been automatically logged out because you were inactive for more than 30 minutes. Please enter your login details to continue.";
 
 $lang["resourcenotinresults"]="The current resource is no longer within your active search results so next/previous navigation is not possible.";
@@ -1165,7 +1165,7 @@ $lang["alternativebatchupload"]="Batch upload alternative files";
 $lang["confirmdeletefieldoption"]="Are you sure you wish to DELETE this field option?";
 
 $lang["cannotshareemptycollection"]="This collection is empty and cannot be shared.";	
-$lang["cannotshareemptythemecategory"]="This theme category contains no themes and cannot be shared.";
+$lang["cannotshareemptythemecategory"]="This featured collection category contains no featured collections and cannot be shared.";
 
 $lang["requestall"]="Request all";
 $lang["requesttype-email_only"]=$lang["resourcerequesttype0"]="Email only";
@@ -1256,7 +1256,7 @@ $lang["undometadatatemplate"]="(undo template selection)";
 
 $lang["accountemailalreadyexists"]="An account with that e-mail address already exists";
 
-$lang["backtothemes"]="Back to themes";
+$lang["backtothemes"]="Back to featured collections";
 $lang["downloadreport"]="Download report";
 
 #Bug Report Page
@@ -1508,7 +1508,7 @@ $lang["backtogroupmanagement"]="Back to group management";
 $lang["searching_and_access"]="Searching / access";
 $lang["metadatafields"]="Metadata fields";
 $lang["resource_creation_and_management"]="Resource creation / management";
-$lang["themes_and_collections"]="Themes / collections";
+$lang["themes_and_collections"]="Collections";
 $lang["administration"]="Administration";
 $lang["other"]="Other";
 $lang["custompermissions"]="Custom permissions";
@@ -1533,11 +1533,11 @@ $lang["can_manage_archive_resources"]="Can manage archive resources";
 $lang["can_manage_alternative_files"]="Can manage alternative files";
 $lang["can_tag_resources_using_speed_tagging"]="Can tag resources using 'Speed Tagging'<br>(if enabled in the configuration)";
 $lang["enable_bottom_collection_bar"]="Enable bottom collection bar ('Lightbox')";
-$lang["can_publish_collections_as_themes"]="Can publish collections as themes";
-$lang["can_see_all_theme_categories"]="Can see all theme categories";
-$lang["can_see_theme_category"]="Can see theme category";
-$lang["can_see_theme_sub_category"]="Can see theme subcategory";
-$lang["display_only_resources_within_accessible_themes"]="When searching, display only resources that exist within themes to which the user has access";
+$lang["can_publish_collections_as_themes"]="Can publish collections as featured collections";
+$lang["can_see_all_theme_categories"]="Can see all featured collection categories";
+$lang["can_see_theme_category"]="Can see featured collection category";
+$lang["can_see_theme_sub_category"]="Can see featured collection subcategory";
+$lang["display_only_resources_within_accessible_themes"]="When searching, display only resources that exist within featured collections to which the user has access";
 $lang["can_access_team_centre"]="Can access the Team Centre area";
 $lang["can_manage_research_requests"]="Can manage research requests";
 $lang["can_manage_resource_requests"]="Can manage resource requests";
@@ -1741,7 +1741,7 @@ $lang["contact_sheet-single_select_size"]="Image quality";
 
 $lang["caps-lock-on"]="Warning! Caps Lock is on";
 $lang["collectionnames"]="Collection names";
-$lang["findcollectionthemes"]="Themes";
+$lang["findcollectionthemes"]="Featured collections";
 $lang["upload-options"]="Upload options";
 $lang["user-preferences"]="User preferences";
 $lang["allresources"]="All Resources";
@@ -1984,7 +1984,7 @@ $lang["all__searchpanel"]="Search using descriptions, keywords and resource numb
 $lang["change_language__introtext"]="Please select your language below.";
 $lang["collection_edit__introtext"]="Organise and manage your work by grouping resources together. Create 'Collections' to suit your way of working.\n\n<br />\n\nAll the collections in your list appear in the 'My Collections' panel at the bottom of the screen\n\n<br /><br />\n\n<strong>Private Access</strong> allows only you and and selected users to see the collection. Ideal for grouping resources under projects that you are working on independently and share resources amongst a project team.\n\n<br /><br />\n\n<strong>Public Access</strong> allows all users of the system to search and see the collection. Useful if you wish to share collections of resources that you think others would benefit from using.\n\n<br /><br />\n\nYou can choose whether you allow other users (public or users you have added to your private collection) to add and remove resources or simply view them for reference.";
 $lang["collection_email__introtext"]="Please complete the form below. The recipients will receive an email containing links to the collections rather than file attachments so they can choose and download the appropriate resources.";
-$lang["collection_email__introtextthemeshare"]="Complete the form below to e-mail the themes in this theme category. The recipients will receive an email containing links to each of the themes.";
+$lang["collection_email__introtextthemeshare"]="Complete the form below to e-mail the featured collections in this featured collection category. The recipients will receive an email containing links to each of the featured collections.";
 $lang["collection_manage__findpublic"]="Public collections are groups of resources made widely available by users of the system. Enter a collection ID, or all or part of a collection name or username to find public collections. Add them to your list of collections to access the resources.";
 $lang["collection_manage__introtext"]="Organise and manage your work by grouping resources together. Create 'Collections' to suit your way of working. You may want to group resources under projects that you are working on independently, share resources amongst a project team or simply keep your favourite resources together in one place. All the collections in your list appear in the 'My Collections' panel at the bottom of the screen.";
 $lang["collection_manage__newcollection"]="To create a new collection, enter a short name.";
@@ -2023,7 +2023,7 @@ $lang["team_batch_select__introtext"]="";
 $lang["team_batch_upload__introtext"]="";
 $lang["team_content__introtext"]="";
 $lang["team_copy__introtext"]="Enter the ID of the resource you would like to copy. Only the resource data will be copied - any uploaded file will not be copied.";
-$lang["team_home__introtext"]="Welcome to the team centre. Use the links below to administer resources, respond to resource requests, manage themes and alter system settings.";
+$lang["team_home__introtext"]="Welcome to the team centre. Use the links below to administer resources, respond to resource requests, manage featured collections and alter system settings.";
 $lang["team_report__introtext"]="Please choose a report and a date range. The report can be opened in Microsoft Excel or similar spreadsheet application.";
 $lang["team_research__introtext"]="Organise and manage 'Research Requests'. <br /><br />Choose 'edit research' to review the request details and assign the research to a team member. It is possible to base a research request on a previous collection by entering the collection ID in the 'edit' screen. <br /><br />Once the research request is assigned, choose 'edit collection' to add the research request to 'My collection' panel. Using the standard tools, it is then possible to add resources to the research. <br /><br />Once the research is complete, choose 'edit research',  change the status to complete and an email is automatically  sent to the user who requested the research. The email contains a link to the research and it is also automatically added to their 'My Collection' panel.";
 $lang["team_resource__introtext"]="Add individual resources or batch upload resources. To edit individual resources, simply search for the resource, and click edit in the 'Resource Tool' panel on the resource screen.";
@@ -2033,8 +2033,8 @@ $lang["terms__introtext"]="Before you proceed you must accept the terms and cond
 $lang["terms__terms"]="Your terms and conditions go here.";
 $lang["terms and conditions__terms and conditions"]="Your terms and conditions go here.";
 $lang["themes__findpublic"]="Public collections are collections of resources that have been shared by other users.";
-$lang["themes__introtext"]="Themes are groups of resources that have been selected by the administrators to provide an example of the resources available in the system.";
-$lang["themes__manage"]="Organise and edit the themes available online. Themes are specially promoted collections. <br /><br /> <strong>1 To create a new entry under a Theme -  build a collection</strong><br /> Choose <strong>My Collections</strong> from the main top menu and set up a brand new <strong>public</strong> collection. Remember to include a theme name during the setup. Use an existing theme name to group the collection under a current theme (make sure you type it exactly the same), or choose a new title to create a brand new theme. Never allow users to add/remove resources from themed collections. <br /> <br /><strong>2 To edit the content of an existing entry under a theme </strong><br /> Choose <strong>edit collection</strong>. The items in that collection will appear in the <strong>My Collections</strong> panel at the bottom of the screen. Use the standard tools to edit, remove or add resources. <br /> <br /><strong>3 To alter a theme name or move a collection to appear under a different theme</strong><br /> Choose <strong>edit properties</strong> and edit theme category or collection name. Use an existing theme name to group the collection under an current theme (make sure you type it exactly the same), or choose a new title to create a brand new theme. <br /> <br /><strong>4 To remove a collection from a theme </strong><br /> Choose <strong>edit properties</strong> and delete the words in the theme category box. ";
+$lang["themes__introtext"]="Featured collections are groups of resources that have been selected by the administrators to provide an example of the resources available in the system.";
+$lang["themes__manage"]="Organise and edit the featured collections available online. Featured collections are specially promoted collections. <br /><br /> <strong>1 To create a new entry under a Featured collection -  build a collection</strong><br /> Choose <strong>My Collections</strong> from the main top menu and set up a brand new <strong>public</strong> collection. Remember to include a featured collection name during the setup. Use an existing featured collection name to group the collection under a current featured collection (make sure you type it exactly the same), or choose a new title to create a brand new featured collection. Never allow users to add/remove resources from featured collections. <br /> <br /><strong>2 To edit the content of an existing entry under a featured collection </strong><br /> Choose <strong>edit collection</strong>. The items in that collection will appear in the <strong>My Collections</strong> panel at the bottom of the screen. Use the standard tools to edit, remove or add resources. <br /> <br /><strong>3 To alter a featured collection name or move a collection to appear under a different featured collection</strong><br /> Choose <strong>edit properties</strong> and edit featured collection category or collection name. Use an existing featured collection name to group the collection under an current featured collection (make sure you type it exactly the same), or choose a new title to create a brand new featured collection. <br /> <br /><strong>4 To remove a collection from a featured collection </strong><br /> Choose <strong>edit properties</strong> and delete the words in the featured collection category box. ";
 $lang["upload__introtext"]="";
 $lang["upload_swf__introtext"]="";
 $lang["user_password__introtext"]="Enter your e-mail address and your username and password will be sent to you.";
@@ -2060,3 +2060,35 @@ $lang["delete__nopassword"]="Please confirm that you would like to delete this r
 
 $lang["collection_download_too_large"]="Sorry, this collection is too large to download as one file. Try reducing the size of the collection or selecting a smaller image size.";
 $lang["all__passwordnewemailhtml"]="[img_gfx/whitegry/titles/title.gif]<br /><br />Please click on the link below to set a new passsword for your account.<br /><br />URL: <a href=\"[url]\" target=\"_blank\" >[url]</a><br />username: [username]<br />[text_footer]" ;
+
+/*
+ * Start - User Dash Strings
+ *
+ */
+$lang["savethissearchtodash"]="Save to dash tile";
+$lang["pushtoallusers"]="Push this dash tile to all users?";
+$lang["createnewdashtile"]="Create new dash tile";
+$lang["enterdefaultorderby"]="Enter default position number";
+$lang["dashtiletitle"]="Title";
+$lang["nodashtilefound"]="No matching dash tile was found";
+$lang["existingdashtilefound"]="The tile specified already exists on your Dash.";
+$lang["invaliddashtile"]="Invalid dash tile reference";
+$lang["dashtilestyle"]="Dash Tile style";
+$lang["returntopreviouspage"]="Return to previous page";
+$lang["showresourcecount"]="Show resource count?";
+$lang["tilebin"]="Remove";
+$lang["last"]="Last";
+$lang["managedefaultdash"]="Manage default dash";
+$lang["dashtile"]="Dash tile";
+$lang["manage_own_dash"]="Manage own dash";
+$lang["manage_all_dash_h"]="Manage default dash / all user tiles (Requires h permission)";
+$lang["manage_all_dash"]="Manage default dash / all user tiles";
+$lang["dashtiledeleteaction"]="What delete action would you like to take?";
+$lang["confirmdashtiledelete"]="Delete Tile from my dash";
+$lang["confirmdefaultdashtiledelete"]="Delete Tile for all users";
+$lang["dashtiledelete"]="Delete dash tile";
+$lang["error-missingtileheightorwidth"]="Missing tile height or width";
+/*
+ * End - User Dash Strings
+ *
+ */

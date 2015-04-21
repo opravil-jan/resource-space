@@ -354,9 +354,9 @@ input.defaultbutton {position: absolute; left: -100%; width: 0; height: 0;}
 .HomePicturePanel {    margin:0px 15px 10px 0px;float: left;width: 517px;}
 .HomePicturePanelIN img {width:517px; height:350px;}
 .HomePicturePanelIN {height: 350px;}
-.HomePanelPromoted {min-height: 205px;}
+/*.HomePanelPromoted {min-height: 205px;}
 .HomePanelMatchPromotedHeight {min-height: 197px;}
-.HomePanelPromotedIN {min-height: 197px;}
+.HomePanelPromotedIN {min-height: 197px;}*/
 .HomePanelPromotedImageWrap {text-align:center;min-height:155px;vertical-align:middle;}
 
 a.HomePanel {text-decoration:none;}
@@ -784,3 +784,127 @@ width: 90px;
 .ui-sortable-helper{
     border: 2px solid;
 }
+
+/* Dash Styling */
+#HomePanelContainer {
+  float: left;
+  width: 100%;
+  padding: 10px 0px;
+}
+#HomePanelContainer a {
+	  -webkit-user-drag: none;
+}
+#dash_tile_bin {
+	width:100px; 
+	height:100%;
+	position:absolute; 
+	left:0;
+	top: 0;
+	display:none;
+}
+#dash_tile_bin.ui-state-hover {
+	background:#000;
+	background:rgba(0, 0, 0, 0.55);
+	border:#d7d7d7 1px solid;
+	color:#d7d7d7;
+}
+#dash_tile_bin.ui-state-active {
+	background: rgba(114, 22, 37, 0.51);
+  	border: 1px solid #d0d0d0;
+}
+.dash_tile_bin_text {
+  	transform: rotate(-90deg);
+  	transform-origin: left top 0;
+  	color: #fff;
+  	text-transform: uppercase;
+  	display:block;
+  	text-align:center;
+  	position:absolute;
+  	top:55%;
+  	left:10px;
+  	font-size:50px;
+  	width:300px;
+  	vertical-align:middle;
+}
+.HomePanelDynamicDash h2.title {
+	text-shadow: #090909 1px 1px 8px;
+	color:#fff;
+}
+.HomePanelDynamicDash p.tile_corner_box {
+	position: absolute;
+  	bottom: 0;
+  	right: 0;
+  	padding: 2px 10px;
+  	font-size: 1.5em;
+  	background: rgba(19, 19, 19, 0.67);
+  	  border-top-left-radius: 5px;
+}
+.HomePanel .count-icon {
+	background: url("../gfx/dash/count.gif") no-repeat;
+	width: 20px;
+	height: 15px;
+	display: block;
+	float: left;
+	margin-top: 8px;
+}
+.HomePanel .collection-icon {
+	background: url("../gfx/dash/collection.png") no-repeat;
+	width: 56px;
+	height: 160px;
+	display: block;
+	float: left;
+	position: relative;
+	margin-left: 3px;
+	margin-top: 6px;
+}
+.HomePanel .search-icon {
+	background: url("../gfx/dash/search.png") no-repeat;
+	width: 54px;
+	height: 160px;
+	display: block;
+	float: left;
+	position: relative;
+	margin-left: 3px;
+	margin-top: 6px;
+}
+.HomePanel .clock-icon {
+	  background: url("../gfx/dash/clock.png") no-repeat;
+  width: 54px;
+  height: 160px;
+  display: block;
+  float: left;
+  position: relative;
+  margin-left: 3px;
+  margin-top: 9px;
+}
+.tools a{
+	white-space: nowrap;
+}
+#delete_dialog {
+	display:none !important;
+}
+.no-close .ui-dialog-titlebar-close {
+  display: none;
+}
+.delete-dialog .ui-dialog-titlebar {
+	  background-color: #d7d7d7;
+  background: linear-gradient(#d3d3d3,#dfdfdf);
+  border: #878787;
+  color: #3A3A3A;
+}
+.delete-dialog .ui-state-default .ui-button-text {
+  color: #000000;
+  background-color: #FFF;
+}
+.delete-dialog .ui-state-default.ui-state-hover .ui-button-text {
+	color: #FFF;
+  background-color: #3A3A3A;
+}
+.delete-dialog .ui-state-default.ui-state-focus {
+	border:solid 1px #878787;
+}
+.delete-dialog .ui-state-default.ui-state-hover {
+	border:solid 1px #878787;
+}
+
+
