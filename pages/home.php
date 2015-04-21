@@ -5,7 +5,6 @@ include "../include/general.php";
 include "../include/resource_functions.php";
 include "../include/collections_functions.php";
 include "../include/search_functions.php";
-include "../include/dash_functions.php";
 
 # Fetch promoted collections ready for display later
 $home_collections=get_home_page_promoted_collections();
@@ -15,23 +14,10 @@ hook("homeheader");
 include "../include/header.php";
 
 if (!hook("replacehome")) { 
-function loadWelcomeText() 
-	{
-	global $welcome_text_picturepanel;
-	if (!$welcome_text_picturepanel && !hook('homereplacewelcome')) 
-		{ ?>
-		<div class="BasicsBox" id="HomeSiteText">
-			<div id="HomeSiteTextInner">
-	    	<h1><?php echo text("welcometitle")?></h1>
-	    	<p><?php echo text("welcometext")?></p>
-	    	</div>
-		</div>
-		<?php 
-		}
-	}
+
 if (!hook("replaceslideshow")) 
 	{
-	global $slideshow_photo_delay;
+		global $slideshow_photo_delay;
 
 	# Count the files in the configured $homeanim_folder.
 	$dir = dirname(__FILE__) . "/../" . $homeanim_folder; 
@@ -153,13 +139,6 @@ if (!hook("replaceslideshow"))
 			
 		</script><?php 
 		}
-	if($slideshow_big) 
-		{?>
-		<style>
-			#Footer {display:none;}
-		</style>
-		<?php
-		}
 
 	if (!$slideshow_big) 
 		{ ?>
@@ -186,7 +165,7 @@ if (!hook("replaceslideshow"))
 			$linkaccess = get_resource_access($linkres);
 			if (($linkaccess!=="") && (($linkaccess==0) || ($linkaccess==1))) {$linkurl=$baseurl . "/pages/view.php?ref=" . $linkres;}
 			echo "href=\"" . $linkurl ."\" ";
-			}
+			}	
 		
 		?>
 		>
@@ -229,10 +208,9 @@ if (!hook("replaceslideshow"))
 
 if (checkperm("s")) 
 	{
-	if($home_dash){loadWelcomeText();}
 	hook("homebeforepanels");
 	?>
-	<div id="HomePanelContainer">
+	<div id="HomePanelContainer" class="">
 	<?php 
 	hook('homepanelcontainerstart');
 	if ($home_themeheaders && $enable_themes) 
@@ -260,7 +238,7 @@ if (checkperm("s"))
 		</div>
 		<?php 
 		}
-	if ($home_themes && $enable_themes && !$home_themeheaders) 
+	if ($home_themes && $enable_themes) 
 		{ ?>
 		<a href="<?php echo $baseurl_short?>pages/themes.php" onClick="return CentralSpaceLoad(this,true);" class="HomePanel"><div class="HomePanelIN HomePanelThemes<?php if (count($home_collections)>0) { ?> HomePanelMatchPromotedHeight<?php } ?>">
 		<h2><?php echo $lang["themes"]?></h2>
@@ -339,53 +317,35 @@ if (checkperm("s"))
 			{
 			?>
 			<a href="<?php echo $baseurl_short?>pages/search.php?search=!collection<?php echo $home_collection["ref"] ?>" onClick="return CentralSpaceLoad(this,true);" class="HomePanel HomePanelPromoted">
-				<div class="HomePanelIN HomePanelPromotedIN" style="padding: 0;overflow: hidden;position: relative;height: 100%;width: 100%;min-height: 180px;">
-						<img 
-							class="ImageBorder" 
-							src="<?php echo get_resource_path($home_collection["home_page_image"],false,"pre",false) ?>" 
-							style="position: absolute;top: 0;left: 0;" 
-							<?php
-
-							$tile_height=180;
-							$tile_width=100;
-							#fit image to tile size
-							if(($home_collection["thumb_width"]*0.7)>=$home_collection["thumb_height"])
-								{
-								$ratio = $home_collection["thumb_height"] / $tile_height;
-								$width = $home_collection["thumb_width"] / $ratio;
-								if($width<$tile_width){echo "width='100%' ";}
-								else {echo "height='100%' ";}
-								}
-							else
-								{
-								$ratio = $home_collection["thumb_width"] / $tile_width;
-								$height = $home_collection["thumb_height"] / $ratio;
-								if($height<$tile_height){echo "height='100%' ";}
-								else {echo "width='100%' ";}
-								}
-							?>
-						/>
-						<span class="collection-icon"></span>
-						<h2 style="float: none;position: relative;padding-left: 15px;padding-right: 15px;padding-top: 18px;text-transform: capitalize;text-shadow: #090909 1px 1px 8px;color: #fff;">
+				<div class="HomePanelIN HomePanelPromotedIN">
+					<div class="HomePanelPromotedImageWrap">
+						<div style="padding-top:<?php echo floor((155-$home_collection["thumb_height"])/2) ?>px;">
+							<img class="ImageBorder" src="<?php echo get_resource_path($home_collection["home_page_image"],false,"thm",false) ?>" width="<?php echo $home_collection["thumb_width"] ?>" height="<?php echo $home_collection["thumb_height"] ?>" />
+						</div>
+					</div>
+					<p>
 					<?php echo i18n_get_translated($home_collection["home_page_text"]) ?>
-					</h2>
+					</p>
 				</div>
 			<div class="PanelShadow"></div>
 			</a>
 			<?php
 			}
 		} # end hook homefeaturedcol
-	if($home_dash && !(isset($anonymous_login) && $anonymous_login==$username))
-		{
-		get_user_dash($userref);	
-		}
 	?>
-	<div style="clear:both;"></div>
-	</div> <!-- End HomePanelContainer -->
-	
+	</div> <!-- END HomePanelContainer -->
 	<div class="clearerleft"></div>
-	<?php
-	if(!$home_dash){loadWelcomeText();}
+	<?php 
+	if (!$welcome_text_picturepanel && !hook('homereplacewelcome')) 
+		{ ?>
+		<div class="BasicsBox" id="HomeSiteText">
+			<div id="HomeSiteTextInner">
+	    	<h1><?php echo text("welcometitle")?></h1>
+	    	<p><?php echo text("welcometext")?></p>
+	    	</div>
+		</div>
+		<?php 
+		}
 	} // end of checkperm("s") 
 else 
 	{ ?>
@@ -397,6 +357,7 @@ else
 	</div>
 	<?php 
 	}
+
 } // End of ReplaceHome hook
 
 include "../include/footer.php";

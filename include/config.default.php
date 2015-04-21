@@ -244,15 +244,6 @@ $homeanim_folder="gfx/homeanim/gfx";
 # $home_slideshow_width=517;
 # $home_slideshow_height=350;
 
-# Big slideshow mode (Fullscreen slideshow)
-# ----------------------------------
-# You will need to configure much bigger slideshow images with $home_slideshow_width and $home_slideshow_height, and regenerate
-# your slideshow images using the transform plugin. This is recommended to be used along with the slim header.
-$slideshow_big=false;
-
-
-# Home Dash - RapiDash
-$home_dash = false;
 
 # Optional 'quota size' for allocation of a set amount of disk space to this application. Value is in GB.
 # Note: Unix systems only.
@@ -663,7 +654,7 @@ $defaulttheme="multi";
 # this is a basic way of adding general custom themes that do not affect SVN checkouts, 
 # though css can also be added in plugins as usual.
  
-$available_themes=array("multi", "whitegry","greyblu","black","slimcharcoal");
+$available_themes=array("multi", "whitegry","greyblu","black");
 
 # NOTE: Do not add custom themes to $available_themes_by_default.
 # This is being used to know which themes are custom
@@ -2571,6 +2562,12 @@ $remove_resources_link_on_collection_bar = FALSE;
 
 # Show group filter and user search at top of team_user.php
 $team_user_filter_top=false;
+
+# Big slideshow mode - EXPERIMENTAL!
+# ----------------------------------
+# You will need to configure much bigger slideshow images with $home_slideshow_width and $home_slideshow_height, and regenerate
+# your slideshow images using the transform plugin. This is recommended to be used along with the slim header.
+$slideshow_big=false;
 
 # Stemming support - at this stage, experimental. Indexes stems of words only, so plural / singular (etc) forms of keywords are indexed as if they are equivalent. Requires a full reindex.
 $stemming=false;

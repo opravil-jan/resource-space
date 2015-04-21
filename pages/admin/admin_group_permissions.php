@@ -54,7 +54,7 @@ $permissions=trim_array(explode(",",$group["permissions"]));
 $permissions_done=array();
 
 function DrawOption($permission,$description,$reverse=false,$reload=false)
-	{
+	{	
 	global $permissions,$permissions_done;
 	$checked=(in_array($permission,$permissions));
 	if ($reverse) {$checked=!$checked;}
@@ -209,10 +209,7 @@ DrawOption("n", $lang["can_tag_resources_using_speed_tagging"]);
 <?php
 
 DrawOption("b", $lang["enable_bottom_collection_bar"], true);
-DrawOption("h", $lang["can_publish_collections_as_themes"],false,true);
-if(in_array("h",$permissions)){DrawOption("hdta",$lang["manage_all_dash_h"],true,false);}
-else {DrawOption("dta",$lang["manage_all_dash"],false,false);}
-DrawOption("dtu",$lang["manage_own_dash"],true,false);
+DrawOption("h", $lang["can_publish_collections_as_themes"]);
 
 # ------------ Access to theme categories
 
@@ -248,9 +245,6 @@ if (!in_array("j*",$permissions))	// by default is checked
 DrawOption("J", $lang["display_only_resources_within_accessible_themes"]);
 
 # ---------- end of theme categories
-
-
-# ---------- End of Dash Tiles
 
 ?>				<tr class="ListviewTitleStyle">
 					<td colspan=3 class="permheader"><?php echo $lang["administration"] ?></td>

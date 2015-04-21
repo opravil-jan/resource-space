@@ -184,58 +184,27 @@ for ($n=$offset;(($n<count($collections)) && ($n<($offset+$per_page)));$n++)
 	{
 	?>
     <tr <?php hook("collectionlistrowstyle");?>>
-		<td class="name">
-			<div class="ListTitle">
-			<a href="<?php echo $baseurl_short?>pages/search.php?search=<?php echo urlencode("!collection" . $collections[$n]["ref"])?>" onClick="return CentralSpaceLoad(this,true);"><?php echo highlightkeywords(i18n_get_collection_name($collections[$n]),$find)?></a>
-			</div>
-		</td>
-		<?php 
-		if (!$collection_public_hide_owner) 
-			{ ?>
-			<td class="fullname"><?php echo highlightkeywords(htmlspecialchars($collections[$n]["fullname"]),$find)?></td>
-			<?php 
-			} ?>
-		<td class="ref"><?php echo highlightkeywords($collections[$n]["ref"],$find)?></td>
-		<td class="created"><?php echo nicedate($collections[$n]["created"],true)?></td>
-    	<td class="count"><?php echo $collections[$n]["count"]?></td>
-		<?php 
-		if (!$hide_access_column_public)
-			{ ?>
-			<td class="access"><?php echo ($collections[$n]["public"]==0)?$lang["private"]:$lang["public"]?></td>
-			<?php 
-			}
-		hook("beforecollectiontoolscolumn");?>
-		<td class="tools">
-			<div class="ListTools">
-   			<?php 
-   			if ($collections_compact_style)
-   				{
-         		draw_compact_style_selector($collections[$n]["ref"]);
-    			} 
-    		else 
-    			{?>
-    			<a href="<?php echo $baseurl_short?>pages/search.php?search=<?php echo urlencode("!collection" . $collections[$n]["ref"])?>" onClick="return CentralSpaceLoad(this,true);">&gt;&nbsp;<?php echo $lang["viewall"]?></a>
-				<?php 
-				if ($contact_sheet==true) 
-					{ ?>
-    				&nbsp;<a href="<?php echo $baseurl_short?>pages/contactsheet_settings.php?ref=<?php echo urlencode($collections[$n]["ref"]) ?>" onClick="return CentralSpaceLoad(this);">&gt;&nbsp;<?php echo $lang["contactsheet"]?></a>
-					<?php 
-					}
-				if (!checkperm("b")) 
-					{ ?>
-					&nbsp;<a href="#" onclick="document.getElementById('collectionadd').value='<?php echo urlencode($collections[$n]["ref"]) ?>';document.getElementById('collectionform').submit(); return false;">&gt;&nbsp;<?php echo $lang["addtomycollections"]?></a>
-					<?php 
-					}
-				global $home_dash,$anonymous_login,$username;
-                if($home_dash && !(isset($anonymous_login) && $anonymous_login==$username) && (!checkperm("dtu") || (checkperm("h") && !checkperm("hdta")) || (checkperm("dta") && !checkperm("h")))) 
-                	{?>
-                	&nbsp;<a href="<?php echo $baseurl_short;?>pages/dash_tile.php?create=true&tltype=srch&link=/pages/search.php?search=!collection<?php echo $collections[$n]["ref"]?>&order_by=relevance&sort=DESC"  onClick="return CentralSpaceLoad(this,true);">&gt;&nbsp;<?php echo $lang["dashtile"]?></a>
-                	<?php 
-                	} ?>
-				</div>
-				</td>
-    			<?php 
-    			} ?>
+	<td class="name"><div class="ListTitle">
+			<a href="<?php echo $baseurl_short?>pages/search.php?search=<?php echo urlencode("!collection" . $collections[$n]["ref"])?>" onClick="return CentralSpaceLoad(this,true);"><?php echo highlightkeywords(i18n_get_collection_name($collections[$n]),$find)?></a></div></td>
+
+	<?php if (!$collection_public_hide_owner) { ?><td class="fullname"><?php echo highlightkeywords(htmlspecialchars($collections[$n]["fullname"]),$find)?></td><?php } ?>
+	<td class="ref"><?php echo highlightkeywords($collections[$n]["ref"],$find)?></td>
+	<td class="created"><?php echo nicedate($collections[$n]["created"],true)?></td>
+    <td class="count"><?php echo $collections[$n]["count"]?></td>
+	<?php if (!$hide_access_column_public){ ?><td class="access"><?php echo ($collections[$n]["public"]==0)?$lang["private"]:$lang["public"]?></td><?php } ?>
+	<?php hook("beforecollectiontoolscolumn");?>
+	<td class="tools"><div class="ListTools">
+    <?php if ($collections_compact_style){
+         draw_compact_style_selector($collections[$n]["ref"]);
+    } else {
+    ?><a href="<?php echo $baseurl_short?>pages/search.php?search=<?php echo urlencode("!collection" . $collections[$n]["ref"])?>" onClick="return CentralSpaceLoad(this,true);">&gt;&nbsp;<?php echo $lang["viewall"]?></a>
+	<?php if ($contact_sheet==true) { ?>
+    &nbsp;<a href="<?php echo $baseurl_short?>pages/contactsheet_settings.php?ref=<?php echo urlencode($collections[$n]["ref"]) ?>" onClick="return CentralSpaceLoad(this);">&gt;&nbsp;<?php echo $lang["contactsheet"]?></a>
+	<?php } ?>
+	<?php if (!checkperm("b")) { ?>
+	&nbsp;<a href="#" onclick="document.getElementById('collectionadd').value='<?php echo urlencode($collections[$n]["ref"]) ?>';document.getElementById('collectionform').submit(); return false;">&gt;&nbsp;<?php echo $lang["addtomycollections"]?></a><?php } ?>
+	</div></td>
+    <?php } ?>
     </tr>
 	<?php
 	}

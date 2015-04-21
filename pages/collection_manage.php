@@ -390,15 +390,9 @@ if (!hook('collectionaccessmode')) {
 	{
 	    if (!$edit_all_checkperms || allow_multi_edit($collections[$n]["ref"])) { ?>&nbsp;<a href="<?php echo $baseurl_short?>pages/edit.php?collection=<?php echo urlencode($collections[$n]["ref"]) ?>" onClick="return CentralSpaceLoad(this,true);">&gt;&nbsp;<?php echo $lang["action-editall"]?></a>&nbsp;<?php } 
 	}
-	
-	global $home_dash,$anonymous_login,$username;
-    if($home_dash && !(isset($anonymous_login) && $anonymous_login==$username)&& (!checkperm("dtu") || (checkperm("h") && !checkperm("hdta")) || (checkperm("dta") && !checkperm("h")))) 
-    	{?>
-        <a href="<?php echo $baseurl_short;?>pages/dash_tile.php?create=true&tltype=srch&link=/pages/search.php?search=!collection<?php echo $collections[$n]["ref"]?>&order_by=relevance&sort=DESC"  onClick="return CentralSpaceLoad(this,true);">&gt;&nbsp;<?php echo $lang["dashtile"]?></a>
-        <?php 
-    	}
+	?>
 
-	if (($username==$collections[$n]["username"]) || (checkperm("h"))) {?><a href="<?php echo $baseurl_short?>pages/collection_log.php?ref=<?php echo urlencode($collections[$n]["ref"]);?>&order_by=relevance&sort=DESC" onClick="return CentralSpaceLoad(this,true);">&gt;&nbsp;<?php echo $lang["log"]?></a><?php } ?>
+	<?php if (($username==$collections[$n]["username"]) || (checkperm("h"))) {?><a href="<?php echo $baseurl_short?>pages/collection_log.php?ref=<?php echo urlencode($collections[$n]["ref"]) ?>" onClick="return CentralSpaceLoad(this,true);">&gt;&nbsp;<?php echo $lang["log"]?></a><?php } ?>
 
 	<?php hook("addcustomtool"); ?>
 	
