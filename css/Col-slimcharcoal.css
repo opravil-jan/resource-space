@@ -117,9 +117,9 @@ a.ResourcePanel:visited, a.ResourcePanel:active, a.ResourcePanel:link {color:#E0
 .InfoTable td {border:1px solid #E0E0E0;padding:10px;color:#E0E0E0;}
 
 /* RS SpriteSheet */
-.glyph_user {background:url('/plugins/rse_responsive/gfx/responsive_spritesheet_white.png') -20px 0;}
-.glyph_menu {background:url('/plugins/rse_responsive/gfx/responsive_spritesheet_white.png') 0 0;}
-.glyph_result {background:url('/plugins/rse_responsive/gfx/responsive_spritesheet_white.png') -40px 0;}
+.glyph_user {background:url('../plugins/rse_responsive/gfx/responsive_spritesheet_white.png') -20px 0;}
+.glyph_menu {background:url('../plugins/rse_responsive/gfx/responsive_spritesheet_white.png') 0 0;}
+.glyph_result {background:url('../plugins/rse_responsive/gfx/responsive_spritesheet_white.png') -40px 0;}
 
 /* START EXTRAS */
 
