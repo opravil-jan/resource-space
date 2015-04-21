@@ -59,12 +59,12 @@ if ($resource["has_image"]==1)
 		?>	
 
 
-<div id="wrapper" style="display:block;clear:none;float:left;margin: 0px 10px 10px 0px;">
+<div id="wrapper" class="annotate-view-wrapper">
 <div>
 <img id="toAnnotate" onload="annotate(<?php echo $ref?>,'<?php echo $k?>','<?php echo $w?>','<?php echo $h?>',<?php echo getvalescaped("annotate_toggle",true)?>);" src="<?php echo $imageurl?>" id="previewimage" class="Picture" GALLERYIMG="no" style="display:block;"   />
 </div>
 	
-<div style="float:right;padding-top:5px;">
+<div class="annotate-view-preview-links" >
 <a class="enterLink" href="<?php echo $baseurl_short?>pages/preview.php?<?php if (getval("annotate","")!=""){?>annotate=true&<?php } ?>ref=<?php echo $ref?>&amp;ext=<?php echo $resource["preview_extension"]?>&amp;k=<?php echo $k?>&amp;search=<?php echo urlencode($search)?>&amp;offset=<?php echo $offset?>&amp;order_by=<?php echo $order_by?>&amp;sort=<?php echo $sort?>&amp;archive=<?php echo $archive?><?php if($multipage_document) { echo '&amp;page=1'; } ?>" title="<?php echo $lang["fullscreenpreview"]?>">&gt;&nbsp;<?php echo $lang["fullscreenpreview"]?></a>
     
      <?php
