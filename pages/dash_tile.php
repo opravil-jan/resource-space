@@ -33,8 +33,11 @@ if($submitdashtile)
 	$default_order_by=getvalescaped("default_order_by","UNSET");
 	$reload_interval=getvalescaped("reload_interval_secs","");
 	$link=str_replace("&amp;","&",getvalescaped("link",""));
-	$link = preg_replace("/^".preg_quote($baseurl_short),"",$link);
-	$link= preg_replace("/^(\/|\\\)/","",$link);
+	if(strpos($link,$baseurl_short)===0) {
+		$length = strlen($baseurl_short);
+		$link = substr_replace($link,"",0,$length);
+	}
+	$link= preg_replace("/^\//","",$link);
 	$resource_count=getvalescaped("resource_count",FALSE);
 
 	$tile = create_dash_tile($buildurl,$link,$title,$reload_interval,$all_users,$default_order_by,$resource_count);

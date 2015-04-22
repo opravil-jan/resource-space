@@ -258,7 +258,7 @@ function get_user_dash($user)
 		?>
 		<a 
 			href="<?php echo $baseurl."/".htmlspecialchars($tile["link"]);?>" 
-			onClick="if(dragging){dragging=false;return false;}return CentralSpaceLoad(this,true);" 
+			onClick="if(dragging){dragging=false;e.defaultPrevented}return CentralSpaceLoad(this,true);" 
 			class="HomePanel DashTile DashTileDraggable <?php echo ($tile['all_users']==1)? 'allUsers':''; ?>"
 			tile="<?php echo $tile['tile']; ?>"
 			id="user_tile<?php echo htmlspecialchars($tile["user_tile"]);?>"
