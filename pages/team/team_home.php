@@ -94,6 +94,8 @@ include "../../include/header.php";
     <?php if (checkperm("u")) { ?><li><a href="<?php echo $baseurl_short?>pages/team/team_user.php" onClick="return CentralSpaceLoad(this,true);"><?php echo $lang["manageusers"]?></a></li><?php } ?>
 
     <?php if (checkperm("o")) { ?><li><a href="<?php echo $baseurl_short?>pages/team/team_content.php" onClick="return CentralSpaceLoad(this,true);"><?php echo $lang["managecontent"]?></a></li><?php } ?>
+
+    <?php if((checkperm("h") && !checkperm("hdta")) || (checkperm("dta") && !checkperm("h"))){ ?><li><a href="<?php echo $baseurl_short?>pages/team/team_dash_tile.php" onClick="return CentralSpaceLoad(this,true);"><?php echo $lang["managedefaultdash"]?></a></li><?php } ?>
     
     <li><a href="<?php echo $baseurl_short?>pages/team/team_stats.php" onClick="return CentralSpaceLoad(this,true);"><?php echo $lang["viewstatistics"]?></a></li>
     

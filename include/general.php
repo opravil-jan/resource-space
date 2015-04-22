@@ -1106,6 +1106,7 @@ function email_reset_link($email,$newuser=false)
 
 function new_user($newuser)
 	{
+	global $lang,$home_dash;
 	# Username already exists?
 	$c=sql_value("select count(*) value from user where username='$newuser'",0);
 	if ($c>0) {return false;}
@@ -1115,8 +1116,14 @@ function new_user($newuser)
 	
 	$newref=sql_insert_id();
 	
+	#Create Default Dash for the new user
+	if($home_dash)
+		{
+		include dirname(__FILE__)."/dash_functions.php";
+		create_new_user_dash($newref);
+		}
+	
 	# Create a collection for this user, the collection name is translated when displayed!
-	global $lang;
 	$new=create_collection($newref,"My Collection",0,1); # Do not translate this string!
 	# set this to be the user's current collection
 	sql_query("update user set current_collection='$new' where ref='$newref'");

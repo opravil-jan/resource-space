@@ -168,7 +168,7 @@ $include_rs_header_info=true;
 
 # Available languages
 # If $defaultlanguage is not set, the brower's default language will be used instead
-$defaultlanguage="en"; # default language, uses ISO 639-1 language codes ( en, es etc.)
+$defaultlanguage="en-US"; # default language, uses ISO 639-1 language codes ( en, es etc.)
 $languages["en"]="British English";
 $languages["en-US"]="American English";
 $languages["ar"]="العربية";
@@ -244,6 +244,15 @@ $homeanim_folder="gfx/homeanim/gfx";
 # $home_slideshow_width=517;
 # $home_slideshow_height=350;
 
+# Big slideshow mode (Fullscreen slideshow)
+# ----------------------------------
+# You will need to configure much bigger slideshow images with $home_slideshow_width and $home_slideshow_height, and regenerate
+# your slideshow images using the transform plugin. This is recommended to be used along with the slim header.
+$slideshow_big=false;
+
+
+# Home Dash - RapiDash
+$home_dash = false;
 
 # Optional 'quota size' for allocation of a set amount of disk space to this application. Value is in GB.
 # Note: Unix systems only.
@@ -2562,12 +2571,6 @@ $remove_resources_link_on_collection_bar = FALSE;
 
 # Show group filter and user search at top of team_user.php
 $team_user_filter_top=false;
-
-# Big slideshow mode - EXPERIMENTAL!
-# ----------------------------------
-# You will need to configure much bigger slideshow images with $home_slideshow_width and $home_slideshow_height, and regenerate
-# your slideshow images using the transform plugin. This is recommended to be used along with the slim header.
-$slideshow_big=false;
 
 # Stemming support - at this stage, experimental. Indexes stems of words only, so plural / singular (etc) forms of keywords are indexed as if they are equivalent. Requires a full reindex.
 $stemming=false;

@@ -22,7 +22,9 @@ if (!collection_writeable($ref)) {exit($lang["no_access_to_collection"]);}
 
 
 # Fetch collection data
-$collection=get_collection($ref);if ($collection===false) {
+$collection=get_collection($ref);
+if ($collection===false) 
+	{
 	$error=$lang['error-collectionnotfound'];
 	error_alert($error);
 	exit();
@@ -263,10 +265,9 @@ if (checkperm("h") && $collection['public']==1)
 		<?php hook("morehomepagepublishoptions");
 		}
 	}
-?>
 
 
-<?php if (isset($collection['savedsearch'])&&$collection['savedsearch']==null){
+if (isset($collection['savedsearch'])&&$collection['savedsearch']==null){
 	# disallowing share breaks smart collections 
 	?>
 <div class="Question">
@@ -326,7 +327,28 @@ if ($enable_collection_copy)
 <div class="clearerleft"> </div>
 </div>
 
-<?php } ?>
+<?php } 
+
+global $home_dash,$anonymous_login,$username;
+if($home_dash && !(isset($anonymous_login) && $anonymous_login==$username) && (!checkperm("dtu") || (checkperm("h") && !checkperm("hdta")) || (checkperm("dta") && !checkperm("h")))) 
+	{?>
+	<div class="Question">
+	<label><?php echo $lang["savethissearchtodash"]?></label>
+	<div class="Fixed">
+	<a href="<?php echo $baseurl_short;?>pages/dash_tile.php?create=true&tltype=srch&link=/pages/search.php?search=!collection<?php echo $ref?>&order_by=relevance&sort=DESC"  onClick="return CentralSpaceLoad(this,true);">
+		<?php echo $lang["create"];?>&nbsp;&gt;
+	</a>
+	</div>
+<div class="clearerleft"> </div>
+</div>
+	<?php 
+	}
+
+
+
+
+
+?>
 
 
 
