@@ -204,6 +204,7 @@ if(!is_numeric($tile_width) || !is_numeric($tile_height)){exit($lang["error-miss
 		exit;
 		}
 
+/* Multi Resource Search Tile */
 	if($tile_type=="srch" && $tile_style=="multi")
 		{
 		$search_string = explode('?',$tile["link"]);
@@ -223,7 +224,7 @@ if(!is_numeric($tile_width) || !is_numeric($tile_height)){exit($lang["error-miss
                 $previewpath=get_resource_path($ref,false,$img_size,false,"jpg",-1,1,false,$resources[$i]["file_modified"]);
             }
             else {
-                $previewpath=$baseurl_short."/gfx/".get_nopreview_icon($resources[$i]["resource_type"],$resources[$i]["file_extension"],$img_size);$border=false;
+                $previewpath=$baseurl_short."gfx/".get_nopreview_icon($resources[$i]["resource_type"],$resources[$i]["file_extension"],$img_size);$border=false;
             }
             $modifiedurl=hook('searchpublicmodifyurl');
 			if($modifiedurl)
