@@ -632,7 +632,13 @@ if (!$is_template) { ?><p class="greyText noPadding"><sup>*</sup> <?php echo $la
 # Upload template: Show the save / clear buttons at the top too, to avoid unnecessary scrolling.
 ?>
 <div class="QuestionSubmit">
-<input name="resetform" type="submit" value="<?php echo $lang["clearbutton"]?>" />&nbsp;
+<?php
+global $clearbutton_on_upload;
+if(($clearbutton_on_upload && $ref<0 && !$multiple) || $ref>0) 
+    { ?>
+    <input name="resetform" type="submit" value="<?php echo $lang["clearbutton"]?>" />&nbsp;
+    <?php
+    } ?>
 <input name="save" type="submit" value="&nbsp;&nbsp;<?php echo $lang["next"]?>&nbsp;&nbsp;" /><br />
 <div class="clearerleft"> </div>
 </div>
@@ -1830,7 +1836,13 @@ if ($multiple && !$disable_geocoding)
 
     <?php if (!hook('replacesubmitbuttons')) { ?>
     <div class="QuestionSubmit">
-    <input name="resetform" type="submit" value="<?php echo $lang["clearbutton"]?>" />&nbsp;
+    <?php
+    global $clearbutton_on_upload;
+    if(($clearbutton_on_upload && $ref<0 && !$multiple) || $ref>0) 
+        { ?>
+        <input name="resetform" type="submit" value="<?php echo $lang["clearbutton"]?>" />&nbsp;
+        <?php
+        } ?>
     <input <?php if ($multiple) { ?>onclick="return confirm('<?php echo $lang["confirmeditall"]?>');"<?php } ?> name="save" type="submit" value="&nbsp;&nbsp;<?php echo ($ref>0)?$lang["save"]:$lang["next"]?>&nbsp;&nbsp;" /><br><br>
     <div class="clearerleft"> </div>
     </div>

@@ -991,6 +991,9 @@ $upload_force_mycollection=false;
 # When batch uploading, enable the 'copy resource data from existing resource' feature
 $enable_copy_data_from=true;
 
+# Show clear button on the upload page
+$clearbutton_on_upload=true;
+
 # Store Resource Refs when uploading, this is useful for other developer tools to hook into the upload.
 $store_uploadedrefs=false;
 
