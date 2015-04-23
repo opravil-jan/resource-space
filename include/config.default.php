@@ -994,6 +994,9 @@ $enable_copy_data_from=true;
 # Show clear button on the upload page
 $clearbutton_on_upload=true;
 
+# Show clear button on the edit page
+$clearbutton_on_edit=true;
+
 # Store Resource Refs when uploading, this is useful for other developer tools to hook into the upload.
 $store_uploadedrefs=false;
 
