@@ -310,7 +310,12 @@ if ($submitted != "")
 				if (($zipped_collection_textfile==true)&&($includetext=="true")){ 
 					if ($size==""){$sizetext="";}else{$sizetext="-".$size;}
 					if ($subbed_original) { $sizetext = '(' . $lang['substituted_original'] . ')'; }
-					$fields=get_resource_field_data($ref);
+					if($k === '') {
+						$fields = get_resource_field_data($ref);
+					} else {
+						// External shares should take into account fields that are not meant to show in that case
+						$fields = get_resource_field_data($ref, false, true, -1, true);
+					}
 					$commentdata=get_collection_resource_comment($ref,$collection);
 					if (count($fields)>0){ 
 					$text.= ($sizetext=="" ? "" : $sizetext) ." ". $filename. "\r\n-----------------------------------------------------------------\r\n";
