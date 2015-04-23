@@ -643,7 +643,7 @@ if (!$basic_simple_search)
 	{
 	# For anonymous access, display the login panel
 	?>
-	<br /><div id="SearchBoxPanel">
+	<br /><div id="SearchBoxPanel" class="LoginBoxPanel" >
 	<div class="SearchSpace">
 
 	  <h2><?php echo $lang["login"]?></h2>
