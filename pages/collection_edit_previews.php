@@ -20,6 +20,7 @@ $done=false;
 if (!collection_writeable($ref)) {exit($lang["no_access_to_collection"]);}
 
 # Fetch collection data
+$collection_ref=$ref; // preserve collection id because tweaking resets $ref to resource ids
 $collection=get_collection($ref);if ($collection===false) {
 	$error=$lang['error-collectionnotfound'];
 	error_alert($error);
@@ -60,6 +61,7 @@ if (getval("tweak","")!="")
 			if(!empty($resource['file_path'])){$ingested=false;}
 			else{$ingested=true;}
 			create_previews($resource['ref'],false,$resource["file_extension"],false,false,-1,true,$ingested);
+			$ref=$collection_ref; // restore collection id because tweaking resets $ref to resource ids
 		}
 		break;
 		}
