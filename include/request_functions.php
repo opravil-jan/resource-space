@@ -317,11 +317,14 @@ function managed_collection_request($ref,$details,$ref_is_resource=false)
         }
     
     # Create the request
+    global $request_query;
     $request_query = "insert into request(user,collection,created,request_mode,status,comments) values ('$userref','$ref',now(),1,0,'" . escape_check($message) . "')";
 
+    global $notify_manage_request_admin, $assigned_to_user;
     $notify_manage_request_admin = false;
 
     // Manage individual requests of resources:
+    hook('autoassign_individual_requests', '', array($userref, $ref, $message, isset($collectiondata)));
     if(isset($manage_request_admin) && !isset($collectiondata)) {
 
         $query = sprintf("
@@ -370,6 +373,7 @@ function managed_collection_request($ref,$details,$ref_is_resource=false)
     }
 
     // Manage collection requests:
+    hook('autoassign_collection_requests', '', array($userref, isset($collectiondata) ? $collectiondata : array(), $message, isset($collectiondata)));
     if(isset($manage_request_admin) && isset($collectiondata)) {
 
         $all_r_types = get_resource_types();
@@ -488,7 +492,11 @@ function managed_collection_request($ref,$details,$ref_is_resource=false)
         }
 
     }
-        
+
+    if(hook('bypass_end_managed_collection_request', '', array(!isset($collectiondata), $ref, $request_query, $message, $templatevars, $assigned_to_user, $admin_mail_template, $user_mail_template))) {
+        return true;
+    }
+
     sql_query($request_query);
     $request=sql_insert_id();
     $templatevars["request_id"]=$request;
