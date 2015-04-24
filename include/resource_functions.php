@@ -840,10 +840,58 @@ function update_field($resource,$field,$value)
 	if (!is_numeric($field)){$field=sql_value("select ref value from resource_type_field where name='".escape_check($field)."'","");}
 
 	# Fetch some information about the field
-	$fieldinfo=sql_query("select keywords_index,resource_column,partial_index,type, onchange_macro from resource_type_field where ref='$field'");
+	$fieldinfo=sql_query("select keywords_index,resource_column,partial_index,type, onchange_macro, options from resource_type_field where ref='$field'");
 
 	if (count($fieldinfo)==0) {return false;} else {$fieldinfo=$fieldinfo[0];}
 	
+        # If this is a dynamic keyword we need to add it to the field options
+        if($fieldinfo['type']==9 && !checkperm('bdk' . $field))
+            {
+            $fieldoptions=explode(",",$fieldinfo['options']);
+            $currentoptions=array();
+            foreach($fieldoptions as $fieldoption)
+                {
+                $fieldoptiontranslations=explode("~",$fieldoption);
+                if (count($fieldoptiontranslations)<2)
+                    {
+                    $currentoptions[]=trim($fieldoption); # Not a translatable field
+                    debug("update_field: current field option: '" . trim($fieldoption) . "'<br>");
+                    }
+                else
+                    {
+                    $default="";
+                    for ($n=1;$n<count($fieldoptiontranslations);$n++)
+                        {
+                        # Not a translated string, return as-is
+                        if (substr($fieldoptiontranslations[$n],2,1)!=":" && substr($fieldoptiontranslations[$n],5,1)!=":" && substr($fieldoptiontranslations[$n],0,1)!=":")
+                            {
+                            $currentoptions[]=trim($fieldoption);
+                            debug("update_field: current field option: '" . $fieldoption . "'<br>");
+                            }
+                        else
+                            {
+                            # Support both 2 character and 5 character language codes (for example en, en-US).
+                            $p=strpos($fieldoptiontranslations[$n],':');                         
+                            $currentoptions[]=trim(substr($fieldoptiontranslations[$n],$p+1));
+                            debug("update_field: urrent field option: '" . trim(substr($fieldoptiontranslations[$n],$p+1)) . "'<br>");
+                            } 
+                        }
+                    }
+                }
+            $newvalues=explode(",",$value);
+            foreach($newvalues as $newvalue)
+                {
+                # Check if each new value exists in current options list
+                if(!in_array($newvalue,$currentoptions))
+                    {
+                    # Append the option and update the field
+                    sql_query("update resource_type_field set options=concat(ifnull(options,''), ', " . escape_check(trim($newvalue)) . "') where ref='$field'");
+                    $currentoptions[]=trim($newvalue);
+                    debug("update_field: field option added: '" . trim($newvalue) . "'<br>");
+                    }                    
+                }
+            }
+        
         # Fetch previous value
         $existing=sql_value("select value from resource_data where resource='$resource' and resource_type_field='$field'","");
                         
