@@ -11,7 +11,7 @@ if(checkperm('bdk' . $field['ref'])) {
 ?>
 
 <div class="dynamickeywords ui-front">
-<input type="text" class="stdwidth" value="<?php echo $lang["starttypingkeyword"]?>" onFocus="ShowHelp(<?php echo $field["ref"] ?>);if (this.value=='<?php echo $lang["starttypingkeyword"]?>') {this.value='';}" onBlur="HideHelp(<?php echo $field["ref"] ?>);if (this.value=='') {this.value='<?php echo $lang["starttypingkeyword"]?>'}; if(typeof(UpdateResultCount) == 'function' && this.value!='' && this.value!='<?php echo $lang["starttypingkeyword"]?>'){this.value='<?php echo $lang["starttypingkeyword"]?>';}" name="<?php echo $name ?>_selector" id="<?php echo $name ?>_selector" />
+<input type="text" class="stdwidth" value="<?php echo $lang["starttypingkeyword"]?>" onFocus="<?php if ($pagename=="edit"){ echo "ShowHelp(" . $field["ref"] . ");";} ?>if (this.value=='<?php echo $lang["starttypingkeyword"]?>') {this.value='';}" onBlur="HideHelp(<?php echo $field["ref"] ?>);if (this.value=='') {this.value='<?php echo $lang["starttypingkeyword"]?>'}; if(typeof(UpdateResultCount) == 'function' && this.value!='' && this.value!='<?php echo $lang["starttypingkeyword"]?>'){this.value='<?php echo $lang["starttypingkeyword"]?>';}" name="<?php echo $name ?>_selector" id="<?php echo $name ?>_selector" />
 
 <input type="hidden" name="<?php echo $name ?>" id="<?php echo $name ?>" value="<?php echo htmlspecialchars($value) ?>"/>
 
