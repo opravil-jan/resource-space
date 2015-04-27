@@ -1097,7 +1097,7 @@ function email_reset_link($email,$newuser=false)
         else
             {
             $message=$lang["passwordresetemail"] . "\n\n" . $templatevars['url'];
-            send_mail($email,$applicationname . ": " . $lang["resetpassword"],$message,"","","passwordresetemail",$templatevars);
+            send_mail($email,$applicationname . ": " . $lang["resetpassword"],$message,"","","password_reset_email_html",$templatevars);
             }	
 	
 	return true;

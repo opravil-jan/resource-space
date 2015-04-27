@@ -2043,7 +2043,8 @@ $lang["user_request__introtext"]="Please complete the form below to request a us
 $lang["view__storyextract"]="Story extract:";
 $lang["notify_resource_change_email_subject"]="A resource has been modified";
 $lang["notify_resource_change_email"]="A resource that you downloaded in the past [days] days has been modified . Click the link below to view the resource.<br /><br /><a href='[url]'>[url]</a>";
-$lang["passwordresetemail"]="Please click on the link below to reset your passsword.";
+$lang["passwordresetemail"]="Please click on the link below to reset your password.";
+$lang['password_reset_email_html'] = 'Please click on the link below to reset your password.<br /><br /><a href="[url]" target="_blank" >[url]</a>';
 $lang["passwordnewemail"]="Please click on the link below to set a new passsword for your account.";
 $lang["passwordlinkexpired"]="Password reset link has either expired or been used. Please log in or request a new link."; 
 $lang["done__user_password_link_sent"]="If your email address was recognised as belonging to a valid account then an e-mail containing a link to reset your password has been sent.<br /><br /> If you do not receive an email and you believe your account is valid please check your email filters before contacting your system administrator.";
