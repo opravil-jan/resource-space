@@ -1228,7 +1228,11 @@ $log_resource_views=false;
 $banned_extensions=array("php","cgi","pl","exe","asp","jsp");
 
 #Set a default access value for the upload page. This will override the default resource template value.
+#Change the value of this option to the access id number
 $override_access_default=false;
+#Set a default status value for the upload page. This will override the default resource template value.
+#Change the value of this option to the status id number
+$override_status_default=false;
 
 # When adding resource(s), in the upload template by the status and access fields are hidden.
 # Set the below option to 'true' to enable these options during this process.

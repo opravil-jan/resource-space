@@ -282,54 +282,52 @@ if (!$multiple)
 }
 
 if (getval("tweak","")!="")
-{
-  $tweak=getval("tweak","");
-  switch($tweak)
-  {
-    case "rotateclock":
-    tweak_preview_images($ref,270,0,$resource["preview_extension"]);
-    break;
-    case "rotateanti":
-    tweak_preview_images($ref,90,0,$resource["preview_extension"]);
-    break;
-    case "gammaplus":
-    tweak_preview_images($ref,0,1.3,$resource["preview_extension"]);
-    break;
-    case "gammaminus":
-    tweak_preview_images($ref,0,0.7,$resource["preview_extension"]);
-    break;
-    case "restore":
-    sql_query("update resource set preview_attempts=0 WHERE ref='" . $ref . "'");
-    if ($enable_thumbnail_creation_on_upload)
-    {
-      create_previews($ref,false,$resource["file_extension"],false,false,-1,true);
-      refresh_collection_frame();
-   }
-   else
    {
-      sql_query("update resource set preview_attempts=0, has_image=0 where ref='$ref'");
+   $tweak=getval("tweak","");
+   switch($tweak)
+      {
+      case "rotateclock":
+         tweak_preview_images($ref,270,0,$resource["preview_extension"]);
+         break;
+      case "rotateanti":
+         tweak_preview_images($ref,90,0,$resource["preview_extension"]);
+         break;
+      case "gammaplus":
+         tweak_preview_images($ref,0,1.3,$resource["preview_extension"]);
+         break;
+      case "gammaminus":
+         tweak_preview_images($ref,0,0.7,$resource["preview_extension"]);
+         break;
+      case "restore":
+         sql_query("update resource set preview_attempts=0 WHERE ref='" . $ref . "'");
+         if ($enable_thumbnail_creation_on_upload)
+            {
+            create_previews($ref,false,$resource["file_extension"],false,false,-1,true);
+            refresh_collection_frame();
+            }
+         else
+            {
+            sql_query("update resource set preview_attempts=0, has_image=0 where ref='$ref'");
+            }
+         break;
+      }
+   hook("moretweakingaction", "", array($tweak, $ref, $resource));
+   # Reload resource data.
+   $resource=get_resource_data($ref,false);
    }
-   break;
-}
-
-hook("moretweakingaction", "", array($tweak, $ref, $resource));
-
-    # Reload resource data.
-$resource=get_resource_data($ref,false);
-}
 
 # Simulate reupload (preserving filename and thumbs, but otherwise resetting metadata).
 if (getval("exif","")!="")
-{
-  upload_file($ref,$no_exif=false,true);
-  resource_log($ref,"r","");
-}   
+   {
+   upload_file($ref,$no_exif=false,true);
+   resource_log($ref,"r","");
+   }   
 
 # If requested, refresh the collection frame (for redirects from saves)
 if (getval("refreshcollectionframe","")!="")
-{
-  refresh_collection_frame();
-}
+   {
+   refresh_collection_frame();
+   }
 
 include "../include/header.php";
 ?>
@@ -1550,36 +1548,37 @@ echo " <input type=hidden name=\"exemptfields\" id=\"exemptfields\" value=\"" . 
 
 # Work out the correct archive status.
 if ($ref<0) # Upload template.
-{
-  $modified_defaultstatus = hook("modifydefaultstatusmode");
-  if ($archive==2)
-  {
-        if (checkperm("e2")) {$status = 2;} # Set status to Archived - if the user has the required permission.
-        elseif ($modified_defaultstatus) {$status = $modified_defaultstatus;}  # Set the modified default status - if set.
-        elseif (checkperm("e" . $resource["archive"])) {$status = $resource["archive"];} # Else, set status to the status stored in the user template - if the user has the required permission.
-        elseif (checkperm("c")) {$status = 0;} # Else, set status to Active - if the user has the required permission.
-        elseif (checkperm("d")) {$status = -2;} # Else, set status to Pending Submission.
-     }
-     else
-     {
-        if ($modified_defaultstatus) {$status = $modified_defaultstatus;}  # Set the modified default status - if set.
-        elseif ($resource["archive"]!=2 && checkperm("e" . $resource["archive"])) {$status = $resource["archive"];} # Set status to the status stored in the user template - if the status is not Archived and if the user has the required permission.
-        elseif (checkperm("c")) {$status = 0;} # Else, set status to Active - if the user has the required permission.
-        elseif (checkperm("d") && !checkperm('e-2') && checkperm('e-1')) {$status = -1;} # Else, set status to Pending Review if the user has only edit access to Pending review
-        elseif (checkperm("d")) {$status = -2;} # Else, set status to Pending Submission.   
-     }
-
-     if ($show_status_and_access_on_upload==false)
-     {
-        # Hide the dropdown, and set the default status.
-       ?>
-       <input type=hidden name="archive" id="archive" value="<?php echo htmlspecialchars($status)?>"><?php
-    }
- }
+   {
+   global $override_status_default;
+   $modified_defaultstatus = hook("modifydefaultstatusmode");
+   if ($archive==2)
+      {
+      if (checkperm("e2")) {$status = 2;} # Set status to Archived - if the user has the required permission.
+      elseif ($modified_defaultstatus) {$status = $modified_defaultstatus;}  # Set the modified default status - if set.
+      elseif (checkperm("e" . $resource["archive"])) {$status = $resource["archive"];} # Else, set status to the status stored in the user template - if the user has the required permission.
+      elseif (checkperm("c")) {$status = 0;} # Else, set status to Active - if the user has the required permission.
+      elseif (checkperm("d")) {$status = -2;} # Else, set status to Pending Submission.
+      }
+   else
+      {
+      if ($modified_defaultstatus) {$status = $modified_defaultstatus;}  # Set the modified default status - if set.
+      elseif ($override_status_default!==false) {$status = $override_status_default;}
+      elseif ($resource["archive"]!=2 && checkperm("e" . $resource["archive"])) {$status = $resource["archive"];} # Set status to the status stored in the user template - if the status is not Archived and if the user has the required permission.
+      elseif (checkperm("c")) {$status = 0;} # Else, set status to Active - if the user has the required permission.
+      elseif (checkperm("d") && !checkperm('e-2') && checkperm('e-1')) {$status = -1;} # Else, set status to Pending Review if the user has only edit access to Pending review
+      elseif (checkperm("d")) {$status = -2;} # Else, set status to Pending Submission.   
+      }
+   if ($show_status_and_access_on_upload==false)
+      {
+      # Hide the dropdown, and set the default status.
+      ?>
+      <input type=hidden name="archive" id="archive" value="<?php echo htmlspecialchars($status)?>"><?php
+      }
+   }
 else # Edit Resource(s).
-{
-  $status = $resource["archive"];
-}
+   {
+   $status = $resource["archive"];
+   }
 
 # Status / Access / Related Resources
 if ($show_status_and_access_on_upload_perm &&!hook("editstatushide")) # Only display Status / Access / Related Resources if permissions match.
@@ -1602,38 +1601,39 @@ if ($show_status_and_access_on_upload_perm &&!hook("editstatushide")) # Only dis
 
        hook("statreladdtopfields");
 
-    # Status
-       if ($ref>0 || $show_status_and_access_on_upload===true)
-       {
-          if(!hook("replacestatusselector"))
-          {
-            if ($multiple)
-              { ?>
-           <div id="editmultiple_status"><input name="editthis_status" id="editthis_status" value="yes" type="checkbox" onClick="var q=document.getElementById('question_status');if (q.style.display!='block') {q.style.display='block';} else {q.style.display='none';}">&nbsp;<label id="editthis_status_label" for="editthis<?php echo $n?>"><?php echo $lang["status"]?></label></div><?php
-        } ?>
-        <div class="Question" id="question_status" <?php if ($multiple) {?>style="display:none;"<?php } ?>>
+# Status
+if ($ref>0 || $show_status_and_access_on_upload===true)
+   {
+   if(!hook("replacestatusselector"))
+      {
+      if ($multiple)
+         { ?>
+         <div id="editmultiple_status"><input name="editthis_status" id="editthis_status" value="yes" type="checkbox" onClick="var q=document.getElementById('question_status');if (q.style.display!='block') {q.style.display='block';} else {q.style.display='none';}">&nbsp;<label id="editthis_status_label" for="editthis<?php echo $n?>"><?php echo $lang["status"]?></label></div>
+         <?php
+         } ?>
+      <div class="Question" id="question_status" <?php if ($multiple) {?>style="display:none;"<?php } ?>>
          <label for="archive"><?php echo $lang["status"]?></label><?php
 
-            # Autosave display
+         # Autosave display
          if ($edit_autosave || $ctrls_to_save)
-           { ?>
-        <div class="AutoSaveStatus" id="AutoSaveStatusStatus" style="display:none;"></div><?php
-     } ?>
-
-     <select class="stdwidth" name="status" id="archive" <?php if ($edit_autosave) {?>onChange="AutoSave('Status');"<?php } ?>><?php
-     for ($n=-2;$n<=3;$n++)
-     {
-        if (checkperm("e" . $n)) { ?><option value="<?php echo $n?>" <?php if ($status==$n) { ?>selected<?php } ?>><?php echo $lang["status" . $n]?></option><?php }
-     }
-  foreach ($additional_archive_states as $additional_archive_state)
-  {
-     if (checkperm("e" . $additional_archive_state)) { ?><option value="<?php echo $additional_archive_state?>" <?php if ($status==$additional_archive_state) { ?>selected<?php } ?>><?php echo isset($lang["status" . $additional_archive_state])?$lang["status" . $additional_archive_state]:$additional_archive_state ?></option><?php }
-  }?>
-</select>
-<div class="clearerleft"> </div>
-</div><?php
-} /* end hook replacestatusselector */
-}
+            { ?>
+            <div class="AutoSaveStatus" id="AutoSaveStatusStatus" style="display:none;"></div>
+            <?php
+            } ?>
+         <select class="stdwidth" name="status" id="archive" <?php if ($edit_autosave) {?>onChange="AutoSave('Status');"<?php } ?>><?php
+         for ($n=-2;$n<=3;$n++)
+            {
+            if (checkperm("e" . $n)) { ?><option value="<?php echo $n?>" <?php if ($status==$n) { ?>selected<?php } ?>><?php echo $lang["status" . $n]?></option><?php }
+            }
+         foreach ($additional_archive_states as $additional_archive_state)
+            {
+            if (checkperm("e" . $additional_archive_state)) { ?><option value="<?php echo $additional_archive_state?>" <?php if ($status==$additional_archive_state) { ?>selected<?php } ?>><?php echo isset($lang["status" . $additional_archive_state])?$lang["status" . $additional_archive_state]:$additional_archive_state ?></option><?php }
+            }?>
+         </select>
+         <div class="clearerleft"> </div>
+      </div><?php
+      } /* end hook replacestatusselector */
+   }
 
     # Access
 hook("beforeaccessselector");
