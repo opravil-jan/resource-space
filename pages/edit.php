@@ -184,7 +184,7 @@ if ($ref<0 && isset($disk_quota_limit_size_warning_noupload)){
 	# echo "no_upload: ".$limit."<br/>";
 	# compare against size setting
 	if($free<=$limit){
-		# shut down uploading by redirecting to explination page
+		# shut down uploading by redirecting to explanation page
 		$explain=$baseurl_short."pages/no_uploads.php";
 		redirect($explain);
 	}

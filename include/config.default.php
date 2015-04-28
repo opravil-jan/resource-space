@@ -248,7 +248,7 @@ $homeanim_folder="gfx/homeanim/gfx";
 # ----------------------------------
 # You will need to configure much bigger slideshow images with $home_slideshow_width and $home_slideshow_height, and regenerate
 # your slideshow images using the transform plugin. This is recommended to be used along with the slim header.
-$slideshow_big=true;
+$slideshow_big=false;
 
 
 # Home Dash - RapiDash
@@ -261,7 +261,7 @@ $home_dash = true;
 # Disk Usage Warnings - require running check_disk_usage.php
 # Percentage of disk space used before notification is sent out. The number should be between 1 and 100.
 #$disk_quota_notification_limit_percent_warning=90;
-# interval in hours to wait before sending another percent warning. Useful if you want to run 
+# interval in hours to wait before sending another percent warning 
 #$disk_quota_notification_interval=24;
 $disk_quota_notification_email='';
 # GB of disk space left before uploads are disabled.
