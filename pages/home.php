@@ -333,37 +333,58 @@ if (checkperm("s"))
 		{
 		/* ------------ Collections promoted to the home page ------------------- */
 		foreach ($home_collections as $home_collection)
-			{
+			{	
+			$defaultpreview=false;			
+			if(file_exists(get_resource_path($home_collection["home_page_image"],true,"pre",false)))
+				{
+				$home_col_image=get_resource_path($home_collection["home_page_image"],false,"pre",false);
+				}
+			else
+				{
+				$defaultpreview=true;
+				$home_col_image=$baseurl_short . "gfx/" . get_nopreview_icon($home_collection["resource_type"],$home_collection["file_extension"], false);
+				}
+			$tile_height=180;
+			$tile_width=250;
 			?>
 			<a href="<?php echo $baseurl_short?>pages/search.php?search=!collection<?php echo $home_collection["ref"] ?>" onClick="return CentralSpaceLoad(this,true);" class="HomePanel HomePanelPromoted">
-				<div class="HomePanelIN HomePanelPromotedIN" style="padding: 0;overflow: hidden;position: relative;height: 100%;width: 100%;min-height: 180px;">
+				<div id="HomePanelPromoted<?php echo $home_collection["ref"] ?>" class="HomePanelIN HomePanelPromotedIN" style="padding: 0;overflow: hidden;position: relative;height: 100%;width: 100%;min-height: 180px;">
 						<img 
-							src="<?php echo get_resource_path($home_collection["home_page_image"],false,"pre",false) ?>" 
-							style="position: absolute;top: 0;left: 0;" 
-							<?php
-
-							$tile_height=180;
-							$tile_width=100;
-							#fit image to tile size
-							if($home_collection["thumb_height"]>0 && $home_collection["thumb_width"]>0)
+							src="<?php echo $home_col_image ?>" 
+							<?php 
+							if($defaultpreview)
 								{
-									if(($home_collection["thumb_width"]*0.7)>=$home_collection["thumb_height"])
-									{
-									$ratio = $home_collection["thumb_height"] / $tile_height;
-									$width = $home_collection["thumb_width"] / $ratio;
-									if($width<$tile_width){echo "width='100%' ";}
-									else {echo "height='100%' ";}
-									}
-								else
-									{
-									$ratio = $home_collection["thumb_width"] / $tile_width;
-									$height = $home_collection["thumb_height"] / $ratio;
-									if($height<$tile_height){echo "height='100%' ";}
-									else {echo "width='100%' ";}
-									}
+								?>
+								style="position:absolute;top:<?php echo ($tile_height-128)/2 ?>px;left:<?php echo ($tile_width-128)/2 ?>px;"
+								<?php
 								}
-							?>
+							else 
+								{
+								#fit image to tile size
+								if($home_collection["thumb_height"]>0 && $home_collection["thumb_width"]>0)
+									{
+									if(($home_collection["thumb_width"]*0.7)>=$home_collection["thumb_height"])
+										{
+										$ratio = $home_collection["thumb_height"] / $tile_height;
+										$width = $home_collection["thumb_width"] / $ratio;
+										if($width<$tile_width){echo "width='100%' ";}
+										else {echo "height='100%' ";}
+										}
+									else
+										{
+										$ratio = $home_collection["thumb_width"] / $tile_width;
+										$height = $home_collection["thumb_height"] / $ratio;
+										if($height<$tile_height){echo "height='100%' ";}
+										else {echo "width='100%' ";}
+										}
+									}
+								?>
+								style="position:absolute;top:0;left:0;"
+								<?php
+								}?>
+							class="thmbs_tile_img"
 						/>
+			
 						<span class="collection-icon"></span>
 						<h2 class="title" style="float: none;position: relative;padding-left: 15px;padding-right: 15px;padding-top: 18px;text-transform: capitalize;text-shadow: #090909 1px 1px 8px;color: #fff;">
 					<?php echo i18n_get_translated($home_collection["home_page_text"]) ?>
