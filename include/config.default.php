@@ -252,7 +252,7 @@ $slideshow_big=false;
 
 
 # Home Dash - RapiDash
-$home_dash = false;
+$home_dash = true;
 
 # Optional 'quota size' for allocation of a set amount of disk space to this application. Value is in GB.
 # Note: Unix systems only.
