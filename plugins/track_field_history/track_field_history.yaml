@@ -5,3 +5,4 @@ desc: Ability to track fields' edit history
 info_url: http://www.montala.com
 config_url: /plugins/track_field_history/pages/setup.php
 default_priority: 999
+category: Workflow and access
