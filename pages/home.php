@@ -345,19 +345,22 @@ if (checkperm("s"))
 							$tile_height=180;
 							$tile_width=100;
 							#fit image to tile size
-							if(($home_collection["thumb_width"]*0.7)>=$home_collection["thumb_height"])
+							if($home_collection["thumb_height"]>0 && $home_collection["thumb_width"]>0)
 								{
-								$ratio = $home_collection["thumb_height"] / $tile_height;
-								$width = $home_collection["thumb_width"] / $ratio;
-								if($width<$tile_width){echo "width='100%' ";}
-								else {echo "height='100%' ";}
-								}
-							else
-								{
-								$ratio = $home_collection["thumb_width"] / $tile_width;
-								$height = $home_collection["thumb_height"] / $ratio;
-								if($height<$tile_height){echo "height='100%' ";}
-								else {echo "width='100%' ";}
+									if(($home_collection["thumb_width"]*0.7)>=$home_collection["thumb_height"])
+									{
+									$ratio = $home_collection["thumb_height"] / $tile_height;
+									$width = $home_collection["thumb_width"] / $ratio;
+									if($width<$tile_width){echo "width='100%' ";}
+									else {echo "height='100%' ";}
+									}
+								else
+									{
+									$ratio = $home_collection["thumb_width"] / $tile_width;
+									$height = $home_collection["thumb_height"] / $ratio;
+									if($height<$tile_height){echo "height='100%' ";}
+									else {echo "width='100%' ";}
+									}
 								}
 							?>
 						/>
