@@ -37,7 +37,7 @@ include ("../../include/header.php");
 if ($web_config_edit)
 	{
 ?>		<li><a href="<?php echo $baseurl_short?>pages/admin/fileedit.php?file=../../include/config.php" target="_blank"><?php echo $lang["action-edit"]; ?> config.php</a></li>
-		<li><a href="<?php echo $baseurl_short?>pages/admin/fileedit.php?file=../../include/config.default.php" target="_blank"><?php echo $lang["action-edit"]; ?> config.default.php</a></li>
+		<li><a href="<?php echo $baseurl_short?>pages/admin/fileedit.php?file=../../include/config.default.php" target="_blank"><?php echo $lang["action-view"]; ?> config.default.php</a></li>
 <?php
 	}	
 
