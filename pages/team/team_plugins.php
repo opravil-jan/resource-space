@@ -225,11 +225,11 @@ include "../../include/header.php"; ?>
 })(jQuery);
 </script>
 <div class="BasicsBox"> 
-<h2>&nbsp;</h2>
 <h1><?php echo $lang["pluginmanager"]; ?></h1>
 <p><?php echo $lang["plugins-headertext"]; ?></p>
-<h2><?php echo $lang['plugins-installedheader']; ?></h2>
+<h2 class="pageline"><?php echo $lang['plugins-installedheader']; ?></h2>
 <?php hook("before_active_plugin_list");
+
 if (count($inst_plugins)>0)
    { ?>
    <div class="Listview">
@@ -311,60 +311,156 @@ else
    {
    echo "<p>".$lang['plugins-noneinstalled']."</p>";
    } ?>
-<h2><?php echo $lang['plugins-availableheader']; ?></h2>
+
+<h2 class="pageline"><?php echo $lang['plugins-availableheader']; ?></h2>
 <?php 
 if (count($plugins_avail)>0) 
-   { ?>
-   <div class="Listview">
-      <table border="0" cellspacing="0" cellpadding="0" class="ListviewStyle">
-         <thead>
-         <tr class="ListviewTitleStyle">
-            <td><?php echo $lang['name']; ?></td>
-            <td><?php echo $lang['description']; ?></td>
-            <td><?php echo $lang['plugins-author']; ?></td>
-            <td><?php echo $lang['plugins-version']; ?></td>
-            <td><div class="ListTools"><?php echo $lang['tools']; ?></div></td>
-         </tr>
-         </thead>
-         <tbody>
-         <?php 
-         foreach($plugins_avail as $p)
+   { 
+   $plugin_categories=array();
+   $general_plugins=array();
+   $advanced_plugins=array();
+   foreach($plugins_avail as $p)
+      {
+      $plugin_row = '<tr><td>'.$p['name'].'</td><td>'.$p['desc'].'</td><td>'.$p['author'].'</td>';
+      if ($p['version'] == 0)
+         {
+         $plugin_row .= '<td>' . $lang["notavailableshort"] . '</td>';
+         }
+      else
+         {
+         $plugin_row .= '<td>'.$p['version'].'</td>';
+         }
+      $plugin_row .= '<td><div class="ListTools">';
+      $plugin_row .= '<a href="#'.$p['name'].'" class="p-activate">&gt;&nbsp;'.$lang['plugins-activate'].'</a> ';
+      if ($p['info_url']!='')
+         {
+         $plugin_row .= '<a class="nowrap" href="'.$p['info_url'].'" target="_blank">&gt;&nbsp;'.$lang['plugins-moreinfo'].'</a> ';
+         }
+      if ($p['config'])
+         {
+         $plugin_row .= '<a href="#'.$p['name'].'" class="p-purge">&gt;&nbsp;'.$lang['plugins-purge'].'</a> ';
+         }
+      $plugin_row .= '</div></td></tr>';  
+      if(isset($p["category"]))
+         {
+         if(preg_match("/.*,.*/",$p["category"]))
             {
-            echo '<tr><td>'.$p['name'].'</td><td>'.$p['desc'].'</td><td>'.$p['author'].'</td>';
-            if ($p['version'] == 0)
+            $p_cats = explode(",",$p["category"]);
+            foreach($p_cats as $p_cat)
                {
-               echo '<td>' . $lang["notavailableshort"] . '</td>';
+               if(array_search("advanced",$p_cats))
+                  {
+                  array_push($advanced_plugins,$plugin_row);
+                  unset($p_cats[array_search("advanced",$p_cats)]);
+                  }
+               else if(array_search("general",$p_cats))
+                  {
+                  array_push($general_plugins,$plugin_row);
+                  unset($p_cats[array_search("general",$p_cats)]);
+                  }
+               else
+                  {
+                  if(!isset($plugin_categories[$p_cat]))
+                     {
+                     $plugin_categories[$p_cat]=array();
+                     }
+                  array_push($plugin_categories[$p_cat],$plugin_row);
+                  }
                }
-            else
-               {
-               echo '<td>'.$p['version'].'</td>';
-               }
-            echo '<td><div class="ListTools">';
-            echo '<a href="#'.$p['name'].'" class="p-activate">&gt;&nbsp;'.$lang['plugins-activate'].'</a> ';
-            if ($p['info_url']!='')
-               {
-               echo '<a class="nowrap" href="'.$p['info_url'].'" target="_blank">&gt;&nbsp;'.$lang['plugins-moreinfo'].'</a> ';
-               }
-            if ($p['config'])
-               {
-               echo '<a href="#'.$p['name'].'" class="p-purge">&gt;&nbsp;'.$lang['plugins-purge'].'</a> ';
-               }
-            echo '</div></td></tr>';        
             }
-         ?>
-         </tbody>
-      </table>
-   </div>
-   <?php 
+         else 
+            {
+            if($p["category"]=="advanced"){array_push($advanced_plugins,$plugin_row);}
+         else 
+            {
+            if(!isset($plugin_categories[$p["category"]]))
+               {
+               $plugin_categories[$p["category"]]=array();
+               }
+            array_push($plugin_categories[$p["category"]],$plugin_row);
+            }
+            }
+         }
+      else
+         {
+         $general_plugins[] = $plugin_row;
+         }
+      }
+   function display_plugin_category($plugins,$category,$header=true) 
+      { 
+      global $lang;
+      ?>
+      <div class="plugin-category-container">
+      <?php 
+      if($header)
+         { ?>
+         <h3 class="CollapsiblePluginListHead collapsed"><?php echo isset($lang["plugin_category_".$category])? $lang["plugin_category_".$category] : $category ?></h3>
+         <?php
+         } ?>
+         <div class="Listview CollapsiblePluginList">
+            <table border="0" cellspacing="0" cellpadding="0" class="ListviewStyle">
+               <thead>
+               <tr class="ListviewTitleStyle">
+                  <td><?php echo $lang['name']; ?></td>
+                  <td><?php echo $lang['description']; ?></td>
+                  <td><?php echo $lang['plugins-author']; ?></td>
+                  <td><?php echo $lang['plugins-version']; ?></td>
+                  <td><div class="ListTools"><?php echo $lang['tools']; ?></div></td>
+               </tr>
+               </thead>
+               <tbody>
+               <?php
+               foreach($plugins as $plugin)
+                  {
+                  echo $plugin;
+                  }
+               ?>
+               </tbody>
+            </table>
+         </div>
+      </div>
+      <?php
+      }
+
+   # General Plugins
+   display_plugin_category($general_plugins,"general",(count($plugin_categories)>0));
+
+   # Category Specific plugins
+   ksort($plugin_categories);
+   foreach($plugin_categories as $category => $plugins)
+      {
+      display_plugin_category($plugins,$category);
+      }
+
+   display_plugin_category($advanced_plugins,"advanced");
+   ?>
+   <script>
+      jQuery(".CollapsiblePluginListHead").click(function(){
+         if(jQuery(this).hasClass("collapsed")) {
+            jQuery(this).removeClass("collapsed");
+            jQuery(this).addClass("expanded");
+            jQuery(this).siblings(".CollapsiblePluginList").show();
+         }
+         else {
+            jQuery(this).removeClass("expanded");
+            jQuery(this).addClass("collapsed");
+            jQuery(this).siblings(".CollapsiblePluginList").hide();
+         }
+      });
+      jQuery(".CollapsiblePluginList").hide();
+   </script>
+   <?php
    } 
 else 
    {
    echo ",p>".$lang['plugins-noneavailable']."</p>";
-   } 
+   }
+
 if ($enable_plugin_upload) 
    {
    ?>
-   <h2><?php echo $lang['plugins-uploadheader']; ?></h2>
+   <div class="plugin-upload">
+   <h2 class="pageline"><?php echo $lang['plugins-uploadheader']; ?></h2>
    <form enctype="multipart/form-data" method="post" action="<?php echo $baseurl_short?>pages/team/team_plugins.php">
       <input type="hidden" name="MAX_FILE_SIZE" value="30000000" />
       <p><?php echo $lang['plugins-uploadtext']; ?><input type="file" name="pfile" /><br /></p>
@@ -373,7 +469,8 @@ if ($enable_plugin_upload)
    <?php if (isset($rejected)&& !$rejected) 
       { 
       echo "<p>".$lang['plugins-uploadsuccess']."</p>";
-      } 
+      }
+   echo "</div>"; 
    }
 ?>
 </div>

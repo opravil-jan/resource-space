@@ -29,16 +29,8 @@ input[readonly] {border: none; background: none;}
 input,textarea {box-sizing: border-box;-moz-box-sizing: border-box;-webkit-box-sizing: border-box;}
 option {font-size:1em;}
 input.defaultbutton {position: absolute; left: -100%; width: 0; height: 0;}
-#clearbutton 
-    {
-    margin: 10px 5px 0 0;
-    width: 122px;
-    }
-#searchbutton
-    {
-    width: 122px;
-    margin: 10px 0 0 0;
-    }
+#clearbutton {margin: 10px 5px 0 0;width: 122px;}
+#searchbutton{ width: 122px;margin: 10px 0 0 0;}
 /*General tags*/
 .clearer {clear:both;}
 .clearerleft {clear:left;}
@@ -46,6 +38,8 @@ input.defaultbutton {position: absolute; left: -100%; width: 0; height: 0;}
 .nowrap {white-space:nowrap;}
 .textcenter {text-align:center;}
 .breakall {word-break:break-all;}
+.underline{text-decoration: underline;}
+.pageline{border-bottom: 1px solid #d7d7d7;  margin-right:10px;margin-left:5px;}
 
 /* General Form tags */
 .checkoption {vertical-align: top;display: inline-block;width: 195px;margin: 2px; *display:inline;*zoom: 1;}
@@ -791,9 +785,7 @@ width: 90px;
   width: 100%;
   padding: 10px 0px;
 }
-#HomePanelContainer a {
-	  -webkit-user-drag: none;
-}
+#HomePanelContainer a {-webkit-user-drag: none;}
 #dash_tile_bin {
 	width:100px; 
 	height:100%;
@@ -828,12 +820,8 @@ width: 90px;
   	font-size:50px;
   	min-width:100%;
 }
-#HomePanelContainer .HomePanel .PanelShadow{
-	display:none;
-}
-a.HomePanel:active {
-	color:transparent;
-}
+#HomePanelContainer .HomePanel .PanelShadow{display:none;}
+a.HomePanel:active {color:transparent;}
 .HomePanel h2.title {
 	background: transparent;
 	text-shadow: #090909 1px 1px 8px;
@@ -846,7 +834,8 @@ a.HomePanel:active {
   	padding: 2px 10px;
   	font-size: 1.5em;
   	background: rgba(19, 19, 19, 0.67);
-  	  border-top-left-radius: 5px;
+  	border-top-left-radius: 5px;
+  	color:#fff;
 }
 .HomePanel .tile_corner_box .count-icon {
 	background: url("../gfx/dash/count.gif") no-repeat;
@@ -886,15 +875,9 @@ a.HomePanel:active {
   margin-left: 3px;
   margin-top: 9px;
 }
-.tools a{
-	white-space: nowrap;
-}
-#delete_dialog {
-	display:none !important;
-}
-.no-close .ui-dialog-titlebar-close {
-  	display: none;
-}
+.tools a{white-space: nowrap;}
+#delete_dialog {display:none !important;}
+.no-close .ui-dialog-titlebar-close {display: none;}
 .delete-dialog .ui-dialog-titlebar {
 	background-color: #d7d7d7;
   	background: linear-gradient(#d3d3d3,#dfdfdf);
@@ -909,19 +892,30 @@ a.HomePanel:active {
 	color: #FFF;
   background-color: #3A3A3A;
 }
-.delete-dialog .ui-state-default.ui-state-focus {
-	border:solid 1px #878787;
-}
-.delete-dialog .ui-state-default.ui-state-hover {
-	border:solid 1px #878787;
-}
+.delete-dialog .ui-state-default.ui-state-focus {border:solid 1px #878787;}
+.delete-dialog .ui-state-default.ui-state-hover {border:solid 1px #878787;}
 
+/* Plugin Categories Styling */
+.plugin-category-container h3 {
+	margin-left:10px;
+	margin-bottom: 0;
+	padding-bottom: 0;
+	padding-left: 20px;
+	cursor: pointer;
+	padding-top: 5px;
+	text-transform: capitalize;
+}
+.plugin-category-container .CollapsiblePluginList {margin-top:10px; margin-left: 30px;}
+.plugin-category-container{margin-bottom:10px;}
+.plugin-upload{margin-top:20px;}
+
+/* Maintenance Page */
 #system_down_container {
-	width: 500px;
-	height: 200px;
-	position: absolute;
-	margin: -100px 0 0 -225px;
-	left: 50%;
-	top: 50%;
-	text-align: center;
+        width: 500px;
+        height: 200px;
+        position: absolute;
+        margin: -100px 0 0 -225px;
+        left: 50%;
+        top: 50%;
+        text-align: center;
 }

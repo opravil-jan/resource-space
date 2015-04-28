@@ -2062,10 +2062,7 @@ $lang["delete__nopassword"]="Please confirm that you would like to delete this r
 $lang["collection_download_too_large"]="Sorry, this collection is too large to download as one file. Try reducing the size of the collection or selecting a smaller image size.";
 $lang["all__passwordnewemailhtml"]="[img_gfx/whitegry/titles/title.gif]<br /><br />Please click on the link below to set a new passsword for your account.<br /><br />URL: <a href=\"[url]\" target=\"_blank\" >[url]</a><br />username: [username]<br />[text_footer]" ;
 
-/*
- * Start - User Dash Strings
- *
- */
+/* * Start - User Dash Strings * */
 $lang["savethissearchtodash"]="Save to dash tile";
 $lang["pushtoallusers"]="Push this dash tile to all users?";
 $lang["createnewdashtile"]="Create new dash tile";
@@ -2089,10 +2086,16 @@ $lang["confirmdashtiledelete"]="Delete Tile from my dash";
 $lang["confirmdefaultdashtiledelete"]="Delete Tile for all users";
 $lang["dashtiledelete"]="Delete dash tile";
 $lang["error-missingtileheightorwidth"]="Missing tile height or width";
-/*
- * End - User Dash Strings
- *
- */
+/* * End - User Dash Strings * */
+
+/* * Start - Plugin Category Strings * */
+$lang["plugin_category_general"]="General";
+$lang["plugin_category_api"]="API";
+$lang["plugin_category_advanced"]="Advanced";
+$lang["plugin_category_design"]="Design";
+$lang["plugin_category_ecommerce"]="Ecommerce";
+$lang["plugin_category_sharing"]="Content Sharing";
+/* * End - Plugin Category Strings * */
 
 /* System Down page strings */
 $lang['system_down_title'] = 'Attention!';
