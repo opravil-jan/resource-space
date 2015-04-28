@@ -214,7 +214,7 @@ if(!is_numeric($tile_width) || !is_numeric($tile_height)){exit($lang["error-miss
 		$margin=3;
 		$gap=20;
 		$images=0;
-		$img_size="thm";
+		$img_size="pre";
 		if(count($resources)<3){$margin=10;$gap=40;}
 		for ($i=0;$i<count($resources) && $images<=3;$i++)
             {
@@ -233,9 +233,10 @@ if(!is_numeric($tile_width) || !is_numeric($tile_height)){exit($lang["error-miss
 				$border=true;
 				}
             $images++;
-            $space=$margin+($images-1)*$gap;
+            #$space=$margin+($images-1)*$gap;
+            $space=($images-1)*42;
             ?>
-            <img style="position: absolute; top:<?php echo $space ?>px;left:<?php echo ($space*1.5) ?>px" src="<?php echo $previewpath?>">
+            <img style="position: absolute; top:0;left:<?php echo ($space*1.5) ?>px;height:100%;" src="<?php echo $previewpath?>">
             <?php				
 			}
 		$icon = ""; 
@@ -325,7 +326,7 @@ if(!is_numeric($tile_width) || !is_numeric($tile_height)){exit($lang["error-miss
 	if($tile_type=="admn" && $tile_style=="stat")
 		{?>
 		<h2 class="title stat_tile"><?php echo htmlspecialchars($tile["title"]);?></h2>
-		<p>I need some admin stats (Like a Boss)</p>
+		<p>I need some admin stats</p>
 		<?php
 		exit;
 		}
