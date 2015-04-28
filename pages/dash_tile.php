@@ -20,7 +20,12 @@ $error=false;
 $submitdashtile=getvalescaped("submitdashtile",FALSE);
 if($submitdashtile)
 	{
-	$buildurl="pages/ajax/dash_tile.php?tltype=".getvalescaped("tltype","")."&tlstyle=".getvalescaped("tlstyle","");
+	$buildurl=getvalescaped("url","");
+	if ($buildurl=="")
+		{
+		# No URL provided - build a URL (standard title types).
+		$buildurl="pages/ajax/dash_tile.php?tltype=".getvalescaped("tltype","")."&tlstyle=".getvalescaped("tlstyle","");
+		}
 	$title=getvalescaped("title","");
 	if((checkperm("h") && !checkperm("hdta")) || (checkperm("dta") && !checkperm("h")))
 		{
@@ -115,14 +120,21 @@ if($create)
 		$link="";
 		$title="";
 		}
-
+	else
+		{
+		# Other tile types - unknown, such as added by a plugin (RSE Analytics), allow link and title to be specified.
+		$link=getvalescaped("link","");
+		$title=getvalescaped("title","");
+		}
+		
 	include "../include/header.php";
 	?>
 	<h2><?php echo $lang["createnewdashtile"];?></h2>
 	<form id="create_dash" name="create_dash">
 		<input type="hidden" name="tltype" value="<?php echo htmlspecialchars($tile_type)?>" />
 		<input type="hidden" name="link" value="<?php echo htmlspecialchars($link);?>" />
-		<input type="hidden" name="submitdashtile" value="true"/>
+		<input type="hidden" name="url" value="<?php echo htmlspecialchars(getvalescaped("url","")); ?>" />
+		<input type="hidden" name="submitdashtile" value="true" />
 
 
 		<div class="Question">
@@ -158,7 +170,7 @@ if($create)
 		<?php 
 		}
 
-		tileStyle($tile_type);?>
+		if (getval("nostyleoptions","")=="") {tileStyle($tile_type);} ?>
 
 		<div class="Question">
 			 <div class="Inline"><input name="Submit" type="submit" value="&nbsp;&nbsp;<?php echo $lang["create"]?>&nbsp;&nbsp;" /></div>

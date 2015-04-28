@@ -103,7 +103,11 @@ function get_default_dash()
 		?>
 		<a href="<?php echo $baseurl."/".htmlspecialchars($tile["link"]);?>" onClick="if(dragging){dragging=false;e.defaultPrevented;}" class="HomePanel DashTile DashTileDraggable" id="tile<?php echo htmlspecialchars($tile["tile"]);?>">
 			<div id="contents_tile<?php echo htmlspecialchars($tile["tile"]);?>" class="HomePanelIN HomePanelDynamicDash">
-				<h2 class="title"><?php echo htmlspecialchars($tile["title"]);?></h2>
+				<?php if (strpos($tile["url"],"dash_tile.php")!==false) {
+                                # Only pre-render the title if using a "standard" tile and therefore we know the H2 will be in the target data.
+                                ?>
+                                <h2 class="title"><?php echo htmlspecialchars($tile["title"]);?></h2>
+                                <?php } ?>
 				<p>Loading...</p>
 				<script>
 					height = jQuery("#contents_tile<?php echo htmlspecialchars($tile["tile"]);?>").height();
@@ -264,7 +268,11 @@ function get_user_dash($user)
 			id="user_tile<?php echo htmlspecialchars($tile["user_tile"]);?>"
 		>
 			<div id="contents_user_tile<?php echo htmlspecialchars($tile["user_tile"]);?>" class="HomePanelIN HomePanelDynamicDash">
-				<h2 class="title"><?php echo htmlspecialchars($tile["title"]);?></h2>
+				<?php if (strpos($tile["url"],"dash_tile.php")!==false) {
+                                # Only pre-render the title if using a "standard" tile and therefore we know the H2 will be in the target data.
+                                ?>
+                                <h2 class="title"><?php echo htmlspecialchars($tile["title"]);?></h2>
+                                <?php } ?>
 				<p>Loading...</p>
 				<script>
 				jQuery(function(){
