@@ -2093,3 +2093,8 @@ $lang["error-missingtileheightorwidth"]="Missing tile height or width";
  * End - User Dash Strings
  *
  */
+
+/* System Down page strings */
+$lang['system_down_title'] = 'Attention!';
+$lang['system_down_message'] = 'System is down for maintenance. Thank you for your patience.';
+/* End of System Down page strings */

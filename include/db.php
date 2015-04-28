@@ -69,6 +69,10 @@ if (file_exists(dirname(__FILE__)."/config.default.php")) {include dirname(__FIL
 if (!file_exists(dirname(__FILE__)."/config.php")) {header ("Location: pages/setup.php" );die(0);}
 include (dirname(__FILE__)."/config.php");
 
+if($system_down_redirect && getval('show', '') === '') {
+	redirect($baseurl . '/pages/system_down.php?show=true');
+}
+
 # Set time limit
 set_time_limit($php_time_limit);
 

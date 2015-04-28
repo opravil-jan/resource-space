@@ -2615,3 +2615,5 @@ $hide_failed_reset_text=true;
 # Show and allow to remove custom access for users when editing a resource
 $delete_resource_custom_access = false;
 
+# Enable this option to display a system down message to all users
+$system_down_redirect = false;

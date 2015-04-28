@@ -916,4 +916,12 @@ a.HomePanel:active {
 	border:solid 1px #878787;
 }
 
-
+#system_down_container {
+	width: 500px;
+	height: 200px;
+	position: absolute;
+	margin: -100px 0 0 -225px;
+	left: 50%;
+	top: 50%;
+	text-align: center;
+}
