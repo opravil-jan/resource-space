@@ -164,6 +164,32 @@ if (getval("regenexif","")!="")
 # Establish if this is a metadata template resource, so we can switch off certain unnecessary features
 $is_template=(isset($metadata_template_resource_type) && $resource["resource_type"]==$metadata_template_resource_type);
 
+# check for upload disabled due to space limitations...
+if ($ref<0 && isset($disk_quota_limit_size_warning_noupload)){
+	# check free space
+	if (isset($disksize)){ # Use disk quota rather than real disk size
+		$avail=$disksize*(1024*1024*1024);
+		$used=get_total_disk_usage();
+		$free=$avail-$used;
+	}
+	else{		
+		$avail=disk_total_space($storagedir);
+		$free=disk_free_space($storagedir);
+		$used=$avail-$free;
+	}
+	
+	# echo "free: ".$free."<br/>";
+	# convert limit
+	$limit=$disk_quota_limit_size_warning_noupload*1024*1024*1024;
+	# echo "no_upload: ".$limit."<br/>";
+	# compare against size setting
+	if($free<=$limit){
+		# shut down uploading by redirecting to explination page
+		$explain=$baseurl_short."pages/no_uploads.php";
+		redirect($explain);
+	}
+}
+
 hook("editbeforeheader");
 
 # -----------------------------------
