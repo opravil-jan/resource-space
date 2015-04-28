@@ -119,7 +119,7 @@ $rows = sql_query(
                 foreach($rows as $row)
                 {
                 ?>
-                <form id="form<?php echo $row['id']; ?>" name="form<?php echo $row['id']; ?>" method="post" action="<?php echo $baseurl; ?>plugins/autoassign_mrequests/pages/setup.php">
+                <form id="form<?php echo $row['id']; ?>" name="form<?php echo $row['id']; ?>" method="post" action="<?php echo $baseurl; ?>/plugins/autoassign_mrequests/pages/setup.php">
                     <input type="hidden" name="id_row" value="<?php echo $row['id']; ?>" />
                     <tr id="row<?php echo $row['id']; ?>">
                         <td>
