@@ -624,13 +624,25 @@ function CheckDBStruct($path)
 								if ($existing[$n]["Field"]==$col[0])
 									{
 									$found=true;
+									$existingcoltype=strtoupper($existing[$n]["Type"]);
+									$basecoltype=strtoupper(str_replace("§",",",$col[1]));									
 									# Check the column is of the correct type
-									if (strtoupper($existing[$n]["Type"]) != strtoupper(str_replace("§",",",$col[1])))
-										{
+									preg_match('/\s*(\w+)\s*\((\d+)\)/i',$basecoltype,$matchbase);
+									preg_match('/\s*(\w+)\s*\((\d+)\)/i',$existingcoltype,$matchexisting);
+									// Checks added so that we don't trim off data if a varchar size has been increased manually or by a plugin. 
+									// - If column is of same type but smaller number, update
+									// - If target column is of type text, update
+									
+									if	(
+										(count($matchbase)==3 && count($matchexisting)==3 && $matchbase[1] == $matchexisting[1] && $matchbase[2] > $matchexisting[2])
+										 ||
+										(stripos($basecoltype,"text")!==false && stripos($existingcoltype,"text")===false)
+									       )
+										{        
 										debug("DBSTRUCT - updating column " . $col[0] . " in table " . $table . " from " . $existing[$n]["Type"] . " to " . str_replace("§",",",$col[1]) );
 										// Update the column type
-										sql_query("alter table $table modify `" .$col[0] . "` " .  $col[1]);
-										}										
+										sql_query("alter table $table modify `" .$col[0] . "` " .  $col[1]);       
+										}																				
 									}							
 								}
 							if (!$found)
