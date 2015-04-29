@@ -187,7 +187,7 @@ if(!is_numeric($tile_width) || !is_numeric($tile_height)){exit($lang["error-miss
 			#<?php echo $tile_id;?> h2.thmbs_tile {
 				float: none;
 				position: relative;
-				padding-left: 15px;
+				padding-left: 60px;
 				padding-right: 15px;
 				padding-top: 18px;
 				text-transform: capitalize;
@@ -271,7 +271,7 @@ if(!is_numeric($tile_width) || !is_numeric($tile_height)){exit($lang["error-miss
 				#<?php echo $tile_id;?> h2 {
 					float: none;
 					position: relative;
-					padding-left: 15px;
+					padding-left: 60px;
 					padding-right: 15px;
 					padding-top: 18px;
 				}

@@ -386,7 +386,7 @@ if (checkperm("s"))
 						/>
 			
 						<span class="collection-icon"></span>
-						<h2 class="title" style="float: none;position: relative;padding-left: 15px;padding-right: 15px;padding-top: 18px;text-transform: capitalize;text-shadow: #090909 1px 1px 8px;color: #fff;">
+						<h2 class="title" style="float: none;position: relative;padding-left: 60px;padding-right: 15px;padding-top: 18px;text-transform: capitalize;text-shadow: #090909 1px 1px 8px;color: #fff;">
 					<?php echo i18n_get_translated($home_collection["home_page_text"]) ?>
 					</h2>
 				</div>
