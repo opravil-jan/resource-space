@@ -214,8 +214,8 @@ $lang = set_language($defaultlanguage);
 <head>
 <title><?php echo $lang["setup-rs_initial_configuration"];?></title>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<link href="../css/global.css" rel="stylesheet" type="text/css" media="screen,projection,print" /> 
-<link href="../css/Col-greyblu.css" rel="stylesheet" type="text/css" media="screen,projection,print" id="colourcss" /> 
+<link href="../css/global.css?csr=5" rel="stylesheet" type="text/css" /> 
+<link href="../css/Col-multi.css" rel="stylesheet" type="text/css" id="colourcss" /> 
 <script type="text/javascript" src="../lib/js/jquery-1.7.2.min.js"></script> 
 
 <script type="text/javascript"> 
@@ -333,30 +333,27 @@ $('#mysqlserver').keyup();
  
 <!--
 #wrapper{ margin:0 auto;width:600px; }
- #intro {  margin-bottom: 40px; font-size:100%; background: #333333; text-align: left; padding: 40px; }
-#intro a{ color: #fff; }
+ #intro {  margin-bottom: 40px; font-size:100%; background: #F7F7F7; text-align: left; padding: 40px; }
 #introbottom { padding: 10px; clear: both; text-align:center;}
-#preconfig {  float:right; background: #555555; padding: 25px;}
+#preconfig {  float: right;background: #F1F1F1; padding: 25px;border-radius: 10px;box-shadow: #d7d7d7 1px 1px 9px;}
 #preconfig h2 { border-bottom: 1px solid #ccc;	width: 100%;}
 #preconfig p { font-size:110%; padding:0; margin:0; margin-top: 5px;}
 #preconfig p.failure{ color: #f00; font-weight: bold; }
 
-#tabs { font-size: 100%;}
-#tabs > ul { float: right; width: 600px; margin:0; padding:0; border-bottom:5px solid #333333; }
+#tabs {font-size: 100%;}
+#tabs > ul {float: left;margin: 0;padding: 0;border-bottom: 5px solid #F7F7F7;}
 #tabs > ul >li { margin: 0; padding:0; margin-left: 8px; list-style: none; background: #777777; }
 * html #tabs li { display: inline; /* ie6 double float margin bug */ }
-#tabs > ul > li, #tabs  > ul > li a { float: left; }
+#tabs > ul > li, #tabs  > ul > li a { float: left; border-top-left-radius: 10px; border-top-right-radius: 10px;}
 #tabs > ul > li a { text-decoration: none; padding: 8px; color: #CCCCCC; font-weight: bold; }
-#tabs > ul > li.active { background: #CEE1EF; }
-#tabs > ul > li.active a { color: #333333; }
-#tabs div.tabs { background: #333; clear: both; padding: 20px; text-align: left; }
-#tabs div h1 { text-transform: uppercase; margin-bottom: 10px; letter-spacing: 1px; }
+#tabs > ul > li.active { background: #36AAFF; }
+#tabs > ul > li.active a { color: #FFF }
+#tabs div.tabs { background: #F7F7F7; clear: both; padding: 20px; text-align: left;}
 
 p.iteminfo{ background: #e3fefa; width: 60%; color: #000; padding: 4px; margin: 10px; clear:both; }
 strong { padding:0 5px; color: #F00; font-weight: bold; }
 a.iflink { color: #F00; padding: 2px; border: 1px solid #444; margin-left: 4px; } 
-
-input { margin-left: 10px; border: 1px solid #000; }
+#defaultlanguage{font-size: 1em;padding: 1px;}
 
 input.warn { border: 2px solid #f00; }
 input.ok{ border:2px solid #0f0; }
@@ -382,22 +379,26 @@ h2#dbaseconfig{  min-height: 32px;}
  
 </style> 
 </head>
-<body>
-<div id="Header">
-	<div id="HeaderNav1" class="HorizontalNav ">&nbsp;</div>
-	<div id="HeaderNav2" class="HorizontalNav HorizontalWhiteNav">&nbsp;</div>
+<body class="SlimHeader">
+<div id="Header" class="slimheader_darken" style="height: 40px;margin-bottom: 20px;">
+    <a href="#" onclick="return CentralSpaceLoad(this,true);" class="HeaderImgLink">
+    	<img src="http://127.0.0.1/gfx/titles/title.png" id="HeaderImg" />
+    </a>
+    <div id="HeaderNav1" class="HorizontalNav "><ul></ul></div>
+	<div id="HeaderNav2" class="HorizontalNav HorizontalWhiteNav"><ul></ul></div> 
+	<div class="clearer"></div>
 </div>
-<div id="wrapper">
 <?php
 
 
 	//Check if config file already exists and die with an error if it does.
-	if (file_exists($outputfile)){
-?>
+	if (file_exists($outputfile))
+	{
+	?>
 	<div id="errorheader"><?php echo $lang["setup-alreadyconfigured"];?></div> 
-</body>
-</html>
-<?php
+	</body>
+	</html>
+	<?php
 	die(0);
 	}
 	if (!(isset($_REQUEST['submit']))){ //No Form Submission, lets setup some defaults
@@ -648,6 +649,7 @@ h2#dbaseconfig{  min-height: 32px;}
 			$storagedir = dirname(__FILE__)."/../filestore";
 			$configstoragelocations = false;
 		}
+		/*
 		$ftp_server = get_post('ftp_server');
 		$ftp_username = get_post('ftp_username');
 		$ftp_password = get_post('ftp_password');
@@ -656,6 +658,30 @@ h2#dbaseconfig{  min-height: 32px;}
 		$config_output .= "\$ftp_username = '$ftp_username';\r\n";
 		$config_output .= "\$ftp_password = '$ftp_password';\r\n";
 		$config_output .= "\$ftp_defaultfolder = '$ftp_defaultfolder';\r\n";
+		*/
+		$use_smtp=get_post('use_smtp');
+		if($use_smtp)
+			{
+			$smtp_secure= get_post('smtp_secure');
+			$smtp_host= get_post('smtp_host');
+			$smtp_port= get_post('smtp_port');
+			$smtp_auth= get_post('smtp_auth');
+			$smtp_username= get_post('smtp_username');
+			$smtp_password= get_post('smtp_password');
+			$config_output .= "#SMTP settings\r\n";
+			$config_output .= "\$use_smtp = true;\r\n";
+			$config_output .= "\$use_phpmailer = true;\r\n";
+			$config_output .= "\$smtp_secure = '$smtp_secure';\r\n";
+			$config_output .= "\$smtp_host = '$smtp_host';\r\n";
+			$config_output .= "\$smtp_port = $smtp_port;\r\n";
+			if($smtp_auth)
+				{
+				$config_output .= "\$smtp_auth = true;\r\n";
+				$config_output .= "\$smtp_username = '$smtp_username';\r\n";
+				$config_output .= "\$smtp_password = '$smtp_password';\r\n";
+				}
+			$config_output .= " \r\n";
+			}
 
 		// set display defaults for new installs
 		$config_output .= "\$thumbs_display_fields = array(8,3);\r\n";
@@ -671,9 +697,7 @@ h2#dbaseconfig{  min-height: 32px;}
         	{ 
         	$config_output.= "\r\n#Design Changes\r\n\$slimheader=true;\r\n";
         	#$config_output.= "\$available_themes=array('slimcharcoal', 'multi', 'whitegry','greyblu','black');\r\n\$defaulttheme='slimcharcoal';\r\n";
-        	}
-
-                
+        	}     
 	}
 ?>
 <?php //Output Section
@@ -818,9 +842,9 @@ else{
 					<p class="<?php echo ($pass==true?'':'failure'); ?>"><?php echo $lang["setup-checkstoragewrite"] . ($pass==false?'<br>':' ') . "(" . $result . ")"; ?></p>
 			</div>
 			<h1><?php echo $lang["setup-welcome"];?></h1>
-			<p><?php echo $lang["setup-introtext"];?><p>
+			<p><?php echo $lang["setup-introtext"];?></p>
 			<p><?php echo $lang["setup-visitwiki"];?></p>
-			<div class="language">
+			<div class="language" style="clear: none;text-align: left;padding: 0px;">
 					<label for="defaultlanguage"><?php echo $lang["language"];?>:</label><select id="defaultlanguage" name="defaultlanguage">
 						<?php
 							foreach($languages as $code => $text){
@@ -859,7 +883,6 @@ else{
 		<div class="tabs" id="tab-1">
 			<h1><?php echo $lang["setup-basicsettings"];?></h1>
 			<p><?php echo $lang["setup-basicsettingsdetails"];?></p>
-			<p class="configsection">
 				<h2 id="dbaseconfig"><?php echo $lang["setup-dbaseconfig"];?><img class="starthidden ajloadicon" id="al-testconn" src="../gfx/ajax-loader.gif"/></h2>
 				<?php if(isset($errors['database'])){?>
 					<div class="erroritem"><?php echo $lang["setup-mysqlerror"];?>
@@ -1040,7 +1063,8 @@ else{
 					</div>
 				</div>
 			</div>
-			
+			<?php
+			/* Remove FTP Settings
 			<h2><?php echo $lang["setup-ftp_settings"];?></h2>
 			<div class="advsection" id="ftpsettings">
 				<div class="configitem">
@@ -1057,11 +1081,59 @@ else{
 					<label for="ftp_defaultfolder"><?php echo $lang["ftpfolder"] . ":"; ?></label><input id="ftp_defaultfolder" name="ftp_defaultfolder" type="text" value="<?php echo $ftp_defaultfolder;?>"/>
 				</div>
 			</div>
+			*/?>
+
+			<h2><?php echo $lang["setup-smtp-settings"]; ?></h2>
+			<div class="advsection" id="smtpsettings">
+				<div class="configitem">
+					<label for="use_smtp"><?php echo $lang["usesmtp"] . ":"; ?></label>
+					<input id="use_smtp" name="use_smtp" type="checkbox"  <?php echo $use_smtp?"checked":"";?>/>
+					<a class="iflink" href="#if-usesmtp">?</a>
+					<p class="iteminfo" id="if-usesmtp"><?php echo $lang["setup-if-usesmtp"];?></p>
+				</div>
+				<div class="configitem">
+					<label for="smtp_secure"><?php echo $lang["smtpsecure"] . ":"; ?></label>
+					<input id="smtp_secure" name="smtp_secure" type="text" value="<?php echo $smtp_secure;?>" />
+					<a class="iflink" href="#if-smtpsecure">?</a>
+					<p class="iteminfo" id="if-smtpsecure"><?php echo $lang["setup-if-smtpsecure"];?></p>
+				</div>
+				<div class="configitem">
+					<label for="smtp_host"><?php echo $lang["smtphost"] . ":"; ?></label>
+					<input id="smtp_host" name="smtp_host" type="text" value="<?php echo $smtp_host;?>"/>
+					<a class="iflink" href="#if-smtphost">?</a>
+					<p class="iteminfo" id="if-smtphost"><?php echo $lang["setup-if-smtphost"];?></p>
+				</div>
+				<div class="configitem">
+					<label for="smtp_port"><?php echo $lang["smtpport"] . ":"; ?></label>
+					<input id="smtp_port" name="smtp_port" type="text" value="<?php echo $smtp_port;?>"/>
+					<a class="iflink" href="#if-smtpport">?</a>
+					<p class="iteminfo" id="if-smtpport"><?php echo $lang["setup-if-smtpport"];?></p>
+				</div>
+				<div class="configitem">
+					<label for="smtp_auth"><?php echo $lang["smtpauth"] . ":"; ?></label>
+					<input id="smtp_auth" name="smtp_auth" type="checkbox" checked />
+					<a class="iflink" href="#if-smtpauth">?</a>
+					<p class="iteminfo" id="if-smtpauth"><?php echo $lang["setup-if-smtpauth"];?></p>
+				</div>
+				<div class="configitem">
+					<label for="smtp_username"><?php echo $lang["smtpusername"] . ":"; ?></label>
+					<input id="smtp_username" name="smtp_username" type="text" value="<?php echo $smtp_username;?>"/>
+					<a class="iflink" href="#if-smtpusername">?</a>
+					<p class="iteminfo" id="if-smtpusername"><?php echo $lang["setup-if-smtpusername"];?></p>
+				</div>
+				<div class="configitem">
+					<label for="smtp_password"><?php echo $lang["smtppassword"] . ":"; ?></label>
+					<input id="smtp_password" name="smtp_password" type="password" value=""/>
+					<a class="iflink" href="#if-smtppassword">?</a>
+					<p class="iteminfo" id="if-smtppassword"><?php echo $lang["setup-if-smtppassword"];?></p>
+				</div>
+			</div>
 
 			<h2><?php echo $lang["design-options"];?></h2>
 			<div class="advsection" id="designsettings">
 				<div class="configitem">
-					<label for="slim-theme"><?php echo $lang["use-slim-theme"] . ":"; ?></label><input id="slim-theme" name="slim-theme" type="checkbox" checked /><a class="iflink" href="#if-slimtheme">?</a>
+					<label for="slim-theme"><?php echo $lang["use-slim-theme"] . ":"; ?></label>
+					<input id="slim-theme" name="slim-theme" type="checkbox" checked /><a class="iflink" href="#if-slimtheme">?</a>
 					<p class="iteminfo" id="if-slimtheme"><?php echo $lang["setup-if_slimtheme"];?></p>
 				</div>
 			</div>
@@ -1075,7 +1147,6 @@ else{
 			<h1><?php echo $lang["setup-configuration_file_output"] . ":"; ?></h1>
 			<pre><?php echo $config_output; ?></pre>
 		</div>
-	<?php } ?>	
-</div>
+	<?php } ?>
 </body>
 </html>	

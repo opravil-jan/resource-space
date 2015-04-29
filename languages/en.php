@@ -295,6 +295,15 @@ $lang["ftpserver"]="FTP server";
 $lang["ftpusername"]="FTP username";
 $lang["ftppassword"]="FTP password";
 $lang["ftpfolder"]="FTP folder";
+$lang["usesmtp"]="Use an SMTP Server for email sending / receiving";
+$lang["smtpsecure"]="SMTP Secure";
+$lang["smtphost"]="SMTP Host";
+$lang["smtpport"]="SMTP Port";
+$lang["smtpauth"]="Use Authentication for SMTP Server";
+$lang["smtpusername"]="SMTP Username";
+$lang["smtppassword"]="SMTP Password";
+
+
 $lang["connect"]="Connect";
 $lang["uselocalupload"]="OR: Use local 'upload' folder instead of remote FTP server";
 
@@ -1074,6 +1083,15 @@ $lang["setup-storage_url"]="Storage URL";
 $lang["setup-if_storageurl"]="Where the storagedir is available. Can be absolute (http://files.example.com) or relative to the installation. NOTE: No trailing slash.";
 $lang["setup-ftp_settings"]="FTP settings";
 $lang["setup-if_ftpserver"]="Only necessary if you plan to use the FTP upload feature.";
+$lang["setup-smtp-settings"]="SMTP Settings";
+$lang["setup-if-usesmtp"]="Use an external SMTP server for outgoing emails (e.g. Gmail). Uses PHPMailer";
+$lang["setup-if-smtpsecure"]="'', 'tls' or 'ssl'. For Gmail, 'tls' or 'ssl' is required.";
+$lang["setup-if-smtphost"]="Hostname, e.g. 'smtp.gmail.com'.";
+$lang["setup-if-smtpport"]="Port number, e.g. 465 for Gmail using SSL.";
+$lang["setup-if-smtpauth"]="Send credentials to SMTP server (false to use anonymous access)";
+$lang["setup-if-smtpusername"]="Username (full email address).";
+$lang["setup-if-smtppassword"]="Password";
+
 $lang["design-options"]="Design Options";
 $lang["use-slim-theme"]="Use the SlimHeader Design?";
 $lang["setup-if_slimtheme"]="Use the SlimHeader design rather than the original design to display a thinner header bar with a linked logo by default.";
