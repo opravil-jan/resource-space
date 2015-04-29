@@ -415,12 +415,12 @@ if ($display_user_rating_stars && $k=="")
 <?php }
 	elseif (!hook("noreorderjs")) { ?>
 	<script type="text/javascript">
-        
-			jQuery('.ui-sortable').sortable('disable');
+        jQuery(document).ready(function () {
+			jQuery('#CentralSpace').sortable('disable');
 			jQuery('.ResourcePanelShell').enableSelection();
 			jQuery('.ResourcePanelShellLarge').enableSelection();
 			jQuery('.ResourcePanelShellSmall').enableSelection();
-			
+		});
 	
 	</script>
 	<?php }
