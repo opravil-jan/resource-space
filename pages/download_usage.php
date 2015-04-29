@@ -38,7 +38,11 @@ if (getval("save",'') != '')
                             "&k=" . urlencode($k) . 
                             "&alternative=" . urlencode($alternative) . 
                             "&usage=" . urlencode($usage) . 
-                            "&usagecomment=" . urlencode($usagecomment);
+                            "&usagecomment=" . urlencode($usagecomment) .
+                            "&offset=" . urlencode(getval("saved_offset", getval("offset",''))) .
+                            "&order_by=" . urlencode(getval("saved_order_by",getval("order_by",''))) . 
+                            "&sort=" . urlencode(getval("saved_sort",getval("sort",''))) .
+                            "&archive=" . urlencode(getval("saved_archive",getval("archive",'')));
 
     redirect($redirect_url . $download_url_suffix);
     }
