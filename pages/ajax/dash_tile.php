@@ -214,13 +214,14 @@ if(!is_numeric($tile_width) || !is_numeric($tile_height)){exit($lang["error-miss
 		$img_size="pre";
 		for ($i=0;$i<count($resources) && $i<4;$i++)
             {
+            $shadow=true;
 			$ref=$resources[$i]['ref'];
             $previewpath=get_resource_path($ref, true, $img_size, false, "jpg", -1, 1, false);
             if (file_exists($previewpath)){
                 $previewpath=get_resource_path($ref,false,$img_size,false,"jpg",-1,1,false,$resources[$i]["file_modified"]);
             }
             else {
-                $previewpath=$baseurl_short."gfx/".get_nopreview_icon($resources[$i]["resource_type"],$resources[$i]["file_extension"],$img_size);$border=false;
+                $previewpath=$baseurl_short."gfx/".get_nopreview_icon($resources[$i]["resource_type"],$resources[$i]["file_extension"],"");$border=false;$shadow=false;
             }
             $modifiedurl=hook('searchpublicmodifyurl');
 			if($modifiedurl)
@@ -229,10 +230,10 @@ if(!is_numeric($tile_width) || !is_numeric($tile_height)){exit($lang["error-miss
 				$border=true;
 				}
             #$space=$margin+($images-1)*$gap;
-            $gap=168/min(count($resources),4);
+            $gap=140/min(count($resources),4);
             $space=$i*$gap;
             ?>
-            <img style="position: absolute; top:0;left:<?php echo ($space*1.5) ?>px;height:100%;" src="<?php echo $previewpath?>">
+            <img style="position: absolute; top:10px;left:<?php echo ($space*1.5) ?>px;height:100%;<?php if ($shadow) { ?>box-shadow: 0 0 25px #000;<?php } ?>;transform: rotate(<?php echo 20-($i *12) ?>deg);" src="<?php echo $previewpath?>">
             <?php				
 			}
 		$icon = ""; 

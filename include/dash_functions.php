@@ -268,12 +268,8 @@ function get_user_dash($user)
 			id="user_tile<?php echo htmlspecialchars($tile["user_tile"]);?>"
 		>
 			<div id="contents_user_tile<?php echo htmlspecialchars($tile["user_tile"]);?>" class="HomePanelIN HomePanelDynamicDash">
-				<?php if (strpos($tile["url"],"dash_tile.php")!==false) {
-                                # Only pre-render the title if using a "standard" tile and therefore we know the H2 will be in the target data.
-                                ?>
-                                <h2 class="title"><?php echo htmlspecialchars($tile["title"]);?></h2>
-                                <?php } ?>
-				<p>Loading...</p>
+				
+                                
 				<script>
 				jQuery(function(){
 					var height = jQuery("#contents_user_tile<?php echo htmlspecialchars($tile["user_tile"]);?>").height();
