@@ -102,9 +102,10 @@ if ($site_text_use_ckeditor)
 		CKEDITOR.replace('<?php echo $lang["text"] ?>',
 			{
 			toolbar : [ <?php global $ckeditor_content_toolbars;echo $ckeditor_content_toolbars; ?> ],
-			height: "600"	
+			height: "600"
 			});
 		var editor = CKEDITOR.instances['<?php echo $lang["text"]?>'];
+		CKEDITOR.config.autoParagraph = false;
 		<?php } ?>
 	<?php hook("ckeditoroptions"); ?>
 	</script>
