@@ -92,7 +92,7 @@ if(!is_numeric($tile_width) || !is_numeric($tile_height)){exit($lang["error-miss
 		$search_string = explode('?',$tile["link"]);
 		parse_str(str_replace("&amp;","&",$search_string[1]),$search_string);
 		$count = ($tile["resource_count"]) ? "-1" : "1";
-		$tile_search=do_search($search_string["search"],$search_string["restypes"],$search_string["order_by"],$search_string["archive"],$count,$search_string["sort"],$access_override=false,$starsearch=0,$ignore_filters=false,$return_disk_usage=false,$recent_search_daylimit="", $go=false);
+		$tile_search=do_search($search_string["search"],$search_string["restypes"],$search_string["order_by"],$search_string["archive"],$count,$search_string["sort"]);
 		
 		$found_resources=true;
 		$count=count($tile_search);
@@ -210,13 +210,9 @@ if(!is_numeric($tile_width) || !is_numeric($tile_height)){exit($lang["error-miss
 		$search_string = explode('?',$tile["link"]);
 		parse_str(str_replace("&amp;","&",$search_string[1]),$search_string);
 		$count = ($tile["resource_count"]) ? "-1" : "4";
-		$resources=do_search($search_string["search"],$search_string["restypes"],$search_string["order_by"],$search_string["archive"],$count,$search_string["sort"],$access_override=false,$starsearch=0,$ignore_filters=false,$return_disk_usage=false,$recent_search_daylimit="", $go=false);
-		$margin=3;
-		$gap=20;
-		$images=0;
+		$resources=do_search($search_string["search"],$search_string["restypes"],$search_string["order_by"],$search_string["archive"],$count,$search_string["sort"]);
 		$img_size="pre";
-		if(count($resources)<3){$margin=10;$gap=40;}
-		for ($i=0;$i<count($resources) && $images<=3;$i++)
+		for ($i=0;$i<count($resources) && $i<4;$i++)
             {
 			$ref=$resources[$i]['ref'];
             $previewpath=get_resource_path($ref, true, $img_size, false, "jpg", -1, 1, false);
@@ -232,9 +228,9 @@ if(!is_numeric($tile_width) || !is_numeric($tile_height)){exit($lang["error-miss
 				$previewpath=$modifiedurl;
 				$border=true;
 				}
-            $images++;
             #$space=$margin+($images-1)*$gap;
-            $space=($images-1)*42;
+            $gap=168/min(count($resources),4);
+            $space=$i*$gap;
             ?>
             <img style="position: absolute; top:0;left:<?php echo ($space*1.5) ?>px;height:100%;" src="<?php echo $previewpath?>">
             <?php				
