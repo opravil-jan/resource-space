@@ -43,7 +43,9 @@ if (getval("save",'') != '')
                             "&order_by=" . urlencode(getval("saved_order_by",getval("order_by",''))) . 
                             "&sort=" . urlencode(getval("saved_sort",getval("sort",''))) .
                             "&archive=" . urlencode(getval("saved_archive",getval("archive",'')));
-
+    
+    hook('before_usage_redirect');
+    
     redirect($redirect_url . $download_url_suffix);
     }
 
