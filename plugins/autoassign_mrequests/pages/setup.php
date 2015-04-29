@@ -189,7 +189,7 @@ $rows = sql_query(
 
 
                 <!-- Add new map row -->
-                <form id="form1" name="form1" method="post" action="/plugins/autoassign_mrequests/pages/setup.php">
+                <form id="form1" name="form1" method="post" action="<?php echo $baseurl; ?>/plugins/autoassign_mrequests/pages/setup.php">
                     <tr id="new_map_row">
                         <td>
                             <select name="user_group_new" id="resource_type_new" style="width:300px" onChange="filterUsers(this);">
