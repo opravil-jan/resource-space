@@ -208,9 +208,10 @@ for ($n=0;$n<count($plugins);$n++)
 # Register their languages in reverse order
 for ($n=count($plugins)-1;$n>=0;$n--)
 	register_plugin_language($plugins[$n]);
-    
+
+global $suppress_headers;
 # Set character set.
-if (($pagename!="download") && ($pagename!="graph")) {header("Content-Type: text/html; charset=UTF-8");} // Make sure we're using UTF-8.
+if (($pagename!="download") && ($pagename!="graph") && !$suppress_headers) {header("Content-Type: text/html; charset=UTF-8");} // Make sure we're using UTF-8.
 #------------------------------------------------------
 
 
