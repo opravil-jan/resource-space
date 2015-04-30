@@ -232,6 +232,10 @@ function populate_metadata_from_dump($id,$meta){
 	// nice to make the metadump files validate
 	$metadump = preg_replace('/([<\/])([a-z0-9]+):/i','$1$2',$metadump);
 	$metadump = preg_replace('/(resourcespace):(resourceid="\d+">)/i','$1$2',$metadump);
+	
+	# Fix an issue whereby the resourcespace namespace is not defined. Add a fake namespace to the header.
+	$metadump = str_replace("xmlns:dc","xmlns:resourcespace='http://www.resourcespace.org' xmlns:dc",$metadump);
+		
 	$metadump = stripInvalidXml($metadump);
 	//echo $metadump;
 	$xml = new SimpleXMLElement($metadump);
