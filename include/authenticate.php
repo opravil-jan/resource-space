@@ -150,8 +150,9 @@ if (array_key_exists("user",$_COOKIE) || array_key_exists("user",$_GET) || isset
 		if (hook("userpermissions")){$userdata[0]["permissions"]=hook("userpermissions");} 
 		
 		# Create userpermissions array for checkperm() function
-		$userpermissions=array_merge(explode(",",trim($global_permissions)),explode(",",trim($userdata[0]["permissions"]))); 
-	
+		$userpermissions=array_diff(array_merge(explode(",",trim($global_permissions)),explode(",",trim($userdata[0]["permissions"]))),explode(",",trim($global_permissions_mask))); 
+		$userpermissions=array_values($userpermissions);# Resquence array as the above array_diff() causes out of step keys.
+		
 		$usergroup=$userdata[0]["usergroup"];
 		$usergroupname=$userdata[0]["groupname"];
         $usergroupparent=$userdata[0]["parent"];

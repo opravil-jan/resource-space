@@ -1332,8 +1332,13 @@ $config_trimchars="";
 # Global permissions
 # Permissions that will be prefixed to all user group permissions
 # Handy for setting global options, e.g. for fields
-# By default do not allow the 'original filename' and 'camera make/model' fields to be edited.
 $global_permissions="";
+
+# Global permissions
+# Permissions that will be removed from all user group permissions
+# Useful for temporarily disabling permissions globally, e.g. to make the system readonly during maintenance.
+# Suggested setting for a 'read only' mode: $global_permissions_mask="a,t,c,d,e0,e1,e2,e-1,e-2,i,n,h";
+$global_permissions_mask="";
 
 # User account application - auto creation
 # By default this is switched off and applications for new user accounts will be sent as e-mails
