@@ -28,7 +28,7 @@ else{
 	if ($free<0){
 		$free=0;
 	}
-
+	
 	$avail_format=str_replace("&nbsp;", " ",formatfilesize($avail));
 	$used_format=str_replace("&nbsp;"," ",formatfilesize($used));
 	$free_format=str_replace("&nbsp;"," ",formatfilesize($free));
@@ -74,17 +74,37 @@ else{
 		# convert limit
 		$limit=$disk_quota_limit_size_warning_noupload*1024*1024*1024;
 		if($free<=$limit){
-			# Send notification of disabling uploads
-			$subject="Uploads Disabled - Free space is " . $disk_quota_limit_size_warning_noupload . "GB or less!";
-			$body="Uploading will be disabled because free space is ".$disk_quota_limit_size_warning_noupload."GB or less!\n".$lang["diskusage"].": ".$used_percent."%\n".$lang["available"].": ".$avail_format."\n".$lang["used"].": ".$used_format."\n".$lang["free"].": ".$free_format;
 			
-			echo "Free space is less than or equal to ".$disk_quota_limit_size_warning_noupload." GB. Sending email...<br/>";
-			
-			send_mail($disk_quota_notification_email,$subject,$body);
+			echo "Free space is less than or equal to ".$disk_quota_limit_size_warning_noupload." GB.";
+			if(!isset($disk_quota_notification_interval)){
+				$send_email=true;
+			}
+			else{
+				$last_sent=sql_value("select value from sysvars where name='last_sent_disk_quota_noupload'","");
+				echo "Last Sent:".strtotime($last_sent)." - ".$last_sent."<br/>";
+				echo "Now:".time()." - ".date("Y-m-d H:i:s")."<br/>";
+				echo "Interval:".($disk_quota_notification_interval*60*60)."<br/>";
+				if($last_sent=='' || (time()-strtotime($last_sent))>($disk_quota_notification_interval*60*60)){
+					$send_email=true;
+				}
+			}
+			if($send_email){
+				# Send notifications
+				$subject="Uploads Disabled - Free space is " . $disk_quota_limit_size_warning_noupload . "GB or less!";
+				$body="Uploading will be disabled because free space is ".$disk_quota_limit_size_warning_noupload."GB or less!\n".$lang["diskusage"].": ".$used_percent."%\n".$lang["available"].": ".$avail_format."\n".$lang["used"].": ".$used_format."\n".$lang["free"].": ".$free_format;
+				
+				echo" Sending email...<br/>";
+				
+				send_mail($disk_quota_notification_email,$subject,$body);
+				// update last sent
+				sql_query("delete from sysvars where name='last_sent_disk_quota_noupload'");
+				sql_query("insert into sysvars(name,value) values ('last_sent_disk_quota_noupload',now())");
+			}
 		}
 		else{
 			echo "Free space is greater than ".$disk_quota_limit_size_warning_noupload." GB.<br/>";
 		}
 	}
+	hook("aftercheckdiskusage");
 }
 ?>
