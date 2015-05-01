@@ -212,7 +212,7 @@ if (!hook("replaceslideshow"))
 		</a>
 		<div class="PanelShadow"></div>
 		<?php 
-		if (($welcome_text_picturepanel || ($home_dash && !$slideshow_big))&& !hook('homereplacewelcome')) 
+		if (($welcome_text_picturepanel || ($home_dash && !$slideshow_big)) && !hook('homereplacewelcome')) 
 			{ 
 			loadWelcomeText();
 			}
@@ -414,7 +414,7 @@ if (checkperm("s"))
 	
 	<div class="clearerleft"></div>
 	<?php
-	if((!$home_dash && $slideshow_big) || !($home_dash && $slideshow_big)){loadWelcomeText();}
+	if(!$home_dash){loadWelcomeText();}
 	} // end of checkperm("s") 
 else 
 	{ ?>
