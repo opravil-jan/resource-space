@@ -194,7 +194,7 @@ function set_language($defaultlanguage)
 
 
 //Development Mode:  Set to true to change the config.php check to devel.config.php and output to devel.config.php instead.  Also displays the config file output in a div at the bottom of the page.
-$develmode = false;
+$develmode = true;
 if ($develmode)
 	$outputfile = '../include/devel.config.php';
 else
@@ -340,13 +340,22 @@ $('#mysqlserver').keyup();
 #preconfig p { font-size:110%; padding:0; margin:0; margin-top: 5px;}
 #preconfig p.failure{ color: #f00; font-weight: bold; }
 
+#structural_plugins {margin-bottom: 40px;font-size: 100%;background: #F7F7F7;text-align: left;padding: 20px;}
+#structural_plugins h2{margin-bottom: 10px;}
+.templateitem{padding:10px; padding-left:40px;}
+.templateitem label{width: 220px;display: block;float: left;}
+.templateitem input{display: block;float: left;}
+.templateitem .desc{padding:0 10px;display: block;float: left;clear:left; padding-left:28px;}
+.templateitem a.moreinfo{color:#72A939;padding-left: 0;}
+.structurepluginradio{margin-right:10px;}
+
 #tabs {font-size: 100%;}
 #tabs > ul {float: left;margin: 0;padding: 0;border-bottom: 5px solid #F7F7F7;}
 #tabs > ul >li { margin: 0; padding:0; margin-left: 8px; list-style: none; background: #777777; }
 * html #tabs li { display: inline; /* ie6 double float margin bug */ }
 #tabs > ul > li, #tabs  > ul > li a { float: left; border-top-left-radius: 10px; border-top-right-radius: 10px;}
 #tabs > ul > li a { text-decoration: none; padding: 8px; color: #CCCCCC; font-weight: bold; }
-#tabs > ul > li.active { background: #36AAFF; }
+#tabs > ul > li.active { background: #72A939; }
 #tabs > ul > li.active a { color: #FFF }
 #tabs div.tabs { background: #F7F7F7; clear: both; padding: 20px; text-align: left;}
 
@@ -389,8 +398,6 @@ h2#dbaseconfig{  min-height: 32px;}
 	<div class="clearer"></div>
 </div>
 <?php
-
-
 	//Check if config file already exists and die with an error if it does.
 	if (file_exists($outputfile))
 	{
@@ -460,7 +467,14 @@ h2#dbaseconfig{  min-height: 32px;}
 		$config_output .= "###############################\r\n\r\n";
 		$config_output .= "# All custom settings should be entered in this file.\r\n";  
 		$config_output .= "# Options may be copied from config.default.php and configured here.\r\n\r\n";
-			
+		
+		// Structural plugin
+        $structural_plugin = get_post('structureplugin');
+        if(!empty($structural_plugin))
+        	{
+        	$config_output.= "\r\n# Initial Structural Plugin used: ".$structural_plugin."\r\n\r\n\r\n";
+        	}
+
 		//Grab MySQL settings
 		$mysql_server = get_post('mysql_server');
 		$mysql_username = get_post('mysql_username');
@@ -470,33 +484,45 @@ h2#dbaseconfig{  min-height: 32px;}
 		if (@mysql_connect($mysql_server, $mysql_username, $mysql_password)){
 			$mysqlversion=mysql_get_server_info();
 		
-			if ($mysqlversion<'5') {
+			if ($mysqlversion<'5') 
+				{
 				$errors['databaseversion'] = true;
-			}
-			else {
-				if (@mysql_select_db($mysql_db)){
-					if (@mysql_query("CREATE table configtest(test varchar(30))")){
-						@mysql_query("DROP table configtest");
-					}
-					else {$errors['databaseperms'] = true;}
 				}
-				else {$errors['databasedb'] = true;}
+			else 
+				{
+				if (@mysql_select_db($mysql_db))
+					{
+					if (@mysql_query("CREATE table configtest(test varchar(30))"))
+						{
+						@mysql_query("DROP table configtest");
+						}
+					else 
+						{
+						$errors['databaseperms'] = true;
+						}
+					}
+				else 
+					{$errors['databasedb'] = true;}
 			}
 		}
-		else {
-			switch (mysql_errno()){
+		else 
+			{
+			switch (mysql_errno())
+				{
 				case 1045:  //User login failure.
 					$errors['databaselogin'] = true;
 					break;
 				default: //Must be a server problem.
 					$errors['databaseserver'] = true;
 					break;
+				}
 			}
-		}
-		if (isset($errors)){
+		if (isset($errors))
+			{
 			$errors['database'] = mysql_error();
-		}
-		else {
+			}
+		else 
+			{
 			//Test passed: Output MySQL config section
 			$config_output .= "# MySQL database settings\r\n";
 			$config_output .= "\$mysql_server = '$mysql_server';\r\n";
@@ -504,7 +530,7 @@ h2#dbaseconfig{  min-height: 32px;}
 			$config_output .= "\$mysql_password = '$mysql_password';\r\n";
 			$config_output .= "\$mysql_db = '$mysql_db';\r\n";
 			$config_output .= "\r\n";
-		}
+			}
 		
 		//Check MySQL bin path (not required)
 		$mysql_bin_path = sslash(get_post('mysql_bin_path'));
@@ -697,17 +723,99 @@ h2#dbaseconfig{  min-height: 32px;}
         	{ 
         	$config_output.= "\r\n#Design Changes\r\n\$slimheader=true;\r\n";
         	#$config_output.= "\$available_themes=array('slimcharcoal', 'multi', 'whitegry','greyblu','black');\r\n\$defaulttheme='slimcharcoal';\r\n";
-        	}     
+        	}
 	}
 ?>
 <?php //Output Section
 
-if ((isset($_REQUEST['submit'])) && (!isset($errors))){
+if ((isset($_REQUEST['submit'])) && (!isset($errors)))
+	{
 	//Form submission was a success.  Output the config file and refrain from redisplaying the form.
 	$fhandle = fopen($outputfile, 'w') or die ("Error opening output file.  (This should never happen, we should have caught this before we got here)");
 	fwrite($fhandle, "<?php\r\n".$config_output); //NOTE: php opening tag is prepended to the output.
 	fclose($fhandle);
 	
+	if(!empty($structural_plugin) && !$develmode)
+		{
+		$suppress_headers=true;
+		include "../include/db.php";
+		//BUILD Data from plugin
+		global $mysql_db, $resource_field_column_limit;
+	
+		# Check for path
+		$path="../plugins/".$structural_plugin."/dbstruct/";
+		
+		# Tables first.
+		# Load existing tables list
+		$ts=sql_query("show tables",false,-1,false);
+		$tables=array();
+		for ($n=0;$n<count($ts);$n++)
+			{
+			$tables[]=$ts[$n]["Tables_in_" . $mysql_db];
+			}
+		$dh=opendir($path);
+		while (($file = readdir($dh)) !== false)
+			{
+			if (substr($file,0,5)=="data_")
+				{
+				$table=str_replace(".txt","",substr($file,5));
+				sql_query("TRUNCATE $table");
+				# Add initial data
+				$data=$file;
+				if (file_exists($path . "/" . $data))
+					{
+					$f=fopen($path . "/" . $data,"r");
+					while (($row = fgetcsv($f,5000)) !== false)
+						{
+						# Escape values
+						for ($n=0;$n<count($row);$n++)
+							{
+							$row[$n]=escape_check($row[$n]);
+							$row[$n]="'" . $row[$n] . "'";
+							if ($row[$n]=="''") {$row[$n]="null";}
+							}
+						sql_query("insert into $table values (" . join (",",$row) . ")",false,-1,false);
+						}
+					}
+
+				# Check all indices exist
+				# Load existing indexes
+				$existing=sql_query("show index from $table",false,-1,false);
+						
+				$file=str_replace("data_","index_",$file);
+				if (file_exists($path . "/" . $file))
+					{
+					$done=array(); # List of indices already processed.
+					$f=fopen($path . "/" . $file,"r");
+					while (($col = fgetcsv($f,5000)) !== false)
+						{
+						# Look for this index in the existing indices.
+						$found=false;
+						for ($n=0;$n<count($existing);$n++)
+							{
+							if ($existing[$n]["Key_name"]==$col[2]) {$found=true;}
+							}
+						if (!$found && !in_array($col[2],$done))
+							{
+							# Add this index.
+							
+							# Fetch list of columns for this index
+							$cols=array();
+							$f2=fopen($path . "/" . $file,"r");
+							while (($col2 = fgetcsv($f2,5000)) !== false)
+								{
+								if ($col2[2]==$col[2]) {$cols[]=$col2[4];}
+								}
+							$sql="create index " . $col[2] . " on $table (" . join(",",$cols) . ")";
+							sql_query($sql,false,-1,false);
+							$done[]=$col[2];
+							}
+						}
+					}
+				}
+			}
+		}
+
 	?>
 	<div id="intro">
 		<h1><?php echo $lang["setup-successheader"]; ?></h1>
@@ -725,8 +833,9 @@ if ((isset($_REQUEST['submit'])) && (!isset($errors))){
 		</ul>
 	</div>
 	<?php
-}
-else{
+	}
+else
+{
 ?>
 <form action="setup.php" method="POST">
 <?php echo $config_windows==true?'<input type="hidden" name="config_windows" value="true"/>':'' ?>
@@ -869,6 +978,82 @@ else{
 			<?php } ?>
 			</div>
 	</div>
+	<?php
+	include "../include/plugin_functions.php";
+	$plugins_dir = dirname(__FILE__)."/../plugins/";
+	# Build an array of available plugins.
+	$dirh = opendir($plugins_dir);
+	$plugins_avail = array();
+
+	while (false !== ($file = readdir($dirh))) 
+	   {
+	   if (is_dir($plugins_dir.$file)&&$file[0]!='.')
+	      	{
+	        # Look for a <pluginname>.yaml file.
+	        $plugin_yaml = get_plugin_yaml($plugins_dir.$file.'/'.$file.'.yaml', false);
+	        if(isset($plugin_yaml["category"]) 
+	         		&& $plugin_yaml["category"]=="structural"
+	         		&& isset($plugin_yaml["info_url"])
+	         		&& isset($plugin_yaml["setup_desc"])
+	         		&& isset($plugin_yaml["name"])
+	         	)
+	         	{
+	         	foreach ($plugin_yaml as $key=>$value)
+		            {
+		            $plugins_avail[$file][$key] = $value ;
+		            }
+	         	}    
+	      	}
+	   }
+	closedir($dirh);
+	if(!empty($plugins_avail))
+		{
+		ksort ($plugins_avail);
+		?>
+		<div id="structural_plugins">
+			<h2><?php echo $lang["setup-structuralplugins"]; ?></h2>
+			<?php
+			$default= (isset($structural_plugin) && !empty($structural_plugin)) ? $structural_plugin : "general_structure";
+			foreach($plugins_avail as $plugin)
+				{ ?>
+				<div class="templateitem">
+					<input 
+						class="structurepluginradio" 
+						type="radio" 
+						id="structureplugin-<?php echo $plugin["name"]; ?>" 
+						name="structureplugin" 
+						<?php
+						if($plugin["name"]==$default){echo "checked";}
+						?>
+						value="<?php echo $plugin["name"];?>"
+					/>
+					<label for="structureplugin-<?php echo $plugin["name"]; ?>"><?php echo ucfirst(preg_replace("/(_|-)/"," ",$plugin["name"]));?></label>
+					<span class="desc">
+						<?php 
+						echo $plugin["setup_desc"];
+						if(substr($plugin["setup_desc"], -1)!="."){echo ".";}
+						if(isset($plugin["info_url"]) && !empty($plugin["info_url"]))
+						{ ?>
+						<a 
+							class="moreinfo" 
+							target="_blank" 
+							href="<?php echo $plugin["info_url"]?>"
+						>
+							<?php echo $lang["more-information"]."..."; ?>
+						</a>
+						<?php
+						} ?>
+					</span>					
+					<div style="clear:both;"></div>		
+				</div>
+				<?php
+				} ?>
+			<div style="clear:both;"></div>
+		</div>
+		<?php
+		}
+	?>
+	
 	<?php if (isset($errors)){ ?>	
 		<div id="errorheader"><?php echo $lang["setup-errorheader"];?></div>
 	<?php } ?>	
@@ -886,16 +1071,18 @@ else{
 				<h2 id="dbaseconfig"><?php echo $lang["setup-dbaseconfig"];?><img class="starthidden ajloadicon" id="al-testconn" src="../gfx/ajax-loader.gif"/></h2>
 				<?php if(isset($errors['database'])){?>
 					<div class="erroritem"><?php echo $lang["setup-mysqlerror"];?>
-						<?php if(isset($errors['databaseversion'])) 
-							echo $lang["setup-mysqlerrorversion"]; 
+						<?php 
+						if(isset($errors['databaseversion'])) 
+							{echo $lang["setup-mysqlerrorversion"];}
 						if(isset($errors['databaseserver']))
-							echo $lang["setup-mysqlerrorserver"]; 
+							{echo $lang["setup-mysqlerrorserver"];} 
 						if(isset($errors['databaselogin']))
-							echo $lang["setup-mysqlerrorlogin"];
+							{echo $lang["setup-mysqlerrorlogin"];}
 						if(isset($errors['databasedb']))
-							echo $lang["setup-mysqlerrordbase"];
+							{echo $lang["setup-mysqlerrordbase"];}
 						if(isset($errors['databaseperms']))
-							echo $lang["setup-mysqlerrorperms"]; ?>
+							{echo $lang["setup-mysqlerrorperms"];} 
+						?>
 						
 						<p><?php echo $errors['database'];?></p>
 					</div>
@@ -1091,41 +1278,43 @@ else{
 					<a class="iflink" href="#if-usesmtp">?</a>
 					<p class="iteminfo" id="if-usesmtp"><?php echo $lang["setup-if-usesmtp"];?></p>
 				</div>
-				<div class="configitem">
-					<label for="smtp_secure"><?php echo $lang["smtpsecure"] . ":"; ?></label>
-					<input id="smtp_secure" name="smtp_secure" type="text" value="<?php echo $smtp_secure;?>" />
-					<a class="iflink" href="#if-smtpsecure">?</a>
-					<p class="iteminfo" id="if-smtpsecure"><?php echo $lang["setup-if-smtpsecure"];?></p>
-				</div>
-				<div class="configitem">
-					<label for="smtp_host"><?php echo $lang["smtphost"] . ":"; ?></label>
-					<input id="smtp_host" name="smtp_host" type="text" value="<?php echo $smtp_host;?>"/>
-					<a class="iflink" href="#if-smtphost">?</a>
-					<p class="iteminfo" id="if-smtphost"><?php echo $lang["setup-if-smtphost"];?></p>
-				</div>
-				<div class="configitem">
-					<label for="smtp_port"><?php echo $lang["smtpport"] . ":"; ?></label>
-					<input id="smtp_port" name="smtp_port" type="text" value="<?php echo $smtp_port;?>"/>
-					<a class="iflink" href="#if-smtpport">?</a>
-					<p class="iteminfo" id="if-smtpport"><?php echo $lang["setup-if-smtpport"];?></p>
-				</div>
-				<div class="configitem">
-					<label for="smtp_auth"><?php echo $lang["smtpauth"] . ":"; ?></label>
-					<input id="smtp_auth" name="smtp_auth" type="checkbox" checked />
-					<a class="iflink" href="#if-smtpauth">?</a>
-					<p class="iteminfo" id="if-smtpauth"><?php echo $lang["setup-if-smtpauth"];?></p>
-				</div>
-				<div class="configitem">
-					<label for="smtp_username"><?php echo $lang["smtpusername"] . ":"; ?></label>
-					<input id="smtp_username" name="smtp_username" type="text" value="<?php echo $smtp_username;?>"/>
-					<a class="iflink" href="#if-smtpusername">?</a>
-					<p class="iteminfo" id="if-smtpusername"><?php echo $lang["setup-if-smtpusername"];?></p>
-				</div>
-				<div class="configitem">
-					<label for="smtp_password"><?php echo $lang["smtppassword"] . ":"; ?></label>
-					<input id="smtp_password" name="smtp_password" type="password" value=""/>
-					<a class="iflink" href="#if-smtppassword">?</a>
-					<p class="iteminfo" id="if-smtppassword"><?php echo $lang["setup-if-smtppassword"];?></p>
+				<div id="use-SMTP-settings">
+					<div class="configitem">
+						<label for="smtp_secure"><?php echo $lang["smtpsecure"] . ":"; ?></label>
+						<input id="smtp_secure" name="smtp_secure" type="text" value="<?php echo $smtp_secure;?>" />
+						<a class="iflink" href="#if-smtpsecure">?</a>
+						<p class="iteminfo" id="if-smtpsecure"><?php echo $lang["setup-if-smtpsecure"];?></p>
+					</div>
+					<div class="configitem">
+						<label for="smtp_host"><?php echo $lang["smtphost"] . ":"; ?></label>
+						<input id="smtp_host" name="smtp_host" type="text" value="<?php echo $smtp_host;?>"/>
+						<a class="iflink" href="#if-smtphost">?</a>
+						<p class="iteminfo" id="if-smtphost"><?php echo $lang["setup-if-smtphost"];?></p>
+					</div>
+					<div class="configitem">
+						<label for="smtp_port"><?php echo $lang["smtpport"] . ":"; ?></label>
+						<input id="smtp_port" name="smtp_port" type="text" value="<?php echo $smtp_port;?>"/>
+						<a class="iflink" href="#if-smtpport">?</a>
+						<p class="iteminfo" id="if-smtpport"><?php echo $lang["setup-if-smtpport"];?></p>
+					</div>
+					<div class="configitem">
+						<label for="smtp_auth"><?php echo $lang["smtpauth"] . ":"; ?></label>
+						<input id="smtp_auth" name="smtp_auth" type="checkbox" checked />
+						<a class="iflink" href="#if-smtpauth">?</a>
+						<p class="iteminfo" id="if-smtpauth"><?php echo $lang["setup-if-smtpauth"];?></p>
+					</div>
+					<div class="configitem">
+						<label for="smtp_username"><?php echo $lang["smtpusername"] . ":"; ?></label>
+						<input id="smtp_username" name="smtp_username" type="text" value="<?php echo $smtp_username;?>"/>
+						<a class="iflink" href="#if-smtpusername">?</a>
+						<p class="iteminfo" id="if-smtpusername"><?php echo $lang["setup-if-smtpusername"];?></p>
+					</div>
+					<div class="configitem">
+						<label for="smtp_password"><?php echo $lang["smtppassword"] . ":"; ?></label>
+						<input id="smtp_password" name="smtp_password" type="password" value="<?php echo $smtp_password;?>"/>
+						<a class="iflink" href="#if-smtppassword">?</a>
+						<p class="iteminfo" id="if-smtppassword"><?php echo $lang["setup-if-smtppassword"];?></p>
+					</div>
 				</div>
 			</div>
 
@@ -1141,12 +1330,25 @@ else{
 		<input type="submit" id="submit" name="submit" value="<?php echo $lang["setup-begin_installation"];?>"/>
 	</div>
 </form>
-<?php } ?>
-<?php if (($develmode)&& isset($config_output)){?>
-		<div id="configoutput">
-			<h1><?php echo $lang["setup-configuration_file_output"] . ":"; ?></h1>
-			<pre><?php echo $config_output; ?></pre>
-		</div>
-	<?php } ?>
+<script>
+	jQuery("#use_smtp").click(function(){
+		console.log(jQuery(this).val());
+		if(jQuery(this).prop('checked')) {
+			jQuery("#use-SMTP-settings").show(300);
+		} else {
+			jQuery("#use-SMTP-settings").hide(300);
+		}
+	});
+	jQuery("#use-SMTP-settings").hide();
+</script>
+<?php }
+if (($develmode)&& isset($config_output))
+	{ ?>
+	<div id="configoutput">
+		<h1><?php echo $lang["setup-configuration_file_output"] . ":"; ?></h1>
+		<pre><?php echo $config_output; ?></pre>
+	</div>
+	<?php 
+	} ?>
 </body>
 </html>	

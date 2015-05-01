@@ -1091,12 +1091,13 @@ $lang["setup-if-smtpport"]="Port number, e.g. 465 for Gmail using SSL.";
 $lang["setup-if-smtpauth"]="Send credentials to SMTP server (false to use anonymous access)";
 $lang["setup-if-smtpusername"]="Username (full email address).";
 $lang["setup-if-smtppassword"]="Password";
-
 $lang["design-options"]="Design Options";
 $lang["use-slim-theme"]="Use the SlimHeader Design?";
 $lang["setup-if_slimtheme"]="Use the SlimHeader design rather than the original design to display a thinner header bar with a linked logo by default.";
 $lang["setup-login_to"]="Login to";
 $lang["setup-configuration_file_output"]="Configuration file output";
+$lang["more-information"]="More information";
+$lang["setup-structuralplugins"]="System templates";
 
 # Collection log - actions
 $lang["collectionlog"]="Collection log";
