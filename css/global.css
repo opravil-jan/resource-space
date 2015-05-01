@@ -782,7 +782,9 @@ width: 90px;
 /* Dash Styling */
 #HomePanelContainer {
   width: 100%;
-  padding: 10px 0px;
+}
+#SlideshowContainer {
+	float:left;
 }
 #HomePanelContainer a {-webkit-user-drag: none;}
 .HomePanelPromotedIN h2, .HomePanelPromotedIN h3 {

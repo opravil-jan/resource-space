@@ -9,6 +9,7 @@ include "../include/dash_functions.php";
 
 # Fetch promoted collections ready for display later
 $home_collections=get_home_page_promoted_collections();
+$welcometext=false;
 
 hook("homeheader");
 
@@ -163,6 +164,7 @@ if (!hook("replaceslideshow"))
 
 	if (!$slideshow_big) 
 		{ ?>
+		<div id="SlideshowContainer">
 		<div class="HomePicturePanel"
 		<?php if(!hook("replaceeditslideshowwidth"))
 			{
@@ -211,21 +213,23 @@ if (!hook("replaceslideshow"))
 		</div>
 		</a>
 		<div class="PanelShadow"></div>
-		<?php 
-		if (($welcome_text_picturepanel || ($home_dash && !$slideshow_big)) && !hook('homereplacewelcome')) 
-			{ 
-			loadWelcomeText();
-			}
+		<?php
 		hook("homebeforehomepicpanelend");
 		?>
 		</div>
 		<?php
+		if (($welcome_text_picturepanel || ($home_dash && !$slideshow_big)) && !hook('homereplacewelcome')) 
+			{ 
+			loadWelcomeText();
+			$welcometext=true;
+			} ?>
+		</div>
+		<?php
 		}
 	} # End of hook replaceslideshow
-
 if (checkperm("s")) 
 	{
-	if($home_dash && $slideshow_big){loadWelcomeText();}
+	if($home_dash && $slideshow_big && !$welcometext){loadWelcomeText(); $welcometext=true;}
 	hook("homebeforepanels");
 	?>
 	<div id="HomePanelContainer">
@@ -414,7 +418,7 @@ if (checkperm("s"))
 	
 	<div class="clearerleft"></div>
 	<?php
-	if(!$home_dash){loadWelcomeText();}
+	if(!$home_dash || !$welcometext){loadWelcomeText();}
 	} // end of checkperm("s") 
 else 
 	{ ?>
