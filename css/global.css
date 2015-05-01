@@ -781,11 +781,20 @@ width: 90px;
 
 /* Dash Styling */
 #HomePanelContainer {
-  float: left;
   width: 100%;
   padding: 10px 0px;
 }
 #HomePanelContainer a {-webkit-user-drag: none;}
+.HomePanelPromotedIN h2, .HomePanelPromotedIN h3 {
+float: none;
+position: relative;
+padding-left: 60px;
+padding-right: 15px;
+padding-top: 18px;
+text-transform: capitalize;
+text-shadow: #090909 1px 1px 8px;
+color: #fff;
+}
 #dash_tile_bin {
 	width:100px; 
 	height:100%;

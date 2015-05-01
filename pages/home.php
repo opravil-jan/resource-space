@@ -212,13 +212,9 @@ if (!hook("replaceslideshow"))
 		</a>
 		<div class="PanelShadow"></div>
 		<?php 
-		if ($welcome_text_picturepanel && !!hook('homereplacewelcome')) 
-			{ ?>
-			<div class="BasicsBox">
-	    	<h1><?php echo text("welcometitle")?></h1>
-	    	<p><?php echo text("welcometext")?></p>
-			</div>
-			<?php 
+		if (($welcome_text_picturepanel || ($home_dash && !$slideshow_big))&& !hook('homereplacewelcome')) 
+			{ 
+			loadWelcomeText();
 			}
 		hook("homebeforehomepicpanelend");
 		?>
@@ -229,7 +225,7 @@ if (!hook("replaceslideshow"))
 
 if (checkperm("s")) 
 	{
-	if($home_dash){loadWelcomeText();}
+	if($home_dash && $slideshow_big){loadWelcomeText();}
 	hook("homebeforepanels");
 	?>
 	<div id="HomePanelContainer">
@@ -386,9 +382,22 @@ if (checkperm("s"))
 						/>
 			
 						<span class="collection-icon"></span>
-						<h2 class="title" style="float: none;position: relative;padding-left: 60px;padding-right: 15px;padding-top: 18px;text-transform: capitalize;text-shadow: #090909 1px 1px 8px;color: #fff;">
-					<?php echo i18n_get_translated($home_collection["home_page_text"]) ?>
-					</h2>
+						<?php 
+						if(!empty($home_collection["home_page_text"]))
+							{ ?>
+							<h3 class="title">
+								<?php echo i18n_get_translated($home_collection["home_page_text"]); ?>
+							</h3>
+							<?php
+							}
+						else
+							{ ?>
+
+							<h2 class="title" style="float: none;position: relative;padding-left: 60px;padding-right: 15px;padding-top: 18px;text-transform: capitalize;text-shadow: #090909 1px 1px 8px;color: #fff;">
+								<?php echo i18n_get_translated($home_collection["name"]); ?>
+							</h2>
+							<?php
+							} ?>
 				</div>
 			<div class="PanelShadow"></div>
 			</a>
@@ -405,7 +414,7 @@ if (checkperm("s"))
 	
 	<div class="clearerleft"></div>
 	<?php
-	if(!$home_dash){loadWelcomeText();}
+	if((!$home_dash && $slideshow_big) || !($home_dash && $slideshow_big)){loadWelcomeText();}
 	} // end of checkperm("s") 
 else 
 	{ ?>
