@@ -254,7 +254,8 @@ else
 	# This is a new search, log this activity
 	if ($archive==2) {daily_stat("Archive search",0);} else {daily_stat("Search",0);}
 	}
-
+$modified_restypes=hook("modifyrestypes_aftercookieset");
+if($modified_restypes){$restypes=$modified_restypes;}
 
 # if search is not a special search (ie. !recent), use starsearchvalue.
 if (getvalescaped("search","")!="" && strpos(getvalescaped("search",""),"!")!==false)
