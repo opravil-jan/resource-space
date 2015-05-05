@@ -253,6 +253,7 @@ $slideshow_big=false;
 
 # Home Dash - RapiDash
 $home_dash = true;
+$tile_styles["srch"]=array("thmbs","multi");
 
 # Optional 'quota size' for allocation of a set amount of disk space to this application. Value is in GB.
 # Note: Unix systems only.
