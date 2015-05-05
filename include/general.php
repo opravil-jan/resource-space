@@ -176,7 +176,7 @@ function update_hitcount($ref)
 	if (!$resource_hit_count_on_downloads) 
 		{ 
 		# greatest() is used so the value is taken from the hit_count column in the event that new_hit_count is zero to support installations that did not previously have a new_hit_count column (i.e. upgrade compatability).
-		sql_query("update resource set new_hit_count=greatest(hit_count,new_hit_count)+1 where ref='$ref'");
+		sql_query("update resource set new_hit_count=greatest(hit_count,new_hit_count)+1 where ref='$ref'",false,-1,true,0);
 		}
 	}	
 	
@@ -568,7 +568,7 @@ function update_resource_keyword_hitcount($resource,$search)
 		$found=resolve_keyword($keyword);
 		if ($found!==false) {$keys[]=resolve_keyword($keyword);}
 		}	
-	if (count($keys)>0) {sql_query("update resource_keyword set new_hit_count=new_hit_count+1 where resource='$resource' and keyword in (" . join(",",$keys) . ")");}
+	if (count($keys)>0) {sql_query("update resource_keyword set new_hit_count=new_hit_count+1 where resource='$resource' and keyword in (" . join(",",$keys) . ")",false,-1,true,0);}
 	}
 }
 	
@@ -2285,11 +2285,11 @@ function get_related_keywords($keyref)
 		return $related_keywords_cache[$keyref];
 	} else {
 		if ($keyword_relationships_one_way){
-			$related_keywords_cache[$keyref]=sql_array(" select related value from keyword_related where keyword='$keyref'");
+			$related_keywords_cache[$keyref]=sql_array("select related value from keyword_related where keyword='$keyref'");
 			return $related_keywords_cache[$keyref];
 			}
 		else {
-			$related_keywords_cache[$keyref]=sql_array(" select keyword value from keyword_related where related='$keyref' union select related value from keyword_related where (keyword='$keyref' or keyword in (select keyword value from keyword_related where related='$keyref')) and related<>'$keyref'");
+			$related_keywords_cache[$keyref]=sql_array("select keyword value from keyword_related where related='$keyref' union select related value from keyword_related where (keyword='$keyref' or keyword in (select keyword value from keyword_related where related='$keyref')) and related<>'$keyref'");
 			return $related_keywords_cache[$keyref];
 			}
 		}

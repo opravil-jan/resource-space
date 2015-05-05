@@ -36,6 +36,14 @@ $mysql_force_strict_mode=false;
 # to them. Unless you need to store '\' in your fields, you can safely keep the default.
 $mysql_verbatim_queries=false;
 
+# Ability to record important DB transactions (e.g. INSERT, UPDATE, DELETE) in a sql file to allow replaying of changes since DB was last backed.
+# You may schedule cron jobs to delete this sql log file and perform a mysqldump of the database at the same time.
+# Note that there is no built in database backup, you need to take care of this yourself!
+#
+# WARNING!! Ensure the location defined by $mysql_log_location is not in a web accessible directory -it is advisable to either block access in the web server configuration or make the file write only by the web service account
+$mysql_log_transactions=false;
+#$mysql_log_location="/var/resourcespace_backups/sql_log.sql";
+
 $baseurl="http://my.site/resourcespace"; # The 'base' web address for this installation. Note: no trailing slash
 $email_from="resourcespace@my.site"; # Where system e-mails appear to come from
 $email_notify="resourcespace@my.site"; # Where resource/research/user requests are sent

@@ -109,7 +109,7 @@ function sql_connect() {
 	# Set MySQL Strict Mode (if configured)
 	if ($mysql_force_strict_mode)
 		{
-		sql_query("SET SESSION sql_mode='STRICT_ALL_TABLES'");	
+		sql_query("SET SESSION sql_mode='STRICT_ALL_TABLES'",false,-1,true,0);	
 		}
 }
 sql_connect();
@@ -308,7 +308,7 @@ function hook($name,$pagename="",$params=array())
 	return hook($name,$pagename,$params);	
 	}
 
-function sql_query($sql,$cache=false,$fetchrows=-1,$dbstruct=true)
+function sql_query($sql,$cache=false,$fetchrows=-1,$dbstruct=true, $logthis=2)
     {
     # sql_query(sql) - execute a query and return the results as an array.
 	# Database functions are wrapped in this way so supporting a database server other than MySQL is 
@@ -318,7 +318,8 @@ function sql_query($sql,$cache=false,$fetchrows=-1,$dbstruct=true)
     # just fetch $fetchrows row but pad the array to the full result set size with empty values.
     # This has been added retroactively to support large result sets, yet a pager can work as if a full
     # result set has been returned as an array (as it was working previously).
-    global $db,$config_show_performance_footer,$debug_log,$mysql_verbatim_queries,$use_mysqli;
+	# $logthis parameter is only relevant if $mysql_log_transactions is set.  0=don't log, 1=always log, 2=detect logging - i.e. SELECT statements will not be logged
+    global $db,$config_show_performance_footer,$debug_log,$mysql_verbatim_queries,$use_mysqli, $mysql_log_transactions;
     
     if ($config_show_performance_footer)
     	{
@@ -332,6 +333,46 @@ function sql_query($sql,$cache=false,$fetchrows=-1,$dbstruct=true)
     if ($debug_log) 
 		{
 		debug("SQL: " . $sql);
+		}
+	
+    if($mysql_log_transactions && !($logthis==0))
+    	{	
+		global $mysql_log_location, $lang;
+		$requirelog=true;
+		if($logthis==2)
+			{
+			// Ignore any SELECTs if the decision to log has not been indicated by function call, 	
+			if(strtoupper(substr($sql,0,6))=="SELECT")
+				{$requirelog=false;}
+			}
+			
+		if($logthis==1 || $requirelog)
+			{
+			# Log this to a transaction log file so it can be replayed after restoring database backup
+			$mysql_log_dir = dirname($mysql_log_location);
+			if (!is_dir($mysql_log_dir))
+				{
+				@mkdir($mysql_log_dir, 0333, true);
+				if (!is_dir($mysql_log_dir))
+					{exit("ERROR: Unable to create  folder for \$mysql_log_location specified in config file: " . $mysql_log_location);}
+				}	
+			
+			if(!file_exists($mysql_log_location))
+				{
+				global $mysql_db;
+				$mlf=@fopen($mysql_log_location,"wb");
+				@fwrite($mlf,"USE " . $mysql_db . ";\r\n");
+				if(!file_exists($mysql_log_location))
+					{exit("ERROR: Invalid \$mysql_log_location specified in config file: " . $mysql_log_location);}
+				// Set the permissions if we can to prevent browser access(will not work on Windows)
+				chmod($mysql_log_location,0333);
+				}
+			
+			$mlf=@fopen($mysql_log_location,"ab");
+			fwrite($mlf,$sql . ";\n"); // Append the ';' so the file can be used to replay the changes
+			fclose ($mlf);		
+			}
+		
 		}
     
     # Execute query    
@@ -430,7 +471,7 @@ function sql_value($query,$default)
     {
     # return a single value from a database query, or the default if no rows
     # The value returned must have the column name aliased to 'value'
-    $result=sql_query($query);
+    $result=sql_query($query,false,-1,true,0); // This is a select so we don't need to log this in the mysql log
     if (count($result)==0) {return $default;} else {return $result[0]["value"];}
     }
 
@@ -439,7 +480,7 @@ function sql_array($query)
 	# Like sql_value() but returns an array of all values found.
     # The value returned must have the column name aliased to 'value'
 	$return=array();
-    $result=sql_query($query);
+    $result=sql_query($query,false,-1,true,0); // This is a select so we don't need to log this in the mysql log
     for ($n=0;$n<count($result);$n++)
     	{
     	$return[]=$result[$n]["value"];
@@ -1096,12 +1137,12 @@ function daily_stat($activity_type,$object_ref)
 	if ($count==0)
 		{
 		# insert
-		sql_query("insert into daily_stat(year,month,day,usergroup,activity_type,object_ref,external,count) values ('$year','$month','$day','$usergroup','$activity_type','$object_ref','$external','1')");
+		sql_query("insert into daily_stat(year,month,day,usergroup,activity_type,object_ref,external,count) values ('$year','$month','$day','$usergroup','$activity_type','$object_ref','$external','1')",false,-1,true,0);
 		}
 	else
 		{
 		# update
-		sql_query("update daily_stat set count=count+1 where year='$year' and month='$month' and day='$day' and usergroup='$usergroup' and activity_type='$activity_type' and object_ref='$object_ref' and external='$external'");
+		sql_query("update daily_stat set count=count+1 where year='$year' and month='$month' and day='$day' and usergroup='$usergroup' and activity_type='$activity_type' and object_ref='$object_ref' and external='$external'",false,-1,true,0);
 		}
 	}    
 }
