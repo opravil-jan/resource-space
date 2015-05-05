@@ -12,6 +12,7 @@ a:active {color:#B5C3D4;}
 input[readonly] {color: #FFFFFF;}
 
 #Header {border-bottom: 1px solid #5A7599;background: url(../gfx/greyblu/titles/title.gif) no-repeat;}
+.SlimHeader #Header{background: #4B6B95 url(../gfx/greyblu/interface/back.gif) repeat-x;}
 #Footer {border-top: 1px solid #94A7C0;}
 #TextHeader, #TextHeader a {color:#c2e066;}
 #TextDesc{color:#c2e066;}
