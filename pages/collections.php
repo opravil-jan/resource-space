@@ -76,7 +76,7 @@ if ($collection!="")
 		# Log this
 		daily_stat("New collection",$userref);
 		}
-	else
+	elseif(!isset($usercollection) || $collection!=$usercollection)
 		{
 		# Switch the existing collection
 		if ($k=="") {set_user_collection($userref,$collection);}
