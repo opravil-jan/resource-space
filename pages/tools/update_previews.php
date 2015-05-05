@@ -32,8 +32,8 @@ include_once "../../include/collections_functions.php";
  */
 function update_preview($ref){
     global $previewbased;
-    $resourceinfo=sql_query("select ref, file_extension, file_path from resource where ref='$ref'");
-    if (count($resourceinfo)>0){
+    $resourceinfo=sql_query("select * from resource where ref='$ref'");
+    if (count($resourceinfo)>0 && !hook("replaceupdatepreview", '', array($ref, $resourceinfo[0]))){
     	if(!empty($resourceinfo[0]['file_path'])){$ingested=false;}
     	else{$ingested=true;}
         create_previews($ref, false,($previewbased?"jpg":$resourceinfo[0]["file_extension"]),false, $previewbased,-1,false,$ingested);
@@ -92,7 +92,7 @@ else {
     if (isset($collection[$key+1])){
         $next_ref = $collection[$key+1];
         ?>
-        <meta http-equiv="refresh" content="1;url=<?php echo $baseurl?>/pages/tools/update_previews.php?col=<?php echo $collectionid?>&ref=<?php echo $next_ref?>&previewbased=<?php echo $previewbased?>"/>
+        <meta http-equiv="refresh" content="0;url=<?php echo $baseurl?>/pages/tools/update_previews.php?col=<?php echo $collectionid?>&ref=<?php echo $next_ref?>&previewbased=<?php echo $previewbased?>"/>
         <?php
     }
     else {
