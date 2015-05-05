@@ -300,7 +300,7 @@ class rsPDF extends MYPDF {
 $pdf = new rsPDF($orientation , 'in', $size, true, 'UTF-8', false); 
 
 $pdf->SetTitle(i18n_get_collection_name($collectiondata).' - '.nicedate($date, true, true));
-$pdf->SetAuthor($user['fullname'].' '.$user['email']);
+$pdf->SetAuthor($user['fullname']);
 $pdf->SetSubject($applicationname . " - " . $lang["contactsheet"]);
 $pdf->SetMargins(1,1.2,.7);
 $pdf->SetAutoPageBreak(false);
