@@ -487,6 +487,7 @@ function index_collection($ref,$index_string='')
 	$keywords=split_keywords($index_string,true);
 	for ($n=0;$n<count($keywords);$n++)
 		{
+		if(trim($keywords[$n])==""){continue;}
 		$keyref=resolve_keyword($keywords[$n],true);
 		sql_query("insert into collection_keyword values ('$ref','$keyref')");
 		}
