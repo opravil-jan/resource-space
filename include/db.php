@@ -216,7 +216,7 @@ if (($pagename!="download") && ($pagename!="graph") && !$suppress_headers) {head
 
 
 # Pre-load all text for this page.
-$pagefilter="and (page='$pagename' or page='all' or page='')";
+$pagefilter="AND (page = '" . $pagename . "' OR page = 'all' OR page = '')";
 if ($pagename=="team_content") {$pagefilter="";} # Special case for the team content manager. Pull in all content from all pages so it's all overridden.
 
 $site_text=array();

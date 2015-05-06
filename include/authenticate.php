@@ -351,8 +351,36 @@ else
 	{
 	if (isset($usergroup))
 		{
-		$results=sql_query("select language,name,text from site_text where (page='$pagename' or page='all') and specific_to_group='$usergroup'");
-		for ($n=0;$n<count($results);$n++) {$site_text[$results[$n]["language"] . "-" . $results[$n]["name"]]=$results[$n]["text"];}
+		// Old way of getting the user specific content text (kept here for reference)
+		// $results=sql_query("select language,name,text from site_text where (page='$pagename' or page='all') and specific_to_group='$usergroup'");
+		// for ($n=0;$n<count($results);$n++) {$site_text[$results[$n]["language"] . "-" . $results[$n]["name"]]=$results[$n]["text"];}
+
+		$site_text_query = sprintf("
+				SELECT `name`,
+				       `text`,
+				       `page` 
+				  FROM site_text 
+				 WHERE language = '%s'
+				   %s #pagefilter
+				   AND specific_to_group = '%s';
+			",
+			escape_check($language),
+			$pagefilter,
+			$usergroup
+		);
+		$results = sql_query($site_text_query);
+
+		for($n = 0; $n < count($results); $n++)
+			{
+			if($results[$n]['page'] == '')
+				{
+				$lang[$results[$n]['name']] = $results[$n]['text'];
+				} 
+			else
+				{
+				$lang[$results[$n]['page'] . '__' . $results[$n]['name']] = $results[$n]['text'];
+				}
+			}
 		}
 	}	/* end replacesitetextloader */
 
