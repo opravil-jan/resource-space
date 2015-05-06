@@ -796,6 +796,9 @@ text-transform: capitalize;
 text-shadow: #090909 1px 1px 8px;
 color: #fff;
 }
+a.HomePanel:hover{
+	box-shadow: 3px 3px 12px rgba(0, 0, 0, 0.3);
+}
 #dash_tile_bin {
 	width:100px; 
 	height:100%;
