@@ -163,6 +163,29 @@ function url_exists($url)
     fclose($fp);
     return false;
 }   
+
+/**
+ * Ensures the filename cannot leave the directory set.
+ *
+ * @param string $name
+ * @return string
+ */
+function safe_file_name($name)
+	{
+	# Returns a file name stipped of all non alphanumeric values
+	# Spaces are replaced with underscores
+	$alphanum="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_-";
+	$name=str_replace(" ","_",$name);
+	$newname="";
+	for ($n=0;$n<strlen($name);$n++)
+		{
+		$c=substr($name,$n,1);
+		if (strpos($alphanum,$c)!==false) {$newname.=$c;}
+		}
+	$newname=substr($newname,0,30);
+	return $newname;
+	}
+
 /**
  * Sets the language to be used.
  *
@@ -174,6 +197,7 @@ function set_language($defaultlanguage)
 {
 	global $languages;
 	global $storagedir, $applicationname, $homeanim_folder; # Used in the language files.
+	$defaultlanguage = safe_file_name($defaultlanguage);
 	if (file_exists("../languages/en.php")) {include "../languages/en.php";}
 	if ($defaultlanguage==''){ 
 		//See if we can auto-detect the most likely language.  The user can override this.
@@ -186,6 +210,7 @@ function set_language($defaultlanguage)
 	}
 	if ($defaultlanguage!='en'){
 		if (file_exists("../languages/".$defaultlanguage.".php")){
+
 			include "../languages/".$defaultlanguage.".php";
 		}
 	}
