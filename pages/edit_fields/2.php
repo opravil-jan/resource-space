@@ -25,12 +25,18 @@ $options=array_keys($option_trans); # Set the options array to the keys, so it i
 	
 $set=trim_array(explode(",",$value));
 $wrap=0;
+
+# Work out an appropriate number of columns based on the average length of the options.
 $l=average_length($option_trans_simple);
-$cols=10;
-if ($l>5)  {$cols=6;}
-if ($l>10) {$cols=4;}
-if ($l>15) {$cols=3;}
-if ($l>25) {$cols=2;}
+switch ($l)
+	{
+	case ($l>40): 	$cols=1; break;	
+	case ($l>25): 	$cols=2; break;
+	case ($l>15): 	$cols=3; break;
+	case ($l>10): 	$cols=4; break;
+	case ($l>5): 	$cols=5; break;
+	default: 	$cols=10;
+	}
 
 $height=ceil(count($options)/$cols);
 

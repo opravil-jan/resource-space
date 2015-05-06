@@ -278,7 +278,7 @@ input.defaultbutton {position: absolute; left: -100%; width: 0; height: 0;}
 .FormError{font-weight: bold;font-size: 1.1em;margin: 0px 0px 10px 190px;padding: 10px 0px 0px;}
 .FormIncorrect {font-weight: bold;font-size: 1.1em;margin: 0px 0px 25px;text-align: center;padding: 3px 3px 6px;}
 .PageInformal, .PageInfoMessage{font-weight: bold;font-size: 1.1em;margin: 0px 0px 25px;text-align: center;padding: 3px 3px 6px;}
-.AutoSaveStatus {font-weight: bold;float:right;padding:6px 0 0;}
+.AutoSaveStatus {font-weight: bold;float:right;padding:6px 0 0;min-width:100px;}
 .PurgeUsersMonths {width:4em;}
 /*Record Panel layout*/
 .RecordBox {margin: 20px 15px 15px 0px;}

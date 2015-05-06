@@ -55,7 +55,7 @@ function create_resource($resource_type,$archive=999,$user=-1)
 	return $insert;
 	}
 	
-function save_resource_data($ref,$multi)
+function save_resource_data($ref,$multi,$autosave_field="")
 	{
 	# Save all submitted data for resource $ref.
 	# Also re-index all keywords from indexable fields.
@@ -66,7 +66,7 @@ function save_resource_data($ref,$multi)
 
 	# save resource defaults
 	# (do this here so that user can override them if the fields are visible.)
-	set_resource_defaults($ref);	 
+	if ($autosave_field=="") {set_resource_defaults($ref);	}
 
 	# Loop through the field data and save (if necessary)
 	$errors=array();
@@ -86,7 +86,9 @@ function save_resource_data($ref,$multi)
 		||
 		(checkperm("F*") && !checkperm("F-" . $fields[$n]["ref"]))
 			
-		))
+		)
+                && ($autosave_field=="" || $autosave_field=$fields[$n]["ref"])
+                )
 			{
 			if ($fields[$n]["type"]==2)
 				{
@@ -261,20 +263,25 @@ function save_resource_data($ref,$multi)
 		}
     //die();	   
     
-	# Always index the resource ID as a keyword
-	remove_keyword_mappings($ref, $ref, -1);
-	add_keyword_mappings($ref, $ref, -1);
-	
-	# Autocomplete any blank fields.
-	autocomplete_blank_fields($ref);
-	
-	# Also save related resources field
-	sql_query("delete from resource_related where resource='$ref' or related='$ref'"); # remove existing related items
-	$related=explode(",",getvalescaped("related",""));
-	# Make sure all submitted values are numeric
-	$ok=array();for ($n=0;$n<count($related);$n++) {if (is_numeric(trim($related[$n]))) {$ok[]=trim($related[$n]);}}
-	if (count($ok)>0) {sql_query("insert into resource_related(resource,related) values ($ref," . join("),(" . $ref . ",",$ok) . ")");}
-					
+        if ($autosave_field=="")
+            {
+            # Additional tasks when editing all fields (i.e. not autosaving)
+            
+            # Always index the resource ID as a keyword
+            remove_keyword_mappings($ref, $ref, -1);
+            add_keyword_mappings($ref, $ref, -1);
+            
+            # Autocomplete any blank fields.
+            autocomplete_blank_fields($ref);
+            
+            # Also save related resources field
+            sql_query("delete from resource_related where resource='$ref' or related='$ref'"); # remove existing related items
+            $related=explode(",",getvalescaped("related",""));
+            # Make sure all submitted values are numeric
+            $ok=array();for ($n=0;$n<count($related);$n++) {if (is_numeric(trim($related[$n]))) {$ok[]=trim($related[$n]);}}
+            if (count($ok)>0) {sql_query("insert into resource_related(resource,related) values ($ref," . join("),(" . $ref . ",",$ok) . ")");}
+            }
+            
 	# Expiry field(s) edited? Reset the notification flag so that warnings are sent again when the date is reached.
 	$expirysql="";
 	if ($expiry_field_edited) {$expirysql=",expiry_notification_sent=0";}

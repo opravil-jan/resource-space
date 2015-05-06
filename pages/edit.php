@@ -124,7 +124,7 @@ if ($go!="")
 $resource=get_resource_data($ref);
 # Allow to specify resource type from url
 $resource_type=getval("resource_type","");
-if (($resource_type!="")&&($resource_type!=$resource["resource_type"]) && !checkperm("XU{$resource_type}"))     // only if resource specified and user has permission for that resource type
+if (($resource_type!="")&&($resource_type!=$resource["resource_type"]) && !checkperm("XU{$resource_type}") && getval("autosave_field","")=="")     // only if resource specified and user has permission for that resource type
 {
   update_resource_type($ref,$resource_type);
   $resource["resource_type"]=$resource_type;
@@ -220,16 +220,23 @@ hook("editbeforesave");
     # save data
 if (!$multiple)
 {
-
+         # When auto saving, pass forward the field so only this is saved.
+         $autosave_field=getvalescaped("autosave_field","");
+         
         # Upload template: Change resource type
  $resource_type=getvalescaped("resource_type","");
-        if ($resource_type!="" && !checkperm("XU{$resource_type}"))     // only if resource specified and user has permission for that resource type
+        if ($resource_type!="" && !checkperm("XU{$resource_type}") && $autosave_field=="")     // only if resource specified and user has permission for that resource type
         {
          update_resource_type($ref,$resource_type);
             $resource=get_resource_data($ref,false); # Reload resource data.
          }       
 
-         $save_errors=save_resource_data($ref,$multiple);
+
+         
+         # Perform the save
+         $save_errors=save_resource_data($ref,$multiple,$autosave_field);
+         
+         
          if($embedded_data_user_select)
          {
             $no_exif=getval("exif_option","");
@@ -461,7 +468,7 @@ function AutoSave(field)
  jQuery('#AutoSaveStatus' + field).show();
 
 
- jQuery.post(jQuery('#mainform').attr('action') + '&autosave=true',jQuery('#mainform').serialize(),
+ jQuery.post(jQuery('#mainform').attr('action') + '&autosave=true&autosave_field=' + field,jQuery('#mainform').serialize(),
 
   function(data)
   {
@@ -514,6 +521,7 @@ function SaveAndClearButtons($extraclass="")
 </script>
 
 <form method="post" action="<?php echo $baseurl_short?>pages/edit.php?ref=<?php echo urlencode($ref) ?>&amp;uploader=<?php echo urlencode(getvalescaped("uploader","")) ?>&amp;single=<?php echo urlencode(getvalescaped("single","")) ?>&amp;local=<?php echo urlencode(getvalescaped("local","")) ?>&amp;search=<?php echo urlencode($search)?>&amp;offset=<?php echo urlencode($offset) ?>&amp;order_by=<?php echo urlencode($order_by) ?>&amp;sort=<?php echo urlencode($sort) ?>&amp;archive=<?php echo urlencode($archive) ?>&amp;collection=<?php echo $collection ?>&amp;metadatatemplate=<?php echo getval("metadatatemplate","")  . $uploadparams?>" id="mainform">
+
    <div class="BasicsBox">
       <input name="save" type="submit" value="&nbsp;&nbsp;<?php echo $lang["next"]?>&nbsp;&nbsp;" class="defaultbutton" />
       <input type="hidden" name="submitted" value="true">
@@ -1319,7 +1327,9 @@ if ($multilingual_text_fields)
      <?php
     # Autosave display
      if ($edit_autosave || $ctrls_to_save) { ?>
-     <div class="AutoSaveStatus" id="AutoSaveStatus<?php echo $field["ref"] ?>" style="display:none;"></div>
+     <div class="AutoSaveStatus">
+     <span id="AutoSaveStatus<?php echo $field["ref"] ?>" style="display:none;"></span>
+     </div>
      <?php } ?>
 
 
