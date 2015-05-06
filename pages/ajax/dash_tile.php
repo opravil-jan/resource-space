@@ -177,12 +177,12 @@ if(!is_numeric($tile_width) || !is_numeric($tile_height)){exit($lang["error-miss
 		?>
 		<style>
 			#<?php echo $tile_id;?> {
-				  padding: 0;
-				  overflow: hidden;
-				  position: relative;
-				  height: 100%;
-				  width: 100%;
-				  min-height: 180px;
+				padding: 0;
+				overflow: hidden;
+				position: relative;
+				height: 100%;
+				width: 100%;
+				min-height: 180px;
 			}
 			#<?php echo $tile_id;?> h2.thmbs_tile {
 				float: none;
@@ -193,12 +193,12 @@ if(!is_numeric($tile_width) || !is_numeric($tile_height)){exit($lang["error-miss
 				text-transform: capitalize;
 			}
 			#<?php echo $tile_id;?> p.no_resources {
-					float: none;
-					position: relative;
-					padding-left: 15px;
-					padding-right: 15px;
-					padding-top: 5px;
-				}
+				float: none;
+				position: relative;
+				padding-left: 15px;
+				padding-right: 15px;
+				padding-top: 5px;
+			}
 		</style>
 		<?php
 		exit;
@@ -217,12 +217,14 @@ if(!is_numeric($tile_width) || !is_numeric($tile_height)){exit($lang["error-miss
             $shadow=true;
 			$ref=$resources[$i]['ref'];
             $previewpath=get_resource_path($ref, true, $img_size, false, "jpg", -1, 1, false);
-            if (file_exists($previewpath)){
+            if (file_exists($previewpath))
+            	{
                 $previewpath=get_resource_path($ref,false,$img_size,false,"jpg",-1,1,false,$resources[$i]["file_modified"]);
-            }
-            else {
+            	}
+            else 
+            	{
                 $previewpath=$baseurl_short."gfx/".get_nopreview_icon($resources[$i]["resource_type"],$resources[$i]["file_extension"],"");$border=false;$shadow=false;
-            }
+            	}
             $modifiedurl=hook('searchpublicmodifyurl');
 			if($modifiedurl)
 				{
@@ -241,7 +243,8 @@ if(!is_numeric($tile_width) || !is_numeric($tile_height)){exit($lang["error-miss
 			{$icon="collection";}
 		else if(substr($search_string["search"],0,7)=="!recent" || substr($search_string["search"],0,5)=="!last")
 			{$icon="clock";}
-		else{$icon="search";}
+		else
+			{$icon="search";}
 		echo "<span class='".$icon."-icon'></span>";
 		?>
 		<h2 class="title multi_tile">
