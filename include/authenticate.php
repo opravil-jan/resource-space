@@ -368,7 +368,7 @@ else
 			$pagefilter,
 			$usergroup
 		);
-		$results = sql_query($site_text_query);
+		$results = sql_query($site_text_query,false,-1,true,0);
 
 		for($n = 0; $n < count($results); $n++)
 			{
