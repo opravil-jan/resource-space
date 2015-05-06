@@ -2223,18 +2223,15 @@ $sharing_userlists=false; // enable users to save/select predefined lists of use
 
 $public_collections_header_only=false; // show public collections page in header, omit from Themes and Manage Collections
 
-$ckeditor_toolbars="'Styles', 'Bold', 'Italic', 'Underline','FontSize', 'RemoveFormat', 'PasteFromWord', 'TextColor','BGColor'";
+$ckeditor_toolbars="'Styles', 'Bold', 'Italic', 'Underline','FontSize', 'RemoveFormat', 'TextColor','BGColor'";
 $ckeditor_content_toolbars="
-	{ name: 'basicstyles', items : [ 'Bold','Italic','Underline','Strike','Subscript','Superscript','-','RemoveFormat' ] },
-	{ name: 'clipboard', items : [ 'Cut','Copy','Paste','PasteText','PasteFromWord','-','Undo','Redo' ] },
-	{ name: 'colors', items : [ 'TextColor','BGColor' ] },
-	{ name: 'styles', items : [ 'Styles','Format','Font','FontSize' ] },
-	'/',
-	{ name: 'paragraph', items : [ 'NumberedList','BulletedList','-','Outdent','Indent','-','Blockquote',
-	'-','JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock','-','BidiLtr','BidiRtl' ] },
-	{ name: 'links', items : [ 'Link','Unlink','Anchor' ] },
+	{ name: 'basicstyles', items : [ 'Bold','Italic','Underline','Strike','RemoveFormat' ] },
+	{ name: 'clipboard', items : [ 'Cut','Copy','Paste','PasteText','-','Undo','Redo' ] },
+	{ name: 'styles', items : [ 'Format' ] },
+	{ name: 'paragraph', items : [ 'NumberedList','BulletedList' ] },
+	{ name: 'links', items : [ 'Link','Unlink' ] },
 	{ name: 'insert', items : [ 'Image','HorizontalRule'] },
-	{ name: 'tools', items : [ 'Source', 'Maximize', 'ShowBlocks','-','About' ] }
+	{ name: 'tools', items : [ 'Source', 'Maximize' ] }
 ";
 
 # Automatically save the edit form after making changes?
