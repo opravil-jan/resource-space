@@ -2064,7 +2064,7 @@ $lang["notify_resource_change_email_subject"]="A resource has been modified";
 $lang["notify_resource_change_email"]="A resource that you downloaded in the past [days] days has been modified . Click the link below to view the resource.<br /><br /><a href='[url]'>[url]</a>";
 $lang["passwordresetemail"]="Please click on the link below to reset your password.";
 $lang['password_reset_email_html'] = 'Please click on the link below to reset your password.<br /><br /><a href="[url]" target="_blank" >[url]</a>';
-$lang["passwordnewemail"]="Please click on the link below to set a new passsword for your account.";
+$lang["passwordnewemail"]="Please click on the link below to set a new password for your account.";
 $lang["passwordlinkexpired"]="Password reset link has either expired or been used. Please log in or request a new link."; 
 $lang["done__user_password_link_sent"]="If your email address was recognised as belonging to a valid account then an e-mail containing a link to reset your password has been sent.<br /><br /> If you do not receive an email and you believe your account is valid please check your email filters before contacting your system administrator.";
 $lang["user_password__introtextreset"]="Enter your e-mail address and a link you can use to reset your password will be sent to you.";
@@ -2079,7 +2079,7 @@ $lang["externalshare_using_permissions_from_user_group"]="If you are e-mailing e
 $lang["delete__nopassword"]="Please confirm that you would like to delete this resource.";
 
 $lang["collection_download_too_large"]="Sorry, this collection is too large to download as one file. Try reducing the size of the collection or selecting a smaller image size.";
-$lang["all__passwordnewemailhtml"]="[img_gfx/whitegry/titles/title.gif]<br /><br />Please click on the link below to set a new passsword for your account.<br /><br />URL: <a href=\"[url]\" target=\"_blank\" >[url]</a><br />username: [username]<br />[text_footer]" ;
+$lang["all__passwordnewemailhtml"]="[img_gfx/whitegry/titles/title.gif]<br /><br />Please click on the link below to set a new password for your account.<br /><br />URL: <a href=\"[url]\" target=\"_blank\" >[url]</a><br />username: [username]<br />[text_footer]" ;
 
 $lang['disk_size_no_upload_heading']="Uploading temporarily unavailable";
 $lang['disk_size_no_upload_explain']="Due to space constraints, uploading has been temporarily disabled. We apologize for any inconvenience.";
