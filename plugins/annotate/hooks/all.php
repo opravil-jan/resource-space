@@ -61,27 +61,35 @@ function HookAnnotateAllAdditionalheaderjs(){
 <script type="text/javascript" src="<?php echo $baseurl_short?>plugins/annotate/lib/jquery/js/jquery.annotate.js?css_reload_key=<?php echo $css_reload_key?>"></script>
 <script language="javascript">
 	function annotate(ref,k,w,h,annotate_toggle,page){
-
 		// Set function's optional arguments:
 		page = typeof page !== 'undefined' ? page : 1;
 
 		// Set defaults:
 		var url_params = '';
 
-		if(page != 1) {
+		if(page != 1) 
+			{
 			url_params = '&page=' + page;
-		}
+			}
 
-	jQuery("#toAnnotate").annotateImage({
-		getUrl: "<?php echo $baseurl_short?>plugins/annotate/pages/get.php?ref="+ref+"&k="+k+"&pw="+w+"&ph="+h + url_params,
-		saveUrl: "<?php echo $baseurl_short?>plugins/annotate/pages/save.php?ref="+ref+"&k="+k+"&pw="+w+"&ph="+h + url_params,
-		deleteUrl: "<?php echo $baseurl_short?>plugins/annotate/pages/delete.php?ref="+ref+"&k="+k + url_params,
-		useAjax: true,
-		<?php  if ($k==""){?> editable: true, <?php }
+		jQuery("#toAnnotate").annotateImage({
+			getUrl: "<?php echo $baseurl_short?>plugins/annotate/pages/get.php?ref="+ref+"&k="+k+"&pw="+w+"&ph="+h + url_params,
+			saveUrl: "<?php echo $baseurl_short?>plugins/annotate/pages/save.php?ref="+ref+"&k="+k+"&pw="+w+"&ph="+h + url_params,
+			deleteUrl: "<?php echo $baseurl_short?>plugins/annotate/pages/delete.php?ref="+ref+"&k="+k + url_params,
+			useAjax: true,
+			<?php  
+			if ($k=="")
+				{?> 
+				editable: true, 
+				<?php 
+				}
 			else
-		{ ?> editable: false, <?php } ?>  
-		toggle: annotate_toggle
-	});
+				{ ?> 
+				editable: false, 
+				<?php 
+				} ?>  
+			toggle: annotate_toggle
+		});
 	}
 </script>
 <?php }

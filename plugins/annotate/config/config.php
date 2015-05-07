@@ -11,3 +11,4 @@ $annotate_show_author=false;
 $annotate_font="helvetica";
 $annotate_pdf_output=false;
 $annotate_pdf_output_only_annotated=false;
+$annotate_admin_edit_access=array();

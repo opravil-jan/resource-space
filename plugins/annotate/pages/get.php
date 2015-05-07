@@ -50,11 +50,14 @@ for ($x=0;$x<count($notes);$x++){
 	$json.='"height":'.round($notes[$x]['height']).', ';
 	$json.='"text":"'.config_encode($notes[$x]['note']).'", ';
 	$json.='"id":"'.$notes[$x]['note_id'].'", ';
-	if (isset($userref) && ($notes[$x]['user']==$userref)){
-	$json.='"editable":true';
-	} else {
-	$json.='"editable":false';	
-}
+	if (isset($userref) && (($notes[$x]['user']==$userref) || in_array($usergroup,$annotate_admin_edit_access)))
+		{
+		$json.='"editable":true';
+		} 
+	else 
+		{
+		$json.='"editable":false';	
+		}
 	$json.="}";
 }
 $json.="]";
