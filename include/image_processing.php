@@ -1757,19 +1757,22 @@ function base64_to_jpeg( $imageData, $outputfile ) {
  
 }
 
-function extract_indd_pages ($filename){
+function extract_indd_pages($filename)
+    {
     $exiftool_fullpath = get_utility_path("exiftool");
-    if ($exiftool_fullpath!=false)
+    if ($exiftool_fullpath)
         {
-        $array=run_command($exiftool_fullpath.' -b -j -pageimage '.$filename);
-        $array=json_decode( $array);
+        $array = run_command($exiftool_fullpath.' -b -j -pageimage ' . escapeshellarg($filename));
+        $array = json_decode($array);
         
-        $array=$array[0]->PageImage;
-        
-        return $array;
-		}     
-}
- 
+        if (isset($array[0]->PageImage))
+        	{
+        	return $array[0]->PageImage;
+        	}
+        }
+    return false;
+    }
+
 function generate_file_checksum($resource,$extension,$anyway=false)
 	{
 	global $file_checksums;
