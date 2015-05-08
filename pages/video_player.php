@@ -15,11 +15,15 @@ elseif ($ffmpeg_preview_extension!="flv")
 	$flashfile=get_resource_path($ref,true,"pre",false,"flv",-1,1,false,"",$alternative);
 	$flashpath=get_resource_path($ref,false,"pre",false,"flv",-1,1,false,"",$alternative,false);
 	}
-if (!file_exists($flashfile))
+
+if (!file_exists($flashfile) || $video_preview_original)
         {
-	# Back out to playing the source file direct (not a preview). For direct FLV upload support - the file itself is an FLV. Or, with the preview functionality disabled, we simply allow playback of uploaded video files.
-	$flashfile=get_resource_path($ref,true,"",false,$ffmpeg_preview_extension,-1,1,false,"",$alternative);
-	$flashpath=get_resource_path($ref,false,"",false,$ffmpeg_preview_extension,-1,1,false,"",$alternative,false);
+	# Back out to playing the source file direct (not a preview). For direct MP4/FLV upload support - the file itself is an FLV/MP4. Or, with the preview functionality disabled, we simply allow playback of uploaded video files.
+	$origvideofile=get_resource_path($ref,true,"",false,$ffmpeg_preview_extension,-1,1,false,"",$alternative);
+	if(file_exists($origvideofile))
+	  {
+	  $flashpath=get_resource_path($ref,false,"",false,$ffmpeg_preview_extension,-1,1,false,"",$alternative,false);
+	  }
 	}
 
 $flashpath_raw=$flashpath;     

@@ -400,6 +400,10 @@ $ffmpeg_global_options = "";
 # were not intended to be the actual preview themselves.
 $ffmpeg_preview_force=false;
 
+# Option to always try and play the original file instead of preview - ueful if recent change to $ffmpeg_preview_force doesn't suit e.g. if all users are
+# on internal network and want to see HQ video
+$video_preview_original=false;
+
 # Encode preview asynchronous?
 $ffmpeg_preview_async=false;
 
