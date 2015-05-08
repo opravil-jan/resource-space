@@ -2,7 +2,7 @@
 
 <!--Resource Panel-->
 <div class="ResourcePanelShellLarge" id="ResourceShell<?php echo htmlspecialchars($ref)?>">
-	<div class="ResourcePanelLarge">
+	<div class="ResourcePanelLarge  <?php hook("xlthumbsviewpanelstyle");?>">
     <?php  if ($resource_type_icons) { ?>
      <div class="ResourceTypeIcon IconResourceType<?php echo $result[$n]["resource_type"];  ?>"></div>
     <?php }  ?>

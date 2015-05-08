@@ -2,7 +2,7 @@
 
 <!--Resource Panel-->
 <div class="ResourcePanelShell" id="ResourceShell<?php echo htmlspecialchars($ref)?>">
-	<div class="ResourcePanel">
+	<div class="ResourcePanel  <?php hook("thumbsviewpanelstyle");?>">
 	<?php  if ($resource_type_icons) { ?>
 	 <div class="ResourceTypeIcon IconResourceType<?php echo $result[$n]["resource_type"];  ?>"></div>
 	<?php }  ?>
