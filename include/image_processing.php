@@ -1971,27 +1971,23 @@ function extract_text($ref,$extension,$path="")
 	
 function get_image_orientation($file)
     {
-    $exiftool_fullpath = get_utility_path("exiftool");
-    if ($exiftool_fullpath==false)
+    $exiftool_fullpath = get_utility_path('exiftool');
+    if ($exiftool_fullpath == false)
         {
         return 0;
         }
-    else    
+    $orientation = run_command($exiftool_fullpath . ' -s -s -s -orientation ' . escapeshellarg($file));
+    $orientation = str_replace('Rotate', '', $orientation);
+    
+    if (strpos($orientation, 'CCW'))
         {
-        $orientation=run_command($exiftool_fullpath.' -s -s -s -orientation '.$file);
-        $orientation=str_replace("Rotate","",$orientation);
-        //only handles CW rotation, haven't seen CCW yet
-        if (strpos($orientation,"CCW")){$rotation="CCW";} else {$rotation="CW";}
-        if ($rotation=="CW")
-            {
-            $orientation=trim(str_replace("CW","",$orientation));
-            }
-        else
-            {
-            $orientation=trim(str_replace("CCW","",360-$orientation));
-            }
-        return $orientation;
+        $orientation = trim(str_replace('CCW', '', 360-$orientation));
+        } 
+    else 
+        {
+        $orientation = trim(str_replace('CW', '', $orientation));
         }
+    return $orientation;
     }
 
 function AutoRotateImage ($src_image,$ref=false){
