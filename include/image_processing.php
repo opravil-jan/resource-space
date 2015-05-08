@@ -1990,92 +1990,103 @@ function get_image_orientation($file)
     return $orientation;
     }
 
-function AutoRotateImage ($src_image,$ref=false){
-	# use $ref to pass a resource ID in case orientation data needs to be taken from a non-ingested image to properly rotate a preview image
-	global $imagemagick_path;
-	global $camera_autorotation_ext, $camera_autorotation_gm;
+function AutoRotateImage($src_image, $ref = false) 
+    {
+    # use $ref to pass a resource ID in case orientation data needs to be taken
+    # from a non-ingested image to properly rotate a preview image
+    global $imagemagick_path, $camera_autorotation_ext, $camera_autorotation_gm;
+    
+    if (!isset($imagemagick_path)) 
+        {
+        return false;
+        # for the moment, this only works for imagemagick
+        # note that it would be theoretically possible to implement this
+        # with a combination of exiftool and GD image rotation functions.
+        }
 
-	if (!isset($imagemagick_path)){
-		return false; // for the moment, this only works for imagemagick
-			      // note that it would be theoretically possible to implement this
-                              // with a combination of exiftool and GD image rotation functions.
-	}
     # Locate imagemagick.
     $convert_fullpath = get_utility_path("im-convert");
-    if ($convert_fullpath==false) {return false;}
+    if ($convert_fullpath == false) 
+        {
+        return false;
+        }
+    
+    $exploded_src = explode('.', $src_image);
+    $ext = $exploded_src[count($exploded_src) - 1];
+    $triml = strlen($src_image) - (strlen($ext) + 1);
+    $noext = substr($src_image, 0, $triml);
+    
+    if (count($camera_autorotation_ext) > 0 && (!in_array(strtolower($ext), $camera_autorotation_ext))) 
+        {
+        # if the autorotation extensions are set, make sure it is allowed for this extension
+        return false;
+        }
 
-	$exploded_src = explode('.',$src_image);
-	$ext = $exploded_src[count($exploded_src)-1];
-	$triml = strlen($src_image) - (strlen($ext)+1);
-	$noext = substr($src_image,0,$triml);
-
-	if (count($camera_autorotation_ext) > 0 && (!in_array(strtolower($ext),$camera_autorotation_ext))) { 
-		return false; // if the autorotation extensions are set, make sure it is allowed for this extension
-	}
-
-	$new_image = $noext . '-autorotated.' . $ext ;
-	$src_image = $src_image;
-
-	if ($camera_autorotation_gm) {
-		$exiftool_fullpath=get_utility_path("exiftool");
-		$orientation=get_image_orientation($src_image);
-			if ($orientation!=0)
-				{
-                if ($convert_fullpath!=false)
-                    {
-                    $command = $convert_fullpath .' '. $src_image .' -rotate +' . $orientation  .' '. $new_image;
-                    $wait = run_command($command);
-                    }
-				}
-		$command = $exiftool_fullpath. ' Orientation=1 '. $new_image;
-	}
-	else {
-		if($ref!=false){
-			# use the original file to get the orientation info
-			$extension=sql_value("select file_extension value from resource where ref=$ref",'');
-			$file=get_resource_path($ref,true,"",false,$extension,-1,1,false,"",-1);
-			# get the orientation
-			$orientation=get_image_orientation($file);
-			if ($orientation!=0){
-                if ($convert_fullpath!=false){
-                    $command = $convert_fullpath . ' -rotate +' . $orientation .' '. escapeshellarg($src_image) .' ' .escapeshellarg($new_image);
-                    $wait=run_command($command);
-                    # change the orientation metadata
-                    $exiftool_fullpath=get_utility_path("exiftool");
-                    $command = $exiftool_fullpath. ' Orientation=1 '. escapeshellarg($new_image);
+    $exiftool_fullpath = get_utility_path("exiftool");
+    $new_image = $noext . '-autorotated.' . $ext;
+    
+    if ($camera_autorotation_gm) 
+        {
+        $orientation = get_image_orientation($src_image);
+        if ($orientation != 0) 
+            {
+            $command = $convert_fullpath . ' ' . escapeshellarg($src_image) . ' -rotate +' . $orientation . ' ' . escapeshellarg($new_image);
+            run_command($command);
+            }
+        $command = $exiftool_fullpath . ' Orientation=1 ' . escapeshellarg($new_image);
+        } 
+    else
+        {
+        if ($ref != false) 
+            {
+            # use the original file to get the orientation info
+            $extension = sql_value("select file_extension value from resource where ref=$ref", '');
+            $file = get_resource_path($ref, true, "", false, $extension, -1, 1, false, "", -1);
+            # get the orientation
+            $orientation = get_image_orientation($file);
+            if ($orientation != 0) 
+                {
+                $command = $convert_fullpath . ' -rotate +' . $orientation . ' ' . escapeshellarg($src_image) . ' ' . escapeshellarg($new_image);
+                run_command($command);
+                # change the orientation metadata
+                $command = $exiftool_fullpath . ' Orientation=1 ' . escapeshellarg($new_image);
                 }
-			}
-		}
-		else{
-	    	$command = $convert_fullpath . ' ' . escapeshellarg($src_image) . ' -auto-orient ' .  escapeshellarg($new_image);
-			run_command($command);
-		}
-	}
-	if (file_exists($new_image)){
-		if(!$ref){
-			// preserve custom metadata fields with exiftool
-			$exiftool_fullpath=get_utility_path("exiftool");
-			// save the new orientation
-			//$new_orientation=run_command($exiftool_fullpath.' -s -s -s -orientation -n '.$new_image);
-			$old_orientation=run_command($exiftool_fullpath.' -s -s -s -orientation -n '.$src_image);
-			
-			$exiftool_copy_command=$exiftool_fullpath." -TagsFromFile ".$src_image." -all:all ".$new_image;
-			run_command($exiftool_copy_command);
-			// If orientation was empty there's no telling if rotation happened, so don't assume.
-			// Also, don't go through this step if the old orientation was set to normal
-			if($old_orientation!='' && $old_orientation!=1){
-				$fix_orientation = $exiftool_fullpath. ' Orientation=1 -n '. escapeshellarg($new_image);
-				run_command($fix_orientation);
-			}
-		}
+            } 
+        else
+            {
+            $command = $convert_fullpath . ' ' . escapeshellarg($src_image) . ' -auto-orient ' . escapeshellarg($new_image);
+            run_command($command);
+            }
+        }
 
-		unlink($src_image);
-		rename($new_image,$src_image);
-		return true;
-	} else {
-		return false;
-	}
-}
+    if (!file_exists($new_image)) 
+        {
+        return false;
+        }
+
+    if (!$ref) 
+        {
+        # preserve custom metadata fields with exiftool        
+        # save the new orientation
+        # $new_orientation=run_command($exiftool_fullpath.' -s -s -s -orientation -n '.$new_image);
+        $old_orientation = run_command($exiftool_fullpath . ' -s -s -s -orientation -n ' . escapeshellarg($src_image));
+        
+        $exiftool_copy_command = $exiftool_fullpath . " -TagsFromFile " . escapeshellarg($src_image) . " -all:all " . escapeshellarg($new_image);
+        run_command($exiftool_copy_command);
+        
+        # If orientation was empty there's no telling if rotation happened, so don't assume.
+        # Also, don't go through this step if the old orientation was set to normal
+        if ($old_orientation != '' && $old_orientation != 1) 
+            {
+            $fix_orientation = $exiftool_fullpath . ' Orientation=1 -n ' . escapeshellarg($new_image);
+            run_command($fix_orientation);
+            }
+        }
+    
+    unlink($src_image);
+    rename($new_image, $src_image);
+    return true; 
+    }
 
 function extract_icc_profile ($ref,$extension){
 	// this is provided for compatibility. However, we are now going to rely on the caller to tell us the
