@@ -135,13 +135,6 @@ function ProcessFolder($folder)
 		# Work out extension
 		$extension = explode(".", $file);
 		$extension = trim(strtolower($extension[count($extension)-1]));
-		 if (($filetype=="file") && (substr($file,0,1)!=".") && (strtolower($file)!="thumbs.db"))
-			 {
-			     $extension=strtolower($extension); //********cmay added this line************
-			 # Check to see if extension is banned, do not add if it is banned
-			   if(array_search($extension, $banned_extensions)===false){ //*******cmay added this line and the appropriate closing bracket on down the page**********
-			 # Already exists?
-			 if (!isset($done[$shortpath]))
 		
 		if ($staticsync_mapped_category_tree)
 			{
@@ -165,7 +158,6 @@ function ProcessFolder($folder)
 
 			/* Below Code Adapted  from CMay's bug report */
 			global $banned_extensions;
-			$extension=strtolower($extension);
 			# Check to see if extension is banned, do not add if it is banned
 			if(array_search($extension, $banned_extensions)){continue;}
 			/* Above Code Adapted from CMay's bug report */
