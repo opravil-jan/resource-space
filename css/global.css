@@ -256,11 +256,13 @@ input.defaultbutton {position: absolute; left: -100%; width: 0; height: 0;}
 .Question .Lineup {margin: 3px 0px;}
 .Question .stdwidth,.stdwidth{width: 360px;font-size: 1em;margin: 3px 0px;}
 .Question select {font-size: 1em ;margin: 3px 0px;}
+.Question select .optionWeekend { background-color: #ccc; }
 .Question .medwidth,.medwidth{width: 250px;font-size: 1em;margin: 3px 0px;}
 .Question .shrtwidth,.shrtwidth{width: 145px;font-size: 1em;margin: 3px 0px;}
 .Question .vshrtwidth{width: 93px;font-size: 0.9em;margin: 3px 0px;}
 .Question .medcomplementwidth{width: 105px;font-size: 1em;margin: 3px 0px 0px 2px;}
 .Question .Inline {float: left;margin: 3px 10px 0px 0px;}
+.Question .Inline label { float: none; font-weight: normal; margin-top: 0; width: auto; }
 .Question .tickset {float: left;}
 .Question .OptionTable, .Question .OptionToggle {margin: 0 0 0 190px;padding:0;}
 .Question .InnerLabel {width:60px; margin-top:  0px;}
@@ -268,6 +270,7 @@ input.defaultbutton {position: absolute; left: -100%; width: 0; height: 0;}
 .Question.FieldSaveError {background-color: #F1A9A0;}
 
 .FormWide .Question label{width: 20%}
+.FormWide .Question .Inline label { width: auto; }
 .FormWide .Question .stdwidth, .FormWide .Question .tickset{width: 80%}
 .FormWide .Question .tickset .stdwidth{width: 99%}
 .FormWide .Question .FormHelp {margin: 0px 10px 10px 20%;}

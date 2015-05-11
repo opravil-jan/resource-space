@@ -179,11 +179,12 @@ include "../../include/header.php";
                         $sel = true;
                         $expires_selected = 'selected';
                         }
-                    ?>
-                    <option <?php if (($d=="Sun") || ($d=="Sat")) { ?>style="background-color:#cccccc"<?php } ?> 
-                        value="<?php echo $dateval ?>" <?php echo $expires_selected ?>> 
-                        <?php echo nicedate($dateval,false,true)?>
-                    </option>
+                    $option_class = '';
+                    if (($d == "Sun") || ($d == "Sat"))
+                        {
+                        $option_class = 'optionWeekend';
+                        } ?>
+                    <option class="<?php echo $option_class ?>" value="<?php echo $dateval ?>" <?php echo $expires_selected ?>><?php echo nicedate($dateval,false,true)?></option>
                     <?php
                     }
                 if ($request["expires"]!="" && $sel==false)

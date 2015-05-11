@@ -72,13 +72,19 @@ include "../include/header.php";
             <label for="deadline"><?php echo $lang["deadline"]?></label>
             <select id="deadline" name="deadline" class="stdwidth">
                 <option value=""><?php echo $lang["nodeadline"]?></option>
-                <?php for ($n=0;$n<=150;$n++)
-                {
-                    $date=time()+(60*60*24*$n);
-                    ?><option <?php $d=date("D",$date);if (($d=="Sun") || ($d=="Sat")) { ?>style="background-color:#cccccc"<?php } ?> value="<?php echo date("Y-m-d",$date)?>"><?php echo nicedate(date("Y-m-d",$date),false,true)?></option>
+                <?php 
+                for ($n=0;$n<=150;$n++)
+                    {
+                    $date = time()+(60*60*24*$n);
+                    $d    = date("D",$date);
+                    $option_class = '';
+                    if (($d == "Sun") || ($d == "Sat"))
+                        {
+                        $option_class = 'optionWeekend';
+                        } ?>
+                    <option class="<?php echo $option_class ?>" value="<?php echo date("Y-m-d",$date)?>"><?php echo nicedate(date("Y-m-d",$date),false,true)?></option>
                     <?php
-                }
-                ?>
+                    } ?>
             </select>
             <div class="clearerleft"></div>
         </div>

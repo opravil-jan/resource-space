@@ -138,15 +138,18 @@ if($editing && !$editexternalurl)
                             for ($n=1;$n<=$resource_share_expire_days;$n++)
                                 {
                                 $date       = time() + (60*60*24*$n);
-                                $is_weekend = (in_array(date('D', $date), array('Sat', 'Sun')));
                                 $ymd_date   = date('Y-m-d', $date);
                                 $selected   = (substr(getvalescaped("editexpiration",""),0,10) == $ymd_date);
                                 $date_text  = nicedate($ymd_date,false,true);
+                                $option_class = '';
+                                if (($d == "Sun") || ($d == "Sat"))
+                                    {
+                                    $option_class = 'optionWeekend';
+                                    }
                                 ?>
-                                <option <?php if ($is_weekend) { ?>style="background-color:#cccccc"<?php } ?> value="<?php echo $ymd_date ?>" <?php if($selected) echo "selected"; ?>><?php echo $date_text ?></option>
+                                <option class="<?php echo $option_class ?>" value="<?php echo $ymd_date ?>" <?php if($selected) echo "selected"; ?>><?php echo $date_text ?></option>
                                 <?php
-                                }
-                            ?>
+                                } ?>
                             </select>
                             <div class="clearerleft"> </div>
                         </div>

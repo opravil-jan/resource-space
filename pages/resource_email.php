@@ -286,10 +286,17 @@ for ($n=$useraccess;$n<=1;$n++)  { ?>
 <label><?php echo $lang["externalselectresourceexpires"]?></label>
 <select name="expires" class="stdwidth">
 <option value=""><?php echo $lang["never"]?></option>
-<?php for ($n=1;$n<=150;$n++)
+<?php 
+for ($n=1;$n<=150;$n++)
 	{
-	$date=time()+(60*60*24*$n);
-	?><option <?php $d=date("D",$date);if (($d=="Sun") || ($d=="Sat")) { ?>style="background-color:#cccccc"<?php } ?> value="<?php echo date("Y-m-d",$date)?>"><?php echo nicedate(date("Y-m-d",$date),false,true)?></option>
+	$date = time()+(60*60*24*$n);
+	$d    = date("D",$date);
+	$option_class = '';
+	if (($d == "Sun") || ($d == "Sat"))
+		{
+		$option_class = 'optionWeekend';
+		} ?>
+	<option class="<?php echo $option_class ?>" value="<?php echo date("Y-m-d",$date)?>"><?php echo nicedate(date("Y-m-d",$date),false,true)?></option>
 	<?php
 	}
 ?>
