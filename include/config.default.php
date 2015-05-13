@@ -1787,6 +1787,8 @@ $paypal_url="https://www.paypal.com/cgi-bin/webscr";
 # ------------------------------------------------------------------------------------------------------------------
 $syncdir="/var/www/r2000/accounted"; # The sync folder
 $nogo="[folder1]"; # A list of folders to ignore within the sign folder.
+# Maximum number of files to process per execution of staticsync.php
+$staticsync_max_files = 10000;
 $staticsync_autotheme=true; # Automatically create themes based on the first and second levels of the sync folder structure.
 # Allow unlimited theme levels to be created based on the folder structure. 
 # Script will output a new $theme_category_levels number which must then be updated in config.php
