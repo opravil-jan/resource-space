@@ -142,7 +142,8 @@ if($editing && !$editexternalurl)
                                 $selected   = (substr(getvalescaped("editexpiration",""),0,10) == $ymd_date);
                                 $date_text  = nicedate($ymd_date,false,true);
                                 $option_class = '';
-                                if (($d == "Sun") || ($d == "Sat"))
+								$day_date = date('D', $date);
+                                if (($day_date == "Sun") || ($day_date == "Sat"))
                                     {
                                     $option_class = 'optionWeekend';
                                     }
