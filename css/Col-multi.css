@@ -11,7 +11,7 @@ a:active {color:#737373;}
 
 input[readonly] {color: #000000;}
 
-#Header {border-bottom: 1px solid #d0d0d0;background: url(../gfx/whitegry/titles/title.gif) no-repeat;}
+#Header {border-bottom: 1px solid #d0d0d0;background: #fff url(../gfx/whitegry/titles/title.gif) no-repeat 30px 12px;margin:0 0 25px 0;padding:5px 20px 0 20px;}
 #Footer {border-top: 1px solid #BBBBBB;}
 #TextHeader, #TextHeader a {color:#616161;}
 #TextDesc{color:#616161;}
