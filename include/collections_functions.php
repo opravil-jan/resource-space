@@ -1556,14 +1556,14 @@ function change_collection_link($collection)
     global $lang;
     return '<a onClick="ChangeCollection('.$collection.',\'\');return false;" href="collections.php?collection='.$collection.'">&gt;&nbsp;'.$lang["selectcollection"].'</a>';
     }
-
+if(!function_exists("get_collection_external_access")){
 function get_collection_external_access($collection)
 	{
 	# Return all external access given to a collection.
 	# Users, emails and dates could be multiple for a given access key, an in this case they are returned comma-separated.
 	return sql_query("select access_key,group_concat(DISTINCT user ORDER BY user SEPARATOR ', ') users,group_concat(DISTINCT email ORDER BY email SEPARATOR ', ') emails,max(date) maxdate,max(lastused) lastused,access,expires,usergroup from external_access_keys where collection='$collection' group by access_key order by date");
 	}
-	
+}
 function delete_collection_access_key($collection,$access_key)
 	{
 	# Get details for log
@@ -1822,6 +1822,7 @@ function edit_collection_external_access($key,$access=-1,$expires="",$group="")
 	if ($key==""){return false;}
 	# Update the expiration and acccess
 	sql_query("update external_access_keys set access='$access', expires=" . (($expires=="")?"null":"'" . $expires . "'") . ",date=now(),usergroup='$group' where access_key='$key'");
+	hook("edit_collection_external_access","",array($key,$access,$expires,$group));
 	return true;
 	}
 	
