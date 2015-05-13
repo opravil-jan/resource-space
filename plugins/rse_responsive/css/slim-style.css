@@ -172,7 +172,7 @@
 }
 @media(max-width:1200px) {
     #Header {
-        height: 47px;
+        min-height: 47px;
     }
     #HeaderButtons {
         display: block !important;
@@ -283,6 +283,12 @@
         max-width: 160px;
         margin-top: 5px;
         height:auto;
+    }
+    .HeaderImgLink {
+        clear: both;
+        display: block;
+        width: 100%;
+        text-align: left;
     }
 }
 @media(min-width:1201px) {

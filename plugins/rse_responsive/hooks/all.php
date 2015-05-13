@@ -59,13 +59,10 @@ function HookRse_responsiveAllResponsiveheader()
     ?>
     <div id="HeaderResponsive">
     <?php
-    global $slimheader;
-    if($slimheader){serveHeader();}
     }
 function HookRse_responsiveAllHeadertop()
     {
-    global $slimheader;
-    if(!$slimheader){serveHeader();}
+    serveHeader();
     }
 function HookRse_responsiveAllReplaceheaderfullnamelink() 
     {
