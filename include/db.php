@@ -342,7 +342,7 @@ function sql_query($sql,$cache=false,$fetchrows=-1,$dbstruct=true, $logthis=2)
 		if($logthis==2)
 			{
 			// Ignore any SELECTs if the decision to log has not been indicated by function call, 	
-			if(strtoupper(substr($sql,0,6))=="SELECT")
+			if(strtoupper(substr(trim($sql),0,6))=="SELECT")
 				{$requirelog=false;}
 			}
 			
@@ -369,7 +369,7 @@ function sql_query($sql,$cache=false,$fetchrows=-1,$dbstruct=true, $logthis=2)
 				}
 			
 			$mlf=@fopen($mysql_log_location,"ab");
-			fwrite($mlf,$sql . ";\n"); // Append the ';' so the file can be used to replay the changes
+			fwrite($mlf,"/* " . date("Y-m-d H:i:s") . " */ " .  $sql . ";\n"); // Append the ';' so the file can be used to replay the changes
 			fclose ($mlf);		
 			}
 		
