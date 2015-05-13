@@ -133,6 +133,7 @@ if($create)
 		# Other tile types - unknown, such as added by a plugin (RSE Analytics), allow link and title to be specified.
 		$link=getvalescaped("link","");
 		$title=getvalescaped("title","");
+		$allusers=getvalescaped("all_users",FALSE);
 		}
 		
 	include "../include/header.php";
