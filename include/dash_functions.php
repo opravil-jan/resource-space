@@ -4,15 +4,16 @@
  * Functions for the homepage dash tiles
  * 
  */
-function create_dash_tile($url,$link,$title,$reload_interval,$all_users,$default_order_by,$resource_count)
+function create_dash_tile($url,$link,$title,$reload_interval,$all_users,$default_order_by,$resource_count,$text="",$delete=1)
 	{
-	if($all_users && !((checkperm("h") && !checkperm("hdta")) || (checkperm("dta") && !checkperm("h")))){$all_users=false;}
+	
 	$rebuild_order=TRUE;
 
 	# Validate Parameters
 	if(empty($reload_interval) || !is_numeric($reload_interval))
 		{$reload_interval=0;}
-	
+
+	$delete = $delete?1:0;
 	$all_users=$all_users?1:0;
 
 	if(!is_numeric($default_order_by))
@@ -23,7 +24,7 @@ function create_dash_tile($url,$link,$title,$reload_interval,$all_users,$default
 	$resource_count = $resource_count?1:0;
 
 	# De-Duplication of tiles on creation
-	$existing = sql_query("SELECT ref FROM dash_tile WHERE url='".$url."' AND link='".$link."' AND title='".$title."' AND reload_interval_secs=".$reload_interval." AND all_users=".$all_users." AND resource_count=".$resource_count);
+	$existing = sql_query("SELECT ref FROM dash_tile WHERE url='".$url."' AND link='".$link."' AND title='".$title."' AND txt='".$text."' AND reload_interval_secs=".$reload_interval." AND all_users=".$all_users." AND resource_count=".$resource_count);
 	if(isset($existing[0]["ref"]))
 		{
 		$tile=$existing[0]["ref"];
@@ -31,7 +32,7 @@ function create_dash_tile($url,$link,$title,$reload_interval,$all_users,$default
 		}
 	else
 		{
-		$result = sql_query("INSERT INTO dash_tile (url,link,title,reload_interval_secs,all_users,default_order_by,resource_count) VALUES ('".$url."','".$link."','".$title."',".$reload_interval.",".$all_users.",".$default_order_by.",".$resource_count.")");
+		$result = sql_query("INSERT INTO dash_tile (url,link,title,reload_interval_secs,all_users,default_order_by,resource_count,allow_delete,txt) VALUES ('".$url."','".$link."','".$title."',".$reload_interval.",".$all_users.",".$default_order_by.",".$resource_count.",".$delete.",'".$text."')");
 		$tile=sql_insert_id();
 		}
 
@@ -40,26 +41,14 @@ function create_dash_tile($url,$link,$title,$reload_interval,$all_users,$default
 	
 	if($all_users==1)
 		{
-		$users = sql_query("SELECT ref FROM user");
-		sql_query("START TRANSACTION");
-		foreach($users as $user)
-			{
-			//New "all user" panels should be positioned at the start of their list rather than in the default position to highlight them to the user
-			$result=add_user_dash_tile($user["ref"],$tile,5);
-			if(!$result)
-				{
-				sql_query("ROLLBACK");
-				return false;
-				}
-			}
-		$result = sql_query("COMMIT");
+		$result = sql_query("INSERT user_dash_tile (user,dash_tile,order_by) SELECT user.ref,'".$tile."',5 FROM user");
 		}
 	return $tile;
 	}
 
 function delete_dash_tile($tile,$cascade=TRUE)
 	{
-	sql_query("DELETE FROM dash_tile WHERE ref='".$tile."'");
+	sql_query("DELETE FROM dash_tile WHERE ref='".$tile."' AND allow_delete=1");
 	if($cascade)
 		{
 		sql_query("DELETE FROM user_dash_tile WHERE dash_tile='".$tile."'");
@@ -91,18 +80,21 @@ function get_tile($tile)
  	}
 function get_default_dash()
 	{
-	global $baseurl,$baseurl_short,$lang;
+	global $baseurl,$baseurl_short,$lang,$anonymous_login,$username,$dash_tile_shadows;
 	#Build Tile Templates
 	$tiles = sql_query("SELECT dash_tile.ref AS 'tile',dash_tile.title,dash_tile.url,dash_tile.reload_interval_secs,dash_tile.link,dash_tile.default_order_by as 'order_by' FROM dash_tile WHERE all_users=1 ORDER BY default_order_by");
 	$order=10;
 	if(count($tiles)==0){echo $lang["nodashtilefound"];exit;}
 	foreach($tiles as $tile)
 		{
-		if($order != $tile["order_by"] || ($tile["order_by"] % 10) > 0){update_default_dash_tile_order($tile["tile"],$order);}
-		$order+=10;
+		if(!(isset($anonymous_login) && $anonymous_login==$username))
+			{
+			if($order != $tile["order_by"] || ($tile["order_by"] % 10) > 0){update_default_dash_tile_order($tile["tile"],$order);}
+			$order+=10;
+			}
 		?>
 		<a href="<?php echo $baseurl."/".htmlspecialchars($tile["link"]);?>" onClick="if(dragging){dragging=false;e.defaultPrevented;}" class="HomePanel DashTile DashTileDraggable" id="tile<?php echo htmlspecialchars($tile["tile"]);?>">
-			<div id="contents_tile<?php echo htmlspecialchars($tile["tile"]);?>" class="HomePanelIN HomePanelDynamicDash">
+			<div id="contents_tile<?php echo htmlspecialchars($tile["tile"]);?>" class="HomePanelIN HomePanelDynamicDash <?php echo ($dash_tile_shadows)? "TileContentShadow":"";?>">
 				<?php if (strpos($tile["url"],"dash_tile.php")!==false) {
                                 # Only pre-render the title if using a "standard" tile and therefore we know the H2 will be in the target data.
                                 ?>
@@ -119,61 +111,86 @@ function get_default_dash()
 		</a>
 		<?php
 		}
-		?>
-	<div id="dash_tile_bin"><span class="dash_tile_bin_text"><?php echo $lang["tilebin"];?></span></div>
-	<div id="delete_dialog" style="display:none;"></div>
-	<script>
-		function deleteDefaultDashTile(id) {
-			jQuery.post( "<?php echo $baseurl?>/pages/ajax/dash_tile.php",{"tile":id,"delete":"true"},function(data){
-				jQuery("#tile"+id).remove();
-			});
-		}
-		function updateDashTileOrder(index,tile) {
-			jQuery.post( "<?php echo $baseurl?>/pages/ajax/dash_tile.php",{"tile":tile,"new_index":((index*10)-5)});
-		}
-		var dragging=false;
 
-		jQuery(function() {
-		 	jQuery("#HomePanelContainer").sortable({
-		  	  items: ".DashTileDraggable",
-		  	  start: function(event,ui) {
-		  	  	jQuery("#dash_tile_bin").show();
-		  	  	dragging=true;
-		  	  },
-		  	  stop: function(event,ui) {
-	          	jQuery("#dash_tile_bin").hide();
-		  	  },
-	          update: function(event, ui) {
-	          	nonDraggableTiles = jQuery(".HomePanel").length - jQuery(".DashTileDraggable").length;
-	          	newIndex = ui.item.index() - nonDraggableTiles;
-	          	var id=jQuery(ui.item).attr("id").replace("tile","");
-	          	updateDashTileOrder(newIndex,id);
-	          }
+	if(!(isset($anonymous_login) && $anonymous_login==$username))
+		{ ?>
+		<div id="dash_tile_bin"><span class="dash_tile_bin_text"><?php echo $lang["tilebin"];?></span></div>
+		<div id="delete_dialog" style="display:none;"></div>
+	
+		<script>
+			function deleteDefaultDashTile(id) {
+				jQuery.post( "<?php echo $baseurl?>/pages/ajax/dash_tile.php",{"tile":id,"delete":"true"},function(data){
+					jQuery("#tile"+id).remove();
+				});
+			}
+			function updateDashTileOrder(index,tile) {
+				index=index+1;
+				jQuery.post( "<?php echo $baseurl?>/pages/ajax/dash_tile.php",{"tile":tile,"new_index":((index*10)+10)});
+			}
+			var dragging=false;
+
+			jQuery(function() {
+			 	jQuery("#HomePanelContainer").sortable({
+			  	  items: ".DashTileDraggable",
+			  	  start: function(event,ui) {
+			  	  	jQuery("#dash_tile_bin").show();
+			  	  	dragging=true;
+			  	  },
+			  	  stop: function(event,ui) {
+		          	jQuery("#dash_tile_bin").hide();
+			  	  },
+		          update: function(event, ui) {
+		          	nonDraggableTiles = jQuery(".HomePanel").length - jQuery(".DashTileDraggable").length;
+		          	newIndex = ui.item.index() - nonDraggableTiles;
+		          	var id=jQuery(ui.item).attr("id").replace("tile","");
+		          	updateDashTileOrder(newIndex,id);
+		          }
+			  	});
+			    jQuery("#dash_tile_bin").droppable({
+					accept: ".DashTileDraggable",
+					activeClass: "ui-state-hover",
+					hoverClass: "ui-state-active",
+					drop: function(event,ui) {
+						var id=jQuery(ui.draggable).attr("id");
+						id = id.replace("tile","");
+						title = jQuery(ui.draggable).find(".title").html();
+						jQuery("#dash_tile_bin").hide();
+						jQuery("#delete_dialog").dialog({
+					    	title:'<?php echo $lang["dashtiledelete"]; ?>',
+					    	modal: true,
+							resizable: false,
+							dialogClass: 'delete-dialog no-close',
+					        buttons: {
+					            "<?php echo $lang['confirmdefaultdashtiledelete'] ?>": function() {deleteDefaultDashTile(id); jQuery(this).dialog("close");},    
+					            "<?php echo $lang['cancel'] ?>": function() { jQuery(this).dialog('close'); }
+					        }
+					    });
+					}
+		    	});
 		  	});
-		    jQuery("#dash_tile_bin").droppable({
-				accept: ".DashTileDraggable",
-				activeClass: "ui-state-hover",
-				hoverClass: "ui-state-active",
-				drop: function(event,ui) {
-					var id=jQuery(ui.draggable).attr("id");
-					id = id.replace("tile","");
-					title = jQuery(ui.draggable).find(".title").html();
-					jQuery("#dash_tile_bin").hide();
-					jQuery("#delete_dialog").dialog({
-				    	title:'<?php echo $lang["dashtiledelete"]; ?>',
-				    	modal: true,
-						resizable: false,
-						dialogClass: 'delete-dialog no-close',
-				        buttons: {
-				            "<?php echo $lang['confirmdefaultdashtiledelete'] ?>": function() {deleteDefaultDashTile(id); jQuery(this).dialog("close");},    
-				            "<?php echo $lang['cancel'] ?>": function() { jQuery(this).dialog('close'); }
-				        }
-				    });
-				}
-	    	});
-	  	});
-	</script>
+		</script>
+		<?php
+		} ?>
+	<style>
+	.HomePanelDynamicDash h2, .HomePanelThemes h2 {
+		background:none !important;
+	}
+	</style>
 	<?php
+	}
+
+function existing_tile($title,$all_users,$url,$link,$reload_interval,$resource_count,$text="")
+	{
+	$sql = "SELECT ref FROM dash_tile WHERE url='".$url."' AND link='".$link."' AND title='".$title."' AND reload_interval_secs=".$reload_interval." AND all_users=".$all_users." AND resource_count=".$resource_count." AND txt='".$text."'";
+	$existing = sql_query($sql);
+	if(isset($existing[0]["ref"]))
+		{
+		return true;
+		}
+	else
+		{
+		return false;
+		}
 	}
 
 
@@ -251,7 +268,7 @@ function append_user_position($user)
 
 function get_user_dash($user)
 	{
-	global $baseurl,$baseurl_short,$lang;
+	global $baseurl,$baseurl_short,$lang,$dash_tile_shadows;
 	#Build User Dash and recalculate order numbers on display
 	$user_tiles = sql_query("SELECT dash_tile.ref AS 'tile',dash_tile.title,dash_tile.all_users,dash_tile.url,dash_tile.reload_interval_secs,dash_tile.link,user_dash_tile.ref AS 'user_tile',user_dash_tile.order_by FROM user_dash_tile LEFT JOIN dash_tile ON user_dash_tile.dash_tile = dash_tile.ref WHERE user_dash_tile.user='".$user."' ORDER BY user_dash_tile.order_by");
 	$order=10;
@@ -263,20 +280,18 @@ function get_user_dash($user)
 		<a 
 			href="<?php echo $baseurl."/".htmlspecialchars($tile["link"]);?>" 
 			onClick="if(dragging){dragging=false;e.defaultPrevented}return CentralSpaceLoad(this,true);" 
-			class="HomePanel DashTile DashTileDraggable <?php echo ($tile['all_users']==1)? 'allUsers':''; ?>"
+			class="HomePanel DashTile DashTileDraggable <?php echo ($tile['all_users']==1)? 'allUsers':'';?>"
 			tile="<?php echo $tile['tile']; ?>"
 			id="user_tile<?php echo htmlspecialchars($tile["user_tile"]);?>"
 		>
-			<div id="contents_user_tile<?php echo htmlspecialchars($tile["user_tile"]);?>" class="HomePanelIN HomePanelDynamicDash">
-				
-                                
+			<div id="contents_user_tile<?php echo htmlspecialchars($tile["user_tile"]);?>" class="HomePanelIN HomePanelDynamicDash <?php echo ($dash_tile_shadows)? "TileContentShadow":"";?>">                  
 				<script>
 				jQuery(function(){
 					var height = jQuery("#contents_user_tile<?php echo htmlspecialchars($tile["user_tile"]);?>").height();
 					var width = jQuery("#contents_user_tile<?php echo htmlspecialchars($tile["user_tile"]);?>").width();
 					jQuery('#contents_user_tile<?php echo htmlspecialchars($tile["user_tile"]) ?>').load("<?php echo $baseurl."/".$tile["url"]."&tile=".htmlspecialchars($tile["tile"]);?>&user_tile=<?php echo htmlspecialchars($tile["user_tile"]);?>&tlwidth="+width+"&tlheight="+height);
 				});
-			</script>
+				</script>
 			</div>
 			
 		</a>
@@ -305,7 +320,8 @@ function get_user_dash($user)
 		echo "<script>";
 		} ?>
 		function updateDashTileOrder(index,tile) {
-			jQuery.post( "<?php echo $baseurl?>/pages/ajax/dash_tile.php",{"user_tile":tile,"new_index":((index*10)-5)});
+			index=index+1;
+			jQuery.post( "<?php echo $baseurl?>/pages/ajax/dash_tile.php",{"user_tile":tile,"new_index":((index*10)+10)});
 		}
 		var dragging=false;
 
@@ -322,6 +338,7 @@ function get_user_dash($user)
 	          update: function(event, ui) {
 	          	nonDraggableTiles = jQuery(".HomePanel").length - jQuery(".DashTileDraggable").length;
 	          	newIndex = ui.item.index() - nonDraggableTiles;
+	          	console.log(nonDraggableTiles);
 	          	var id=jQuery(ui.item).attr("id").replace("user_tile","");
 	          	updateDashTileOrder(newIndex,id);
 	          }
@@ -404,6 +421,11 @@ function get_user_dash($user)
     	?>
 	  	});
 	</script>
+	<style>
+	.HomePanelDynamicDash h2, .HomePanelThemes h2 {
+		background:none !important;
+	}
+	</style>
 	<?php
 	}
 
@@ -413,7 +435,7 @@ function get_user_dash($user)
  */
 function tileStyle($tile_type)
 	{
-	global $lang,$tile_styles;
+	global $lang,$tile_styles,$promoted_resource,$resource_count;
 	?>
 	<div class="Question">
 		<label for="tltype" class="stdwidth"><?php echo $lang["dashtilestyle"];?></label> 
@@ -428,7 +450,7 @@ function tileStyle($tile_type)
 							<input type="radio" class="tlstyle" id="tile_style_<?php echo $style;?>" name="tlstyle" value="<?php echo $style;?>" <?php echo $check? "checked":"";?>/>
 						</td>
 						<td align="left" valign="middle" >
-							<label class="customFieldLabel" for="tile_style_<?php echo $style;?>"><?php echo $style;?></label>
+							<label class="customFieldLabel" for="tile_style_<?php echo $style;?>"><?php echo $lang["tile_".$style];?></label>
 						</td>
 						<?php
 						$check=false;
@@ -439,32 +461,4 @@ function tileStyle($tile_type)
 		<div class="clearerleft"> </div>
 	</div>
 	<?php
-	if($tile_type=="srch")
-		{?>
-		<div class="Question" id="showresourcecount" >
-			<label for="tltype" class="stdwidth"><?php echo $lang["showresourcecount"];?></label> 
-			<table>
-				<tbody>
-					<tr>
-						<td width="10" valign="middle" >
-							<input type="checkbox" id="resource_count" name="resource_count" value="1" />
-						</td>
-					</tr>
-				</tbody>
-			</table>
-			<div class="clearerleft"> </div>
-		</div>
-		<script>
-			jQuery(".tlstyle").change(function(){
-				checked=jQuery(".tlstyle:checked").val();
-				if(checked=="thmbs" || checked=="multi") {
-					jQuery("#showresourcecount").show();
-				}
-				else {
-					jQuery("#showresourcecount").hide();
-				}
-			});
-		</script>
-	<?php
-		}
 	}

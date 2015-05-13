@@ -261,7 +261,13 @@ $slideshow_big=false;
 
 # Home Dash - RapiDash
 $home_dash = true;
+# Define the available styles per type.
 $tile_styles["srch"]=array("thmbs","multi");
+# Place the default dash (tiles set for all_users) on the home page for anonymous users with none of the drag 'n' drop functionality.
+$anonymous_default_dash=true;
+# use shadows on tile content (Suitable for transparent tiles)
+$dash_tile_shadows=false;
+
 
 # Optional 'quota size' for allocation of a set amount of disk space to this application. Value is in GB.
 # Note: Unix systems only.

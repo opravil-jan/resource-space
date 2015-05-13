@@ -2092,10 +2092,11 @@ $lang["pushtoallusers"]="Push this dash tile to all users?";
 $lang["createnewdashtile"]="Create new dash tile";
 $lang["enterdefaultorderby"]="Enter default position number";
 $lang["dashtiletitle"]="Title";
+$lang["dashtiletext"]="Text";
 $lang["nodashtilefound"]="No matching dash tile was found";
 $lang["existingdashtilefound"]="The tile specified already exists on your Dash.";
 $lang["invaliddashtile"]="Invalid dash tile reference";
-$lang["dashtilestyle"]="Dash Tile style";
+$lang["dashtilestyle"]="Dash tile style";
 $lang["returntopreviouspage"]="Return to previous page";
 $lang["showresourcecount"]="Show resource count?";
 $lang["tilebin"]="Remove";
@@ -2106,10 +2107,14 @@ $lang["manage_own_dash"]="Manage own dash";
 $lang["manage_all_dash_h"]="Manage default dash / all user tiles (Requires h permission)";
 $lang["manage_all_dash"]="Manage default dash / all user tiles";
 $lang["dashtiledeleteaction"]="What delete action would you like to take?";
-$lang["confirmdashtiledelete"]="Delete Tile from my dash";
-$lang["confirmdefaultdashtiledelete"]="Delete Tile for all users";
+$lang["confirmdashtiledelete"]="Delete tile from my dash";
+$lang["confirmdefaultdashtiledelete"]="Delete tile for all users";
 $lang["dashtiledelete"]="Delete dash tile";
 $lang["error-missingtileheightorwidth"]="Missing tile height or width";
+$lang["dashtileimage"]="Dash tile image";
+#Tile style strings
+$lang["tile_thmbs"]="Single";
+$lang["tile_multi"]="Multi";
 /* * End - User Dash Strings * */
 
 /* * Start - Plugin Category Strings * */
