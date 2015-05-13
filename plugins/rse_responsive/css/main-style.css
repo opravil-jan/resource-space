@@ -445,11 +445,11 @@
         width:250px;
         margin-left:auto;
         margin-right:auto;
-        min-height:65px;
+        min-height:145px;
         height:auto;
     }
     .HomePanelIN {
-        min-height:65px;
+        min-height:145px;
         height:auto;
     }
 
@@ -700,6 +700,12 @@
     .backtoresults a {
         width:100%;
     }
+    .RecordHeader .backtoresults a.upLink, 
+    .RecordHeader .backtoresults a.nextLink {
+        padding-left:0px;
+        margin-left:0px;
+        border-left: none;
+    }
 }
 
 /* My Collections */
@@ -726,7 +732,7 @@
 }
 @media(max-width:800px) {
     #collectionform .Listview {
-        overflow:initial;
+        overflow-x:scroll;
     }
     #collectionform .tools {
         display:none;

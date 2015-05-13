@@ -110,7 +110,7 @@
         margin-top:1px;
     }
     .BasicsBox .Question {
-        overflow-x:initial;
+        overflow-x:scroll;
     }
 
 }
@@ -502,12 +502,12 @@
         margin-left: auto;
         margin-right: auto;
         float: none;
-        min-height:65px;
+        min-height: 145px;
         height:auto;
         max-width: 250px;
     }
     .HomePanelIN {
-        min-height:65px;
+        min-height: 145px;
         height:auto;
     }
 
@@ -682,6 +682,7 @@
     }
     .TopInpageNavRight {
         margin-top:10px;
+        text-align:center;
     }
 }
 @media(min-width:1301px) {
@@ -763,6 +764,15 @@
     }
     .backtoresults a {
         width:100%;
+        line-height: 40px;
+        margin-top: 5px;
+        box-shadow: #CBCBCB 1px 1px 6px;
+    }
+    .RecordHeader .backtoresults a.upLink, 
+    .RecordHeader .backtoresults a.nextLink {
+        padding-left:0px;
+        margin-left:0px;
+        border-left: none;
     }
 }
 
