@@ -447,6 +447,9 @@
         margin-right:auto;
         min-height:145px;
         height:auto;
+        float: none;
+        position: relative;
+        display: block;
     }
     .HomePanelIN {
         min-height:145px;
