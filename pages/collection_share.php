@@ -196,7 +196,7 @@ include "../include/header.php";
 			</div>
 			<?php } ?>
 			
-			
+			<?php hook("additionalcollectionshare");?>
 			
 			<div class="QuestionSubmit" style="padding-top:0;margin-top:0;">
 			<label for="buttons"> </label>
@@ -280,6 +280,7 @@ include "../include/header.php";
 		<td><?php echo $lang["lastused"];?></td>
 		<td><?php echo $lang["expires"];?></td>
 		<td><?php echo $lang["access"];?></td>
+		<?php hook("additionalcolexternalshareheader");?>
 		<td><div class="ListTools"><?php echo $lang["tools"]?></div></td>
 		</tr>
 		<?php
@@ -294,6 +295,7 @@ include "../include/header.php";
 			<td><?php echo htmlspecialchars(nicedate($keys[$n]["lastused"],true)); ?></td>
 			<td><?php echo htmlspecialchars(($keys[$n]["expires"]=="")?$lang["never"]:nicedate($keys[$n]["expires"],false)) ?></td>
 			<td><?php echo htmlspecialchars(($keys[$n]["access"]==-1)?"":$lang["access" . $keys[$n]["access"]]); ?></td>
+			<?php hook("additionalcolexternalsharerecord");?>
 			<td><div class="ListTools">
 			<a href="#" onClick="if (confirm('<?php echo $lang["confirmdeleteaccess"]?>')) {document.getElementById('deleteaccess').value='<?php echo htmlspecialchars($keys[$n]["access_key"]) ?>';document.getElementById('collectionform').submit(); return false;}">&gt;&nbsp;<?php echo $lang["action-delete"]?></a>
 			<a href="#" onClick="document.getElementById('editaccess').value='<?php echo htmlspecialchars($keys[$n]["access_key"]) ?>';document.getElementById('editexpiration').value='<?php echo htmlspecialchars($keys[$n]["expires"]) ?>';document.getElementById('editaccesslevel').value='<?php echo htmlspecialchars($keys[$n]["access"]) ?>';document.getElementById('editgroup').value='<?php echo htmlspecialchars($keys[$n]["usergroup"]) ?>';CentralSpacePost(document.getElementById('collectionform'),true);return false;">&gt;&nbsp;<?php echo $lang["action-edit"]?></a>

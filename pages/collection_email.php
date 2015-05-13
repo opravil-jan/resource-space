@@ -328,7 +328,7 @@ foreach ($grouplist as $group)
 </div>
 <?php } ?>
 
-
+<?php hook("collectionemailafterexternal");?>
 
 <?php if ($collection["user"]==$userref) { # Collection owner can request feedback.
 ?>
