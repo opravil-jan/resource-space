@@ -13,8 +13,9 @@ include "../include/search_functions.php";
 include "../include/dash_functions.php";
 
 if(checkperm("dtu") && !((checkperm("h") && !checkperm("hdta")) || (checkperm("dta") && !checkperm("h")))){exit($lang["error-permissiondenied"]);}
-global $baseurl,$userref;
+global $baseurl,$baseurl_short,$userref;
 $error=false;
+
 /* 
  * Process Submitted Tile 
  */
@@ -87,18 +88,23 @@ if($submitdashtile)
 	exit();
 	}
 
+
 /* 
  * Create New Tile Form 
  */
 $create=getvalescaped("create",FALSE);
-$tile_type=getvalescaped("tltype","");
-$tile_nostyle = getvalescaped("nostyleoptions",FALSE);
-
-$freetext = getvalescaped("freetext",false);
-$notitle = getvalescaped("notitle",false);
 
 if($create)
 	{
+	$tile_type=getvalescaped("tltype","");
+	$tile_nostyle = getvalescaped("nostyleoptions",FALSE);
+	$allusers=getvalescaped("all_users",FALSE);
+	$url=getvalescaped("url","");
+	$freetext = getvalescaped("freetext",false);
+	$notitle = getvalescaped("notitle",false);
+	$link=getvalescaped("link","");
+	$title=getvalescaped("title","");
+
 	if($tile_type=="srch")
 		{
 		$srch=getvalescaped("link","");
@@ -107,7 +113,6 @@ if($create)
 		$archive=getvalescaped("archive","");
 		$daylimit=getvalescaped("daylimit","");
 		$restypes=getvalescaped("restypes","");
-		$allusers=getvalescaped("all_users",FALSE);
 		$title=getvalescaped("title","");
 		$promoted_resource=getvalescaped("promoted_resource",FALSE);
 		$resource_count=getvalescaped("resource_count",0,TRUE);
@@ -128,13 +133,6 @@ if($create)
 			$title= ($last!="") ? $lang["last"]." ".$last : $lang["recent"];
 			}
 		}
-	else
-		{
-		# Other tile types - unknown, such as added by a plugin (RSE Analytics), allow link and title to be specified.
-		$link=getvalescaped("link","");
-		$title=getvalescaped("title","");
-		$allusers=getvalescaped("all_users",FALSE);
-		}
 		
 	include "../include/header.php";
 	?>
@@ -142,7 +140,7 @@ if($create)
 	<form id="create_dash" name="create_dash">
 		<input type="hidden" name="tltype" value="<?php echo htmlspecialchars($tile_type)?>" />
 		<input type="hidden" name="link" id="previewlink" value="<?php echo htmlspecialchars($link);?>" />
-		<input type="hidden" name="url" value="<?php echo htmlspecialchars(getvalescaped("url","")); ?>" />
+		<input type="hidden" name="url" value="<?php echo htmlspecialchars($url); ?>" />
 		<input type="hidden" name="submitdashtile" value="true" />
 
 		<?php
@@ -178,74 +176,74 @@ if($create)
 			{tileStyle($tile_type);}
 
 		if($tile_type=="srch")
-		{?>
-		<div class="Question" id="showresourcecount" >
-			<label for="tltype" class="stdwidth"><?php echo $lang["showresourcecount"];?></label> 
-			<table>
-				<tbody>
-					<tr>
-						<td width="10" valign="middle" >
-							<input type="checkbox" id="resource_count" name="resource_count" value="1" <?php echo $resource_count? "checked":"";?>/>
-						</td>
-					</tr>
-				</tbody>
-			</table>
-			<div class="clearerleft"> </div>
-		</div>
-		<script>
-			jQuery(".tlstyle").change(function(){
-				checked=jQuery(".tlstyle:checked").val();
-				if(checked=="thmbs" || checked=="multi") {
-					jQuery("#showresourcecount").show();
-				}
-				else {
-					jQuery("#showresourcecount").hide();
-				}
-			});
-		</script>
-		<?php
-		if($promoted_resource)
-			{
-			global $link,$view_title_field;
-			$search_string = explode('?',$link);
-			parse_str(str_replace("&amp;","&",$search_string[1]),$search_string);
-			$search = isset($search_string["search"]) ? $search_string["search"] :"";
-			$restypes = isset($search_string["restypes"]) ? $search_string["restypes"] : "";
-			$order_by= isset($search_string["order_by"]) ? $search_string["order_by"] : "";
-			$archive = isset($search_string["archive"]) ? $search_string["archive"] : "";
-			$sort = isset($search_string["sort"]) ? $search_string["sort"] : "";
-			$resources = do_search($search,$restypes,$order_by,$archive,-1,$sort);
-			?>
-			<div class="Question" id="promotedresource">
-				<label for="promoted_image">
-				<?php echo $lang["dashtileimage"]?></label>
-				<select class="stdwidth" id="previewimage" name="promoted_image">
-				<?php foreach ($resources as $resource)
-					{
-					?>
-					<option value="<?php echo htmlspecialchars($resource["ref"]) ?>">
-						<?php echo str_replace(array("%ref", "%title"), array($resource["ref"], i18n_get_translated($resource["field" . $view_title_field])), $lang["ref-title"]) ?>
-					</option>
-					<?php
-					}
-				?>
-				</select>
+			{?>
+			<div class="Question" id="showresourcecount" >
+				<label for="tltype" class="stdwidth"><?php echo $lang["showresourcecount"];?></label> 
+				<table>
+					<tbody>
+						<tr>
+							<td width="10" valign="middle" >
+								<input type="checkbox" id="resource_count" name="resource_count" value="1" <?php echo $resource_count? "checked":"";?>/>
+							</td>
+						</tr>
+					</tbody>
+				</table>
 				<div class="clearerleft"> </div>
 			</div>
 			<script>
 				jQuery(".tlstyle").change(function(){
 					checked=jQuery(".tlstyle:checked").val();
-					if(checked=="thmbs") {
-						jQuery("#promotedresource").show();
+					if(checked=="thmbs" || checked=="multi") {
+						jQuery("#showresourcecount").show();
 					}
 					else {
-						jQuery("#promotedresource").hide();
+						jQuery("#showresourcecount").hide();
 					}
 				});
 			</script>
 			<?php
+			if($promoted_resource)
+				{
+				global $link,$view_title_field;
+				$search_string = explode('?',$link);
+				parse_str(str_replace("&amp;","&",$search_string[1]),$search_string);
+				$search = isset($search_string["search"]) ? $search_string["search"] :"";
+				$restypes = isset($search_string["restypes"]) ? $search_string["restypes"] : "";
+				$order_by= isset($search_string["order_by"]) ? $search_string["order_by"] : "";
+				$archive = isset($search_string["archive"]) ? $search_string["archive"] : "";
+				$sort = isset($search_string["sort"]) ? $search_string["sort"] : "";
+				$resources = do_search($search,$restypes,$order_by,$archive,-1,$sort);
+				?>
+				<div class="Question" id="promotedresource">
+					<label for="promoted_image">
+					<?php echo $lang["dashtileimage"]?></label>
+					<select class="stdwidth" id="previewimage" name="promoted_image">
+					<?php foreach ($resources as $resource)
+						{
+						?>
+						<option value="<?php echo htmlspecialchars($resource["ref"]) ?>">
+							<?php echo str_replace(array("%ref", "%title"), array($resource["ref"], i18n_get_translated($resource["field" . $view_title_field])), $lang["ref-title"]) ?>
+						</option>
+						<?php
+						}
+					?>
+					</select>
+					<div class="clearerleft"> </div>
+				</div>
+				<script>
+					jQuery(".tlstyle").change(function(){
+						checked=jQuery(".tlstyle:checked").val();
+						if(checked=="thmbs") {
+							jQuery("#promotedresource").show();
+						}
+						else {
+							jQuery("#promotedresource").hide();
+						}
+					});
+				</script>
+				<?php
+				}
 			}
-		}
 
 		if((checkperm("h") && !checkperm("hdta")) || (checkperm("dta") && !checkperm("h")))
 			{ ?>
@@ -278,15 +276,12 @@ if($create)
 			<div class="clearerleft"> </div>
 		</div>
 	</form>
-	<?php
-	if(!$tile_nostyle)
-		{ ?>
-		<div class="HomePanel DashTile">
-			<div id="previewdashtile" class="dashtilepreview HomePanelIN HomePanelDynamicDash <?php echo ($dash_tile_shadows)? "TileContentShadow":"";?>">
-
-			</div>
+	
+	<div class="HomePanel DashTile">
+		<div id="previewdashtile" class="dashtilepreview HomePanelIN HomePanelDynamicDash <?php echo ($dash_tile_shadows)? "TileContentShadow":"";?>">
 		</div>
-		<script>
+	</div>
+	<script>
 		function updateDashTilePreview() {
 			var prevstyle = jQuery(".tlstyle:checked").val();
 			var width = 250;
@@ -305,13 +300,20 @@ if($create)
 					{count=0;}
 				tile= tile+"&tlrcount="+encodeURIComponent(count);
 				<?php
+				if($promoted_resource)
+					{ ?>
+					tile = tile+"&promimg="+encodeURIComponent(jQuery("#previewimage").val()); 
+					<?php
+					}
 				}
-			if($promoted_resource)
-				{ ?>
-				tile = tile+"&promimg="+encodeURIComponent(jQuery("#previewimage").val()); 
-				<?php
-				} ?>
-			jQuery("#previewdashtile").load("<?php echo $baseurl_short;?>pages/ajax/dash_tile_preview.php?tltype=<?php echo urlencode($tile_type)?>&tlstyle="+prevstyle+"&tlwidth="+width+"&tlheight="+height+tile);
+
+			#Preview URL
+			if (empty($url))
+				{$previewurl=$baseurl_short."pages/ajax/dash_tile_preview.php";}
+			else
+				{$previewurl=$baseurl_short.$url;}
+			?>
+			jQuery("#previewdashtile").load("<?php echo $previewurl; ?>?tltype=<?php echo urlencode($tile_type)?>&tlstyle="+prevstyle+"&tlwidth="+width+"&tlheight="+height+tile);
 		}
 		updateDashTilePreview();
 		jQuery("#previewtitle").change(updateDashTilePreview);
@@ -319,13 +321,8 @@ if($create)
 		jQuery("#resource_count").change(updateDashTilePreview);
 		jQuery(".tlstyle").change(updateDashTilePreview);
 		jQuery("#promotedresource").change(updateDashTilePreview);
-		</script>
+	</script>
 	<?php
-		}
-	else
-		{
-		hook("previewbuildernostyle");
-		}
 	include "../include/footer.php";
 	}
 
