@@ -137,7 +137,7 @@ $users=get_users();
 include "../include/header.php";
 ?>
 <div class="BasicsBox">
-<h1><?php if ($themeshare){echo $lang["email_theme_category"];} else {echo $lang["emailcollection"];}?></h1>
+<h1><?php if ($themeshare){echo $lang["email_theme_category"];} else {echo $lang["emailcollectiontitle"];}?></h1>
 
 <p><?php 
 if ($themeshare && text("introtextthemeshare")!="")
@@ -362,7 +362,7 @@ foreach ($grouplist as $group)
 <?php if(!hook("replaceemailsubmitbutton")){?>
 <div class="QuestionSubmit">
 <label for="buttons"> </label>			
-<input name="save" type="submit" value="&nbsp;&nbsp;<?php if ($themeshare){echo $lang["email_theme_category"];} else {echo $lang["emailcollection"];}?>&nbsp;&nbsp;" />
+<input name="save" type="submit" value="&nbsp;&nbsp;<?php if ($themeshare){echo $lang["email_theme_category"];} else {echo $lang["emailcollectiontitle"];}?>&nbsp;&nbsp;" />
 </div>
 <?php } # end hook replaceemailsubmitbutton ?>
 

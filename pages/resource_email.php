@@ -86,7 +86,7 @@ if (getval("save","")!="")
 			}
 		}
 	else
-		{		
+		{
 		// Email single resource
 		$errors=email_resource($ref,i18n_get_translated($resource["field".$view_title_field]),$userfullname,$users,$message,$access,$expires,$user_email,$from_name,$cc,$list_recipients,$add_internal_access,$useraccess,$group);
 		if ($errors=="")
@@ -104,7 +104,7 @@ include "../include/header.php";
 ?>
 <div class="BasicsBox">
 <p><a onClick="return CentralSpaceLoad(this,true);" href="<?php echo $baseurl_short?>pages/view.php?ref=<?php echo urlencode($ref) ?>&search=<?php echo urlencode($search)?>&offset=<?php echo urlencode($offset)?>&order_by=<?php echo urlencode($order_by)?>&sort=<?php echo urlencode($sort)?>&archive=<?php echo urlencode($archive)?>">&lt;&nbsp;<?php echo $lang["backtoresourceview"]?></a></p>
-<h1><?php echo $lang["emailresource"]?></h1>
+<h1><?php echo $lang["emailresourcetitle"]?></h1>
 
 <p><?php echo text("introtext")?></p>
 
@@ -348,7 +348,7 @@ foreach ($grouplist as $group)
 <?php if(!hook("replaceemailsubmitbutton")){?>
 <div class="QuestionSubmit">
 <label for="buttons"> </label>			
-<input name="save" type="submit" value="&nbsp;&nbsp;<?php echo $lang["emailresource"]?>&nbsp;&nbsp;" />
+<input name="save" type="submit" value="&nbsp;&nbsp;<?php echo $lang["emailresourcetitle"]?>&nbsp;&nbsp;" />
 </div>
 <?php } // end replaceemailsubmitbutton ?>
 

@@ -85,7 +85,7 @@ if($editing && !$editexternalurl)
                     {
                     if ($email_sharing) 
                         { ?>
-                        <li><a href="<?php echo $baseurl_short . 'pages/resource_email.php?' . $query_string ?>" onClick="return CentralSpaceLoad(this,true);"><?php echo $lang["emailresource"]?></a></li> 
+                        <li><a href="<?php echo $baseurl_short . 'pages/resource_email.php?' . $query_string ?>" onClick="return CentralSpaceLoad(this,true);"><?php echo $lang["emailresourcetitle"]?></a></li> 
                         <?php 
                         }
                     if(!$hide_resource_share_generate_url)
