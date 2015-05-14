@@ -367,6 +367,40 @@ if ($display_user_rating_stars && $k=="")
 	}
 	}
 
+// Allow Drag & Drop from collection bar to CentralSpace only when special search is "!collection"
+if(substr($search, 0, 11) === '!collection')
+	{
+	?>
+	<script>
+	jQuery(document).ready(function() {
+		jQuery('#CentralSpace').droppable({
+			accept: '.CollectionPanelShell',
+
+			drop: function(event, ui) {
+				if(!is_special_search('!collection', 11)) {
+					return false;
+				}
+
+				// get the current collection from the search page (ie. CentralSpace)
+				var query_strings = getQueryStrings();
+				if(is_empty(query_strings)) {
+					return false;
+				}
+
+				var resource_id = jQuery(ui.draggable).attr("id");
+				resource_id = resource_id.replace('ResourceShell', '');
+				var collection_id = query_strings.search.substring(11);
+
+				jQuery('#trash_bin').hide();
+				AddResourceToCollection(event, resource_id, '', collection_id);
+				CentralSpaceLoad(window.location.href, true);
+			}
+		});
+	});
+	</script>
+	<?php
+	}
+	
 	if ($allow_reorder && $display!="list") {
 ?>
 	<script type="text/javascript">
@@ -387,18 +421,42 @@ if ($display_user_rating_stars && $k=="")
 		  <?php } ?>
 			} 
 		});
-		}		
+		}
+
+		jQuery(document).ready(function() {
             jQuery('.ui-sortable').sortable('enable');
 			jQuery('#CentralSpace').sortable({
-				helper:"clone",
-				items: ".ResourcePanelShell, .ResourcePanelShellLarge, .ResourcePanelShellSmall",
-				cancel: ".DisableSort",
+				appendTo: 'body',
+				zIndex: 99000,
+				helper: 'clone',
+				items: '.ResourcePanelShell, .ResourcePanelShellLarge, .ResourcePanelShellSmall',
+				cancel: '.DisableSort',
 				
 				start: function (event, ui)
 					{
 					InfoBoxEnabled=false;
 					if (jQuery('#InfoBox')) {jQuery('#InfoBox').hide();}
 					if (jQuery('#InfoBoxCollection')) {jQuery('#InfoBoxCollection').hide();}
+					if(is_special_search('!collection', 11))
+						{
+						// get the current collection from the search page (ie. CentralSpace)
+						var query_strings = getQueryStrings();
+						if(is_empty(query_strings))
+							{
+							return false;
+							}
+						var collection_id = query_strings.search.substring(11);
+
+						if(usercollection == '')
+							{
+							usercollection = '<?php echo $usercollection; ?>';
+							}
+
+						if(usercollection == collection_id)
+							{
+							jQuery('#trash_bin').show();
+							}
+						}
 					},
 
 				update: function(event, ui)
@@ -406,12 +464,25 @@ if ($display_user_rating_stars && $k=="")
 					InfoBoxEnabled=true;
 					var idsInOrder = jQuery('#CentralSpace').sortable("toArray");
 					ReorderResources(idsInOrder);
+					if(is_special_search('!collection', 11))
+						{
+						jQuery('#trash_bin').hide();
+						}
+					},
+
+				stop: function(event, ui)
+					{
+					InfoBoxEnabled=true;
+					if(is_special_search('!collection', 11))
+						{
+						jQuery('#trash_bin').hide();
+						}
 					}
 			});
 			jQuery('.ResourcePanelShell').disableSelection();
 			jQuery('.ResourcePanelShellLarge').disableSelection();
-			jQuery('.ResourcePanelShellSmall').disableSelection();			
-	
+			jQuery('.ResourcePanelShellSmall').disableSelection();
+		});	
 	</script>
 <?php }
 	elseif (!hook("noreorderjs")) { ?>
@@ -921,7 +992,7 @@ if (true) # Always show search header now.
                     echo $lang["key"] . " ";
                     if ($showkeystar) { ?><div class="KeyStar"><?php echo $lang["verybestresources"]?></div><?php }
                     if ($showkeycomment) { ?><div class="KeyComment"><?php echo $lang["addorviewcomments"]?></div><?php }
-                    if ($showkeyemail) { ?><div class="KeyEmail"><?php echo $lang["emailresource"]?></div><?php }
+                    if ($showkeyemail) { ?><div class="KeyEmail"><?php echo $lang["emailresourcetitle"]?></div><?php }
                     if ($showkeycollectout) { ?><div class="KeyCollectOut"><?php echo $lang["removefromcurrentcollection"]?></div><?php }
                     if ($showkeycollect) { ?><div class="KeyCollect"><?php echo $lang["addtocurrentcollection"]?></div><?php }
                     if ($showkeypreview) { ?><div class="KeyPreview"><?php echo $lang["fullscreenpreview"]?></div><?php }
