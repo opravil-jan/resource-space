@@ -1036,7 +1036,8 @@ $always_record_resource_creator = true;
 # Enable the 'related resources' field when editing resources.
 $enable_related_resources=true;
 
-#Resources Uploaded together can be related requires $enable_related_resources=true (enables option on upload)
+# Adds an option to the upload page which allows Resources Uploaded together to all be related 
+/* requires $enable_related_resources=true */
 /* $php_path MUST BE SET */
 $relate_on_upload=false;
 
