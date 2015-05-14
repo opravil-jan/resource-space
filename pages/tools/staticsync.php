@@ -160,13 +160,13 @@ function ProcessFolder($folder)
             # Check to see if extension is banned, do not add if it is banned
             if(array_search($extension, $banned_extensions)){continue;}
             /* Above Code Adapted from CMay's bug report */
+            
+            $count++;
+            if ($count > $staticsync_max_files) { return(true); }
 
             # Already exists?
             if (!isset($done[$shortpath]))
                 {
-                $count++;
-                if ($count > $staticsync_max_files) { return(true); }
-
                 echo "Processing file: $fullpath" . PHP_EOL;
                 
                 if ($collection == 0 && $staticsync_autotheme)
