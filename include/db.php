@@ -22,6 +22,7 @@ $pagetime_start = microtime();
 $pagetime_start = explode(' ', $pagetime_start);
 $pagetime_start = $pagetime_start[1] + $pagetime_start[0];
 
+include_once "debug_functions.php";
 
 if (!isset($suppress_headers) || !$suppress_headers)
 	{
@@ -319,8 +320,13 @@ function sql_query($sql,$cache=false,$fetchrows=-1,$dbstruct=true, $logthis=2)
     # This has been added retroactively to support large result sets, yet a pager can work as if a full
     # result set has been returned as an array (as it was working previously).
 	# $logthis parameter is only relevant if $mysql_log_transactions is set.  0=don't log, 1=always log, 2=detect logging - i.e. SELECT statements will not be logged
-    global $db,$config_show_performance_footer,$debug_log,$mysql_verbatim_queries,$use_mysqli, $mysql_log_transactions;
+    global $db,$config_show_performance_footer,$debug_log,$debug_log_override,$mysql_verbatim_queries,$use_mysqli, $mysql_log_transactions;
     
+	if (!isset($debug_log_override))
+		{
+		check_debug_log_override();
+		}
+	
     if ($config_show_performance_footer)
     	{
     	# Stats
@@ -330,7 +336,7 @@ function sql_query($sql,$cache=false,$fetchrows=-1,$dbstruct=true, $logthis=2)
 		$querycount++;
     	}
     	
-    if ($debug_log) 
+    if ($debug_log || $debug_log_override) 
 		{
 		debug("SQL: " . $sql);
 		}
@@ -1297,8 +1303,8 @@ function debug($text)
 	{
 	# Output some text to a debug file.
 	# For developers only
-	global $debug_log, $debug_log_location;
-	if (!$debug_log) {return true;} # Do not execute if switched off.
+	global $debug_log, $debug_log_override, $debug_log_location;
+	if (!$debug_log && !$debug_log_override) {return true;} # Do not execute if switched off.
 	
 	# Cannot use the general.php: get_temp_dir() method here since general may not have been included.
 	if (isset($debug_log_location))

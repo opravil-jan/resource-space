@@ -215,6 +215,13 @@ $lang["smallthumbstitle"]="Small Thumbnails";
 $lang["list"]="List";
 $lang["listtitle"]="List View";
 $lang["perpage"]="per page";
+$lang["on"]="On";
+$lang["off"]="Off";
+$lang["seconds"]="seconds";
+$lang["reload"]="Reload";
+$lang["pause"]="Pause";
+$lang["filterbutton"]="Filter";
+$lang["stopbutton"]="Stop";
 
 $lang["gotoadvancedsearch"]="Advanced search";
 $lang["viewnewmaterial"]="View new material";
@@ -2130,3 +2137,14 @@ $lang["plugin_category_sharing"]="Content Sharing";
 $lang['system_down_title'] = 'Attention!';
 $lang['system_down_message'] = 'System is down for maintenance. Thank you for your patience.';
 /* End of System Down page strings */
+
+/* System Console */
+$lang["systemconsole"]="System console";
+$lang["systemconsoledebuglog"]="Debug log";
+$lang["systemconsolememorycpu"]="Memory &amp; CPU";
+$lang["systemconsoledatabase"]="Database";
+$lang["systemconsoleturnoffafter"]="Turn off after";
+$lang["systemconsoleonpermallusers"]="On (permanently for all users)";
+$lang["systemconsoleonallusers"]="On (all users)";
+$lang["systemconsoleonfailedtopcommand"]="Failed to execute top command";
+$lang["systemconsoleonfailedtasklistcommand"]="Failed to execute tasklist command";
