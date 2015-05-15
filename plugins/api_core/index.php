@@ -1,7 +1,7 @@
 <?php
 include "../../include/db.php";
-include "../../include/authenticate.php";
 include "../../include/general.php";
+include "../../include/authenticate.php";
 if (!in_array("api_core",$plugins)){die("no access");}
 include "../../include/header.php";
 

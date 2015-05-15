@@ -1,5 +1,6 @@
 <?php
 include "../../../include/db.php";
+include "../../../include/general.php";
 
 
 if (array_key_exists("user",$_COOKIE))
@@ -25,7 +26,6 @@ if (!isset($userref))
 	$plugins=array();
 	}
 	
-include "../../../include/general.php";
 
 $error="";
 $errorfields=array();

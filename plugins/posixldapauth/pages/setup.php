@@ -1,7 +1,7 @@
 <?php
 include "../../../include/db.php";
-include "../../../include/authenticate.php"; if (!checkperm("u")) {exit ($lang['error-permissiondenied']);}
 include "../../../include/general.php";
+include "../../../include/authenticate.php"; if (!checkperm("u")) {exit ($lang['error-permissiondenied']);}
 
 $usergroups = sql_query("SELECT ref,name FROM usergroup");
 /* Set the following debug flag to true for more debugging information

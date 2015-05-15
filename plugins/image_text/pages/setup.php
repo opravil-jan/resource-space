@@ -4,8 +4,8 @@
 #
 
 include '../../../include/db.php';
-include '../../../include/authenticate.php'; if (!checkperm('a')) {exit ($lang['error-permissiondenied']);}
 include '../../../include/general.php';
+include '../../../include/authenticate.php'; if (!checkperm('a')) {exit ($lang['error-permissiondenied']);}
 
 $identify_fullpath = get_utility_path("im-identify");
 if ($identify_fullpath==false) {exit($lang['image_text_noim']);}

@@ -3,8 +3,8 @@
 # NOTE: requires System setup permission
 
 include '../../../include/db.php';
-include '../../../include/authenticate.php'; if (!checkperm('a')) {exit ($lang['error-permissiondenied']);}
 include '../../../include/general.php';
+include '../../../include/authenticate.php'; if (!checkperm('a')) {exit ($lang['error-permissiondenied']);}
 include '../include/track_field_history_functions.php';
 
 include '../../../include/header.php';

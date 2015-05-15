@@ -4,8 +4,8 @@
 #
 
 include '../../../include/db.php';
-include '../../../include/authenticate.php'; if (!checkperm('a')) {exit ($lang['error-permissiondenied']);}
 include '../../../include/general.php';
+include '../../../include/authenticate.php'; if (!checkperm('a')) {exit ($lang['error-permissiondenied']);}
 
 // Specify the name of this plugin and the heading to display for the page.
 $plugin_name = 'imagestream';

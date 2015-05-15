@@ -5,8 +5,8 @@
  */
 
 include dirname(__FILE__)."/../../../include/db.php";
-include dirname(__FILE__)."/../../../include/authenticate.php";
 include dirname(__FILE__)."/../../../include/general.php";
+include dirname(__FILE__)."/../../../include/authenticate.php";
 include dirname(__FILE__)."/../../../include/resource_functions.php";
 
 include_once (dirname(__FILE__)."/../include/meta_functions.php");

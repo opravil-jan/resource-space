@@ -1,8 +1,8 @@
 <?php
 
 include '../../../include/db.php';
-include '../../../include/authenticate.php';
 include '../../../include/general.php';
+include '../../../include/authenticate.php';
 include '../../../include/resource_functions.php';
 include '../include/propose_changes_functions.php';
 
