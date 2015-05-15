@@ -125,7 +125,6 @@ switch ($callback)
 			$remaining_time = 60;
 			}
 
-		// TODO: sort out langs and hard codded css
 		?>
 		<br />
 
@@ -197,6 +196,14 @@ switch ($callback)
 					array_push ($results, $entry);
 					}
 				}
+			}
+		else
+			{
+			?><br />
+			<?php
+			echo $lang["systemconsoleondebuglognotsetorfound"];
+			?><br />
+			<?php
 			}
 
 		// ----- end of tail read
@@ -323,16 +330,21 @@ switch ($callback)
 ?>
 <br />
 <input type="text" class="stdwidth" placeholder="<?php echo $lang["filterbutton"]; ?>" value="<?php echo $filter; ?>"
-	   onchange="filter<?php echo $callback; ?>=this.value;"
-	   onblur="SystemConsole<?php echo $callback; ?>Stop();"
-	   onkeyup="if(this.value=='')
-	   {
-		   jQuery('#filterbutton<?php echo $callback; ?>').attr('disabled','disabled');
-		   jQuery('#clearbutton<?php echo $callback; ?>').attr('disabled','disabled')
-	   } else {
-			jQuery('#filterbutton<?php echo $callback; ?>').removeAttr('disabled');
-		   	jQuery('#clearbutton<?php echo $callback; ?>').removeAttr('disabled')
-	   } "  ></input>
+	onblur="SystemConsole<?php echo $callback; ?>Stop();"
+	onkeyup="if(this.value=='')
+	{
+	   jQuery('#filterbutton<?php echo $callback; ?>').attr('disabled','disabled');
+	   jQuery('#clearbutton<?php echo $callback; ?>').attr('disabled','disabled')
+	} else {
+		jQuery('#filterbutton<?php echo $callback; ?>').removeAttr('disabled');
+		jQuery('#clearbutton<?php echo $callback; ?>').removeAttr('disabled')
+	}
+	filter<?php echo $callback; ?>=this.value;
+	var e = event;
+	if (e.keyCode === 13)
+	{
+		SystemConsole<?php echo $callback; ?>Load(refreshSecs<?php echo $callback; ?>);
+	}" ></input>
 
 <input id="filterbutton<?php echo $callback; ?>" <?php if($filter=="") { ?>disabled="disabled" <?php } ?>type="button" onclick="SystemConsole<?php echo $callback; ?>Load(refreshSecs<?php echo $callback; ?>);" value="<?php echo $lang['filterbutton']; ?>"></input>
 <input id="clearbutton<?php echo $callback; ?>" <?php if($filter=="") { ?>disabled="disabled" <?php } ?>type="button" onclick="filter<?php echo $callback; ?>=''; SystemConsole<?php echo $callback; ?>Load(refreshSecs<?php echo $callback; ?>);" value="<?php echo $lang["clearbutton"]; ?>"></input>

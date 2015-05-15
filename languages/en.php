@@ -2148,3 +2148,4 @@ $lang["systemconsoleonpermallusers"]="On (permanently for all users)";
 $lang["systemconsoleonallusers"]="On (all users)";
 $lang["systemconsoleonfailedtopcommand"]="Failed to execute top command";
 $lang["systemconsoleonfailedtasklistcommand"]="Failed to execute tasklist command";
+$lang["systemconsoleondebuglognotsetorfound"]="\$debug_log not set or file not found";
