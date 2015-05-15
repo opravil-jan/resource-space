@@ -1,7 +1,7 @@
 <?php
 include "../include/db.php";
-include "../include/authenticate.php"; if (!checkperm("s")) {exit ("Permission denied.");}
 include "../include/general.php";
+include "../include/authenticate.php"; if (!checkperm("s")) {exit ("Permission denied.");}
 include "../include/search_functions.php";
 include "../include/collections_functions.php";
 

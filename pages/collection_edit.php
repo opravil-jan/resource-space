@@ -1,8 +1,8 @@
 <?php
 include "../include/db.php";
+include "../include/general.php";
 include "../include/authenticate.php"; #if (!checkperm("s")) {exit ("Permission denied.");}
 if(checkperm("b")) {exit ("Permission denied.");}
-include "../include/general.php";
 include "../include/collections_functions.php";
 include "../include/resource_functions.php";
 include "../include/search_functions.php"; 

@@ -6,9 +6,9 @@
  */
 
 include "../include/db.php";
+include "../include/general.php";
 $k=getvalescaped("k","");
 include "../include/authenticate.php";
-include "../include/general.php";
 include "../include/search_functions.php";
 include "../include/dash_functions.php";
 

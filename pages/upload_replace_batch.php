@@ -4,8 +4,8 @@
  * 
  */
 include "../include/db.php";
-include "../include/authenticate.php";if (!checkperm("t")) {exit ("Permission denied.");}
 include "../include/general.php";
+include "../include/authenticate.php";if (!checkperm("t")) {exit ("Permission denied.");}
 
 
 // Get list of fields to allow selection of field containing file name to folder path
