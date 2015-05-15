@@ -1,6 +1,7 @@
 <?php
-include "../../include/authenticate.php";
 include "../../include/db.php";
+include "../../include/general.php";
+include "../../include/authenticate.php";
 
 #handle posts
 if (array_key_exists("userfile",$_FILES))

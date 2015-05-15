@@ -2,8 +2,8 @@
 # Feeder page for AJAX user/group search for the user selection include file
 
 include "../../include/db.php";
-include "../../include/authenticate.php";
 include "../../include/general.php";
+include "../../include/authenticate.php";
 
 $userstring=getvalescaped("userstring","");
 $userstring=resolve_userlist_groups($userstring);

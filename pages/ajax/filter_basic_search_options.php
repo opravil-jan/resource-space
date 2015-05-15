@@ -4,8 +4,8 @@
 # The output from this page is Javascript.
 
 include "../../include/db.php";
-include "../../include/authenticate.php";
 include "../../include/general.php";
+include "../../include/authenticate.php";
 
 $filter=getvalescaped("filter","");
 $nofilter=getvalescaped("nofilter","");

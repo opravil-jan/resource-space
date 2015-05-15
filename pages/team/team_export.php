@@ -6,8 +6,8 @@
  * @subpackage Pages_Team
  */
 include "../../include/db.php";
-include "../../include/authenticate.php";if (!checkperm("a")) {exit ("Permission denied.");}
 include "../../include/general.php";
+include "../../include/authenticate.php";if (!checkperm("a")) {exit ("Permission denied.");}
 include "../../include/reporting_functions.php";
 set_time_limit(0);
 $type=getvalescaped("type","");

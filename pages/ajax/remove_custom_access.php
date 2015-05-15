@@ -1,7 +1,7 @@
 <?php
 include dirname(__FILE__) . '/../../include/db.php';
-include dirname(__FILE__) . '/../../include/authenticate.php';
 include dirname(__FILE__) . '/../../include/general.php';
+include dirname(__FILE__) . '/../../include/authenticate.php';
 include dirname(__FILE__) . '/../../include/resource_functions.php';
 
 $resource = getvalescaped('resource', '');

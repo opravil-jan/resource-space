@@ -1,7 +1,7 @@
 <?php
 include "../../include/db.php";
-include "../../include/authenticate.php"; if (!checkperm("c")) {exit ("Permission denied.");}
 include "../../include/general.php";
+include "../../include/authenticate.php"; if (!checkperm("c")) {exit ("Permission denied.");}
 
 include "../../include/header.php";
 $resource_type = getvalescaped('resource_type','');

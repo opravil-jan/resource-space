@@ -3,8 +3,8 @@
 # Script to update resource_dimensions table for all resources.
 
 include "../../include/db.php";
-include "../../include/authenticate.php"; if (!checkperm("a")) {exit("Permission denied");}
 include "../../include/general.php";
+include "../../include/authenticate.php"; if (!checkperm("a")) {exit("Permission denied");}
 
 set_time_limit(0);
 

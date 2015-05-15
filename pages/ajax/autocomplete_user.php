@@ -2,8 +2,8 @@
 # Feeder page for AJAX user/group search for the user selection include file.
 
 include "../../include/db.php";
-include "../../include/authenticate.php";
 include "../../include/general.php";
+include "../../include/authenticate.php";
 
 $find=getvalescaped("term","");
 $getrefs=(getvalescaped("getrefs","")!="")?true:false;

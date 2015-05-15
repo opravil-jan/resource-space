@@ -6,6 +6,7 @@
  * @subpackage Pages_Team
  */
 include "../../include/db.php";
+include "../../include/general.php";
 include "../../include/authenticate.php"; 
 
 if (!checkperm("a"))
@@ -14,7 +15,6 @@ if (!checkperm("a"))
 	}
         
         
-include "../../include/general.php";
 include "../../include/resource_functions.php";
 
 $ref=getvalescaped("ref","",true);

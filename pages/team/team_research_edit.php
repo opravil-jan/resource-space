@@ -6,8 +6,8 @@
  * @subpackage Pages_Team
  */
 include "../../include/db.php";
-include "../../include/authenticate.php"; if (!checkperm("r")) {exit ("Permission denied.");}
 include "../../include/general.php";
+include "../../include/authenticate.php"; if (!checkperm("r")) {exit ("Permission denied.");}
 include "../../include/research_functions.php";
 
 $ref=getvalescaped("ref","",true);

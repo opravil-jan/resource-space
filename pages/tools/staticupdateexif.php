@@ -4,8 +4,8 @@
 # local ResourceSpace field edits could be overwritten by original file metadata during this process.
 
 include "../../include/db.php";
-include "../../include/authenticate.php"; if (!checkperm("a")) {exit("Permission denied");}
 include "../../include/general.php";
+include "../../include/authenticate.php"; if (!checkperm("a")) {exit("Permission denied");}
 include "../../include/resource_functions.php";
 include "../../include/image_processing.php";
 

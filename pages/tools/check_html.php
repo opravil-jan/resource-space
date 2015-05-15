@@ -2,8 +2,8 @@
 
 # Quick script to check valid HTML
 include "../../include/db.php";
-include "../../include/authenticate.php";
 include "../../include/general.php";
+include "../../include/authenticate.php";
 include "../../include/resource_functions.php";
 
 echo "<pre>";

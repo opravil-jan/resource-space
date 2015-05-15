@@ -1,6 +1,7 @@
 <?php
 
 include "../../include/db.php";
+include "../../include/general.php";
 include "../../include/authenticate.php";
 
 if (!checkperm("a"))
@@ -8,7 +9,6 @@ if (!checkperm("a"))
 	exit ("Permission denied.");
 	}
 
-include "../../include/general.php";
 
 $restype_order_by=getvalescaped("restype_order_by","rt");
 $restype_sort=getvalescaped("restype_sort","asc");

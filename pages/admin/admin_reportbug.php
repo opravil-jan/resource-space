@@ -8,11 +8,11 @@
  * @author Brian Adams <wreality@gmail.com>
  */
 include "../../include/db.php";
+include "../../include/general.php";
 /**
  * Only accessable to users with 'a' permission.
  */
 include "../../include/authenticate.php";if (!checkperm("a")) {exit ("Permission denied.");}
-include "../../include/general.php";
 
 # Error message
 $errortext = getval('errortext', '');

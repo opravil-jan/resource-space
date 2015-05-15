@@ -1,6 +1,7 @@
 <?php
 
 include "../../include/db.php";
+include "../../include/general.php";
 include "../../include/authenticate.php";
 
 if (!checkperm("a"))
@@ -8,7 +9,6 @@ if (!checkperm("a"))
 	exit ("Permission denied.");
 	}
 
-include "../../include/general.php";
 include "../../include/header.php";
 
 $ref=getval("ref","");

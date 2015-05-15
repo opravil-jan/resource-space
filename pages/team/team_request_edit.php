@@ -6,9 +6,9 @@
  * @subpackage Pages_Team
  */
 include "../../include/db.php";
+include "../../include/general.php";
 include "../../include/authenticate.php"; 
 if (!checkperm("R")) { exit ("Permission denied."); }
-include "../../include/general.php";
 include "../../include/request_functions.php";
 include "../../include/collections_functions.php";
 

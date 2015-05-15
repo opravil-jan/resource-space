@@ -2,8 +2,8 @@
 # Feeder page for AJAX search auto-completion.
 
 include "../../include/db.php";
-include "../../include/authenticate.php";
 include "../../include/general.php";
+include "../../include/authenticate.php";
 
 $field=getval("field",""); # get field name if doing a simple search completion (to get it easily from $_GET)
 $ref=getvalescaped("fieldref","",true); #get field ref if doing simple search completion (for get_suggested_keywords())

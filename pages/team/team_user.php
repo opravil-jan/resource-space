@@ -6,8 +6,8 @@
  * @Subpackage Pages_Team
  */
 include "../../include/db.php";
-include "../../include/authenticate.php";if (!checkperm("u")) {exit ("Permission denied.");}
 include "../../include/general.php";
+include "../../include/authenticate.php";if (!checkperm("u")) {exit ("Permission denied.");}
 include "../../include/collections_functions.php";
 
 $offset=getvalescaped("offset",0);

@@ -5,8 +5,8 @@
 # $flags can be adjusted per the information at http://php.net/manual/en/function.html-entity-decode.php
 
 include "../../include/db.php";
-include "../../include/authenticate.php"; if (!checkperm("a")) {exit("Permission denied");}
 include "../../include/general.php";
+include "../../include/authenticate.php"; if (!checkperm("a")) {exit("Permission denied");}
 include "../../include/resource_functions.php";
 
 if ($use_mysqli){$encoding=mysqli_character_set_name($db);} else {$encoding=mysql_client_encoding();}

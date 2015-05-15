@@ -1,6 +1,7 @@
 <?php
 
 include dirname(__FILE__) . "/../../../include/db.php";
+include dirname(__FILE__) . "/../../../include/general.php";
 include dirname(__FILE__) . "/../../../include/authenticate.php";
 
 if (!checkperm("a"))
@@ -9,7 +10,6 @@ if (!checkperm("a"))
 	}
 
        
-include dirname(__FILE__) . "/../../../include/general.php";
 include dirname(__FILE__) . "/../../../include/admin_functions.php";
 
 

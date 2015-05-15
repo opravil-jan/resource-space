@@ -1,8 +1,8 @@
 <?php
 include "../../include/db.php";
+include "../../include/general.php";
 include "../../include/authenticate.php";
 if(!((checkperm("h") && !checkperm("hdta")) || (checkperm("dta") && !checkperm("h")))){exit($lang["error-permissiondenied"]);}
-include "../../include/general.php";
 include "../../include/dash_functions.php";
 
 include "../../include/header.php";
