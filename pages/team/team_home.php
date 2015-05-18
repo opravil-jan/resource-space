@@ -108,9 +108,7 @@ include "../../include/header.php";
 	<?php
 	# Include a link to the System Setup area for those with the appropriate permissions.
 	if (checkperm("a")) { ?>
-	
-	<li><a href="<?php echo $baseurl?>/pages/team/team_system_console.php" onClick="return CentralSpaceLoad(this,true);"><?php echo $lang["systemconsole"]?></a></li>
-	
+
 	<li><a href="<?php echo $baseurl_short?>pages/admin/admin_home.php" onClick="return CentralSpaceLoad(this,true);"><?php echo $lang["systemsetup"]?></a></li>
 	<?php hook("customteamfunctionadmin")?>
 	<?php } ?>

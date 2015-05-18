@@ -31,6 +31,15 @@ include ("../../include/header.php");
 		<?php } ?>	
 		
 		<li><a href="<?php echo $baseurl_short?>pages/team/team_export.php" onClick="return CentralSpaceLoad(this,true);"><?php echo $lang["exportdata"]?></a></li>
+
+		<?php
+		if (checkperm("a"))
+			{
+			?><li><a href="<?php echo $baseurl?>/pages/team/team_system_console.php" onClick="return CentralSpaceLoad(this,true);"><?php echo $lang["systemconsole"]?></a></li>
+			<?php
+			}
+		?>
+
 		<li><a href="<?php echo $baseurl_short?>pages/check.php" onClick="return CentralSpaceLoad(this,true);"><?php echo $lang["installationcheck"]?></a></li>
 
 <?php

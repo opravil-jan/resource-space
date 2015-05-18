@@ -240,7 +240,7 @@ $lang["viewreports"]="View reports";
 $lang["viewreport"]="View report";
 $lang["treeobjecttype-report"]=$lang["report"]="Report";
 $lang["sendbulkmail"]="Send bulk mail";
-$lang["systemsetup"]="System setup";
+$lang["systemsetup"]="System";
 $lang["usersonline"]="Users currently online (idle time minutes)";
 $lang["diskusage"]="Disk usage";
 $lang["available"]="available";
