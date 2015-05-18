@@ -2881,7 +2881,13 @@ function get_nopreview_icon($resource_type,$extension,$col_size,$deprecated1=fal
 		{
 		return $try;
 		}
-
+	# Try a plugin
+	$try=hook('plugin_nopreview_icon','',array($resource_type,$col));
+	if (file_exists($folder . $try))
+		{
+		return $try;
+		}
+	
 	# Fall back to the 'no preview' icon used for type 1.
 	return "no_preview/resource_type/type1" . $col . ".png";
 	}
