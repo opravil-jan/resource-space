@@ -10,7 +10,7 @@ $callback = getval("callback","");
 if ($callback == "")
 	{
 	include "../../include/header.php";
-	foreach (array("debuglog","memorycpu","database") as $section)
+	foreach (array("debuglog","memorycpu","database","sqllogtransactions") as $section)
 	{
 		?><script>
 			var timeOutControl<?php echo $section; ?> = null;
@@ -323,6 +323,41 @@ switch ($callback)
 
 		// $actions = array("Kill" => "stuff"); /* for future implementation */
 		$sorted = true;
+		break;
+
+	case "sqllogtransactions":
+
+		if (isset($mysql_log_transactions) && isset($mysql_log_location) && file_exists($mysql_log_location))
+			{
+			$data = tail($mysql_log_location,1000);
+			$lines = array();
+			foreach (preg_split('/\n/',$data) as $line)
+				{
+				$line = trim($line);
+				if ($line == "")
+					{
+					continue;
+					}
+				array_push($lines, $line);
+				}
+			for ($i=count($lines)-1; $i >= 0; $i--)
+				{
+				if ($filter == "" || stripos($lines[$i],$filter)!==false)
+					{
+					$entry = array("Tail" => count($lines)-$i, "Line" => $lines[$i]);
+					array_push ($results, $entry);
+					}
+				}
+			}
+		else
+			{
+			?><br />
+			<?php
+			echo $lang["systemconsoleonsqllognotsetorfound"];
+			?><br />
+			<?php
+			}
+
 		break;
 
 	}		// end of callback switch
