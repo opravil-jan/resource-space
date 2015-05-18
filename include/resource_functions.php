@@ -475,7 +475,7 @@ function save_resource_data_multi($collection)
 				# Append text/option(s) mode?
 				if (getval("modeselect_" . $fields[$n]["ref"],"")=="AP")
 					{
-					if ($fields[$n]["type"]!=2 && $fields[$n]["type"]!=3)
+					if ($fields[$n]["type"]!=2 && $fields[$n]["type"]!=3 && substr($origval,0,1)!=",")
 						{
 						# Automatically append a space when appending text types.
 						$val=$existing . " " . $origval;
