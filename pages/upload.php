@@ -109,6 +109,7 @@ function showprogress(){
 <div class="BasicsBox">
 <?php
 if ($ref!="") $resource=get_resource_data($ref);
+if(!hook("replaceuploadheader")){
 # Define the titles:
 if (($ref!="")&&($resource["file_path"]!=""))
 	{ # Replace file
@@ -134,7 +135,8 @@ else
 <?php } ?>
 <h1><?php echo $titleh1 ?></h1>
 <h2><?php echo $titleh2 ?></h2>
-<?php if (($ref!="")&&($resource["file_path"]!="")){
+<?php }
+if (($ref!="")&&($resource["file_path"]!="")){
 	?>
 	<?php if ($replace_file_resource_preview){ 
 		$imgpath=get_resource_path($resource['ref'],true,"col",false);
