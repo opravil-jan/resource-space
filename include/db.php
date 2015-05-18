@@ -15,14 +15,15 @@
 
 # ensure no caching (dynamic site)
 
+# Functions used for debugging via System Console
+include_once "debug_functions.php";
+
 # Switch on output buffering.
 ob_start(null,4096);
 
 $pagetime_start = microtime();
 $pagetime_start = explode(' ', $pagetime_start);
 $pagetime_start = $pagetime_start[1] + $pagetime_start[0];
-
-include_once "debug_functions.php";
 
 if (!isset($suppress_headers) || !$suppress_headers)
 	{
