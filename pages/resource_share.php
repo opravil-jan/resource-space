@@ -176,7 +176,8 @@ if($editing && !$editexternalurl)
 								<div class="clearerleft"> </div>
 							</div>
 							<?php 
-							} 
+							}
+							hook("additionalresourceshare");
 							?>
                         <div class="QuestionSubmit" style="padding-top:0;margin-top:0;">
                             <label>&nbsp;</label>
@@ -246,6 +247,7 @@ if($editing && !$editexternalurl)
                             <td><?php echo $lang["lastused"];    ?></td>
                             <td><?php echo $lang["expires"];     ?></td>
                             <td><?php echo $lang["access"];      ?></td>
+                            <?php hook("additionalresourceexternalshareheader");?>
                             <td><div class="ListTools"><?php echo $lang["tools"]?></div></td>
                         </tr>
                 <?php
@@ -276,6 +278,7 @@ if($editing && !$editexternalurl)
                             <td><?php echo htmlspecialchars(nicedate($key["lastused"],true)); ?></td>
                             <td><?php echo htmlspecialchars($expires)                         ?></td>
                             <td><?php echo htmlspecialchars($access);                         ?></td>
+                            <?php hook("additionalresourceexternalsharerecord");?>
                             <td>
                                 <div class="ListTools">
                                 <?php 

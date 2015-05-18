@@ -325,6 +325,7 @@ foreach ($grouplist as $group)
 </div>
 <?php } ?>
 
+<?php hook("resourceemailafterexternal");?>
 
 <?php if ($email_from_user && !$always_email_from_user){?>
 <?php if ($useremail!="") { // Only allow this option if there is an email address available for the user.
