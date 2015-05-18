@@ -179,6 +179,7 @@ jQuery(document).ready(function() {
     if(jQuery("input,textarea").is(":focus"))
     {
        // don't listen to keyboard arrows when focused on form elements
+       <?php hook("keyboardnavtextfocus");?>
     }
     else
     { 
