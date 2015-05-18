@@ -175,7 +175,7 @@ switch ($callback)
 
 		// ----- start of tail read
 
-		if (isset($debug_log_location) && file_exists($debug_log_location))
+		if (isset($debug_log_location) && file_exists($debug_log_location) && is_readable($debug_log_location))
 			{
 			$data = tail($debug_log_location,1000);
 			$lines = array();
@@ -327,7 +327,7 @@ switch ($callback)
 
 	case "sqllogtransactions":
 
-		if (isset($mysql_log_transactions) && isset($mysql_log_location) && file_exists($mysql_log_location))
+		if (isset($mysql_log_transactions) && isset($mysql_log_location) && file_exists($mysql_log_location) && is_readable($mysql_log_location))
 			{
 			$data = tail($mysql_log_location,1000);
 			$lines = array();

@@ -2149,5 +2149,5 @@ $lang["systemconsoleonpermallusers"]="On (permanently for all users)";
 $lang["systemconsoleonallusers"]="On (all users)";
 $lang["systemconsoleonfailedtopcommand"]="Failed to execute top command";
 $lang["systemconsoleonfailedtasklistcommand"]="Failed to execute tasklist command";
-$lang["systemconsoleondebuglognotsetorfound"]="\$debug_log_location not set or file not found";
-$lang["systemconsoleonsqllognotsetorfound"]="\$mysql_log_transactions not set or \$mysql_log_location file not found";
+$lang["systemconsoleondebuglognotsetorfound"]="\$debug_log_location not set, file not found or is not readable";
+$lang["systemconsoleonsqllognotsetorfound"]="\$mysql_log_transactions not set or \$mysql_log_location file not found or is not readable";
