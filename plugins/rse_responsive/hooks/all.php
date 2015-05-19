@@ -32,7 +32,7 @@ function serveHeader() {
     if (!$slimheader)
         {
         ?>
-        <a href="<?php echo $baseurl; ?>"><img src="<?php echo $baseurl.$header_img_src; ?>" id="HeaderImg"></img></a>
+        <a href="<?php echo $baseurl; ?>"><img src="<?php echo $baseurl.$header_img_src; ?>" id="HeaderImg" style="display:none;"></img></a>
         <style>#Header{background-image: url(<?php echo $baseurl.$header_img_src; ?>);}</style>
         <?php
         }

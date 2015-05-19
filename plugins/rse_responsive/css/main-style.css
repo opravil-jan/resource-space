@@ -158,7 +158,6 @@
     max-width:320px;
     width:90%;
     clear:both;
-    display:inline-block;
 }
 .ResponsiveHeaderButton {
     margin-bottom:5px;
@@ -192,6 +191,8 @@
     .headerlink {
         display:none;
     }
+    #HeaderImg{display:inline-block!important;}
+
     .clearResponsiveBackground {
         background:none!important;
     }   
@@ -202,6 +203,7 @@
         margin-top:15px;
         margin-bottom:0px;
         background:0 !important;
+        padding:0;
     }
     #HeaderNav1 {
         display:none;
