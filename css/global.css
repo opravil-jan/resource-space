@@ -792,7 +792,7 @@ width: 90px;
 	float:left;
 }
 #HomePanelContainer a {-webkit-user-drag: none;}
-.HomePanel h2, .HomePanel h3 {
+.HomePanelDynamicDash h2, .HomePanelDynamicDash h3 {
 float: none;
 position: relative;
 padding-left: 60px;
