@@ -518,6 +518,13 @@
     }
 
 }
+/* Dash */
+@media(max-width:800px) {
+    #HomePanelContainer {
+    clear: both;
+    }
+}
+
 /* News */
 @media(max-width:1100px) {
     #NewsBox {
