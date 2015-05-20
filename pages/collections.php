@@ -137,13 +137,17 @@ if ($allow_reorder)
 		
 		jQuery(document).ready(function() {
 			jQuery('#CollectionSpace').sortable({
-				helper:"clone",
-				items: ".CollectionPanelShell",
+				connectWith: '#CentralSpaceResources',
+				appendTo: 'body',
+				zIndex: 99000,
+				helper: 'clone',
+				items: '.CollectionPanelShell',
 
 				start: function (event, ui)
 					{
 					InfoBoxEnabled=false;
 					if (jQuery('#InfoBoxCollection')) {jQuery('#InfoBoxCollection').hide();}
+					jQuery('#trash_bin').show();
 					},
 
 				stop: function(event, ui)
@@ -151,11 +155,11 @@ if ($allow_reorder)
 					InfoBoxEnabled=true;
 					var idsInOrder = jQuery('#CollectionSpace').sortable("toArray");
 					ReorderResourcesInCollection(idsInOrder);
+					jQuery('#trash_bin').hide();
 					}
 			});
 			jQuery('.CollectionPanelShell').disableSelection();
-			
-		});	
+		});
 		
 		
 	</script>
@@ -171,6 +175,96 @@ else { ?>
 	hook("responsivethumbsloaded");
 
 ?>
+	<!-- Drag and Drop -->
+	<script>
+		jQuery('#CentralSpace').on('prepareTrash', function() {
+			jQuery('#CollectionDiv').droppable({
+				accept: '.ResourcePanelShell, .ResourcePanelShellSmall, .ResourcePanelShellLarge',
+
+				drop: function(event, ui)
+					{
+					var query_strings = getQueryStrings();
+					if(is_special_search('!collection', 11) && !is_empty(query_strings) && query_strings.search.substring(11) == usercollection)
+						{
+						// No need to re-add this resource since we are looking at the same collection in both CentralSpace and CollectionDiv
+						return false;
+						}
+
+					var resource_id = jQuery(ui.draggable).attr("id");
+					resource_id = resource_id.replace('ResourceShell', '');
+
+					jQuery('#trash_bin').hide();
+					AddResourceToCollection(event, resource_id, '');
+					}
+			});
+
+			jQuery('#trash_bin').droppable({
+				accept: '.CollectionPanelShell, .ResourcePanelShell, .ResourcePanelShellSmall, .ResourcePanelShellLarge',
+				activeClass: "ui-state-hover",
+				hoverClass: "ui-state-active",
+
+				drop: function(event, ui) {
+					var resource_id = jQuery(ui.draggable).attr("id");
+					resource_id = resource_id.replace('ResourceShell', '');
+
+					jQuery('#trash_bin').hide();
+
+					// Cancel re-order in case it was triggered
+					if(jQuery('#CentralSpace').hasClass('ui-sortable'))
+						{
+						jQuery('#CentralSpace').sortable('cancel');
+						}
+					if(jQuery('#CollectionSpace').hasClass('ui-sortable'))
+						{
+						jQuery('#CollectionSpace').sortable('cancel');
+						}
+
+					jQuery('#trash_bin_delete_dialog').dialog({
+						title:'<?php echo $lang["trash_bin_delete_dialog_title"]; ?>',
+						autoOpen: false,
+						modal: true,
+						resizable: false,
+						dialogClass: 'delete-dialog no-close',
+						buttons: {
+							// Confirm removal of this resource from current collection
+							"<?php echo $lang['yes']; ?>": function() {
+								var query_strings = getQueryStrings();
+								if(is_empty(query_strings))
+									{
+									console.error('RS_debug: query_strings returned an empty object. Search param was expected to get the collection ID in order to remove the resource from the collection using Drag & Drop.');
+									jQuery(this).dialog('close');
+									}
+								var collection_id = query_strings.search.substring(11);
+
+								RemoveResourceFromCollection(event, resource_id, '<?php echo $pagename; ?>', collection_id);
+								jQuery('#ResourceShell' + resource_id).fadeOut();
+								jQuery(this).dialog('close');
+							},
+							// Cancel action
+							"<?php echo $lang['no']; ?>": function() {
+								jQuery(this).dialog('close');
+							}
+						}
+					});
+
+					// Only show confirmation dialog when resource is being dragged from top (ie. CentralSpace)
+					if(ui.draggable.attr('class') === 'CollectionPanelShell')
+						{
+						RemoveResourceFromCollection(event, resource_id, '<?php echo $pagename; ?>');
+						}
+					else
+						{
+						jQuery('#trash_bin_delete_dialog').dialog('open');
+						}
+				}
+			});
+		});
+
+		jQuery(document).ready(function() {
+			jQuery('#CentralSpace').trigger('prepareTrash');
+		});
+	</script>
+	<!-- End of Drag and Drop -->
 	<style>
 	#CollectionMenuExp
 		{
@@ -192,6 +286,9 @@ else { ?>
 $add=getvalescaped("add","");
 if ($add!="")
 	{
+	// If we provide a collection ID use that one instead
+	$to_collection = getvalescaped('toCollection', '');
+
 	if(strpos($add,",")>0)
 		{
 		$addarray=explode(",",$add);
@@ -205,7 +302,7 @@ if ($add!="")
 		{
 		hook("preaddtocollection");
 		#add to current collection
-		if (add_resource_to_collection($add,$usercollection,false,getvalescaped("size",""))==false)
+		if (add_resource_to_collection($add,($to_collection === '') ? $usercollection : $to_collection,false,getvalescaped("size",""))==false)
 			{ ?>
 			<script language="Javascript">alert("<?php echo $lang["cantmodifycollection"]?>");</script><?php
 			}
@@ -230,6 +327,9 @@ if ($add!="")
 $remove=getvalescaped("remove","");
 if ($remove!="")
 	{
+	// If we provide a collection ID use that one instead
+	$from_collection = getvalescaped('fromCollection', '');
+
 	if(strpos($remove,",")>0)
 		{
 		$removearray=explode(",",$remove);
@@ -243,7 +343,7 @@ if ($remove!="")
 		{
 		hook("preremovefromcollection");
 		#remove from current collection
-		if (remove_resource_from_collection($remove,$usercollection)==false)
+		if (remove_resource_from_collection($remove, ($from_collection === '') ? $usercollection : $from_collection) == false)
 			{
 			?><script language="Javascript">alert("<?php echo $lang["cantmodifycollection"]?>");</script><?php
 			}

@@ -367,9 +367,74 @@ if ($display_user_rating_stars && $k=="")
 	}
 	}
 
+// Allow Drag & Drop from collection bar to CentralSpace only when special search is "!collection"
+if(substr($search, 0, 11) === '!collection' && collection_writeable(substr($search, 11)))
+	{
+	?>
+	<script>
+	jQuery(document).ready(function() {
+		jQuery('#CentralSpaceResources').droppable({
+			accept: '.CollectionPanelShell',
+
+			drop: function(event, ui) {
+				if(!is_special_search('!collection', 11)) {
+					return false;
+				}
+
+				// get the current collection from the search page (ie. CentralSpace)
+				var query_strings = getQueryStrings();
+				if(is_empty(query_strings)) {
+					return false;
+				}
+
+				var resource_id = jQuery(ui.draggable).attr("id");
+				resource_id = resource_id.replace('ResourceShell', '');
+				var collection_id = query_strings.search.substring(11);
+
+				jQuery('#trash_bin').hide();
+				AddResourceToCollection(event, resource_id, '', collection_id);
+				CentralSpaceLoad(window.location.href, true);
+			}
+		});
+
+		jQuery('#CentralSpace').trigger('CentralSpaceSortable');
+	});
+	</script>
+	<?php
+	}
+
+if(substr($search, 0, 11) !== '!collection')
+	{
+	?>
+	<!-- Search items should only be draggable if results are not a collection -->
+	<script>
+	jQuery(document).ready(function() {
+		jQuery('#CentralSpaceResources .ResourcePanelShell, .ResourcePanelShellLarge, .ResourcePanelShellSmall').draggable({
+			connectWith: '#CollectionSpace',
+			appendTo: 'body',
+			zIndex: 99000,
+			helper: 'clone',
+			revert: false,
+			start: function(event, ui)
+				{
+				InfoBoxEnabled = false;
+				jQuery(this).css('visibility', 'hidden');
+				},
+			stop: function(event, ui)
+				{
+				InfoBoxEnabled = true;
+				jQuery(this).css('visibility', '');
+				}
+		});
+	});
+	</script>
+	<?php
+	}
+	
 	if ($allow_reorder && $display!="list") {
 ?>
 	<script type="text/javascript">
+	var allow_reorder = true;
 	
 	function ReorderResources(idsInOrder)
 		{
@@ -387,37 +452,79 @@ if ($display_user_rating_stars && $k=="")
 		  <?php } ?>
 			} 
 		});
-		}		
+		}
+
+		jQuery('#CentralSpace').on('CentralSpaceSortable', function() {
             jQuery('.ui-sortable').sortable('enable');
-			jQuery('#CentralSpace').sortable({
-				helper:"clone",
-				items: ".ResourcePanelShell, .ResourcePanelShellLarge, .ResourcePanelShellSmall",
-				cancel: ".DisableSort",
+			jQuery('#CentralSpaceResources').sortable({
+				connectWith: '#CollectionSpace',
+				appendTo: 'body',
+				zIndex: 99000,
+				helper: 'clone',
+				items: '.ResourcePanelShell, .ResourcePanelShellLarge, .ResourcePanelShellSmall',
+				cancel: '.DisableSort',
 				
 				start: function (event, ui)
 					{
 					InfoBoxEnabled=false;
 					if (jQuery('#InfoBox')) {jQuery('#InfoBox').hide();}
 					if (jQuery('#InfoBoxCollection')) {jQuery('#InfoBoxCollection').hide();}
+					if(is_special_search('!collection', 11))
+						{
+						// get the current collection from the search page (ie. CentralSpace)
+						var query_strings = getQueryStrings();
+						if(is_empty(query_strings))
+							{
+							return false;
+							}
+						var collection_id = query_strings.search.substring(11);
+
+						jQuery('#trash_bin').show();
+						}
 					},
 
 				update: function(event, ui)
 					{
+					// Don't reorder when top and bottom collections are the same and you drag & reorder from top to bottom
+					if(ui.item[0].parentElement.id == 'CollectionSpace')
+						{
+						return false;
+						}
+
 					InfoBoxEnabled=true;
 					var idsInOrder = jQuery('#CentralSpace').sortable("toArray");
 					ReorderResources(idsInOrder);
+					if(is_special_search('!collection', 11))
+						{
+						jQuery('#trash_bin').hide();
+						}
+					},
+
+				stop: function(event, ui)
+					{
+					InfoBoxEnabled=true;
+					if(is_special_search('!collection', 11))
+						{
+						jQuery('#trash_bin').hide();
+						}
 					}
 			});
 			jQuery('.ResourcePanelShell').disableSelection();
 			jQuery('.ResourcePanelShellLarge').disableSelection();
-			jQuery('.ResourcePanelShellSmall').disableSelection();			
-	
+			jQuery('.ResourcePanelShellSmall').disableSelection();
+
+			// CentralSpace should only be sortable (ie. reorder functionality) for collections only
+			if(!allow_reorder)
+				{
+				jQuery('#CentralSpace').sortable('disable');
+				}
+		});
 	</script>
 <?php }
 	elseif (!hook("noreorderjs")) { ?>
 	<script type="text/javascript">
         jQuery(document).ready(function () {
-			jQuery('#CentralSpace .ui-sortable').sortable('disable');
+			jQuery('#CentralSpaceResources .ui-sortable').sortable('disable');
 			jQuery('.ResourcePanelShell').enableSelection();
 			jQuery('.ResourcePanelShellLarge').enableSelection();
 			jQuery('.ResourcePanelShellSmall').enableSelection();
@@ -726,6 +833,7 @@ if (true) # Always show search header now.
 	hook("beforesearchresultsexpandspace");
 	?>
 	<div class="clearerleft"></div>
+	<div id="CentralSpaceResources">
 	<?php
 
 		
@@ -933,6 +1041,7 @@ if (true) # Always show search header now.
     }
 $url=$baseurl_short."pages/search.php?search=" . urlencode($search) . "&amp;order_by=" . urlencode($order_by) . "&amp;sort=" . urlencode($sort) . "&amp;archive=" . urlencode($archive) . "&amp;daylimit=" . urlencode($daylimit) . "&amp;k=" . urlencode($k) . "&amp;restypes=" . urlencode($restypes);	
 ?>
+</div> <!-- end of CentralSpaceResources -->
 <!--Bottom Navigation - Archive, Saved Search plus Collection-->
 <div class="BottomInpageNav">
 	<div class="BottomInpageNavLeft">
