@@ -2151,3 +2151,8 @@ $lang["systemconsoleonfailedtopcommand"]="Failed to execute top command";
 $lang["systemconsoleonfailedtasklistcommand"]="Failed to execute tasklist command";
 $lang["systemconsoleondebuglognotsetorfound"]="\$debug_log_location not set, file not found or is not readable";
 $lang["systemconsoleonsqllognotsetorfound"]="\$mysql_log_transactions not set or \$mysql_log_location file not found or is not readable";
+
+/* Global Trash Bin */
+$lang['trash_bin_title'] = 'Remove';
+$lang['trash_bin_delete_dialog_title'] = 'Remove resource from current collection?';
+/* End of Global Trash Bin strings */
