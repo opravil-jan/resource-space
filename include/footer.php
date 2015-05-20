@@ -17,6 +17,12 @@ if ($use_theme_bar && !in_array($pagename,array("search_advanced","login","previ
 <!-- Use aria-live assertive for high priority changes in the content: -->
 <span role="status" aria-live="assertive" class="ui-helper-hidden-accessible"></span>
 
+<!-- Global Trash Bin -->
+<div id="trash_bin">
+	<span class="trash_bin_text"><?php echo $lang['trash_bin_title']; ?></span>
+</div>
+<div id="trash_bin_delete_dialog" style="display: none;"></div>
+
 </div><!--End div-CentralSpace-->
 <?php if (($pagename!="login") && ($pagename!="user_password") && ($pagename!="preview_all") && ($pagename!="user_request")) { ?></div><?php } ?><!--End div-CentralSpaceContainer-->
 
@@ -25,6 +31,7 @@ if ($use_theme_bar && !in_array($pagename,array("search_advanced","login","previ
 <?php hook("footertop"); ?>
 
 <?php if (($pagename!="login") && ($pagename!="user_request") && ($pagename!="user_password") && ($pagename!="preview_all")&& ($pagename!="done") && ($pagename!="preview") && ($pagename!="change_language") && ($loginterms==false)) { ?>
+
 <!--Global Footer-->
 <div id="Footer">
 
@@ -370,6 +377,7 @@ if (isset($k) && $k!="" && isset($search) && !isset($usercollection))
 if ($collections_footer && !in_array($pagename,$omit_collectiondiv_load_pages) && !checkperm("b") && isset($usercollection)) 
 	{?>
 	<div id="CollectionDiv" class="CollectBack AjaxCollect ui-layout-south"></div>
+
 	<script type="text/javascript">
 		var collection_frame_height=<?php echo $collection_frame_height?>;
 		var thumbs="<?php echo htmlspecialchars($thumbs); ?>";
