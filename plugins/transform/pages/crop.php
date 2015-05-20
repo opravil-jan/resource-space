@@ -48,7 +48,7 @@ $imversion = get_imagemagick_version();
 if (!file_exists(get_temp_dir() . "/transform_plugin/pre_$ref.jpg")){
 	//echo  "generating preview";
 	//exit();
-	generate_transform_preview($ref) or die("Error generating transform preview.");
+	$wait=generate_transform_preview($ref) or die("Error generating transform preview.");
 }
 
 
@@ -71,11 +71,15 @@ $previewpath = get_temp_dir() . "/transform_plugin/".$cropper_cropsize."_$ref.jp
 //echo $previewpath;
 //exit();
 $originalpath= get_resource_path($ref,true,'',false,$orig_ext);
-
+if (in_array("s3storage",$plugins)){$wait=verify_file($originalpath);}
+if (in_array("s3storage",$plugins)){$wait=verify_file($previewpath);if ($wait){}}
 
 // retrieve image sizes for original image and preview used for cropping
 $cropsizes = getimagesize($previewpath);
 $origsizes = getimagesize($originalpath);
+
+
+
 $cropwidth = $cropsizes[0];
 $cropheight = $cropsizes[1];
 $origwidth = $origsizes[0];
@@ -432,7 +436,14 @@ if ($cropper_enable_alternative_files && !$download && !$original && getval("sli
     if (file_exists(get_temp_dir() . "/transform_plugin/pre_$ref.jpg")){
 	unlink(get_temp_dir() . "/transform_plugin/pre_$ref.jpg");
     }
-
+    
+	if (in_array("s3storage",$plugins)){
+		$files_created=find_all_files(dirname(get_resource_path($ref,true,'',false)));
+		foreach ($files_created as $file){
+			$wait=verify_offload($file);
+		}
+	}
+	
     redirect("pages/view.php?ref=$ref");
     exit;
 
@@ -471,7 +482,12 @@ else
 	unlink(get_temp_dir() . "/transform_plugin/pre_$ref.jpg");
 	exit();
 }
-
+if (in_array("s3storage",$plugins)){
+	$files_created=find_all_files(dirname(get_resource_path($ref,true,'',false)));
+	foreach ($files_created as $file){
+		$wait=verify_offload($file);
+	}
+}
 
 // send user back to view page
 header("Location:../../../pages/view.php?ref=$ref\n\n");
