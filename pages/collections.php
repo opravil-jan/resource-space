@@ -1055,9 +1055,4 @@ hook("thumblistextra");
 	</div>
 	<?php } ?>
 
-<?php draw_performance_footer();?>
-
-	</div>
-	</body>
-	</html>
-<?php 
+<?php draw_performance_footer();
