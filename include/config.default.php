@@ -2378,6 +2378,9 @@ $download_id_only_with_size = false;
 # Index the 'contributed by' field?
 $index_contributed_by=false;
 
+# Index the resource type, so searching for the resource type string will work (e.g. if you have a resource of type "photo" then "cat photo" will match even if the resource metadata itself doesn't contain the word 'photo')
+$index_resource_type=true;
+
 # Use CKEditor for site content?
 $site_text_use_ckeditor=false;
 
