@@ -87,9 +87,10 @@ function save_resource_data($ref,$multi,$autosave_field="")
 		(checkperm("F*") && !checkperm("F-" . $fields[$n]["ref"]))
 			
 		)
-                && ($autosave_field=="" || $autosave_field==$fields[$n]["ref"])
+                && ($autosave_field=="" || $autosave_field==$fields[$n]["ref"] || (is_array($autosave_field) && in_array($fields[$n]["ref"],$autosave_field)))
                 )
 			{
+			
 			if ($fields[$n]["type"]==2)
 				{
 				# construct the value from the ticked boxes

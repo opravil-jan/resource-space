@@ -65,8 +65,18 @@ if (getval("save","")!="")
 	{
 	if($editaccess)
 		{
+		// Set a list of the fields we actually want to change - otherwise any fields we don't submit will get wiped
+		$acceptedfields=array();
+		foreach($proposed_changes as $proposed_change)
+			{
+			if(getval("accept_change_" . $proposed_change["resource_type_field"],"")=="on" && !getval("delete_change_" . $proposed_change["resource_type_field"],"")=="on")
+				{
+				$acceptedfields[]=$proposed_change["resource_type_field"];
+				}			
+			}
+		
 		// Actually save the data		
-		save_resource_data($ref,false);
+		save_resource_data($ref,false,$acceptedfields);
 		
 		daily_stat("Resource edit",$ref);				
 		
@@ -578,6 +588,24 @@ if (isset($resulttext))
 </div><!-- End of BasicsBox -->
 <script>
 
+function ShowHelp(field)
+{
+    // Show the help box if available.
+    if (document.getElementById('help_' + field))
+    {
+       jQuery('#help_' + field).fadeIn();
+    }
+ }
+ 
+ function HideHelp(field)
+ {
+    // Hide the help box if available.
+    if (document.getElementById('help_' + field))
+    {
+       document.getElementById('help_' + field).style.display='none';
+    }
+ }
+ 
 function ShowProposeChanges(fieldref)
 	{
 	//fieldid="#proposed_change_" + fieldref;

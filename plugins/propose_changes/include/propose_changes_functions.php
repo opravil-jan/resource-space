@@ -70,15 +70,15 @@ function save_proposed_changes($ref)
                                     }
                             }
                     }
-            elseif ($fields[$n]["type"] == 3)
-                    {
-                    $val=getvalescaped("field_" . $fields[$n]["ref"],"");				
-                    // if it doesn't already start with a comma, add one
-                    if (substr($val,0,1) != ',')
-                            {
-                            $val = ','.$val;
-                            }
-                    }
+           elseif ($fields[$n]["type"] == 3 || $fields[$n]["type"] == 12)
+				{
+				$val=getvalescaped("field_" . $fields[$n]["ref"],"");				
+				// if it doesn't already start with a comma, add one
+				if (substr($val,0,1) != ',')
+					{
+					$val = ','.$val;
+					}
+				}
             else
                     {
                     # Set the value exactly as sent.
