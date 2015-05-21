@@ -239,9 +239,9 @@ input[readonly] {color: #000000;}
 #themeselect {color: white; background-color: #F45D18;}
 #themeselect:active {background-color: #db5315;}
 
-#basicyear, #basicmonth { background-color: #0DA4CF; color: white;}
+#basicyear, #basicmonth { background-color: #fff; color: #000;}
 
-#SearchBox select {background-color:#0DA4CF; color: white;}
+#SearchBox select {background-color:#fff; color: #000;}
 
 /* RS SpriteSheet */
 .glyph_user {background:url('../plugins/rse_responsive/gfx/responsive_spritesheet_charcoal.png') -20px 0;}
