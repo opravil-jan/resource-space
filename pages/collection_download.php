@@ -16,6 +16,7 @@ $useoriginal=getvalescaped("use_original","no");
 $collectiondata=get_collection($collection);
 $settings_id=getvalescaped("settings","");
 $uniqid=getval("id",uniqid("Col".$collection."-"));
+
 $usage = getvalescaped('usage', '-1');
 $usagecomment = getvalescaped('usagecomment', '');
 function findDuplicates($data,$dupval) {
@@ -124,22 +125,59 @@ $used_resources=array();
 $subbed_original_resources = array();
 if ($submitted != "")
 	{
-    # Define the archive file.
+	$id=getvalescaped("id","");
+	// Get a temporary directory for this download - $id should be unique
+	$usertempdir=get_temp_dir(false,"rs_" . $userref . "_" . $id);
+	
+	// Clean up old user temp directories if they exist
+	$tempdirbase=get_temp_dir(false);	
+	$tempfoldercontents = new DirectoryIterator($tempdirbase);
+	$folderstodelete=array();
+	$delindex=0;
+	foreach($tempfoldercontents as $objectindex => $object)
+		{
+		if ($object->isDir())
+			{
+			if(substr($object->getFilename(),0,strlen("rs_" . $userref . "_"))=="rs_" . $userref . "_" && time()-$object->getMTime()>24*60*60) 
+			   {
+			   debug ("Collection download - found old temp directory: " . $object->getFilename() .  "  age (minutes): " . (time()-$object->getMTime())/60);
+			   // This directory belongs to the user and is older than a day, delete it
+			   $folderstodelete[]=$tempdirbase . DIRECTORY_SEPARATOR . $object->getFilename();				
+			   }
+			}
+		elseif($purge_temp_folder_age!=0 && time()-$object->getMTime()>$purge_temp_folder_age*24*60*60)
+			{
+			unlink($tempdirbase . DIRECTORY_SEPARATOR . $object->getFilename()); 				
+			}
+		
+		}
+	foreach ($folderstodelete as $foldertodelete)
+		{
+		debug ("Collection download - deleting directory " . $foldertodelete);
+		$delfiles = array_diff(scandir($foldertodelete), array('.','..')); 
+		foreach ($delfiles as $delfile)
+			{
+			unlink($foldertodelete . DIRECTORY_SEPARATOR . $delfile); 
+			} 
+					    
+		rmdir($foldertodelete);
+		}
+	
+	# Define the archive file.
 	if ($use_zip_extension){
-		$id=getvalescaped("id","");
-		$progress_file=get_temp_dir(false,$id) . "/progress_file.txt";
+		$progress_file=$usertempdir . "/progress_file.txt";
 		$zipfile = get_temp_dir(false,$id)."/zip.zip";
 		$zip = new ZipArchive();
 		$zip->open($zipfile, ZIPARCHIVE::CREATE);
 	}
     else if ($archiver)
         {
-        $zipfile = get_temp_dir(false,$id)."/".$lang["collectionidprefix"] . $collection . "-" . $size . "." . $collection_download_settings[$settings_id]["extension"];
-        }
+        $zipfile = $usertempdir . "/".$lang["collectionidprefix"] . $collection . "-" . $size . "." . $collection_download_settings[$settings_id]["extension"];
+       }
     else
         {
-        $zipfile = get_temp_dir(false,$id)."/".$lang["collectionidprefix"] . $collection . "-" . $size . ".zip";
-        }
+        $zipfile = $usertempdir . "/".$lang["collectionidprefix"] . $collection . "-" . $size . ".zip";
+       }
     
 	$path="";
 	$deletion_array=array();
@@ -590,7 +628,7 @@ function ajax_download()
 <?php } ?>
 
 <?php if (!$use_zip_extension){?>
-	<form id='myform' action="<?php echo $baseurl_short?>pages/collection_download.php?submitted=true" method=post>
+	<form id='myform' action="<?php echo $baseurl_short?>pages/collection_download.php?id=<?php echo urlencode($uniqid) ?>&submitted=true" method=post>
 <?php } else { ?>
 	<form id='myform'>
 <?php } ?>
