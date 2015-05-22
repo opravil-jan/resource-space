@@ -20,7 +20,7 @@ $archive=getvalescaped("archive",0,true);
 
 $default_sort="DESC";
 if (substr($order_by,0,5)=="field"){$default_sort="ASC";}
-$sort=getval("sort",$default_sort);
+$sort=getvalescaped("sort",$default_sort);
 
 $useraccess=get_resource_access($ref);
 
@@ -94,7 +94,7 @@ if (getval("save","")!="")
 			// Log this			
 			daily_stat("E-mailed resource",$ref);
 			if (!hook("replaceresourceemailredirect")){
-				redirect("pages/done.php?text=resource_email&resource=$ref&search=".urlencode($search)."&offset=".$offset."&order_by=".$order_by."&sort=".$sort."&archive=".$archive);
+				redirect("pages/done.php?text=resource_email&resource=urlencode($ref)&search=".urlencode($search)."&offset=".urlencode($offset)."&order_by=".urlencode($order_by)."&sort=".urlencode($sort)."&archive=".urlencode($archive));
 			}
 			}
 		}
