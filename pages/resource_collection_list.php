@@ -7,7 +7,7 @@ $k=getvalescaped("k","");if ($k!=""){die();}
 include("../include/authenticate.php");
 include "../include/search_functions.php";
 include "../include/resource_functions.php";
-include "../include/collections_functions.php";
+include_once "../include/collections_functions.php";
 
 $ref=getvalescaped("ref","",true);
 $collections=get_resource_collections($ref);

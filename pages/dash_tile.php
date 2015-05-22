@@ -121,7 +121,7 @@ if($create)
 		$title=preg_replace("/^.*search=/", "", $srch);
 		if(substr($title,0,11)=="!collection")
 			{
-			include "../include/collections_functions.php";
+			include_once "../include/collections_functions.php";
 			$col= get_collection(preg_replace("/^!collection/", "", $title));
 			$title=$col["name"];
 			}

@@ -2,7 +2,7 @@
 include "../include/db.php";
 include "../include/general.php";
 include "../include/authenticate.php"; #if (!checkperm("s")) {exit ("Permission denied.");}
-include "../include/collections_functions.php";
+include_once "../include/collections_functions.php";
 
 $offset=getvalescaped("offset",0);
 $find=getvalescaped("find",getvalescaped("saved_find",""));setcookie("saved_find",$find, 0, '', '', false, true);

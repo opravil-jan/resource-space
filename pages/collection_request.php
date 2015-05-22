@@ -2,7 +2,7 @@
 include "../include/db.php";
 include "../include/general.php";
 $k=getvalescaped("k","");if ($k=="") {include "../include/authenticate.php";} 
-include "../include/collections_functions.php";
+include_once "../include/collections_functions.php";
 include "../include/request_functions.php";
 
 $ref=getval("ref","",true);

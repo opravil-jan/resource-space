@@ -5,7 +5,7 @@ include "../include/db.php";
 include "../include/general.php";
 include "../include/authenticate.php";
 include "../include/resource_functions.php";
-include "../include/collections_functions.php";
+include_once "../include/collections_functions.php";
 
 $ref=getvalescaped ("ref","",true);
 # fetch the current search (for finding similar matches)

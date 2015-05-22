@@ -6,7 +6,7 @@ include "../include/general.php";
 $k=getvalescaped("k","");if (($k=="") || (!check_access_key(getvalescaped("ref","",true),$k))) {include "../include/authenticate.php";}
 
 include "../include/search_functions.php";
-include "../include/collections_functions.php";
+include_once "../include/collections_functions.php";
 include "../include/resource_functions.php";
 
 # Save Existing Thumb Cookie Status Then Hide the collection Bar 

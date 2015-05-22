@@ -2,7 +2,7 @@
 include "../include/db.php";
 include "../include/general.php";
 include "../include/authenticate.php";
-include "../include/collections_functions.php";
+include_once "../include/collections_functions.php";
 
 global $default_perpage_list;
 $themes_order_by=getvalescaped("themes_order_by",getvalescaped("saved_themes_order_by","name"));setcookie("saved_themes_order_by",$themes_order_by, 0, '', '', false, true);
