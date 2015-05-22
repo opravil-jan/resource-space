@@ -165,7 +165,9 @@ if (array_key_exists("user",$_COOKIE) || array_key_exists("user",$_GET) || isset
         $ip_restrict_user=trim($userdata[0]["ip_restrict_user"]);
         
         $usercollection=$userdata[0]["current_collection"];
-        if ($usercollection==0 || !is_numeric($usercollection))
+	// Check collection actually exists
+	$validcollection=sql_value("select ref value from collection where ref='$usercollection'",0);
+	if ($usercollection==0 || !is_numeric($usercollection) || $validcollection==0)
         	{
        		# Create a collection for this user
 			global $lang;

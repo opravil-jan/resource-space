@@ -25,11 +25,12 @@ if ($addcollection!="")
 /////
 
 #Remove all from collection
-	$ref = getvalescaped("ref","",true);
-if($ref!='' && getvalescaped("submitted","")=='removeall' && getval("removeall","")!="") 
-	{
-	remove_all_resources_from_collection($ref);
-	}
+$emptycollection = getvalescaped("emptycollection","",true);
+if($emptycollection!='' && getvalescaped("submitted","")=='removeall' && getval("removeall","")!="" && collection_writeable($emptycollection))
+    {
+    remove_all_resources_from_collection($emptycollection);
+    }
+    
 # Disable info box for external access.
 if ($k!="") {$infobox=false;} 
 # Disable checkboxes for external users.
@@ -89,7 +90,7 @@ if ($collection!="")
 	
 # Load collection info.
 $cinfo=get_collection($usercollection);
-	
+
 # Check to see if the user can edit this collection.
 $allow_reorder=false;
 if (($k=="") && (($userref==$cinfo["user"]) || ($cinfo["allow_changes"]==1) || (checkperm("h"))))
@@ -709,7 +710,7 @@ elseif ($k!="")
 	else { ?>
     <li><a onclick="return CentralSpaceLoad(this,true);" href="<?php echo $baseurl_short?>pages/search.php?search=<?php echo urlencode("!collection" . $usercollection)?>">&gt; <?php echo $lang["viewall"]?></a></li>
     <?php }
-    echo (isset($emptycollection) && $remove_resources_link_on_collection_bar && collection_writeable($usercollection)) ? '<li><a href="'.$baseurl_short.'pages/collections.php?ref='.urlencode($usercollection).'&removeall=true&submitted=removeall&ajax=true" onclick="if(!confirm(\''.$lang['emptycollectionareyousure'].'\')){return false;}return CollectionDivLoad(this);"> &gt; '.$lang["emptycollection"].'</a></li>' : "";
+    echo (isset($emptycollection) && $remove_resources_link_on_collection_bar && collection_writeable($usercollection)) ? '<li><a href="'.$baseurl_short.'pages/collections.php?emptycollection='.urlencode($usercollection).'&removeall=true&submitted=removeall&ajax=true" onclick="if(!confirm(\''.$lang['emptycollectionareyousure'].'\')){return false;}return CollectionDivLoad(this);"> &gt; '.$lang["emptycollection"].'</a></li>' : "";
      if ($count_result>0)
     	{ 
 		# Ability to request a whole collection (only if user has restricted access to any of these resources)
