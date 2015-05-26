@@ -957,7 +957,7 @@ a.HomePanel:active {color:transparent;}
 
 /* Shadowy Styling */
 .HomePanelDynamicDash.TileContentShadow h2, .HomePanelDynamicDash.TileContentShadow p, .HomePanelDynamicDash.TileContentShadow  {
-	text-shadow: #090909 1px 1px 8px;
+	text-shadow: 1px 1px 8px #090909;
 }
 .HomePanelDynamicDash.TileContentShadow .collection-icon {
 	background: url("../gfx/dash/collection.png") no-repeat;

@@ -734,13 +734,7 @@ h2#dbaseconfig{  min-height: 32px;}
 			$config_output .= " \r\n";
 			}
 
-		// set display defaults for new installs
-		$config_output .= "\$thumbs_display_fields = array(8,3);\r\n";
-		$config_output .= "\$list_display_fields = array(8,3,12);\r\n";
-		$config_output .= "\$sort_fields = array(12);\r\n";
 
-        // Set imagemagick default for new installs to expect the newer version with the sRGB bug fixed.
-        $config_output .= "\$imagemagick_colorspace = \"sRGB\";\r\n";
 
         //Design Configuration
         $slimtheme=get_post_bool('slim-theme');
@@ -749,6 +743,9 @@ h2#dbaseconfig{  min-height: 32px;}
         	$config_output.= "\r\n#Design Changes\r\n\$slimheader=true;\r\n";
         	#$config_output.= "\$available_themes=array('slimcharcoal', 'multi', 'whitegry','greyblu','black');\r\n\$defaulttheme='slimcharcoal';\r\n";
         	}
+                
+        # Append defaults for new systems.
+        $config_output.=file_get_contents(dirname(__FILE__) . "/../include/config.new_installs.php");
 	}
 ?>
 <?php //Output Section
@@ -1085,7 +1082,7 @@ else
 	<?php if (isset($warnings)){ ?>	
 		<div id="warnheader"><?php echo $lang["setup-warnheader"];?></div>
 	<?php } ?>	
-	<div id="tabs" class="starthidden">
+	<div id="tabs" class="starthidden" style="width:80%;margin:0 auto 0 auto;">
 		<ul>
 			<li><a href="#tab-1"><?php echo $lang["setup-basicsettings"];?></a></li>
 			<li><a href="#tab-2"><?php echo $lang["setup-advancedsettings"];?></a></li>

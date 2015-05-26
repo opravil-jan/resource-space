@@ -240,3 +240,23 @@ input[readonly] {color: #000000;}
 .glyph_user {background:url('../plugins/rse_responsive/gfx/responsive_spritesheet_charcoal.png') -20px 0;}
 .glyph_menu {background:url('../plugins/rse_responsive/gfx/responsive_spritesheet_charcoal.png') 0 0;}
 .glyph_result {background:url('../plugins/rse_responsive/gfx/responsive_spritesheet_charcoal.png') -40px 0;}
+
+/* Black versions of the dash icons */
+.HomePanel .collection-icon {	background: url("../gfx/dash/black-non-collection.png") no-repeat; }
+.HomePanel .theme-icon { background: url("../gfx/dash/black-non-theme.png") no-repeat; }
+.HomePanel .shopping-icon { background: url("../gfx/dash/black-non-my_collections.png") no-repeat; }
+.HomePanel .search-icon { background: url("../gfx/dash/black-non-search.png") no-repeat; }
+.HomePanel .help-icon { background: url("../gfx/dash/black-non-help.png") no-repeat; }
+.HomePanel .clock-icon { background: url("../gfx/dash/black-non-clock.png") no-repeat;}
+.HomePanelDynamicDash.TileContentShadow .collection-icon { background: url("../gfx/dash/black-collection.png") no-repeat; }
+.HomePanelDynamicDash.TileContentShadow .theme-icon { background: url("../gfx/dash/black-theme.png") no-repeat;}
+.HomePanelDynamicDash.TileContentShadow .shopping-icon { background: url("../gfx/dash/black-my_collections.png") no-repeat;}
+.HomePanelDynamicDash.TileContentShadow .search-icon { background: url("../gfx/dash/black-search.png") no-repeat; }
+.HomePanelDynamicDash.TileContentShadow .help-icon { background: url("../gfx/dash/black-help.png") no-repeat;}
+.HomePanelDynamicDash.TileContentShadow .clock-icon { background: url("../gfx/dash/black-clock.png") no-repeat;}
+
+/* Shadowy Styling - white for this theme */
+.HomePanelDynamicDash.TileContentShadow h2, .HomePanelDynamicDash.TileContentShadow p, .HomePanelDynamicDash.TileContentShadow  {
+	text-shadow: 1px 1px 15px #fff;color: #000;
+}
+
