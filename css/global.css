@@ -941,7 +941,7 @@ a.HomePanel:active {color:transparent;}
 	position: relative;
 	padding-left: 60px;
 	padding-right: 15px;
-	padding-top: 18px;
+	padding-top: 12px;
 	margin-bottom: 0;
 }
 .HomePanelDynamicDash p, .HomePanelThemes p {
