@@ -201,12 +201,21 @@ if (strtoupper($new_ext) == 'JPG' && $cropper_jpeg_rgb){
 }
 
 $commandprefix="";
+$keep_transparency=false;
 if (strtoupper($new_ext)=="PNG" || strtoupper($new_ext)=="GIF")
     {
     $commandprefix = " -background transparent ";
-    }
+    $keep_transparency=true;
+    $command .= $commandprefix . " \"$originalpath\" ";
     
-$command .= $commandprefix . " \"$originalpath\"[0] ";
+    }
+else
+    {
+    $command .= $commandprefix . " \"$originalpath\"[0] ";
+    }
+
+    
+
 
 
 $resolution=getval("resolution","",TRUE);
@@ -218,7 +227,7 @@ if ($resolution!="")
 	
 // below is a hack to make this work with multilayer images
 // the result will always be a flattened single-layer image
-if ($orig_ext=="psd"){$command .= " -alpha Off ";}
+if ($orig_ext=="psd" && !$keep_transparency){$command .= " -alpha Off ";}
 $command .= "-flatten ";
 
 $command .= $colorspace1;
