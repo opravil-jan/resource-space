@@ -1082,7 +1082,7 @@ function delete_resource($ref)
 	
 	$current_state=$resource['archive'];
 	
-	global $resource_deletion_state;
+	global $resource_deletion_state, $staticsync_allow_syncdir_deletion, $storagedir;
 	if (isset($resource_deletion_state) && $current_state!=$resource_deletion_state) # Really delete if already in the 'deleted' state.
 		{
 		# $resource_deletion_state is set. Do not delete this resource, instead move it to the specified state.
@@ -1115,7 +1115,8 @@ function delete_resource($ref)
 		$sizes=get_image_sizes($ref,true,$extension);
 		foreach ($sizes as $size)
 			{
-			if (file_exists($size['path'])) {unlink($size['path']);}
+			if (file_exists($size['path']) && ($staticsync_allow_syncdir_deletion || false !== strpos ($size['path'],$storagedir))) // Only delete if file is in filestore
+				 {unlink($size['path']);}
 			}
 		}
 	

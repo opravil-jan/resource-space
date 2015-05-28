@@ -1849,6 +1849,9 @@ $staticsync_alternatives_suffix="_alternatives";
 # if an embedded title is found in the file. If true, the embedded title will be used.
 $staticsync_prefer_embedded_title = true;
 
+# Do we allow deletion of files located in $syncdir through the UI?
+$staticsync_allow_syncdir_deletion=false;
+
 # End of StaticSync settings
 
 
