@@ -492,7 +492,7 @@ if(substr($search, 0, 11) !== '!collection')
 						}
 
 					InfoBoxEnabled=true;
-					var idsInOrder = jQuery('#CentralSpace').sortable("toArray");
+					var idsInOrder = jQuery('#CentralSpaceResources').sortable("toArray");
 					ReorderResources(idsInOrder);
 					if(is_special_search('!collection', 11))
 						{
@@ -516,7 +516,7 @@ if(substr($search, 0, 11) !== '!collection')
 			// CentralSpace should only be sortable (ie. reorder functionality) for collections only
 			if(!allow_reorder)
 				{
-				jQuery('#CentralSpace').sortable('disable');
+				jQuery('#CentralSpaceResources').sortable('disable');
 				}
 		});
 	</script>
