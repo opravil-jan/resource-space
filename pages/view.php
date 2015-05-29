@@ -1613,6 +1613,8 @@ if ($metadata_report && isset($exiftool_path) && $k==""){?>
 <?php hook("customrelations"); //For future template/spawned relations in Web to Print plugin ?>
 
 <?php
+
+
 # -------- Related Resources (must be able to search for this to work)
 if (isset($relatedresources) && (count($relatedresources) > $related_resources_shown)&& checkperm("s") && ($k=="")) {
 $result=$relatedresources;
@@ -1800,7 +1802,8 @@ if (count($result)>0)
 	} 
 	# -------- End Related Resources
 	
-	
+	 } # end of related resources block that requires search permissions
+
 
 if ($show_related_themes==true ){
 # -------- Public Collections / Themes
@@ -1830,9 +1833,7 @@ if (count($result)>0)
 	<div class="PanelShadow"></div>
 	</div><?php
 	}} 
-?>
 
-<?php } # end of block that requires search permissions
 
 if($enable_find_similar && checkperm('s') && ($k == '')) { ?>
 <!--Panel for search for similar resources-->
