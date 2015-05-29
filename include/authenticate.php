@@ -167,7 +167,18 @@ if (array_key_exists("user",$_COOKIE) || array_key_exists("user",$_GET) || isset
         $usercollection=$userdata[0]["current_collection"];
 	// Check collection actually exists
 	$validcollection=sql_value("select ref value from collection where ref='$usercollection'",0);
-	if ($usercollection==0 || !is_numeric($usercollection) || $validcollection==0)
+	if($validcollection==0)
+        	{
+		// Not a valid collection - switch to user's primary collection if there is one
+		$usercollection=sql_value("select ref value from collection where user='$userref' and name like 'My Collection%' order by created asc limit 1",0);
+		if ($usercollection!=0)
+			{
+			# set this to be the user's current collection
+			sql_query("update user set current_collection='$usercollection' where ref='$userref'");
+			}
+		}	
+		
+	if ($usercollection==0 || !is_numeric($usercollection))
         	{
        		# Create a collection for this user
 			global $lang;

@@ -79,7 +79,8 @@ if ($collection!="")
 		}
 	elseif(!isset($usercollection) || $collection!=$usercollection)
 		{
-		# Switch the existing collection
+                $validcollection=sql_value("select ref value from collection where ref='$collection'",0);
+                # Switch the existing collection
 		if ($k=="") {set_user_collection($userref,$collection);}
 		$usercollection=$collection;
 		}
@@ -648,6 +649,12 @@ elseif ($k!="")
 				<option selected><?php echo i18n_get_collection_name($notfound) ?></option>
 				<?php
 				}
+                        elseif($validcollection==0)
+                            {
+                            ?>
+                            <option selected><?php echo $lang["error-collectionnotfound"] ?></option>
+                            <?php  
+                            }
 			}
 		
 		if ($collection_allow_creation) { ?>
