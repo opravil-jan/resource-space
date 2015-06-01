@@ -118,26 +118,27 @@ if ($allow_reorder)
 	{
 	?>
 	<script type="text/javascript">
-	function ReorderResourcesInCollection(idsInOrder)
-		{
-		var newOrder = [];
-		jQuery.each(idsInOrder, function() {
-			newOrder.push(this.substring(13));
-			}); 
-		
-		jQuery.ajax({
-		  type: 'POST',
-		  url: '<?php echo $baseurl_short?>pages/collections.php?collection=<?php echo urlencode($usercollection) ?>&reorder=true',
-		  data: {order:JSON.stringify(newOrder)},
-		  success: function() {
-		    var results = new RegExp('[\\?&amp;]' + 'search' + '=([^&amp;#]*)').exec(window.location.href);
-		    var ref = new RegExp('[\\?&amp;]' + 'ref' + '=([^&amp;#]*)').exec(window.location.href);
-		    if ((ref==null)&&(results!== null)&&('<?php echo urlencode("!collection" . $usercollection); ?>' === results[1])) CentralSpaceLoad('<?php echo $baseurl_short?>pages/search.php?search=<?php echo urlencode("!collection" . $usercollection); ?>',true);
-		  }
-		});		
+		function ReorderResourcesInCollection(idsInOrder) {
+			var newOrder = [];
+			jQuery.each(idsInOrder, function() {
+				newOrder.push(this.substring(13));
+				}); 
+			
+			jQuery.ajax({
+			  type: 'POST',
+			  url: '<?php echo $baseurl_short?>pages/collections.php?collection=<?php echo urlencode($usercollection) ?>&reorder=true',
+			  data: {order:JSON.stringify(newOrder)},
+			  success: function() {
+			    var results = new RegExp('[\\?&amp;]' + 'search' + '=([^&amp;#]*)').exec(window.location.href);
+			    var ref = new RegExp('[\\?&amp;]' + 'ref' + '=([^&amp;#]*)').exec(window.location.href);
+			    if ((ref==null)&&(results!== null)&&('<?php echo urlencode("!collection" . $usercollection); ?>' === results[1])) CentralSpaceLoad('<?php echo $baseurl_short?>pages/search.php?search=<?php echo urlencode("!collection" . $usercollection); ?>',true);
+			  }
+			});		
 		}
-		
 		jQuery(document).ready(function() {
+			if(jQuery(window).width()<600 && jQuery(window).height()<600 && is_touch_device()) {
+					return false;
+				}
 			jQuery('#CollectionSpace').sortable({
 				connectWith: '#CentralSpaceResources',
 				appendTo: 'body',

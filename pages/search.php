@@ -372,33 +372,36 @@ if(substr($search, 0, 11) === '!collection' && collection_writeable(substr($sear
 	{
 	?>
 	<script>
-	jQuery(document).ready(function() {
-		jQuery('#CentralSpaceResources').droppable({
-			accept: '.CollectionPanelShell',
+		jQuery(document).ready(function() {
+		if(jQuery(window).width()<600 && jQuery(window).height()<600 && is_touch_device()) {
+			return false;
+		}
+			jQuery('#CentralSpaceResources').droppable({
+				accept: '.CollectionPanelShell',
 
-			drop: function(event, ui) {
-				if(!is_special_search('!collection', 11)) {
-					return false;
+				drop: function(event, ui) {
+					if(!is_special_search('!collection', 11)) {
+						return false;
+					}
+
+					// get the current collection from the search page (ie. CentralSpace)
+					var query_strings = getQueryStrings();
+					if(is_empty(query_strings)) {
+						return false;
+					}
+
+					var resource_id = jQuery(ui.draggable).attr("id");
+					resource_id = resource_id.replace('ResourceShell', '');
+					var collection_id = query_strings.search.substring(11);
+
+					jQuery('#trash_bin').hide();
+					AddResourceToCollection(event, resource_id, '', collection_id);
+					CentralSpaceLoad(window.location.href, true);
 				}
+			});
 
-				// get the current collection from the search page (ie. CentralSpace)
-				var query_strings = getQueryStrings();
-				if(is_empty(query_strings)) {
-					return false;
-				}
-
-				var resource_id = jQuery(ui.draggable).attr("id");
-				resource_id = resource_id.replace('ResourceShell', '');
-				var collection_id = query_strings.search.substring(11);
-
-				jQuery('#trash_bin').hide();
-				AddResourceToCollection(event, resource_id, '', collection_id);
-				CentralSpaceLoad(window.location.href, true);
-			}
+			jQuery('#CentralSpace').trigger('CentralSpaceSortable');
 		});
-
-		jQuery('#CentralSpace').trigger('CentralSpaceSortable');
-	});
 	</script>
 	<?php
 	}
@@ -407,8 +410,9 @@ if(substr($search, 0, 11) !== '!collection')
 	{
 	?>
 	<!-- Search items should only be draggable if results are not a collection -->
-	<script>
+	<script>	
 	jQuery(document).ready(function() {
+		if(jQuery(window).width()<600 && jQuery(window).height()<600 && is_touch_device()) {return false;}
 		jQuery('#CentralSpaceResources .ResourcePanelShell, .ResourcePanelShellLarge, .ResourcePanelShellSmall').draggable({
 			connectWith: '#CollectionSpace',
 			appendTo: 'body',
@@ -436,8 +440,7 @@ if(substr($search, 0, 11) !== '!collection')
 	<script type="text/javascript">
 	var allow_reorder = true;
 	
-	function ReorderResources(idsInOrder)
-		{
+	function ReorderResources(idsInOrder) {
 		var newOrder = [];
 		jQuery.each(idsInOrder, function() {
 			newOrder.push(this.substring(13));
@@ -452,73 +455,73 @@ if(substr($search, 0, 11) !== '!collection')
 		  <?php } ?>
 			} 
 		});
-		}
-
-		jQuery('#CentralSpace').on('CentralSpaceSortable', function() {
-            jQuery('.ui-sortable').sortable('enable');
-			jQuery('#CentralSpaceResources').sortable({
-				connectWith: '#CollectionSpace',
-				appendTo: 'body',
-				zIndex: 99000,
-				helper: 'clone',
-				items: '.ResourcePanelShell, .ResourcePanelShellLarge, .ResourcePanelShellSmall',
-				cancel: '.DisableSort',
-				
-				start: function (event, ui)
+	}
+	jQuery('#CentralSpace').on('CentralSpaceSortable', function() {
+		if(jQuery(window).width()<600 && jQuery(window).height()<600 && is_touch_device()) {return false;}
+        jQuery('.ui-sortable').sortable('enable');
+		jQuery('#CentralSpaceResources').sortable({
+			connectWith: '#CollectionSpace',
+			appendTo: 'body',
+			zIndex: 99000,
+			helper: 'clone',
+			items: '.ResourcePanelShell, .ResourcePanelShellLarge, .ResourcePanelShellSmall',
+			cancel: '.DisableSort',
+			
+			start: function (event, ui)
+				{
+				InfoBoxEnabled=false;
+				if (jQuery('#InfoBox')) {jQuery('#InfoBox').hide();}
+				if (jQuery('#InfoBoxCollection')) {jQuery('#InfoBoxCollection').hide();}
+				if(is_special_search('!collection', 11))
 					{
-					InfoBoxEnabled=false;
-					if (jQuery('#InfoBox')) {jQuery('#InfoBox').hide();}
-					if (jQuery('#InfoBoxCollection')) {jQuery('#InfoBoxCollection').hide();}
-					if(is_special_search('!collection', 11))
-						{
-						// get the current collection from the search page (ie. CentralSpace)
-						var query_strings = getQueryStrings();
-						if(is_empty(query_strings))
-							{
-							return false;
-							}
-						var collection_id = query_strings.search.substring(11);
-
-						jQuery('#trash_bin').show();
-						}
-					},
-
-				update: function(event, ui)
-					{
-					// Don't reorder when top and bottom collections are the same and you drag & reorder from top to bottom
-					if(ui.item[0].parentElement.id == 'CollectionSpace')
+					// get the current collection from the search page (ie. CentralSpace)
+					var query_strings = getQueryStrings();
+					if(is_empty(query_strings))
 						{
 						return false;
 						}
+					var collection_id = query_strings.search.substring(11);
 
-					InfoBoxEnabled=true;
-					var idsInOrder = jQuery('#CentralSpaceResources').sortable("toArray");
-					ReorderResources(idsInOrder);
-					if(is_special_search('!collection', 11))
-						{
-						jQuery('#trash_bin').hide();
-						}
-					},
-
-				stop: function(event, ui)
-					{
-					InfoBoxEnabled=true;
-					if(is_special_search('!collection', 11))
-						{
-						jQuery('#trash_bin').hide();
-						}
+					jQuery('#trash_bin').show();
 					}
-			});
-			jQuery('.ResourcePanelShell').disableSelection();
-			jQuery('.ResourcePanelShellLarge').disableSelection();
-			jQuery('.ResourcePanelShellSmall').disableSelection();
+				},
 
-			// CentralSpace should only be sortable (ie. reorder functionality) for collections only
-			if(!allow_reorder)
+			update: function(event, ui)
 				{
-				jQuery('#CentralSpaceResources').sortable('disable');
+				// Don't reorder when top and bottom collections are the same and you drag & reorder from top to bottom
+				if(ui.item[0].parentElement.id == 'CollectionSpace')
+					{
+					return false;
+					}
+
+				InfoBoxEnabled=true;
+				var idsInOrder = jQuery('#CentralSpaceResources').sortable("toArray");
+				ReorderResources(idsInOrder);
+				if(is_special_search('!collection', 11))
+					{
+					jQuery('#trash_bin').hide();
+					}
+				},
+
+			stop: function(event, ui)
+				{
+				InfoBoxEnabled=true;
+				if(is_special_search('!collection', 11))
+					{
+					jQuery('#trash_bin').hide();
+					}
 				}
 		});
+		jQuery('.ResourcePanelShell').disableSelection();
+		jQuery('.ResourcePanelShellLarge').disableSelection();
+		jQuery('.ResourcePanelShellSmall').disableSelection();
+
+		// CentralSpace should only be sortable (ie. reorder functionality) for collections only
+		if(!allow_reorder)
+			{
+			jQuery('#CentralSpaceResources').sortable('disable');
+			}
+	});
 	</script>
 <?php }
 	elseif (!hook("noreorderjs")) { ?>

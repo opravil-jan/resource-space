@@ -128,46 +128,49 @@ function get_default_dash()
 				jQuery.post( "<?php echo $baseurl?>/pages/ajax/dash_tile.php",{"tile":tile,"new_index":((index*10)+10)});
 			}
 			var dragging=false;
-
-			jQuery(function() {
-			 	jQuery("#HomePanelContainer").sortable({
-			  	  items: ".DashTileDraggable",
-			  	  start: function(event,ui) {
-			  	  	jQuery("#dash_tile_bin").show();
-			  	  	dragging=true;
-			  	  },
-			  	  stop: function(event,ui) {
-		          	jQuery("#dash_tile_bin").hide();
-			  	  },
-		          update: function(event, ui) {
-		          	nonDraggableTiles = jQuery(".HomePanel").length - jQuery(".DashTileDraggable").length;
-		          	newIndex = ui.item.index() - nonDraggableTiles;
-		          	var id=jQuery(ui.item).attr("id").replace("tile","");
-		          	updateDashTileOrder(newIndex,id);
-		          }
-			  	});
-			    jQuery("#dash_tile_bin").droppable({
-					accept: ".DashTileDraggable",
-					activeClass: "ui-state-hover",
-					hoverClass: "ui-state-active",
-					drop: function(event,ui) {
-						var id=jQuery(ui.draggable).attr("id");
-						id = id.replace("tile","");
-						title = jQuery(ui.draggable).find(".title").html();
-						jQuery("#dash_tile_bin").hide();
-						jQuery("#delete_dialog").dialog({
-					    	title:'<?php echo $lang["dashtiledelete"]; ?>',
-					    	modal: true,
-							resizable: false,
-							dialogClass: 'delete-dialog no-close',
-					        buttons: {
-					            "<?php echo $lang['confirmdefaultdashtiledelete'] ?>": function() {deleteDefaultDashTile(id); jQuery(this).dialog("close");},    
-					            "<?php echo $lang['cancel'] ?>": function() { jQuery(this).dialog('close'); }
-					        }
-					    });
+				jQuery(function() {
+					if(jQuery(window).width()<600 && jQuery(window).height()<600 && is_touch_device()) {
+						jQuery("#HomePanelContainer").prepend("<p><?php echo $lang["dashtilesmalldevice"];?></p>");
+						return false;
 					}
-		    	});
-		  	});
+				 	jQuery("#HomePanelContainer").sortable({
+				  	  items: ".DashTileDraggable",
+				  	  start: function(event,ui) {
+				  	  	jQuery("#dash_tile_bin").show();
+				  	  	dragging=true;
+				  	  },
+				  	  stop: function(event,ui) {
+			          	jQuery("#dash_tile_bin").hide();
+				  	  },
+			          update: function(event, ui) {
+			          	nonDraggableTiles = jQuery(".HomePanel").length - jQuery(".DashTileDraggable").length;
+			          	newIndex = ui.item.index() - nonDraggableTiles;
+			          	var id=jQuery(ui.item).attr("id").replace("tile","");
+			          	updateDashTileOrder(newIndex,id);
+			          }
+				  	});
+				    jQuery("#dash_tile_bin").droppable({
+						accept: ".DashTileDraggable",
+						activeClass: "ui-state-hover",
+						hoverClass: "ui-state-active",
+						drop: function(event,ui) {
+							var id=jQuery(ui.draggable).attr("id");
+							id = id.replace("tile","");
+							title = jQuery(ui.draggable).find(".title").html();
+							jQuery("#dash_tile_bin").hide();
+							jQuery("#delete_dialog").dialog({
+						    	title:'<?php echo $lang["dashtiledelete"]; ?>',
+						    	modal: true,
+								resizable: false,
+								dialogClass: 'delete-dialog no-close',
+						        buttons: {
+						            "<?php echo $lang['confirmdefaultdashtiledelete'] ?>": function() {deleteDefaultDashTile(id); jQuery(this).dialog("close");},    
+						            "<?php echo $lang['cancel'] ?>": function() { jQuery(this).dialog('close'); }
+						        }
+						    });
+						}
+			    	});
+			  	});
 		</script>
 		<?php
 		} ?>
@@ -324,102 +327,105 @@ function get_user_dash($user)
 			jQuery.post( "<?php echo $baseurl?>/pages/ajax/dash_tile.php",{"user_tile":tile,"new_index":((index*10)+10)});
 		}
 		var dragging=false;
-
-		jQuery(function() {
-		 	jQuery("#HomePanelContainer").sortable({
-		  	  items: ".DashTileDraggable",
-		  	  start: function(event,ui) {
-		  	  	jQuery("#dash_tile_bin").show();
-		  	  	dragging=true;
-		  	  },
-		  	  stop: function(event,ui) {
-	          	jQuery("#dash_tile_bin").hide();
-		  	  },
-	          update: function(event, ui) {
-	          	nonDraggableTiles = jQuery(".HomePanel").length - jQuery(".DashTileDraggable").length;
-	          	newIndex = ui.item.index() - nonDraggableTiles;
-	          	console.log(nonDraggableTiles);
-	          	var id=jQuery(ui.item).attr("id").replace("user_tile","");
-	          	updateDashTileOrder(newIndex,id);
-	          }
-		  	});
-		<?php
-		# Check Permissions to Display Deleting Dash Tiles
-		if((checkperm("h") && !checkperm("hdta")) || (checkperm("dta") && !checkperm("h")) || !checkperm("dtu"))
-			{
-			?> 	
-		    jQuery("#dash_tile_bin").droppable({
-		      accept: ".DashTileDraggable",
-		      activeClass: "ui-state-hover",
-		      hoverClass: "ui-state-active",
-		      drop: function(event,ui) {
-		      	var id=jQuery(ui.draggable).attr("id");
-		      	id = id.replace("user_tile","");
-		    <?php
-		    # If permission to delete all_user tiles
-		    if((checkperm("h") && !checkperm("hdta")) || (checkperm("dta") && !checkperm("h")))
-		    	{ ?>
-		    	var tileid=jQuery(ui.draggable).attr("tile");
-		    <?php
-		      	} ?>
-
-		      	title = jQuery(ui.draggable).find(".title").html();
-		      	jQuery("#dash_tile_bin").hide();
-	      	<?php
-	      	# If permission to delete all_user tiles
-			if((checkperm("h") && !checkperm("hdta")) || (checkperm("dta") && !checkperm("h")))
+			jQuery(function() {
+				if(jQuery(window).width()<600 && jQuery(window).height()<600 && is_touch_device()) {
+						return false;
+					}				
+			 	jQuery("#HomePanelContainer").sortable({
+			  	  items: ".DashTileDraggable",
+			  	  start: function(event,ui) {
+			  	  	jQuery("#dash_tile_bin").show();
+			  	  	dragging=true;
+			  	  },
+			  	  stop: function(event,ui) {
+		          	jQuery("#dash_tile_bin").hide();
+			  	  },
+		          update: function(event, ui) {
+		          	nonDraggableTiles = jQuery(".HomePanel").length - jQuery(".DashTileDraggable").length;
+		          	newIndex = ui.item.index() - nonDraggableTiles;
+		          	console.log(nonDraggableTiles);
+		          	var id=jQuery(ui.item).attr("id").replace("user_tile","");
+		          	updateDashTileOrder(newIndex,id);
+		          }
+			  	});
+			<?php
+			# Check Permissions to Display Deleting Dash Tiles
+			if((checkperm("h") && !checkperm("hdta")) || (checkperm("dta") && !checkperm("h")) || !checkperm("dtu"))
 				{
-				?>
-		      	if(jQuery(ui.draggable).hasClass("allUsers")) {
-		      		// This tile is set for all users so provide extra options
-			        jQuery("#delete_dialog").dialog({
+				?> 	
+			    jQuery("#dash_tile_bin").droppable({
+			      accept: ".DashTileDraggable",
+			      activeClass: "ui-state-hover",
+			      hoverClass: "ui-state-active",
+			      drop: function(event,ui) {
+			      	var id=jQuery(ui.draggable).attr("id");
+			      	id = id.replace("user_tile","");
+			    <?php
+			    # If permission to delete all_user tiles
+			    if((checkperm("h") && !checkperm("hdta")) || (checkperm("dta") && !checkperm("h")))
+			    	{ ?>
+			    	var tileid=jQuery(ui.draggable).attr("tile");
+			    <?php
+			      	} ?>
+
+			      	title = jQuery(ui.draggable).find(".title").html();
+			      	jQuery("#dash_tile_bin").hide();
+		      	<?php
+		      	# If permission to delete all_user tiles
+				if((checkperm("h") && !checkperm("hdta")) || (checkperm("dta") && !checkperm("h")))
+					{
+					?>
+			      	if(jQuery(ui.draggable).hasClass("allUsers")) {
+			      		// This tile is set for all users so provide extra options
+				        jQuery("#delete_dialog").dialog({
+				        	title:'<?php echo $lang["dashtiledelete"]; ?>',
+				        	modal: true,
+		    				resizable: false,
+	    					dialogClass: 'delete-dialog no-close',
+		                    buttons: {
+		                        "<?php echo $lang['confirmdashtiledelete'] ?>": function() {deleteDashTile(id); jQuery(this).dialog( "close" );},
+		                        "<?php echo $lang['confirmdefaultdashtiledelete'] ?>": function() {deleteDefaultDashTile(tileid,id); jQuery(this).dialog( "close" );},
+		                        "<?php echo $lang['managedefaultdash'] ?>": function() {window.location = "<?php echo $baseurl; ?>/pages/team/team_dash_tile.php"; return false;},
+		                        "<?php echo $lang['cancel'] ?>":  function() { jQuery(this).dialog('close'); }
+		                    }
+		                });
+		            }
+		            else {
+		            	//This tile belongs to this user
+				        jQuery("#delete_dialog").dialog({
+				        	title:'<?php echo $lang["dashtiledelete"]; ?>',
+				        	modal: true,
+		    				resizable: false,	    				
+	    					dialogClass: 'delete-dialog no-close',
+		                    buttons: {
+		                        "<?php echo $lang['confirmdashtiledelete'] ?>": function() {deleteDashTile(id); jQuery(this).dialog( "close" );},
+		                        "<?php echo $lang['cancel'] ?>": function() { jQuery(this).dialog('close'); }
+		                    }
+		                });
+		            }
+	            <?php
+	            	}
+	       		else #Only show dialog to delete for this user
+	       			{ ?>
+	       			var dialog = jQuery("#delete_dialog").dialog({
 			        	title:'<?php echo $lang["dashtiledelete"]; ?>',
 			        	modal: true,
 	    				resizable: false,
-    					dialogClass: 'delete-dialog no-close',
+	    				dialogClass: 'delete-dialog no-close',
 	                    buttons: {
 	                        "<?php echo $lang['confirmdashtiledelete'] ?>": function() {deleteDashTile(id); jQuery(this).dialog( "close" );},
-	                        "<?php echo $lang['confirmdefaultdashtiledelete'] ?>": function() {deleteDefaultDashTile(tileid,id); jQuery(this).dialog( "close" );},
-	                        "<?php echo $lang['managedefaultdash'] ?>": function() {window.location = "<?php echo $baseurl; ?>/pages/team/team_dash_tile.php"; return false;},
-	                        "<?php echo $lang['cancel'] ?>":  function() { jQuery(this).dialog('close'); }
+	                        "<?php echo $lang['cancel'] ?>": function() {jQuery(this).dialog('close'); }
 	                    }
 	                });
-	            }
-	            else {
-	            	//This tile belongs to this user
-			        jQuery("#delete_dialog").dialog({
-			        	title:'<?php echo $lang["dashtiledelete"]; ?>',
-			        	modal: true,
-	    				resizable: false,	    				
-    					dialogClass: 'delete-dialog no-close',
-	                    buttons: {
-	                        "<?php echo $lang['confirmdashtiledelete'] ?>": function() {deleteDashTile(id); jQuery(this).dialog( "close" );},
-	                        "<?php echo $lang['cancel'] ?>": function() { jQuery(this).dialog('close'); }
-	                    }
-	                });
-	            }
-            <?php
-            	}
-       		else #Only show dialog to delete for this user
-       			{ ?>
-       			var dialog = jQuery("#delete_dialog").dialog({
-		        	title:'<?php echo $lang["dashtiledelete"]; ?>',
-		        	modal: true,
-    				resizable: false,
-    				dialogClass: 'delete-dialog no-close',
-                    buttons: {
-                        "<?php echo $lang['confirmdashtiledelete'] ?>": function() {deleteDashTile(id); jQuery(this).dialog( "close" );},
-                        "<?php echo $lang['cancel'] ?>": function() {jQuery(this).dialog('close'); }
-                    }
-                });
-		    <?php
-       			} ?>
-		      }
-	    	});
-	    	<?php
-    		} 
-    	?>
-	  	});
+			    <?php
+	       			} ?>
+			      }
+		    	});
+		    	<?php
+	    		} 
+	    	?>
+		  	});
+
 	</script>
 	<style>
 	.HomePanelDynamicDash h2, .HomePanelThemes h2 {

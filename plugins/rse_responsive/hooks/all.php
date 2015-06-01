@@ -177,10 +177,6 @@ function HookRse_responsiveAllResponsivescripts()
             jQuery("#CentralSpace .TopInpageNavLeft .InpageNavLeftBlock").slideToggle(100);
             jQuery("#SearchResultFound").hide();
         }
-        function is_touch_device() {
-           return 'ontouchstart' in window // works on most browsers 
-                || 'onmsgesturechange' in window; // works on ie10
-        }
         <?php 
         if(!$slimheader) 
             { ?>

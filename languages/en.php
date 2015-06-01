@@ -2119,6 +2119,8 @@ $lang["confirmdefaultdashtiledelete"]="Delete tile for all users";
 $lang["dashtiledelete"]="Delete dash tile";
 $lang["error-missingtileheightorwidth"]="Missing tile height or width";
 $lang["dashtileimage"]="Dash tile image";
+$lang["dashtilesmalldevice"]="Required drag functionality is not available on devices with a small screen";
+
 #Tile style strings
 $lang["tile_thmbs"]="Single";
 $lang["tile_multi"]="Multi";
