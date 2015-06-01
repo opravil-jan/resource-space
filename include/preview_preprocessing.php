@@ -725,6 +725,12 @@ if ((!isset($newfile)) && (!in_array($extension, $ffmpeg_audio_extensions))&& (!
 		$gscommand2 = $ghostscript_fullpath . " -dBATCH -r".$resolution." ".$dUseCIEColor." -dNOPAUSE -sDEVICE=jpeg -dJPEGQ=".$imagemagick_quality." -sOutputFile=" . escapeshellarg($target) . "  -dFirstPage=" . $n . " -dLastPage=" . $n . " -dEPSCrop -dUseCropBox " . escapeshellarg($file);
  		$output=run_command($gscommand2);
 
+ 		# Stop trying when after the last page
+ 		if (strstr($output, 'FirstPage > LastPage'))
+			{
+			break;
+			}
+
     	debug("PDF multi page preview: page $n, executing " . $gscommand2);
 
 	
