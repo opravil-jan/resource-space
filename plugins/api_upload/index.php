@@ -15,7 +15,9 @@ if (!in_array("api_upload",$plugins)){die("no access");}
 
 hook("additionalapiuploadmethods");
 
-if (isset($_FILES['userfile'])){
+$fileurl=getvalescaped("fileurl","");
+
+if (isset($_FILES['userfile']) || $fileurl!=""){
 	
  $resource_type=getvalescaped("resource_type",1,true);
 
@@ -62,19 +64,52 @@ if (isset($_FILES['userfile'])){
 	$ref=create_resource(getval("resourcetype",1),$status,$userref);
  }
  
- $path_parts=pathinfo($_FILES['userfile']['name']);
- $extension=strtolower($path_parts['extension']);  
- $filepath=get_resource_path($ref,true,"",true,$extension);
  $collection=getvalescaped('collection',"",true);
-
  
- $result=move_uploaded_file($_FILES['userfile']['tmp_name'], $filepath);
+ if (isset($_FILES['userfile'])){
+	 $path_parts=pathinfo($_FILES['userfile']['name']);
+	 $extension=strtolower($path_parts['extension']);  
+	 $filepath=get_resource_path($ref,true,"",true,$extension);
+	 $result=move_uploaded_file($_FILES['userfile']['tmp_name'], $filepath);
+	 $filename=$_FILES['userfile']['name'];
+ } else if ($fileurl!=""){
+	$path_parts=pathinfo($fileurl);
+	$extension=strtolower($path_parts['extension']);  
+	$extension=explode("?",$extension);
+	$extension=$extension[0];
+	$filepath=get_resource_path($ref,true,"",true,$extension);
+	// use curl to get file 
+	$source = $fileurl;
+	$ch = curl_init();
+	curl_setopt($ch, CURLOPT_URL, $source);
+	curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+	curl_setopt($ch, CURLOPT_SSL_VERIFYPEER,false);
+	$data = curl_exec ($ch);
+	$error = curl_error($ch); 
+	curl_close ($ch);
+	$filename=explode("?",$fileurl);
+	$filename=basename($filename[0]);
+	$destination = $storagedir."/tmp/".$filename;
+	$file = fopen($destination, "w+");
+	fputs($file, $data);
+	fclose($file);
+	$result=rename($destination, $filepath);
+ }
  $wait=sql_query("update resource set file_extension='$extension',preview_extension='jpg',file_modified=now() ,has_image=0 where ref='$ref'");
  # Store original filename in field, if set
  global $filename_field;
  if (isset($filename_field))
     {
-    $wait=update_field($ref,$filename_field,$_FILES['userfile']['name']);	
+	$uploadfilename=getvalescaped('filename','');
+	if ($uploadfilename!=''){
+		// allow specification of uploaded filename to exclude extension, it will be added.
+		$filename=$uploadfilename;
+		$path_parts=pathinfo($filename);
+		if(!isset($path_parts['extension'])){
+			$filename=$filename.".".$extension;
+		}
+	}
+    $wait=update_field($ref,$filename_field,$filename);	
     }
 
  // extract metadata
@@ -128,7 +163,7 @@ if (substr($key,0,5)=="field" && $value!=""){
    
  // this function in api_core   
  $results=refine_api_resource_results($results);  
-        
+
  // return refs
  header('Content-type: application/json');
  if ($collection!=""){
