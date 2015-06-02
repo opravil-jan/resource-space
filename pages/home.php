@@ -18,8 +18,8 @@ include "../include/header.php";
 if (!hook("replacehome")) { 
 function loadWelcomeText() 
 	{
-	global $welcome_text_picturepanel;
-	if (!$welcome_text_picturepanel && !hook('homereplacewelcome')) 
+	global $welcome_text_picturepanel,$no_welcometext;
+	if (!hook('homereplacewelcome') && !$no_welcometext)
 		{ ?>
 		<div class="BasicsBox" id="HomeSiteText">
 			<div id="HomeSiteTextInner">
@@ -165,64 +165,65 @@ if (!hook("replaceslideshow"))
 	if (!$slideshow_big) 
 		{ ?>
 		<div id="SlideshowContainer">
-		<div class="HomePicturePanel"
-		<?php if(!hook("replaceeditslideshowwidth"))
-			{
-			if (isset($home_slideshow_width)) 
+			<div class="HomePicturePanel"
+			<?php if(!hook("replaceeditslideshowwidth"))
 				{
-				echo "style=\"";
-				$slide_width = $home_slideshow_width + 2;
-				echo"width:" .  (string)$slide_width ."px; ";
-				echo "\" ";
+				if (isset($home_slideshow_width)) 
+					{
+					echo "style=\"";
+					$slide_width = $home_slideshow_width + 2;
+					echo"width:" .  (string)$slide_width ."px; ";
+					echo "\" ";
+					}
 				}
+			?>>
+			
+			<a id="slideshowlink"
+			<?php
+			 
+			$linkurl="#";
+			if(file_exists("../" . $homeanim_folder . "/1.txt"))
+				{
+				$linkres=file_get_contents("../" . $homeanim_folder . "/1.txt");
+				$linkaccess = get_resource_access($linkres);
+				if (($linkaccess!=="") && (($linkaccess==0) || ($linkaccess==1))) {$linkurl=$baseurl . "/pages/view.php?ref=" . $linkres;}
+				echo "href=\"" . $linkurl ."\" ";
+				}
+			
+			?>
+			>
+			
+			<div class="HomePicturePanelIN" id='photoholder' style="
+			<?php if(!hook("replaceeditslideshowheight")){
+			if (isset($home_slideshow_height)){		
+				echo"height:" .  (string)$home_slideshow_height ."px; ";
+				} 
 			}
-		?>>
-		
-		<a id="slideshowlink"
-		<?php
-		 
-		$linkurl="#";
-		if(file_exists("../" . $homeanim_folder . "/1.txt"))
-			{
-			$linkres=file_get_contents("../" . $homeanim_folder . "/1.txt");
-			$linkaccess = get_resource_access($linkres);
-			if (($linkaccess!=="") && (($linkaccess==0) || ($linkaccess==1))) {$linkurl=$baseurl . "/pages/view.php?ref=" . $linkres;}
-			echo "href=\"" . $linkurl ."\" ";
-			}
-		
-		?>
-		>
-		
-		<div class="HomePicturePanelIN" id='photoholder' style="
-		<?php if(!hook("replaceeditslideshowheight")){
-		if (isset($home_slideshow_height)){		
-			echo"height:" .  (string)$home_slideshow_height ."px; ";
-			} 
-		}
-		?>
-		background-image:url('<?php echo $baseurl . "/" . $homeanim_folder?>/1.jpg?checksum=<?php echo $checksum ?>');">
-		
-		<img src='<?php echo $baseurl . "/" .  $homeanim_folder?>/<?php echo $homeimages>1?2:1;?>.jpg?checksum=<?php echo $checksum ?>' alt='' id='image1' style="display:none;<?php
-		if (isset($home_slideshow_width)){
-			echo"width:" .  $home_slideshow_width ."px; ";
-			}
-		if (isset($home_slideshow_height)){
-			echo"height:" .  $home_slideshow_height ."px; ";
-			} 
-		?>">
-		</div>
-		</a>
-		<div class="PanelShadow"></div>
-		<?php
-		hook("homebeforehomepicpanelend");
-		?>
-		</div>
-		<?php
-		if (($welcome_text_picturepanel || ($home_dash && !$slideshow_big)) && !hook('homereplacewelcome')) 
-			{ 
-			loadWelcomeText();
-			$welcometext=true;
-			} ?>
+			?>
+			background-image:url('<?php echo $baseurl . "/" . $homeanim_folder?>/1.jpg?checksum=<?php echo $checksum ?>');">
+			
+			<img src='<?php echo $baseurl . "/" .  $homeanim_folder?>/<?php echo $homeimages>1?2:1;?>.jpg?checksum=<?php echo $checksum ?>' alt='' id='image1' style="display:none;<?php
+			if (isset($home_slideshow_width)){
+				echo"width:" .  $home_slideshow_width ."px; ";
+				}
+			if (isset($home_slideshow_height)){
+				echo"height:" .  $home_slideshow_height ."px; ";
+				} 
+			?>">
+			</div>
+			</a>
+			<div class="PanelShadow"></div>
+			<?php
+			hook("homebeforehomepicpanelend");
+			?>
+			</div>
+			<?php
+			global $welcome_text_picturepanel,$home_dash,$slideshow_big;
+			if ($welcome_text_picturepanel || ($home_dash && !$slideshow_big))
+				{
+				loadWelcomeText();
+				$welcometext=true;
+				} ?>
 		</div>
 		<?php
 		}

@@ -2515,6 +2515,8 @@ $hide_geolocation_panel=false;
 
 # Option to move the welcome text into the Home Picture Panel. Stops text from falling behind other panels.
 $welcome_text_picturepanel=false;
+# Hide Welcome Text
+$no_welcometext = false;
 
 #Show a specified metadata field below the resource preview image on the view page. Useful for phoo captions. 
 #$display_field_below_preview=18;
