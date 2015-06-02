@@ -90,11 +90,6 @@ if ($api && $enable_remote_apis ){
 			{
 			$username=$u_p_array[0];
 			$password=$u_p_array[1];
-			
-			if(strlen($password)==32) // We need to maintain support for old API Access now we are using sha256 hashes
-				{
-				$password=hash('sha256', $password);	
-				}
 
 			$result=perform_login();
 			if ($result['valid'])
@@ -150,9 +145,8 @@ if (array_key_exists("user",$_COOKIE) || array_key_exists("user",$_GET) || isset
 		if (hook("userpermissions")){$userdata[0]["permissions"]=hook("userpermissions");} 
 		
 		# Create userpermissions array for checkperm() function
-		$userpermissions=array_diff(array_merge(explode(",",trim($global_permissions)),explode(",",trim($userdata[0]["permissions"]))),explode(",",trim($global_permissions_mask))); 
-		$userpermissions=array_values($userpermissions);# Resquence array as the above array_diff() causes out of step keys.
-		
+		$userpermissions=array_merge(explode(",",trim($global_permissions)),explode(",",trim($userdata[0]["permissions"]))); 
+	
 		$usergroup=$userdata[0]["usergroup"];
 		$usergroupname=$userdata[0]["groupname"];
         $usergroupparent=$userdata[0]["parent"];
@@ -165,20 +159,7 @@ if (array_key_exists("user",$_COOKIE) || array_key_exists("user",$_GET) || isset
         $ip_restrict_user=trim($userdata[0]["ip_restrict_user"]);
         
         $usercollection=$userdata[0]["current_collection"];
-	// Check collection actually exists
-	$validcollection=sql_value("select ref value from collection where ref='$usercollection'",0);
-	if($validcollection==0)
-        	{
-		// Not a valid collection - switch to user's primary collection if there is one
-		$usercollection=sql_value("select ref value from collection where user='$userref' and name like 'My Collection%' order by created asc limit 1",0);
-		if ($usercollection!=0)
-			{
-			# set this to be the user's current collection
-			sql_query("update user set current_collection='$usercollection' where ref='$userref'");
-			}
-		}	
-		
-	if ($usercollection==0 || !is_numeric($usercollection))
+        if ($usercollection==0 || !is_numeric($usercollection))
         	{
        		# Create a collection for this user
 			global $lang;
@@ -244,7 +225,7 @@ if (array_key_exists("user",$_COOKIE) || array_key_exists("user",$_GET) || isset
 					
 					# Remove session
 					sql_query("update user set logged_in=0,session='' where ref='$userref'");
-					hook("removeuseridcookie");
+			
 					# Blank cookie / var
 					rs_setcookie("user", "", time() - 3600, "", "", substr($baseurl,0,5)=="https", true);
 					unset($username);
@@ -279,10 +260,9 @@ else
     # Set a cookie that we'll check for again on the login page after the redirection.
     # If this cookie is missing, it's assumed that cookies are switched off or blocked and a warning message is displayed.
     setcookie("cookiecheck","true",0,'/', '', false, true);
-    hook("removeuseridcookie");
     }
 
-if (!$valid && !$api && !isset($system_login))
+if (!$valid && !$api)
     {
 	$_SERVER['REQUEST_URI'] = ( isset($_SERVER['REQUEST_URI']) ?
 	$_SERVER['REQUEST_URI'] : $_SERVER['SCRIPT_NAME'] . (( isset($_SERVER
@@ -313,10 +293,9 @@ if (!$valid && $api){echo "invalid login";exit();}
 
 # Handle IP address restrictions
 $ip=get_ip();
-if (isset($ip_restrict_group)){
-	$ip_restrict=$ip_restrict_group;
-	if ($ip_restrict_user!="") {$ip_restrict=$ip_restrict_user;} # User IP restriction overrides the group-wide setting.
-	if ($ip_restrict!="")
+$ip_restrict=$ip_restrict_group;
+if ($ip_restrict_user!="") {$ip_restrict=$ip_restrict_user;} # User IP restriction overrides the group-wide setting.
+if ($ip_restrict!="")
 	{
 	$allow=false;
 
@@ -335,7 +314,7 @@ if (isset($ip_restrict_group)){
 		exit("Access denied.");
 		}
 	}
-}
+
 #update activity table
 global $pagename;
 $terms="";if (($pagename!="login") && ($pagename!="terms")) {$terms=",accepted_terms=1";} # Accepted terms
@@ -351,7 +330,7 @@ if (!$api){
 
 // don't update this table if the System is doing it's own operations
 if (!isset($system_login)){
-	sql_query("update user set lang='$language', last_active=now(),logged_in=1,last_ip='" . get_ip() . "',last_browser='" . $last_browser . "'$terms where ref='$userref'",false,-1,true,0);
+	sql_query("update user set lang='$language', last_active=now(),logged_in=1,last_ip='" . get_ip() . "',last_browser='" . $last_browser . "'$terms where ref='$userref'");
 }
 
 # Add group specific text (if any) when logged in.
@@ -364,67 +343,28 @@ else
 	{
 	if (isset($usergroup))
 		{
-		// Old way of getting the user specific content text (kept here for reference)
-		// $results=sql_query("select language,name,text from site_text where (page='$pagename' or page='all') and specific_to_group='$usergroup'");
-		// for ($n=0;$n<count($results);$n++) {$site_text[$results[$n]["language"] . "-" . $results[$n]["name"]]=$results[$n]["text"];}
-
-		$site_text_query = sprintf("
-				SELECT `name`,
-				       `text`,
-				       `page` 
-				  FROM site_text 
-				 WHERE language = '%s'
-				   %s #pagefilter
-				   AND specific_to_group = '%s';
-			",
-			escape_check($language),
-			$pagefilter,
-			$usergroup
-		);
-		$results = sql_query($site_text_query,false,-1,true,0);
-
-		for($n = 0; $n < count($results); $n++)
-			{
-			if($results[$n]['page'] == '')
-				{
-				$lang[$results[$n]['name']] = $results[$n]['text'];
-				} 
-			else
-				{
-				$lang[$results[$n]['page'] . '__' . $results[$n]['name']] = $results[$n]['text'];
-				}
-			}
+		$results=sql_query("select language,name,text from site_text where (page='$pagename' or page='all') and specific_to_group='$usergroup'");
+		for ($n=0;$n<count($results);$n++) {$site_text[$results[$n]["language"] . "-" . $results[$n]["name"]]=$results[$n]["text"];}
 		}
 	}	/* end replacesitetextloader */
 
-# Load group specific plugins and reorder plugins list
-$plugins = array();
-$active_plugins = (sql_query("SELECT name,enabled_groups, config, config_json FROM plugins WHERE inst_version>=0 ORDER BY priority"));
+# Load group specific plugins
+$active_plugins = (sql_query("SELECT name,enabled_groups, config, config_json FROM plugins WHERE inst_version>=0 AND length(enabled_groups)>0 ORDER BY priority"));
 foreach($active_plugins as $plugin)
 	{ 
 	# Check group access, only enable for global access at this point
-	if($plugin['enabled_groups']!='')
+	$s=explode(",",$plugin['enabled_groups']);
+	if (in_array($usergroup,$s))
 		{
-		$s=explode(",",$plugin['enabled_groups']);
-		if (isset($usergroup) && in_array($usergroup,$s))
-			{
-			include_plugin_config($plugin['name'],$plugin['config'],$plugin['config_json']);
-			register_plugin($plugin['name']);
-			register_plugin_language($plugin['name']);
-			$plugins[]=$plugin['name'];
-			}
-		}
-	else
-		{
+		include_plugin_config($plugin['name'],$plugin['config'],$plugin['config_json']);
+		register_plugin($plugin['name']);
+		register_plugin_language($plugin['name']);
 		$plugins[]=$plugin['name'];
 		}
 	}
-hook('handleuserref','',array($userref));
-if (($userpassword=="b58d18f375f68d13587ce8a520a87919" || $userpassword== "b975fc60c53ab4780623e0cd813095e328ddf8ff5a3d01d134f6df7391c42ff5" ) && $pagename!="user_preferences"  && $pagename!="collections"){?>
+
+if ($userpassword=="b58d18f375f68d13587ce8a520a87919" && $pagename!="user_preferences"  && $pagename!="collections"){?>
 <script>
 	top.location.href="<?php echo $baseurl_short?>pages/user_preferences.php";
 </script>
-<?php }
-
-
-
+<?php } 

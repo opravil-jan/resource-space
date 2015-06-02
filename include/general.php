@@ -176,7 +176,7 @@ function update_hitcount($ref)
 	if (!$resource_hit_count_on_downloads) 
 		{ 
 		# greatest() is used so the value is taken from the hit_count column in the event that new_hit_count is zero to support installations that did not previously have a new_hit_count column (i.e. upgrade compatability).
-		sql_query("update resource set new_hit_count=greatest(hit_count,new_hit_count)+1 where ref='$ref'",false,-1,true,0);
+		sql_query("update resource set new_hit_count=greatest(hit_count,new_hit_count)+1 where ref='$ref'");
 		}
 	}	
 	
@@ -325,12 +325,10 @@ function get_resource_top_keywords($resource,$count)
 	{
 	# Return the top $count keywords (by hitcount) used by $resource.
 	# This is for the 'Find Similar' search.
-
-        # These are now derived from resource data for fixed keyword lists, rather than from the resource_keyword table
-        # which produced very mixed results and didn't work with stemming or diacritic normalisation.
-        
-    $return=array();
-	$keywords=sql_query("select distinct rd.value keyword,f.ref field,f.resource_type from resource_data rd,resource_type_field f where rd.resource='$resource' and f.ref=rd.resource_type_field and f.type in (2,3,7,9,11,12) and f.keywords_index=1 and f.use_for_similar=1 and length(rd.value)>0 limit $count");
+	# Keywords that are too short or too long, or contain numbers are dropped - they are probably not as meaningful in
+	# the contexts of this search (consider being offered "12" or "OKB-34" as an option?)
+	$return=array();
+	$keywords=sql_query("select distinct k.ref,k.keyword keyword,f.ref field,f.resource_type from keyword k,resource_keyword r,resource_type_field f where k.ref=r.keyword and r.resource='$resource' and f.ref=r.resource_type_field and f.use_for_similar=1 and length(k.keyword)>=3 and length(k.keyword)<=15 and k.keyword not like '%0%' and k.keyword not like '%1%' and k.keyword not like '%2%' and k.keyword not like '%3%' and k.keyword not like '%4%' and k.keyword not like '%5%' and k.keyword not like '%6%' and k.keyword not like '%7%' and k.keyword not like '%8%' and k.keyword not like '%9%' order by k.hit_count desc limit $count");
 	foreach ($keywords as $keyword)
 		{
 		# Apply permissions and strip out any results the user does not have access to.
@@ -338,14 +336,7 @@ function get_resource_top_keywords($resource,$count)
 		&& !checkperm("f-" . $keyword["field"]) && !checkperm("T" . $keyword["resource_type"]))
 			{
 			# Has access to this field.
-                        $r=$keyword["keyword"];
-                        if (substr($r,0,1)==",") {$r=substr($r,1);}
-                        $s=explode(",",$r);
-                        foreach ($s as $a)
-                            {
-                            if(!empty($a))
-                            	{$return[]=$a;}
-                            }
+			$return[]=$keyword["keyword"];
 			}
 		}
 	return $return;
@@ -355,7 +346,7 @@ if (!function_exists("split_keywords")){
 function split_keywords($search,$index=false,$partial_index=false,$is_date=false,$is_html=false)
 	{
 	# Takes $search and returns an array of individual keywords.
-	global $config_trimchars;
+	global $config_trimchars, $daterange_search;
 
 	if ($index && $is_date)
 		{
@@ -370,7 +361,8 @@ function split_keywords($search,$index=false,$partial_index=false,$is_date=false
 			return $search;
 			}
 		}
-		
+
+
 	# Remove any real / unescaped lf/cr
 	$search=str_replace("\r"," ",$search);
 	$search=str_replace("\n"," ",$search);
@@ -382,12 +374,11 @@ function split_keywords($search,$index=false,$partial_index=false,$is_date=false
 	if ((substr($ns,0,1)==",") ||  ($index==false && strpos($ns,":")!==false)) # special 'constructed' query type, split using comma so
 	# we support keywords with spaces.
 		{
-		if (strpos($ns,"startdate")==false && strpos($ns,"enddate")==false)
+		if ((strpos($ns,"startdate")==false && strpos($ns,"enddate")==false && strpos($ns,"range")==false) || (!$daterange_search))
 			{$ns=cleanse_string($ns,true,!$index,$is_html);}
-	
 		$return=explode(",",$ns);
 		# If we are indexing, append any values that contain spaces.
-        
+					
 		# Important! Solves the searching for keywords with spaces issue.
 		# Consider: for any keyword that has spaces, append to the array each individual word too
 		# so for example: South Asia,USA becomes South Asia,USA,South,Asia
@@ -406,7 +397,6 @@ function split_keywords($search,$index=false,$partial_index=false,$is_date=false
 					for ($m=0;$m<count($words);$m++) {$return2[]=trim($words[$m]);}
 					}
 				}
-
 			$return2=trim_array($return2,$config_trimchars);
 			if ($partial_index) {return add_partial_index($return2);}
 			return $return2;
@@ -419,9 +409,15 @@ function split_keywords($search,$index=false,$partial_index=false,$is_date=false
 	else
 		{
 		# split using spaces and similar chars (according to configured whitespace characters)
-		$ns=explode(" ",cleanse_string($ns,false,!$index,$is_html));                
-		
-        $ns=trim_array($ns,$config_trimchars);
+		if (strpos($ns,"range")===false)
+			{
+			$ns=explode(" ",cleanse_string($ns,false,!$index,$is_html));
+			}
+		else
+			{
+			$ns=explode(" ",cleanse_string($ns,true,true));
+			}
+		$ns=trim_array($ns,$config_trimchars);
 		if ($index && $partial_index) {
 			return add_partial_index($ns);
 		}
@@ -469,10 +465,10 @@ function cleanse_string($string,$preserve_separators,$preserve_hyphen=false,$is_
 
 if (!function_exists("resolve_keyword")){
 function resolve_keyword($keyword,$create=false)
-	{
+	{	
 	debug("resolving keyword " . $keyword  . ". Create=" . (($create)?"true":"false"));
 	
-        $keyword=substr($keyword,0,100); # Trim keywords to 100 chars for indexing, as this is the length of the keywords column.
+    $keyword=substr($keyword,0,100); # Trim keywords to 100 chars for indexing, as this is the length of the keywords column.
     
 	global $quoted_string;	
 	if(!$quoted_string)
@@ -480,15 +476,7 @@ function resolve_keyword($keyword,$create=false)
 		$keyword=normalize_keyword($keyword);		
 		debug("resolving normalized keyword " . $keyword  . ".");
 		}
-	
-        # Stemming support. If enabled and a stemmer is available for the current language, index the stem of the keyword not the keyword itself.
-        # This means plural/singular (and other) forms of a word are treated as equivalents.
-        global $stemming;
-        if ($stemming && function_exists("GetStem"))
-            {
-            $keyword=GetStem($keyword);
-            }
-
+		
 	# Returns the keyword reference for $keyword, or false if no such keyword exists.
 	$return=sql_value("select ref value from keyword where keyword='" . trim(escape_check($keyword)) . "'",false);
 	if ($return===false && $create)
@@ -525,7 +513,7 @@ function add_partial_index($keywords)
 				# For each position an infix of this length can exist in the string
 				for ($o=0;$o<=strlen($keyword)-$m;$o++)
 					{
-					$infix=mb_substr($keyword,$o,$m);
+					$infix=substr($keyword,$o,$m);
 					$return[$x]['keyword']=$infix;
 					$return[$x]['position']=$position; // infix has same position as root
 					$x++;
@@ -568,7 +556,7 @@ function update_resource_keyword_hitcount($resource,$search)
 		$found=resolve_keyword($keyword);
 		if ($found!==false) {$keys[]=resolve_keyword($keyword);}
 		}	
-	if (count($keys)>0) {sql_query("update resource_keyword set new_hit_count=new_hit_count+1 where resource='$resource' and keyword in (" . join(",",$keys) . ")",false,-1,true,0);}
+	if (count($keys)>0) {sql_query("update resource_keyword set new_hit_count=new_hit_count+1 where resource='$resource' and keyword in (" . join(",",$keys) . ")");}
 	}
 }
 	
@@ -685,24 +673,18 @@ function get_image_sizes($ref,$internal=false,$extension="jpg",$onlyifexists=tru
 
 function trim_array($array,$trimchars='')
 	{
-	if(empty($array[0])){$unshiftblank=true;}
-	$array = array_filter($array);
-	$array_trimmed=array();
-	$index=0;
 	# removes whitespace from the beginning/end of all elements in an array
-	foreach($array as $el)
+	
+	for ($n=0;$n<count($array);$n++)
 		{
-		$el=trim($el);
+		$array[$n]=trim($array[$n]);
 		if (strlen($trimchars) > 0)
 			{
 			// also trim off extra characters they want gone
-			$el=trim($el,$trimchars);
+			$array[$n]=trim($array[$n],$trimchars);
 			}
-		$array_trimmed[$index]=$el;
-		$index++;
 		}
-	if(isset($unshiftblank)){array_unshift($array_trimmed,"");}
-	return $array_trimmed;
+	return $array;
 	}
 
 
@@ -807,40 +789,28 @@ function get_users($group=0,$find="",$order_by="u.username",$usepermissions=fals
 {
     # Returns a user list. Group or search term is optional.
     # The standard user group names are translated using $lang. Custom user group names are i18n translated.
-    global $usergroup, $U_perm_strict;
 
     $sql = "";
-	$find=strtolower($find);
     if ($group != 0) {$sql = "where usergroup IN ($group)";}
     if (strlen($find)>1)
       {
       if ($sql=="") {$sql = "where ";} else {$sql.= " and ";}
-      $sql .= "(LOWER(username) like '%$find%' or LOWER(fullname) like '%$find%' or LOWER(email) like '%$find%')";
+      $sql .= "(username like '%$find%' or fullname like '%$find%' or email like '%$find%')";
       }
     if (strlen($find)==1)
       {
       if ($sql=="") {$sql = "where ";} else {$sql.= " and ";}
-      $sql .= "LOWER(username) like '$find%'";
+      $sql .= "username like '$find%'";
       }
-    if ($usepermissions && checkperm("U") && $U_perm_strict) {
+    if ($usepermissions && checkperm("U")) {
         # Only return users in children groups to the user's group
+        global $usergroup;
         if ($sql=="") {$sql = "where ";} else {$sql.= " and ";}
         $sql.= "find_in_set('" . $usergroup . "',g.parent) ";
         $sql.= hook("getuseradditionalsql");
     }
-
-    // Return users in both user's user group and children groups
-    if ($usepermissions && checkperm('U') && !$U_perm_strict) {
-    	$sql .= sprintf('
-    			%1$s (g.ref = "%2$s" OR find_in_set("%2$s", g.parent))
-    		',
-    		($sql == '') ? 'WHERE' : ' AND',
-    		$usergroup
-    	);
-    }
-    $query = "select u.*,g.name groupname,g.ref groupref,g.parent groupparent,u.approved,u.created from user u left outer join usergroup g on u.usergroup=g.ref $sql order by $order_by";
     # Executes query.
-    $r = sql_query($query, false, $fetchrows);
+    $r = sql_query("select u.*,g.name groupname,g.ref groupref,g.parent groupparent,u.approved,u.created from user u left outer join usergroup g on u.usergroup=g.ref $sql order by $order_by",false,$fetchrows);
 
     # Translates group names in the newly created array.
     for ($n = 0;$n<count($r);$n++) {
@@ -968,7 +938,7 @@ function get_user($ref)
 if (!function_exists("save_user")){	
 function save_user($ref)
 	{
-	global $lang, $allow_password_email;
+	global $lang;
 		
 	# Save user details, data is taken from the submitted form.
 	if (getval("deleteme","")!="")
@@ -1009,15 +979,10 @@ function save_user($ref)
 		sql_query("update user set username='" . trim(getvalescaped("username","")) . "'" . $passsql . ",fullname='" . getvalescaped("fullname","") . "',email='" . getvalescaped("email","") . "',usergroup='" . getvalescaped("usergroup","") . "',account_expires=$expires,ip_restrict='" . getvalescaped("ip_restrict","") . "',comments='" . getvalescaped("comments","") . "',approved='" . ((getval("approved","")=="")?"0":"1") . "' $additional_sql where ref='$ref'");
 		}
 		
-	if ($allow_password_email && getval("emailme","")!="")
+	if (getval("emailme","")!="")
 		{
 		email_user_welcome(getval("email",""),getval("username",""),getval("password",""),getvalescaped("usergroup",""));
 		}
-	elseif (getval("emailresetlink","")!="")
-		{
-		email_reset_link(getvalescaped("email",""), true);
-		}	
-	
 	return true;
 	}
 }
@@ -1032,23 +997,21 @@ function email_user_welcome($email,$username,$password,$usergroup)
 	
 	$templatevars['welcome']=$welcome;
 	$templatevars['username']=$username;
+	$templatevars['password']=$password;
+	if (trim($email_url_save_user)!=""){$templatevars['url']=$email_url_save_user;}
+	else {$templatevars['url']=$baseurl;}
 	
-        $templatevars['password']=$password;
-        if (trim($email_url_save_user)!=""){$templatevars['url']=$email_url_save_user;}
-        else {$templatevars['url']=$baseurl;}
-        $message=$templatevars['welcome'] . $lang["newlogindetails"] . "\n\n" . $lang["username"] . ": " . $templatevars['username'] . "\n" . $lang["password"] . ": " . $templatevars['password'] . "\n\n". $templatevars['url'];
-          	
+	$message=$templatevars['welcome'] . $lang["newlogindetails"] . "\n\n" . $lang["username"] . ": " . $templatevars['username'] . "\n" . $lang["password"] . ": " . $templatevars['password']."\n\n".$templatevars['url'];
+	
 	send_mail($email,$applicationname . ": " . $lang["youraccountdetails"],$message,"","","emaillogindetails",$templatevars);
 	}
-        
-
 
 if (!function_exists("email_reminder")){
 function email_reminder($email)
 	{
 	# Send a password reminder.
-	global $password_brute_force_delay, $allow_password_email;
-	if ($allow_password_email || $email=="") {return false;}
+	global $password_brute_force_delay;
+	if ($email=="") {return false;}
 	$details=sql_query("select username from user where email like '$email' and approved=1");
 	if (count($details)==0) {sleep($password_brute_force_delay);return false;}
 	$details=$details[0];
@@ -1070,139 +1033,8 @@ function email_reminder($email)
 	}
 }
 
-if (!function_exists("email_reset_link")){
-function email_reset_link($email,$newuser=false)
-	{
-        debug("password_reset - checking for email: " . $email);
-	# Send a link to reset password
-	global $password_brute_force_delay, $scramble_key;
-	if ($email=="") {return false;}
-	$details=sql_query("select ref, username from user where email like '$email' and approved=1 and (account_expires is null or account_expires>now())");
-	if (count($details)==0) {sleep($password_brute_force_delay);return false;}
-	$details=$details[0];
-	global $applicationname,$email_from,$baseurl,$lang,$email_url_remind_user;
-        $resetuniquecode=make_password();
-    	$password_reset_hash=hash('sha256', date("Ymd") . md5("RS" . $resetuniquecode . $details["username"] . $scramble_key));  
-	sql_query("update user set password_reset_hash='$password_reset_hash' where username='" . escape_check($details["username"]) . "'");
-	
-        $password_reset_url_key=hash('sha256', date("Ymd") . $password_reset_hash . $details["username"] . $scramble_key);        
-        $templatevars['url']=$baseurl . "/?rp=" . $details["ref"] . substr($password_reset_url_key,0,15);
-        
-	if($newuser)
-            {
-            $templatevars['username']=$details["username"];
-            $message=$lang["newlogindetails"] . "\n\n" . $baseurl . "\n\n" . $lang["username"] . ": " . $templatevars['username'] . "\n\n" .  $lang["passwordnewemail"] . "\n" . $templatevars['url'];
-            send_mail($email,$applicationname . ": " . $lang["newlogindetails"],$message,"","","passwordnewemailhtml",$templatevars);
-            }
-        else
-            {
-            $templatevars['username']=$details["username"];
-            $message=$lang["username"] . ": " . $templatevars['username'];
-            $message.="\n\n" . $lang["passwordresetemail"] . "\n\n" . $templatevars['url'];
-            send_mail($email,$applicationname . ": " . $lang["resetpassword"],$message,"","","password_reset_email_html",$templatevars);
-            }	
-	
-	return true;
-	}
-}
-
-if (!function_exists("auto_create_user_account")){
-function auto_create_user_account()
-	{
-	# Automatically creates a user account (which requires approval unless $auto_approve_accounts is true).
-	global $applicationname,$user_email,$baseurl,$email_notify,$lang,$user_account_auto_creation_usergroup,$registration_group_select,$auto_approve_accounts,$auto_approve_domains,$customContents;
-
-	# Work out which user group to set. Allow a hook to change this, if necessary.
-	$altgroup=hook("auto_approve_account_switch_group");
-	if ($altgroup!==false)
-		{
-		$usergroup=$altgroup;
-		}
-	else
-		{
-		$usergroup=$user_account_auto_creation_usergroup;
-		}
-
-	if ($registration_group_select)
-		{
-		$usergroup=getvalescaped("usergroup","",true);
-		# Check this is a valid selectable usergroup (should always be valid unless this is a hack attempt)
-		if (sql_value("select allow_registration_selection value from usergroup where ref='$usergroup'",0)!=1) {exit("Invalid user group selection");}
-		}
-
-	$username=escape_check(make_username(getval("name","")));
-
-	#check if account already exists
-	$check=sql_value("select email value from user where email = '$user_email'","");
-	if ($check!=""){return $lang["useremailalreadyexists"];}
-
-	# Prepare to create the user.
-	$email=trim(getvalescaped("email","")) ;
-	$password=make_password();
-
-	# Work out if we should automatically approve this account based on $auto_approve_accounts or $auto_approve_domains
-	$approve=false;
-	if ($auto_approve_accounts==true)
-		{
-		$approve=true;
-		}
-	elseif (count($auto_approve_domains)>0)
-		{
-		# Check e-mail domain.
-		foreach ($auto_approve_domains as $domain=>$set_usergroup)
-			{
-			// If a group is not specified the variables don't get set correctly so we need to correct this
-			if (is_numeric($domain)){$domain=$set_usergroup;$set_usergroup="";}
-			if (substr(strtolower($email),strlen($email)-strlen($domain)-1)==("@" . strtolower($domain)))
-				{
-				# E-mail domain match.
-				$approve=true;
-
-				# If user group is supplied, set this
-				if (is_numeric($set_usergroup)) {$usergroup=$set_usergroup;}
-				}
-			}
-		}
-
-	# Create the user
-	sql_query("insert into user (username,password,fullname,email,usergroup,comments,approved) values ('" . $username . "','" . $password . "','" . getvalescaped("name","") . "','" . $email . "','" . $usergroup . "','" . escape_check($customContents) . "'," . (($approve)?1:0) . ")");
-	$new=sql_insert_id();
-    hook("afteruserautocreated", "all",array("new"=>$new));
-	if ($approve)
-		{
-		# Auto approving, send mail direct to user
-		email_user_welcome($email,$username,$password,$usergroup);
-		}
-	else
-		{
-		# Not auto approving.
-		# Build a message to send to an admin notifying of unapproved user (same as email_user_request(),
-		# but also adds the new user name to the mail)
-		$message=$lang["userrequestnotification1"] . "\n\n" . $lang["name"] . ": " . getval("name","") . "\n\n" . $lang["email"] . ": " . getval("email","") . "\n\n" . $lang["comment"] . ": " . getval("userrequestcomment","") . "\n\n" . $lang["ipaddress"] . ": '" . $_SERVER["REMOTE_ADDR"] . "'\n\n" . $customContents . "\n\n" . $lang["userrequestnotification3"] . "\n$baseurl?u=" . $new;
-
-		send_mail($email_notify,$applicationname . ": " . $lang["requestuserlogin"] . " - " . getval("name",""),$message,"",$user_email,"","",getval("name",""));
-		}
-
-	return true;
-	}
-} //end function replace hook
-
-function email_user_request()
-	{
-	# E-mails the submitted user request form to the team.
-	global $applicationname,$user_email,$baseurl,$email_notify,$lang,$customContents;
-
-	# Build a message
-	$message=$lang["userrequestnotification1"] . "\n\n" . $lang["name"] . ": " . getval("name","") . "\n\n" . $lang["email"] . ": " . getval("email","") . "\n\n" . $lang["comment"] . ": " . getval("userrequestcomment","") . "\n\n" . $lang["ipaddress"] . ": '" . $_SERVER["REMOTE_ADDR"] . "'\n\n" . $customContents . "\n\n" . $lang["userrequestnotification2"] . "\n$baseurl";
-
-	send_mail($email_notify,$applicationname . ": " . $lang["requestuserlogin"] . " - " . getval("name",""),$message,"",$user_email,"","",getval("name",""));
-
-	return true;
-	}
-
 function new_user($newuser)
 	{
-	global $lang,$home_dash;
 	# Username already exists?
 	$c=sql_value("select count(*) value from user where username='$newuser'",0);
 	if ($c>0) {return false;}
@@ -1212,14 +1044,8 @@ function new_user($newuser)
 	
 	$newref=sql_insert_id();
 	
-	#Create Default Dash for the new user
-	if($home_dash)
-		{
-		include dirname(__FILE__)."/dash_functions.php";
-		create_new_user_dash($newref);
-		}
-	
 	# Create a collection for this user, the collection name is translated when displayed!
+	global $lang;
 	$new=create_collection($newref,"My Collection",0,1); # Do not translate this string!
 	# set this to be the user's current collection
 	sql_query("update user set current_collection='$new' where ref='$newref'");
@@ -1247,6 +1073,64 @@ function newlines($text)
 	return $text;
 	}
 
+function email_user_request()
+	{
+	# E-mails the submitted user request form to the team.
+	global $applicationname,$email_from,$user_email,$baseurl,$email_notify,$lang,$custom_registration_fields,$custom_registration_required;
+	
+	# Required fields (name, email) not set?
+	$missingFields = array();
+	if (getval("name","")=="") { $missingFields[] = $lang["yourname"]; }
+	if (getval("email","")=="") { $missingFields[] = $lang["youremailaddress"]; }
+
+	# Add custom fields
+	$c="";
+	if (isset($custom_registration_fields))
+		{
+		$custom=explode(",",$custom_registration_fields);
+	
+		# Required fields?
+		if (isset($custom_registration_required)) {$required=explode(",",$custom_registration_required);}
+	
+		# Loop through custom fields
+		for ($n=0;$n<count($custom);$n++)
+			{			
+			$custom_field_value = getval("custom" . $n,"");
+			$custom_field_sub_value_list = "";
+			
+			for ($i=1; $i<=1000; $i++)		# check if there are sub values, i.e. custom<n>_<n> form fields, for example a bunch of checkboxes if custom type is set to "5"
+				{
+				$custom_field_sub_value = getval("custom" . $n . "_" . $i, "");								
+				if ($custom_field_sub_value == "") continue;
+				$custom_field_sub_value_list .= ($custom_field_sub_value_list == "" ? "" : ", ") . $custom_field_sub_value;		# we have found a sub value so append to the list
+				}
+			
+			if ($custom_field_sub_value_list != "")		# we found sub values
+				{
+				$c.=i18n_get_translated($custom[$n] . ": " . $custom_field_sub_value_list) . "\n\n";		# append with list of all sub values found
+				}
+			elseif ($custom_field_value != "")		# if no sub values found then treat as normal field
+				{
+				$c.=i18n_get_translated($custom[$n] . ": " . $custom_field_value) . "\n\n";		# there is a value so append it
+				}
+			elseif (isset($required) && in_array($custom[$n],$required))		# if the field was mandatory and a value or sub value(s) not set then we return false
+				{
+				$missingFields[] = $custom[$n];
+				}
+			}
+		}
+
+	if (!empty($missingFields))
+		return $lang["requiredfields"] . ' ' . i18n_get_translated(implode(', ', $missingFields), true);
+
+	# Build a message
+	$message=$lang["userrequestnotification1"] . "\n\n" . $lang["name"] . ": " . getval("name","") . "\n\n" . $lang["email"] . ": " . getval("email","") . "\n\n" . $lang["comment"] . ": " . getval("userrequestcomment","") . "\n\n" . $lang["ipaddress"] . ": '" . $_SERVER["REMOTE_ADDR"] . "'\n\n" . $c . "\n\n" . $lang["userrequestnotification2"] . "\n$baseurl";
+	
+	send_mail($email_notify,$applicationname . ": " . $lang["requestuserlogin"] . " - " . getval("name",""),$message,"",$user_email,"","",getval("name",""));
+
+	return true;
+	}
+
 function get_active_users()
 	{
 	# Returns a list of active users, i.e. users still logged on with a last-active time within the last 2 hours.
@@ -1257,60 +1141,62 @@ function get_all_site_text($findpage="",$findname="",$findtext="")
 	{
 	# Returns a list of all available editable site text (content).
 	# If $find is specified a search is performed across page, name and text fields.
-	global $defaultlanguage,$lang;	
+	global $defaultlanguage;	
 	$findname=trim($findname);
 	$findpage=trim($findpage);
 	$findtext=trim($findtext);
+	$sql="site_text s ";
 	
-        $return=array();
-        
-        ksort($lang);#,function ($a,$b) {return (is_array($a)?false:strpos($a,"__")===false);});
-        
-        # Find language strings.
-        foreach ($lang as $key=>$text)
-            {
-            $pagename="";
-            $s=explode("__",$key);
-            if (count($s)>1) {$pagename=$s[0];$key=$s[1];}
-            
-            if
-                (
-                !is_array($text) # Do not support overrides for array values (used for months)... complex UI needed and very unlikely to need overrides.
-                &&
-                ($findname=="" || stripos($key,$findname)!==false)
-                &&            
-                ($findpage=="" || stripos($pagename,$findpage)!==false || strtolower($findpage)==strtolower($lang["all"]))
-                &&
-                ($findtext=="" || stripos($text,$findtext)!==false)
-                )
-                {
-                $row["page"]=$pagename;
-                $row["name"]=$key;
-                $row["text"]=$text;
-                $return[]=$row;
-                }
-            }
-        
-        return $return;
+	if ($findname!="" || $findpage!="" || $findtext!=""){
+		$sql.=" where (";
+	}
+	
+	
+	if ($findname!="") {
+		$findnamearray=explode(" ",$findname);
+		for ($n=0;$n<count($findnamearray);$n++){
+		  $sql.=' name like "%'.$findnamearray[$n].'%"';
+		  if ($n+1!=count($findnamearray)){$sql.=" and ";}
+		}
+		
+	}
+	
+	if ($findpage!="") {
+		$findpagearray=explode(" ",$findpage);
+		if ($findname!=""){$sql.=" and ";}
+		for ($n=0;$n<count($findpagearray);$n++){
+		  $sql.=' page like "%'.$findpagearray[$n].'%"';
+		  if ($n+1!=count($findpagearray)){$sql.=" and ";}
+		}
+		
+	}
+	
+	if ($findtext!="") {
+		$findtextarray=explode(" ",$findtext);
+		if ($findname!="" || $findpage!=""){$sql.=" and ";}
+		for ($n=0;$n<count($findtextarray);$n++){
+		  $sql.=' text like "%'.$findtextarray[$n].'%"';
+		  if ($n+1!=count($findtextarray)){$sql.=" and ";}
+		}
+		
+	}
+	if ($findname!="" || $findpage!="" || $findtext!=""){
+		$sql.=" ) ";
+	}
+
+	return sql_query ("select distinct s.page,s.name,(select text from site_text st where st.name=s.name and st.page=s.page order by (language='$defaultlanguage') desc limit 1) text from $sql order by (s.page='all') desc,s.page,name");
 	}
 
 function get_site_text($page,$name,$language,$group)
 	{
 	# Returns a specific site text entry.
-        global $defaultlanguage;
 	if ($group=="") {$g="null";$gc="is";} else {$g="'" . $group . "'";$gc="=";}
 	
 	$text=sql_query ("select * from site_text where page='$page' and name='$name' and language='$language' and specific_to_group $gc $g");
 	if (count($text)==0)
 		{
-		# Fall back to language strings.
-                if ($page=="") {$key=$name;} else {$key=$page . "__" . $name;}
-                
-                # Include specific language(s)
-                @include dirname(__FILE__)."/../languages/" . safe_file_name($defaultlanguage) . ".php";
-                @include dirname(__FILE__)."/../languages/" . safe_file_name($language) . ".php";
-                
-                if (array_key_exists($key,$lang)) {return $lang[$key];} else {return "";}
+		$existing=escape_check(sql_value("select text value from site_text where page='$page' and name='$name' limit 1",""));
+		return $existing;
 		}
 	return $text[0]["text"];
 	}
@@ -1478,20 +1364,20 @@ if (!function_exists("change_password")){
 function change_password($password)
 	{
 	# Sets a new password for the current user.
-	global $userref,$username,$lang,$userpassword, $password_reset_mode;
+	global $userref,$username,$lang,$userpassword;
 
 	# Check password
 	$message=check_password($password);
 	if ($message!==true) {return $message;}
 
 	# Generate new password hash
-	$password_hash=hash('sha256', md5("RS" . $username . $password));
+	$password_hash=md5("RS" . $username . $password);
 	
 	# Check password is not the same as the current
 	if ($userpassword==$password_hash) {return $lang["password_matches_existing"];}
 	
-	sql_query("update user set password='$password_hash', password_reset_hash=NULL, password_last_change=now() where ref='$userref' limit 1");
-        return true;
+	sql_query("update user set password='$password_hash',password_last_change=now() where ref='$userref' limit 1");
+	return true;
 	}
 }
 	
@@ -1718,7 +1604,8 @@ function send_mail($email,$subject,$message,$from="",$reply_to="",$html_template
 if (!function_exists("send_mail_phpmailer")){
 function send_mail_phpmailer($email,$subject,$message="",$from="",$reply_to="",$html_template="",$templatevars=null,$from_name="",$cc="",$bcc="")
 	{
-        # if ($use_phpmailer==true) this function is used instead.
+	
+	# if ($use_phpmailer==true) this function is used instead.
 	# Mail templates can include lang, server, site_text, and POST variables by default
 	# ex ( [lang_mycollections], [server_REMOTE_ADDR], [text_footer] , [message]
 	
@@ -1784,7 +1671,8 @@ function send_mail_phpmailer($email,$subject,$message="",$from="",$reply_to="",$
 		for ($n=0;$n<count($results);$n++) {$site_text[$results[$n]["language"] . "-" . $results[$n]["name"]]=$results[$n]["text"];} 
 				
 		$language=$to_usergrouplang;
-                                
+
+
 		if (array_key_exists($language . "-" . $html_template,$site_text)) 
 			{
 			$template=$site_text[$language . "-" .$html_template];
@@ -1799,10 +1687,8 @@ function send_mail_phpmailer($email,$subject,$message="",$from="",$reply_to="",$
 				{
 				if (array_key_exists($key . "-" . $html_template,$site_text)) {$template= $site_text[$key . "-" . $html_template];break;} 		
 				}
-                        // Fall back to language file if not in site text
-                        global $lang;
-                        if(isset($lang[$html_template])){$template=$lang[$html_template];}
-			}		
+			}	
+			
 
 
 		if (isset($template) && $template!="")
@@ -2067,7 +1953,7 @@ function highlightkeywords($text,$search,$partial_index=false,$field_name="",$ke
 	{
 	# do not highlight if the field is not indexed, so it is clearer where results came from.	
 	if ($keywords_index!=1){return $text;}
-
+        
 	# Highlight searched keywords in $text
 	# Optional - depends on $highlightkeywords being set in config.php.
 	global $highlightkeywords;
@@ -2092,20 +1978,20 @@ function highlightkeywords($text,$search,$partial_index=false,$field_name="",$ke
                 # else add general keywords
                 else {
                         $keyword=$s[$n];
-            
-                        global $stemming;
-                        if ($stemming && function_exists("GetStem")) // Stemming enabled. Highlight any words matching the stem.
-                            {
-                            $keyword=GetStem($keyword);
-                            }
-                        
                         if (strpos($keyword,"*")!==false) {$wildcards_found=true;$keyword=str_replace("*","",$keyword);}
                         $hlkeycache[]=$keyword;
                 }	
              }
         
 	# Parse and replace.
-	return str_highlight ($text,$hlkeycache,STR_HIGHLIGHT_SIMPLE);
+	if ($partial_index || $wildcards_found)
+		{
+		return str_highlight ($text,$hlkeycache,STR_HIGHLIGHT_SIMPLE);
+		}
+	else
+		{
+		return str_highlight ($text,$hlkeycache,STR_HIGHLIGHT_WHOLEWD);
+		}
 	}
 }
 # These lines go with str_highlight (next).
@@ -2126,7 +2012,7 @@ function str_highlight($text, $needle, $options = null, $highlight = null)
     
     // Default highlighting
     if ($highlight === null) {
-        $highlight = '||<||\1||>||';
+        $highlight = '<span class="highlight">\1</span>';
     }
  
     // Select pattern to use
@@ -2170,11 +2056,6 @@ function str_highlight($text, $needle, $options = null, $highlight = null)
     }
 	$text=str_replace("♠","_",$text);
 	$text=str_replace("♣","#zwspace;",$text);
-
-	# Fix - do the final replace at the end - fixes a glitch whereby the highlight HTML itself gets highlighted if it matches search terms, and you get nested HTML.
-	$text=str_replace("||<||",'<span class="highlight">',$text);
-	$text=str_replace("||>||",'</span>',$text);
-
     return $text;
 	}
 
@@ -2192,11 +2073,11 @@ function pager($break=true)
 	global $curpage,$url,$totalpages,$offset,$per_page,$lang,$jumpcount,$pager_dropdown;
 	$jumpcount++;global $pagename;
     if ($totalpages!=0 && $totalpages!=1){?>     
-        <span class="TopInpageNavRight"><?php if ($break) { ?>&nbsp;<br /><?php } hook("custompagerstyle"); if ($curpage>1) { ?><a class="prevPageLink" href="<?php echo $url?>&amp;go=prev&amp;offset=<?php echo urlencode($offset-$per_page) ?>" <?php if(!hook("replacepageronclick_prev")){?>onClick="return CentralSpaceLoad(this, true);" <?php } ?>><?php } ?>&lt;&nbsp;<?php echo $lang["previous"]?><?php if ($curpage>1) { ?></a><?php } ?>&nbsp;|
+        <span class="TopInpageNavRight"><?php if ($break) { ?>&nbsp;<br /><?php } hook("custompagerstyle"); if ($curpage>1) { ?><a class="prevPageLink" href="<?php echo $url?>&amp;go=prev&amp;offset=<?php echo urlencode($offset-$per_page) ?>" onClick="return CentralSpaceLoad(this, true);"><?php } ?>&lt;&nbsp;<?php echo $lang["previous"]?><?php if ($curpage>1) { ?></a><?php } ?>&nbsp;|
 
         <?php if ($pager_dropdown){
             $id=rand();?>
-            <select id="pager<?php echo $id;?>" class="ListDropdown" style="width:50px;" <?php if(!hook("replacepageronchange_drop","",array($id))){?>onChange="var jumpto=document.getElementById('pager<?php echo $id?>').value;if ((jumpto>0) && (jumpto<=<?php echo $totalpages?>)) {return CentralSpaceLoad('<?php echo $url?>&amp;go=page&amp;offset=' + ((jumpto-1) * <?php echo urlencode($per_page) ?>), true);}" <?php } ?>>
+            <select id="pager<?php echo $id;?>" class="ListDropdown" style="width:50px;" onChange="var jumpto=document.getElementById('pager<?php echo $id?>').value;if ((jumpto>0) && (jumpto<=<?php echo $totalpages?>)) {return CentralSpaceLoad('<?php echo $url?>&amp;go=page&amp;offset=' + ((jumpto-1) * <?php echo urlencode($per_page) ?>), true);}">
             <?php for ($n=1;$n<$totalpages+1;$n++){?>
                 <option value='<?php echo $n?>' <?php if ($n==$curpage){?>selected<?php } ?>><?php echo $n?></option>
             <?php } ?>
@@ -2205,7 +2086,7 @@ function pager($break=true)
             <a href="#" title="<?php echo $lang["jumptopage"]?>" onClick="p=document.getElementById('jumppanel<?php echo $jumpcount?>');if (p.style.display!='block') {p.style.display='block';document.getElementById('jumpto<?php echo $jumpcount?>').focus();} else {p.style.display='none';}; return false;"><?php echo $lang["page"]?>&nbsp;<?php echo htmlspecialchars($curpage) ?>&nbsp;<?php echo $lang["of"]?>&nbsp;<?php echo $totalpages?></a>
         <?php } ?>
 
-        |&nbsp;<?php if ($curpage<$totalpages) { ?><a class="nextPageLink" href="<?php echo $url?>&amp;go=next&amp;offset=<?php echo urlencode($offset+$per_page) ?>" <?php if(!hook("replacepageronclick_next")){?>onClick="return CentralSpaceLoad(this, true);" <?php } ?>><?php } ?><?php echo $lang["next"]?>&nbsp;&gt;<?php if ($curpage<$totalpages) { ?></a><?php } hook("custompagerstyleend"); ?>
+        |&nbsp;<?php if ($curpage<$totalpages) { ?><a class="nextPageLink" href="<?php echo $url?>&amp;go=next&amp;offset=<?php echo urlencode($offset+$per_page) ?>" onClick="return CentralSpaceLoad(this, true);"><?php } ?><?php echo $lang["next"]?>&nbsp;&gt;<?php if ($curpage<$totalpages) { ?></a><?php } hook("custompagerstyleend"); ?>
         </span>
         <?php if (!$pager_dropdown){?>
             <div id="jumppanel<?php echo $jumpcount?>" style="display:none;margin-top:5px;"><?php echo $lang["jumptopage"]?>: <input type="text" size="3" id="jumpto<?php echo $jumpcount?>" onkeydown="var evt = event || window.event;if (evt.keyCode == 13) {var jumpto=document.getElementById('jumpto<?php echo $jumpcount?>').value;if (jumpto<1){jumpto=1;};if (jumpto><?php echo $totalpages?>){jumpto=<?php echo $totalpages?>;};CentralSpaceLoad('<?php echo $url?>&amp;go=page&amp;offset=' + ((jumpto-1) * <?php echo urlencode($per_page) ?>), true);}">
@@ -2381,11 +2262,11 @@ function get_related_keywords($keyref)
 		return $related_keywords_cache[$keyref];
 	} else {
 		if ($keyword_relationships_one_way){
-			$related_keywords_cache[$keyref]=sql_array("select related value from keyword_related where keyword='$keyref'");
+			$related_keywords_cache[$keyref]=sql_array(" select related value from keyword_related where keyword='$keyref'");
 			return $related_keywords_cache[$keyref];
 			}
 		else {
-			$related_keywords_cache[$keyref]=sql_array("select keyword value from keyword_related where related='$keyref' union select related value from keyword_related where (keyword='$keyref' or keyword in (select keyword value from keyword_related where related='$keyref')) and related<>'$keyref'");
+			$related_keywords_cache[$keyref]=sql_array(" select keyword value from keyword_related where related='$keyref' union select related value from keyword_related where (keyword='$keyref' or keyword in (select keyword value from keyword_related where related='$keyref')) and related<>'$keyref'");
 			return $related_keywords_cache[$keyref];
 			}
 		}
@@ -2489,7 +2370,7 @@ function check_access_key($resource,$key)
 	# Option to plugin in some extra functionality to check keys
 	if (hook("check_access_key","",array($resource,$key))===true) {return true;}
 	
-	$keys=sql_query("select user,usergroup,expires from external_access_keys where resource='$resource' and access_key='$key' and (expires is null or expires>now())");
+	$keys=sql_query("select user,expires from external_access_keys where resource='$resource' and access_key='$key' and (expires is null or expires>now())");
 
 	if (count($keys)==0)
 		{
@@ -2501,7 +2382,7 @@ function check_access_key($resource,$key)
 		
 		$user=$keys[0]["user"];
 		$expires=$keys[0]["expires"];
-                
+		
 		# Has this expired?
 		if ($expires!="" && strtotime($expires)<time())
 			{
@@ -2515,19 +2396,12 @@ function check_access_key($resource,$key)
 			exit();
 			}
 		
-		global $usergroup,$userpermissions,$userrequestmode,$userfixedtheme,$usersearchfilter;
-                $groupjoin="u.usergroup=g.ref";
-                if ($keys[0]["usergroup"]!="")
-                    {
-                    # Select the user group from the access key instead.
-                    $groupjoin="g.ref='" . escape_check($keys[0]["usergroup"]) . "'";
-                    }
-		$userinfo=sql_query("select g.ref usergroup,g.permissions,g.fixed_theme,g.search_filter from user u join usergroup g on $groupjoin where u.ref='$user'");
+		global $usergroup,$userpermissions,$userrequestmode,$userfixedtheme;
+		$userinfo=sql_query("select u.usergroup,g.permissions,g.fixed_theme from user u join usergroup g on u.usergroup=g.ref where u.ref='$user'");
 		if (count($userinfo)>0)
 			{
-                        $usergroup=$userinfo[0]["usergroup"]; # Older mode, where no user group was specified, find the user group out from the table.
+			$usergroup=$userinfo[0]["usergroup"];
 			$userpermissions=explode(",",$userinfo[0]["permissions"]);
-			$usersearchfilter=$userinfo[0]["search_filter"];
 			if (trim($userinfo[0]["fixed_theme"])!="") {$userfixedtheme=$userinfo[0]["fixed_theme"];} # Apply fixed theme also
 
 			if (hook("modifyuserpermissions")){$userpermissions=hook("modifyuserpermissions");}
@@ -2597,6 +2471,117 @@ function check_access_key_collection($collection,$key)
 	sql_query("update external_access_keys set lastused=now() where collection='$collection' and access_key='$key'");
 	return true;
 	}
+	
+if (!function_exists("auto_create_user_account")){
+function auto_create_user_account()
+	{
+	# Automatically creates a user account (which requires approval unless $auto_approve_accounts is true).
+	global $applicationname,$user_email,$email_from,$baseurl,$email_notify,$lang,$custom_registration_fields,$custom_registration_required,$user_account_auto_creation_usergroup,$registration_group_select,$auto_approve_accounts,$auto_approve_domains;
+
+	# Required fields (name, email) not set?
+	$missingFields = array();
+	if (getval("name","")=="") { $missingFields[] = $lang["yourname"]; }
+	if (getval("email","")=="") { $missingFields[] = $lang["youremailaddress"]; }
+
+	# Add custom fields
+	$c="";
+	if (isset($custom_registration_fields))
+		{
+		$custom=explode(",",$custom_registration_fields);
+	
+		# Required fields?
+		if (isset($custom_registration_required)) {$required=explode(",",$custom_registration_required);}
+
+		for ($n=0;$n<count($custom);$n++)
+			{
+			if (isset($required) && in_array($custom[$n],$required) && getval("custom" . $n,"")=="")
+				{
+				# Required field was not set.
+				$missingFields[] = $custom[$n];
+				}
+			
+			$c.=i18n_get_translated($custom[$n]) . ": " . getval("custom" . $n,"") . "\n\n";
+			}
+		}
+
+	if (!empty($missingFields))
+		return $lang["requiredfields"] . ' ' . i18n_get_translated(implode(', ', $missingFields), true);
+
+	# Work out which user group to set. Allow a hook to change this, if necessary.
+	$altgroup=hook("auto_approve_account_switch_group");
+	if ($altgroup!==false)
+		{
+		$usergroup=$altgroup;
+		}
+	else
+		{
+		$usergroup=$user_account_auto_creation_usergroup;
+		}
+			
+	if ($registration_group_select)
+		{
+		$usergroup=getvalescaped("usergroup","",true);
+		# Check this is a valid selectable usergroup (should always be valid unless this is a hack attempt)
+		if (sql_value("select allow_registration_selection value from usergroup where ref='$usergroup'",0)!=1) {exit("Invalid user group selection");}
+		}
+	
+	$username=escape_check(make_username(getval("name","")));
+	
+	#check if account already exists
+	$check=sql_value("select email value from user where email = '$user_email'","");
+	if ($check!=""){return $lang["useremailalreadyexists"];}
+
+	# Prepare to create the user.
+	$email=trim(getvalescaped("email","")) ;
+	$password=make_password();
+
+	# Work out if we should automatically approve this account based on $auto_approve_accounts or $auto_approve_domains
+	$approve=false;
+	if ($auto_approve_accounts==true)
+		{
+		$approve=true;
+		}
+	elseif (count($auto_approve_domains)>0)
+		{
+		# Check e-mail domain.
+		foreach ($auto_approve_domains as $domain=>$set_usergroup)
+			{
+			// If a group is not specified the variables don't get set correctly so we need to correct this
+			if (is_numeric($domain)){$domain=$set_usergroup;$set_usergroup="";} 
+			if (substr(strtolower($email),strlen($email)-strlen($domain)-1)==("@" . strtolower($domain)))
+				{
+				# E-mail domain match.
+				$approve=true;
+				
+				# If user group is supplied, set this
+				if (is_numeric($set_usergroup)) {$usergroup=$set_usergroup;}
+				}
+			}
+		}
+	
+
+	# Create the user
+	sql_query("insert into user (username,password,fullname,email,usergroup,comments,approved) values ('" . $username . "','" . $password . "','" . getvalescaped("name","") . "','" . $email . "','" . $usergroup . "','" . escape_check($c) . "'," . (($approve)?1:0) . ")");
+	$new=sql_insert_id();
+    hook("afteruserautocreated", "all",array("new"=>$new));
+	if ($approve)
+		{
+		# Auto approving, send mail direct to user
+		email_user_welcome($email,$username,$password,$usergroup);
+		}
+	else
+		{
+		# Not auto approving.
+		# Build a message to send to an admin notifying of unapproved user
+		$message=$lang["userrequestnotification1"] . "\n\n" . $lang["name"] . ": " . getval("name","") . "\n\n" . $lang["email"] . ": " . getval("email","") . "\n\n" . $lang["comment"] . ": " . getval("userrequestcomment","") . "\n\n" . $lang["ipaddress"] . ": '" . $_SERVER["REMOTE_ADDR"] . "'\n\n" . $c . "\n\n" . $lang["userrequestnotification3"] . "\n$baseurl?u=" . $new;
+		
+		
+		send_mail($email_notify,$applicationname . ": " . $lang["requestuserlogin"] . " - " . getval("name",""),$message,"",$user_email,"","",getval("name",""));
+		}
+		
+	return true;
+	}
+} //end function replace hook	
 
 function make_username($name)
 	{
@@ -2977,13 +2962,7 @@ function get_nopreview_icon($resource_type,$extension,$col_size,$deprecated1=fal
 		{
 		return $try;
 		}
-	# Try a plugin
-	$try=hook('plugin_nopreview_icon','',array($resource_type,$col));
-	if (file_exists($folder . $try))
-		{
-		return $try;
-		}
-	
+
 	# Fall back to the 'no preview' icon used for type 1.
 	return "no_preview/resource_type/type1" . $col . ".png";
 	}
@@ -3078,15 +3057,9 @@ function filesize_unlimited($path)
 
 		return exec('for %I in (' . escapeshellarg($path) . ') do @echo %~zI' );
         }
-	else if(PHP_OS == 'Darwin') 
-    	{
-        $bytesize = exec("stat -f '%z' " . escapeshellarg($path));
-    	}
-    else 
-    	{
-		$bytesize = exec("stat -c '%s' " . escapeshellarg($path));
-    	}
 
+	#Use stat
+	$bytesize = exec("stat -c '%s' " . escapeshellarg($path));
 	if(!is_int($bytesize))
 		{
 		return @filesize($path); # Bomb out, the output wasn't as we expected. Return the filesize() output.
@@ -3658,16 +3631,6 @@ function get_utility_path($utilityname, &$checked_path = null)
                 }
             else { return $return; }
             break;
-        case "ffprobe":
-            if (!isset($ffmpeg_path)) {return false;} # FFmpeg path not configured.
-            $return=get_executable_path($ffmpeg_path, array("unix"=>"ffprobe", "win"=>"ffprobe.exe"), $checked_path);
-            if ($return===false)
-                {
-                # Support 'avconv' also
-                return get_executable_path($ffmpeg_path, array("unix"=>"avconv", "win"=>"avconv.exe"), $checked_path);
-                }
-            else { return $return; }
-            break;        
         case "exiftool":
             //if (!isset($exiftool_path)) {return false;} # Exiftool path not configured.
             return get_executable_path($exiftool_path, array("unix"=>"exiftool", "win"=>"exiftool.exe"), $checked_path);
@@ -3891,11 +3854,6 @@ function validate_html($html)
         }
     }
 
-function get_indexed_resource_type_fields()
-	{
-	return sql_array("select ref as value from resource_type_field where keywords_index=1");
-	}
-
 function get_resource_type_fields($restypes="", $field_order_by="ref", $field_sort="asc", $find="")
 	{
 	// Gets all metadata fields, optionally for a specified array of resource types 
@@ -3909,13 +3867,13 @@ function get_resource_type_fields($restypes="", $field_order_by="ref", $field_so
 		$find=escape_check($find);
 		if($conditionsql!="")
 			{
-			$conditionsql.=" and ( ";
+			$conditionsql.=" and ";
 			}
 		else
 			{
-			$conditionsql.=" where ( ";
+			$conditionsql.=" where ";
 			}
-		$conditionsql.=" name like '%" . $find . "%' or options like '%" . $find . "%'or title like '%" . $find . "%'or tab_name like '%" . $find . "%'or exiftool_field like '%" . $find . "%'or help_text like '%" . $find . "%'or ref like '%" . $find . "%'or tooltip_text like '%" .$find . "%' or display_template like '%" .$find . "%')";
+		$conditionsql.=" name like '%" . $find . "%' or options like '%" . $find . "%'or title like '%" . $find . "%'or tab_name like '%" . $find . "%'or exiftool_field like '%" . $find . "%'or help_text like '%" . $find . "%'or ref like '%" . $find . "%'or tooltip_text like '%" .$find . "%' or display_template like '%" .$find . "%'";
 		}
 	// Allow for sorting, enabled for use by System Setup pages
 	//if(!in_array($field_order_by,array("ref","name","tab_name","type","order_by","keywords_index","resource_type","display_field","required"))){$field_order_by="ref";}		
@@ -3930,7 +3888,7 @@ function generateURL($url,$parameters=array(),$setparams=array())
     {
     foreach($setparams as $setparam=>$setvalue)
         {
-        if($setparam!="")
+        if($setparam!="" && $setvalue!="")
             {$parameters[$setparam]=$setvalue;}
         }
     $querystringparams=array();
@@ -3944,90 +3902,3 @@ function generateURL($url,$parameters=array(),$setparams=array())
     return $returnurl;
      
     }
-
-function notify_resource_change($resource)
-	{
-	debug("notify_resource_change " . $resource);
-	global $notify_on_resource_change_days;
-	// Check to see if we need to notify users of this change
-	if($notify_on_resource_change_days==0 || !is_int($notify_on_resource_change_days))
-		{
-		return false;
-		}
-		
-	debug("notify_resource_change - checking for users that have downloaded this resource " . $resource);
-	$download_users=sql_array("select u.email value from resource_log rl left join user u on rl.user=u.ref where rl.type='d' and rl.resource=$resource and u.email<>'' and datediff(now(),date)<'$notify_on_resource_change_days'","");
-	
-	if(count($download_users>0))
-		{
-		global $applicationname, $lang, $baseurl;
-		foreach ($download_users as $download_user)
-			{
-			if($download_user!="")
-				{
-				//send_mail($email,$subject,$message,$from="",$reply_to="",$html_template="",$templatevars=null,$from_name="",$cc="",$bcc="")
-				send_mail($download_user,$applicationname . ": " . $lang["notify_resource_change_email_subject"],str_replace(array("[days]","[url]"),array($notify_on_resource_change_days,$baseurl . "/?r=" . $resource),$lang["notify_resource_change_email"]),"","",array("days"=>$notify_on_resource_change_days,"url"=>$baseurl . "/?r=" . $resource));
-				}
-			}
-		}
-	}
-
-# Takes a string and add verbatim regex matches to the keywords list on found matches (for that field)
-# It solves the problem, for example, indexing an entire "nnn.nnn.nnn" string value when '.' are used as a keyword separator.
-# Uses config option $resource_field_verbatim_keyword_regex[resource type field] = '/regex/'
-function add_verbatim_keywords(&$keywords, $string, $resource_type_field)
-	{
-	global $resource_field_verbatim_keyword_regex;
-	if (empty($resource_field_verbatim_keyword_regex[$resource_type_field]))
-		{
-		return;		// return if regex not found or is blank
-		}
-	preg_match_all($resource_field_verbatim_keyword_regex[$resource_type_field], $string, $matches);
-	foreach ($matches as $match)
-		{
-		foreach ($match as $sub_match)
-			{
-			array_push($keywords,$sub_match);		// note that the keywords array is passed in by reference.
-			}
-		}
-	}
-
-# Tails a file using native PHP functions.
-# First introduced with system console.
-# Credit to:
-# http://www.geekality.net/2011/05/28/php-tail-tackling-large-files
-function tail($filename, $lines = 10, $buffer = 4096)
-	{
-	$f = fopen($filename, "rb");		// Open the file
-	fseek($f, -1, SEEK_END);		// Jump to last character
-
-	// Read it and adjust line number if necessary
-	// (Otherwise the result would be wrong if file doesn't end with a blank line)
-	if(fread($f, 1) != "\n") $lines -= 1;
-
-	// Start reading
-	$output = '';
-	$chunk = '';
-
-	// While we would like more
-	while(ftell($f) > 0 && $lines >= 0)
-		{
-		$seek = min(ftell($f), $buffer);		// Figure out how far back we should jump
-		fseek($f, -$seek, SEEK_CUR);		// Do the jump (backwards, relative to where we are)
-		$output = ($chunk = fread($f, $seek)).$output;		// Read a chunk and prepend it to our output
-		fseek($f, -mb_strlen($chunk, '8bit'), SEEK_CUR);		// Jump back to where we started reading
-		$lines -= substr_count($chunk, "\n");		// Decrease our line counter
-		}
-
-	// While we have too many lines
-	// (Because of buffer size we might have read too many)
-	while($lines++ < 0)
-		{
-		// Find first newline and remove all text before that
-		$output = substr($output, strpos($output, "\n") + 1);
-		}
-
-	// Close file and return
-	fclose($f);
-	return $output;
-	}	

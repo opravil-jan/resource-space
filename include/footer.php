@@ -1,6 +1,4 @@
 <?php 
-hook("before_footer_always");
-
 # Do not display header / footer when dynamically loading CentralSpace contents.
 if (getval("ajax","")=="" && !hook("replace_footer")) { 
 
@@ -17,12 +15,6 @@ if ($use_theme_bar && !in_array($pagename,array("search_advanced","login","previ
 <!-- Use aria-live assertive for high priority changes in the content: -->
 <span role="status" aria-live="assertive" class="ui-helper-hidden-accessible"></span>
 
-<!-- Global Trash Bin -->
-<div id="trash_bin">
-	<span class="trash_bin_text"><?php echo $lang['trash_bin_title']; ?></span>
-</div>
-<div id="trash_bin_delete_dialog" style="display: none;"></div>
-
 </div><!--End div-CentralSpace-->
 <?php if (($pagename!="login") && ($pagename!="user_password") && ($pagename!="preview_all") && ($pagename!="user_request")) { ?></div><?php } ?><!--End div-CentralSpaceContainer-->
 
@@ -31,7 +23,6 @@ if ($use_theme_bar && !in_array($pagename,array("search_advanced","login","previ
 <?php hook("footertop"); ?>
 
 <?php if (($pagename!="login") && ($pagename!="user_request") && ($pagename!="user_password") && ($pagename!="preview_all")&& ($pagename!="done") && ($pagename!="preview") && ($pagename!="change_language") && ($loginterms==false)) { ?>
-
 <!--Global Footer-->
 <div id="Footer">
 
@@ -64,14 +55,14 @@ function SwapCSS(css){
 			    		jQuery("#Header").removeClass("slimheader_darken");
 			    	}
 			    	<?php
-		            if(empty($linkedheaderimgsrc))
+		            if($linkedheaderimgsrc=="")
 		                {
 		                $header_img_src = $baseurl.'/gfx/titles/title.png';
 		                echo "jQuery('#HeaderImg').attr(\"src\",'".$header_img_src."?css_reload_key=".$css_reload_key."');";
 		                }
 		            else
 		                {
-		                echo "jQuery('#HeaderImg').attr(\"src\",'".$linkedheaderimgsrc."');";
+		                echo "jQuery('#HeaderImg').attr(\"src\",'".$baseurl.$linkedheaderimgsrc."');";
 		                } 
 		            } ?>
 		        }
@@ -85,7 +76,7 @@ function SwapCSS(css){
 <div id="FooterNavLeft" class=""><span id="FooterThemes" aria-hidden="true" role="presentation"><?php if (isset($userfixedtheme) && $userfixedtheme=="") { ?><?php echo $lang["interface"]?>:&nbsp;&nbsp;
 <?php if (!hook("replacecustomthemechips"))	{
 	// enable custom theme chips 
-	if (count($available_themes)!=0){
+	if (count($available_themes!=0)){
 		foreach ($available_themes as $available_theme){
 		if (!in_array($available_theme, $available_themes_by_default)){?>
 		&nbsp;<a href="#" onClick="SwapCSS('<?php echo $available_theme?>');return false;" name="choosetheme"><label class="ui-helper-hidden-accessible" for="choosetheme"><?php echo $lang['changethemeto'] . ' ' . ucfirst($available_theme); ?></label><img src="<?php echo $baseurl?>/plugins/<?php echo $available_theme?>/gfx/interface/<?php echo ucfirst($available_theme)?>Chip.gif" alt="<?php echo ucfirst($available_theme); ?> Theme Chip" width="11" height="11" /></a>
@@ -109,7 +100,7 @@ function SwapCSS(css){
 		<ul>
 <?php if (!hook("replacefooterlinks")){?>
 		<?php if (!$use_theme_as_home && !$use_recent_as_home) { ?><li><a href="<?php echo $baseurl?>/pages/<?php echo $default_home_page?>" onClick="return CentralSpaceLoad(this,true);"><?php echo $lang["home"]?></a></li><?php } ?>
-		<?php if ($about_link) { ?><li id="footer_about_link"><a href="<?php echo $baseurl?>/pages/about.php" onClick="return CentralSpaceLoad(this,true);"><?php echo $lang["aboutus"]?></a></li><?php } ?>
+		<?php if ($about_link) { ?><li><a href="<?php echo $baseurl?>/pages/about.php" onClick="return CentralSpaceLoad(this,true);"><?php echo $lang["aboutus"]?></a></li><?php } ?>
 		<?php if ($contact_link || $nav2contact_link) { ?><li><a href="<?php echo $baseurl?>/pages/contact.php" onClick="return CentralSpaceLoad(this,true);"><?php echo $lang["contactus"]?></a></li><?php } ?>
 <?php } /* end hook replacefooterlinks */ ?>
 		</ul>
@@ -348,7 +339,7 @@ $additional_title_pages=array(hook("additional_title_pages_array"));
 ?><script src="<?php echo $baseurl?>/lib/js/Placeholders.min.js?css_reload_key=<?php echo $css_reload_key?>" type="text/javascript"></script><?php
 
 
-if (getval("ajax","")=="") {
+if (getval("ajax","")=="") { 
 	// don't show closing tags if we're in ajax mode
 	?>
 
@@ -377,7 +368,6 @@ if (isset($k) && $k!="" && isset($search) && !isset($usercollection))
 if ($collections_footer && !in_array($pagename,$omit_collectiondiv_load_pages) && !checkperm("b") && isset($usercollection)) 
 	{?>
 	<div id="CollectionDiv" class="CollectBack AjaxCollect ui-layout-south"></div>
-
 	<script type="text/javascript">
 		var collection_frame_height=<?php echo $collection_frame_height?>;
 		var thumbs="<?php echo htmlspecialchars($thumbs); ?>";
@@ -453,17 +443,6 @@ else {?><div class="ui-layout-south" ></div><script>myLayout=jQuery('body').layo
 
 <?php hook("afteruilayout");?>
 <?php hook("responsivescripts"); ?>
-
-<script type="text/javascript">
-
-try{
-	top.history.replaceState(document.title+'&&&'+jQuery('#CentralSpace').html(), applicationname);
-	}
- catch(e){console.log(e);
-	 console.log("failed to load state");
-	}
-
-</script>
 
 </body>
 </html>

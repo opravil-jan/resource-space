@@ -29,15 +29,6 @@ if ($ref<0)
 	    <input type=hidden id="no_exif" name="no_exif" value="no">
 	    <?php } 
 	    }
-	if($enable_related_resources && $relate_on_upload && $ref<0 && !$multiple) # When uploading
-        {
-        ?>
-        <div class="Question" id="question_related">
-        <label for="relateonupload"><?php echo $lang["relatedresources_onupload"]?></label>
-        <input name="relateonupload" id="relateonupload" type="checkbox" value="1" style="margin-top:7px;" <?php if($relate_on_upload_default){echo " checked ";} ?>/> 
-        <div class="clearerleft"> </div>
-        </div><?php
-        }
 	if($camera_autorotation){ ?>
 	<div class="Question" id="question_autorotate">
 	<label for="autorotate"><?php echo $lang["autorotate"]?></label><input type=checkbox id="autorotate" name="autorotate" value="yes" <?php
@@ -58,7 +49,7 @@ if ($ref<0)
 		<select name="collection_add" id="collection_add" class="stdwidth">
 		
 		<?php if ($upload_add_to_new_collection_opt && $collection_allow_creation) { ?><option value="-1" <?php if ($upload_add_to_new_collection){ ?>selected <?php }?>>(<?php echo $lang["createnewcollection"]?>)</option><?php } ?>
-		<?php if ($upload_do_not_add_to_new_collection_opt && !hook("remove_do_not_add_to_collection")) { ?><option value="" <?php if (!$upload_add_to_new_collection || $do_not_add_to_new_collection_default){ ?>selected <?php }?>><?php echo $lang["batchdonotaddcollection"]?></option><?php } ?>
+		<?php if ($upload_do_not_add_to_new_collection_opt) { ?><option value="" <?php if (!$upload_add_to_new_collection || $do_not_add_to_new_collection_default){ ?>selected <?php }?>><?php echo $lang["batchdonotaddcollection"]?></option><?php } ?>
 		
 		<?php
 		if ($upload_force_mycollection)
@@ -104,7 +95,7 @@ if ($ref<0)
 				#show only active collections if a start date is set for $active_collections 
 				if (strtotime($list[$n]['created']) > ((isset($active_collections))?strtotime($active_collections):1))
 					{ if ($list[$n]["ref"]==$usercollection) {$currentfound=true;} ?>
-					<option value="<?php echo $list[$n]["ref"]?>" <?php if ($list[$n]['ref']==$collection_add) {?> 	selected<?php } ?>><?php echo i18n_get_collection_name($list[$n]) ?> <?php if ($collection_dropdown_user_access_mode){echo htmlspecialchars("(". $colusername."/".$accessmode.")"); } ?></option>
+					<option value="<?php echo $list[$n]["ref"]?>" <?php if ($list[$n]['ref']==$collection_add) {?> 	selected<?php } ?>><?php echo htmlspecialchars(i18n_get_collection_name($list[$n])) ?> <?php if ($collection_dropdown_user_access_mode){echo htmlspecialchars("(". $colusername."/".$accessmode.")"); } ?></option>
 					<?php }
 			
 				}
@@ -116,7 +107,7 @@ if ($ref<0)
 			if ($cc!==false)
 				{$currentfound=true;
 				?>
-				<option value="<?php echo htmlspecialchars($usercollection) ?>" <?php if ($usercollection==$collection_add){?>selected <?php } ?>><?php echo i18n_get_collection_name($cc) ?></option>
+				<option value="<?php echo htmlspecialchars($usercollection) ?>" <?php if ($usercollection==$collection_add){?>selected <?php } ?>><?php echo htmlspecialchars(i18n_get_collection_name($cc)) ?></option>
 				<?php
 				}
 			}
@@ -169,7 +160,6 @@ if ($ref<0)
 	
 		<?php
 		}
-	hook("extrauploadoptions");
 	}
 ?>
 

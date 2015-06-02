@@ -100,10 +100,10 @@ if ($exiftool_fullpath!=false)
 	if ($extension=="indd" && !isset($newfile))
 		{
 		$indd_thumbs = extract_indd_pages ($file);
-		$pagescommand="";
+
 		if (is_array($indd_thumbs))
 			{
-			
+			$pagescommand="";
 			$n=0;
 			foreach ($indd_thumbs as $indd_page){
 				echo $indd_page;
@@ -112,28 +112,25 @@ if ($exiftool_fullpath!=false)
 				
 				$n++;
 			}
-		} 
+		}
 		
 		
 		// process jpgs as a pdf so the existing pdf paging code can be used.	
-		if (is_array($indd_thumbs)){
-			$file=get_resource_path($ref,true,"",false,"pdf");		
-			$jpg2pdfcommand = $convert_fullpath . " ".$pagescommand." " . $file; 
+		$file=get_resource_path($ref,true,"",false,"pdf");		
+		$jpg2pdfcommand = $convert_fullpath . " ".$pagescommand." " . $file; 
+		
+		$output=run_command($jpg2pdfcommand);
 			
-			$output=run_command($jpg2pdfcommand);
+		$n=0;
+		foreach ($indd_thumbs as $indd_page){
 				
-			$n=0;
-			foreach ($indd_thumbs as $indd_page){
-				if (file_exists($target."_".$n)){	
-					unlink($target."_".$n);
-				}
-				$n++;
-			}
-			
-			$extension="pdf";
-			$dUseCIEColor=false;
-			$n=0;	
-			}
+			unlink($target."_".$n);
+			$n++;
+		}
+		
+		$extension="pdf";
+		$dUseCIEColor=false;
+		$n=0;	
 		}
 	}	
 	
@@ -482,29 +479,22 @@ if ($extension=="txt" && !isset($newfile))
    ----------------------------------------
 */
 $ffmpeg_fullpath = get_utility_path("ffmpeg");
-$ffprobe_fullpath = get_utility_path("ffprobe");
 global $ffmpeg_preview,$ffmpeg_preview_seconds,$ffmpeg_preview_extension,$ffmpeg_preview_options, $ffmpeg_preview_min_width,$ffmpeg_preview_min_height,$ffmpeg_preview_max_width,$ffmpeg_preview_max_height, $php_path, $ffmpeg_preview_async, $ffmpeg_preview_force;
 
 
 // If a snapshot has already been created and $ffmpeg_no_new_snapshots, never revert the snapshot (this is usually a custom preview)
-debug('FFMPEG-VIDEO: ####################################################################');
-debug('FFMPEG-VIDEO: Start trying FFMPeg for video files -- resource ID ' . $ref);
+
 if (($ffmpeg_fullpath!=false) && $snapshotcheck && in_array($extension, $ffmpeg_supported_extensions) && $ffmpeg_no_new_snapshots)
 	{
-		debug('FFMPEG-VIDEO: Create a preview for this video by going straight to ffmpeg_processing.php');
 		$target=get_resource_path($ref,true,"pre",false,'jpg',-1,1,false,"");
 		include (dirname(__FILE__)."/ffmpeg_processing.php");
 	}
 
 
 else if (($ffmpeg_fullpath!=false) && !isset($newfile) && in_array($extension, $ffmpeg_supported_extensions))
-        {   
-		debug('FFMPEG-VIDEO: Start process for creating previews...');
-
+        {
         $snapshottime = 1;
-        $out = run_command($ffprobe_fullpath . " -i " . escapeshellarg($file), true);
-
-        debug('FFMPEG-VIDEO: Running information command: ' . $ffprobe_fullpath . ' -i ' . $file);
+        $out = run_command($ffmpeg_fullpath . " -i " . escapeshellarg($file), true);
 
         if(preg_match("/Duration: (\d+):(\d+):(\d+)\.\d+, start/", $out, $match))
         	{
@@ -522,23 +512,19 @@ else if (($ffmpeg_fullpath!=false) && !isset($newfile) && in_array($extension, $
 	if ($extension=="mxf")
 		{ $snapshottime = 0; }
 
-
- 	if(!hook("previewpskipthumb","",array($file))){    
-   $output = run_command($ffmpeg_fullpath . " $ffmpeg_global_options -y -i " . escapeshellarg($file) . " -f image2 -vframes 1 -ss ".$snapshottime." " . escapeshellarg($target));
-   debug('FFMPEG-VIDEO: Get snapshot: ' . $ffmpeg_fullpath . ' ' . $ffmpeg_global_options . ' -y -i ' . $file . ' -f image2 -vframes 1 -ss ' . $snapshottime . ' ' . $target);
+   if(!hook("previewpskipthumb","",array($file))){
+     
+   $output = run_command($ffmpeg_fullpath . " $ffmpeg_global_options -i " . escapeshellarg($file) . " -f image2 -vframes 1 -ss ".$snapshottime." " . escapeshellarg($target));
 	}
         if (file_exists($target)) 
             {
             $newfile=$target;
-            debug('FFMPEG-VIDEO: $newfile = ' . $newfile);
            
 
             if ($ffmpeg_preview && ($extension!=$ffmpeg_preview_extension || $ffmpeg_preview_force) )
                 {
-                	debug('FFMPEG-VIDEO: Before running the actual preview command...');
                 	if ($ffmpeg_preview_async && isset($php_path) && file_exists($php_path . "/php"))
 	                	{
-	                		debug('FFMPEG-VIDEO: Create preview asynchronously...');
 	                	global $scramble_key;
 	                	exec($php_path . "/php " . dirname(__FILE__)."/ffmpeg_processing.php " . 
 	                		escapeshellarg($scramble_key) . " " . 
@@ -552,12 +538,10 @@ else if (($ffmpeg_fullpath!=false) && !isset($newfile) && in_array($extension, $
 	                	}
                 	else 
 	                	{
-	                		debug('FFMPEG-VIDEO: include ffmpeg_processing.php file...');
 	                	include (dirname(__FILE__)."/ffmpeg_processing.php");
 	                	}
                 }
-            }
-            debug('FFMPEG-VIDEO: ####################################################################'); 
+            } 
         } 
 
 
@@ -724,12 +708,6 @@ if ((!isset($newfile)) && (!in_array($extension, $ffmpeg_audio_extensions))&& (!
 		if ($dUseCIEColor){$dUseCIEColor=" -dUseCIEColor ";} else {$dUseCIEColor="";}
 		$gscommand2 = $ghostscript_fullpath . " -dBATCH -r".$resolution." ".$dUseCIEColor." -dNOPAUSE -sDEVICE=jpeg -dJPEGQ=".$imagemagick_quality." -sOutputFile=" . escapeshellarg($target) . "  -dFirstPage=" . $n . " -dLastPage=" . $n . " -dEPSCrop -dUseCropBox " . escapeshellarg($file);
  		$output=run_command($gscommand2);
-
- 		# Stop trying when after the last page
- 		if (strstr($output, 'FirstPage > LastPage'))
-			{
-			break;
-			}
 
     	debug("PDF multi page preview: page $n, executing " . $gscommand2);
 
