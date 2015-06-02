@@ -1,6 +1,6 @@
 		<?php if (!hook("replacelistitem")) {?>
 		<!--List Item-->
-		<tr <?php hook("listviewrowstyle");?>>
+		<tr id="ResourceShell<?php echo htmlspecialchars($ref)?>" <?php hook("listviewrowstyle");?>>
 		<?php if(!hook("listcheckboxes")){?>
 		<?php if ($use_checkboxes_for_selection){?><td width="30px"><input type="checkbox" style="position:relative;margin-bottom:-4px;top:-3px;height:21px;" id="check<?php echo htmlspecialchars($ref)?>" class="checkselect" <?php if (in_array($ref,$collectionresources)){ ?>checked<?php } ?> onclick="if (jQuery('#check<?php echo htmlspecialchars($ref)?>').attr('checked')=='checked'){ AddResourceToCollection(event,<?php echo htmlspecialchars($ref)?>); } else if (jQuery('#check<?php echo htmlspecialchars($ref)?>').attr('checked')!='checked') { RemoveResourceFromCollection(event,<?php echo htmlspecialchars($ref)?>); <?php if (isset($collection)){?>document.location.href='?search=<?php echo urlencode($search)?>&order_by=<?php echo urlencode($order_by)?>&archive=<?php echo urlencode($archive)?>&offset=<?php echo urlencode($offset)?>';<?php } ?> }"></td><?php } ?>
 		<?php } #end hook listcheckboxes 
@@ -28,7 +28,7 @@
 			}
 		hook("beforesearchstars");
 		if ($display_user_rating_stars && $k==""){ 
-			if (!hook("replacesearchstars")){?>?>
+			if (!hook("replacesearchstars")){?>
 			<td <?php hook("listviewcolumnstyle");?>>
 			<?php if ($result[$n]['user_rating']=="") {$result[$n]['user_rating']=0;}
 			$modified_user_rating=hook("modifyuserrating");

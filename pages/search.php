@@ -1090,8 +1090,23 @@ $url=$baseurl_short."pages/search.php?search=" . urlencode($search) . "&amp;orde
 	<?php
 } # End of replace all results hook conditional
 
-hook("endofsearchpage");?>
-<?php	
+hook("endofsearchpage");
+if($search_anchors){ ?>
+	<script>
+		place='<?php echo getval("place","")?>';
+		display='<?php echo $display?>';
+		jQuery(document).ready(function(){
+			if(place){
+				ele_id='ResourceShell'+place;
+				elementScroll = document.getElementById(ele_id);
+				elementScroll.scrollIntoView();
+				jQuery(elementScroll).addClass("search-anchor");
+			}
+			
+		});
+	</script>
+	<?php
+}
 
 
 # Add the infobox.
