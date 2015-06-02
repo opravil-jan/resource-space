@@ -24,7 +24,7 @@ function create_dash_tile($url,$link,$title,$reload_interval,$all_users,$default
 	$resource_count = $resource_count?1:0;
 
 	# De-Duplication of tiles on creation
-	$existing = sql_query("SELECT ref FROM dash_tile WHERE url='".$url."' AND link='".$link."' AND title='".$title."' AND txt='".$text."' AND reload_interval_secs=".$reload_interval." AND all_users=".$all_users." AND resource_count=".$resource_count);
+	$existing = sql_query("SELECT ref FROM dash_tile WHERE url='".$url."' AND link='".$link."' AND title='".escape_check($title)."' AND txt='".escape_check($text)."' AND reload_interval_secs=".$reload_interval." AND all_users=".$all_users." AND resource_count=".$resource_count);
 	if(isset($existing[0]["ref"]))
 		{
 		$tile=$existing[0]["ref"];
@@ -32,7 +32,7 @@ function create_dash_tile($url,$link,$title,$reload_interval,$all_users,$default
 		}
 	else
 		{
-		$result = sql_query("INSERT INTO dash_tile (url,link,title,reload_interval_secs,all_users,default_order_by,resource_count,allow_delete,txt) VALUES ('".$url."','".$link."','".$title."',".$reload_interval.",".$all_users.",".$default_order_by.",".$resource_count.",".$delete.",'".$text."')");
+		$result = sql_query("INSERT INTO dash_tile (url,link,title,reload_interval_secs,all_users,default_order_by,resource_count,allow_delete,txt) VALUES ('".$url."','".$link."','".escape_check($title)."',".$reload_interval.",".$all_users.",".$default_order_by.",".$resource_count.",".$delete.",'".escape_check($text)."')");
 		$tile=sql_insert_id();
 		}
 
@@ -184,7 +184,7 @@ function get_default_dash()
 
 function existing_tile($title,$all_users,$url,$link,$reload_interval,$resource_count,$text="")
 	{
-	$sql = "SELECT ref FROM dash_tile WHERE url='".$url."' AND link='".$link."' AND title='".$title."' AND reload_interval_secs=".$reload_interval." AND all_users=".$all_users." AND resource_count=".$resource_count." AND txt='".$text."'";
+	$sql = "SELECT ref FROM dash_tile WHERE url='".$url."' AND link='".$link."' AND title='".$title."' AND reload_interval_secs=".$reload_interval." AND all_users=".$all_users." AND resource_count=".$resource_count." AND txt='".escape_check($text)."'";
 	$existing = sql_query($sql);
 	if(isset($existing[0]["ref"]))
 		{
