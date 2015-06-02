@@ -249,6 +249,9 @@ input[readonly] {color: #000000;}
 .HomePanel .help-icon { background: url("../gfx/dash/black-non-help.png") no-repeat; }
 .HomePanel .clock-icon { background: url("../gfx/dash/black-non-clock.png") no-repeat;}
 
+/* Search Anchor Highlighting */
+.search-anchor .ResourcePanel  {background-color:#fff;}
+
 /*
 Also make the "shadow" icons and text, meant to appear over photo thumbs, black
 This is not particularly readable so is commented out by default, and the white icons and text are used instead in this instance.

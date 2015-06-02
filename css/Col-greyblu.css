@@ -199,3 +199,6 @@ input[readonly] {color: #FFFFFF;}
 .glyph_user {background:url('../plugins/rse_responsive/gfx/responsive_spritesheet_white.png') -20px 0;}
 .glyph_menu {background:url('../plugins/rse_responsive/gfx/responsive_spritesheet_white.png') 0 0;}
 .glyph_result {background:url('../plugins/rse_responsive/gfx/responsive_spritesheet_white.png') -40px 0;}
+
+/* Search Anchor Highlighting */
+.search-anchor .ResourcePanel  {background-color:#fff;}

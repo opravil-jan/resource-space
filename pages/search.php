@@ -1095,12 +1095,15 @@ if($search_anchors){ ?>
 	<script>
 		place='<?php echo getval("place","")?>';
 		display='<?php echo $display?>';
+		highlight='<?php echo $search_anchors_highlight?>';
 		jQuery(document).ready(function(){
 			if(place){
 				ele_id='ResourceShell'+place;
 				elementScroll = document.getElementById(ele_id);
 				elementScroll.scrollIntoView();
-				jQuery(elementScroll).addClass("search-anchor");
+				if(highlight){
+					jQuery(elementScroll).addClass("search-anchor");
+				}
 			}
 			
 		});

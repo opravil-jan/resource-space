@@ -1467,6 +1467,9 @@ $list_search_results_title_trim=25;
 # When returning to search results from the view page via "all" link, bring user to result location of viewed resource?
 $search_anchors=true;
 
+# Highlight last viewed result when using $search_anchros
+$search_anchors_highlight=false;
+
 # Related Resource title trim: set to 0 to disable
 $related_resources_title_trim=15;
 	

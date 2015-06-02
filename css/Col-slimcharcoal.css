@@ -239,3 +239,5 @@ a.ResourcePanel:visited, a.ResourcePanel:active, a.ResourcePanel:link {color:#E0
 .HomePicturePanel h2 {color:#E0E0E0;}
 .HomePicturePanel{padding-left:15px!important;color:#E0E0E0;}
 
+/* Search Anchor Highlighting */
+.search-anchor .ResourcePanel  {background-color:#999;}
