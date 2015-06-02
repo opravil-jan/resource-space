@@ -38,7 +38,7 @@ if ($display_user_rating_stars && $star_search){
 <!--<?php hook("copyrightinsert");?>
 ResourceSpace version <?php echo $productversion?>
 
-Copyright Oxfam GB, Montala, WWF International, Tom Gleason, David Dwiggins, Historic New England, Colorhythm LLC, Worldcolor, Henrik Frizén 2006-2013
+For copyright and license information see documentation/licenses/resourcespace.txt
 http://www.resourcespace.org/
 -->
 <?php } ?>
@@ -68,7 +68,15 @@ http://www.resourcespace.org/
 
 <?php if ($use_zip_extension){?><script type="text/javascript" src="<?php echo $baseurl?>/lib/js/jquery-periodical-updater.js"></script><?php } ?>
 
-<?php if ($load_ubuntu_font) { 
+<?php 
+if ($slideshow_big) 
+    { ?>
+    <script type="text/javascript" src="<?php echo $baseurl?>/lib/js/slideshow_big.js"></script>
+    <link type="text/css" href="<?php echo $baseurl?>/css/slideshow_big.css?css_reload_key=<?php echo $css_reload_key?>" rel="stylesheet" />
+    <?php 
+    }
+if ($load_ubuntu_font) 
+    { 
 	$urlprefix="http://";
 	if (strpos($baseurl,"https://")!==false) // Change prefix as mixed content prevents linking in Firefox
 		{$urlprefix="https://";}
@@ -80,8 +88,6 @@ if ($contact_sheet){?>
 <script>
 contactsheet_previewimage_prefix = '<?php echo addslashes($storageurl)?>';
 </script>
-
-
 <script type="text/javascript">
 jQuery.noConflict();
 
@@ -136,10 +142,17 @@ jQuery(document).ready(function() {
 <?php if (!hook("ajaxcollections")) { ?>
 <script src="<?php echo $baseurl;?>/lib/js/ajax_collections.js?css_reload_key=<?php echo $css_reload_key?>" type="text/javascript"></script>
 <?php } ?>
-<link href="<?php echo $baseurl_short;?>lib/plupload_2.1.2/jquery.plupload.queue/css/jquery.plupload.queue.css?<?php echo $css_reload_key;?>" rel="stylesheet" type="text/css" media="screen,projection,print"  />
-<script type="text/javascript" src="<?php echo $baseurl_short;?>lib/js/browserplus-min.js?<?php echo $css_reload_key;?>"></script>
+
 <script type="text/javascript" src="<?php echo $baseurl_short;?>lib/plupload_2.1.2/plupload.full.min.js?<?php echo $css_reload_key;?>"></script>
-<script type="text/javascript" src="<?php echo $baseurl_short;?>lib/plupload_2.1.2/jquery.plupload.queue/jquery.plupload.queue.min.js?<?php echo $css_reload_key;?>"></script>
+<?php if ($plupload_widget){?>
+	<link href="<?php echo $baseurl_short;?>lib/plupload_2.1.2/jquery.ui.plupload/css/jquery.ui.plupload.css?<?php echo $css_reload_key;?>" rel="stylesheet" type="text/css" media="screen,projection,print"  />	
+	<script type="text/javascript" src="<?php echo $baseurl_short;?>lib/plupload_2.1.2/jquery.ui.plupload/jquery.ui.plupload.min.js?<?php echo $css_reload_key;?>"></script>
+<?php } else { ?>
+	<link href="<?php echo $baseurl_short;?>lib/plupload_2.1.2/jquery.plupload.queue/css/jquery.plupload.queue.css?<?php echo $css_reload_key;?>" rel="stylesheet" type="text/css" media="screen,projection,print"  />
+	<script type="text/javascript" src="<?php echo $baseurl_short;?>lib/plupload_2.1.2/jquery.plupload.queue/jquery.plupload.queue.min.js?<?php echo $css_reload_key;?>"></script>
+<?php } ?>
+
+
 
 <script type="text/javascript">
 var baseurl_short="<?php echo $baseurl_short?>";
@@ -149,16 +162,16 @@ var errorpageload = "<h1><?php echo $lang["error"] ?></h1><p><?php echo $lang["e
 var applicationname = "<?php echo $applicationname?>";
 var branch_limit="<?php echo $cat_tree_singlebranch?>";
 var global_cookies = "<?php echo $global_cookies?>";
+var global_trash_html = '<!-- Global Trash Bin (added through CentralSpaceLoad -->';
+    global_trash_html += '<div id="trash_bin">';
+    global_trash_html += '<span class="trash_bin_text"><?php echo $lang["trash_bin_title"]; ?></span>';
+    global_trash_html += '</div>';
+    global_trash_html += '<div id="trash_bin_delete_dialog" style="display: none;"></div>';
 </script>
 
 <script src="<?php echo $baseurl_short?>lib/js/global.js?css_reload_key=<?php echo $css_reload_key?>" type="text/javascript"></script>
 
-<script type="text/javascript">
-jQuery(document).ready(function() {
- try{top.history.replaceState(jQuery('#CentralSpace').html(), applicationname);}
- catch(e){console.log(e);}
-});
-</script>
+
 
 <?php if ($keyboard_navigation) { 
 global $k;?>
@@ -171,10 +184,11 @@ jQuery(document).ready(function() {
     if(jQuery("input,textarea").is(":focus"))
     {
        // don't listen to keyboard arrows when focused on form elements
+       <?php hook("keyboardnavtextfocus");?>
     }
     else
     { 
-        var share='<?php echo $k ?>';
+        var share='<?php echo htmlspecialchars($k) ?>';
         var modAlt=e.altKey;
         var modShift=e.shiftKey;
         var modCtrl=e.ctrlKey;
@@ -186,7 +200,7 @@ jQuery(document).ready(function() {
 			 
 		    <?php hook ("addhotkeys"); //this comes first so overriding the below is possible ?>
             // left arrow
-            case <?php echo $keyboard_navigation_prev; ?>: if (jQuery('.prevLink').length > 0) jQuery('.prevLink').click();
+            case <?php echo $keyboard_navigation_prev; ?>: if ((jQuery('.prevLink').length > 0)<?php if ($pagename=="view") { ?>&&(jQuery("#fancybox-content").html()=='')<?php } ?>) jQuery('.prevLink').click();
               if (<?php if ($keyboard_navigation_pages_use_alt) echo "modAlt&&"; ?>(jQuery('.prevPageLink').length > 0)) jQuery('.prevPageLink').click();
               
                      <?php 
@@ -202,7 +216,7 @@ jQuery(document).ready(function() {
                      <?php } ?>
                      break;
             // right arrow
-            case <?php echo $keyboard_navigation_next; ?>: if (jQuery('.nextLink').length > 0) jQuery('.nextLink').click();
+            case <?php echo $keyboard_navigation_next; ?>: if ((jQuery('.nextLink').length > 0)<?php if ($pagename=="view") { ?>&&(jQuery("#fancybox-content").html()=='')<?php } ?>) jQuery('.nextLink').click();
               if (<?php if ($keyboard_navigation_pages_use_alt) echo "modAlt&&"; ?>(jQuery('.nextPageLink').length > 0)) jQuery('.nextPageLink').click();
                      <?php 
                      if (($pagename=="preview_all") && $keyboard_scroll_jump) { ?>
@@ -260,31 +274,7 @@ echo get_plugin_css($theme)
 ?>
 <script>jQuery('.plugincss').attr('class','plugincss0');</script>
 <?php
-if(isset($usergroup))
-    {
-    //Get group logo value
-    $curr_group = get_usergroup($usergroup);
-    if ($curr_group["group_specific_logo"]!=="")
-        {
-        $linkedheaderimgsrc="{$baseurl}/filestore/admin/groupheaderimg/group{$usergroup}.{$curr_group["group_specific_logo"]}";
-        if(!$slimheader)
-            {
-            ?>
-            <style>#Header{background-image: url(<?php echo $linkedheaderimgsrc; ?>);}</style>
-            <?php
-            }
-        }
-    }
-#SlimHeader global structure changes
-if($slimheader)
-    {
-    ?>
-    <style>
-    <?php
-    include dirname(__FILE__)."/../css/globalslimheader.css"; ?>
-    </style>
-    <?php
-    }
+
 hook("headblock");
  
 if ($collections_compact_style && $pagename!="login"){ include dirname(__FILE__)."/../lib/js/colactions.js";}
@@ -299,11 +289,18 @@ if ($infobox)
 	<script src="<?php echo $baseurl_short;?>lib/js/infobox.js?css_reload_key=<?php echo $css_reload_key ?>" type="text/javascript"></script>
 <?php
 	}
+endif; # !hook("customhtmlheader") 
+if($slimheader)
+    {
+    $body_classes[] = 'SlimHeader';
+    }
+if($pagename=="home")
+    {
+    $body_classes[] = $pagename;
+    }
 ?>
-<?php endif; # !hook("customhtmlheader") ?>
 </head>
-
-<body lang="<?php echo $language ?>" <?php if (isset($bodyattribs)) { ?><?php echo $bodyattribs?><?php } if($infobox) {?> onmousemove="InfoBoxMM(event);"<?php } ?>>
+<body lang="<?php echo $language ?>" class="<?php echo implode(' ', $body_classes); ?>" <?php if (isset($bodyattribs)) { ?><?php echo $bodyattribs?><?php } if($infobox) {?> onmousemove="InfoBoxMM(event);"<?php } ?>>
 
 <?php hook("bodystart"); ?>
 
@@ -327,35 +324,22 @@ if ($pagename=="login" || $pagename=="user_request" || $pagename=="user_password
 
 hook("beforeheader");
 
-if(!$slimheader)
+# Calculate Header Image Display #
+if(isset($usergroup))
     {
-    ?>
-    <div id="Header" <?php if ($header_text_title){?>style="background-image:none;"<?php } ?>>
-    <?php hook("responsiveheader");
-
-    if ($header_link && !$header_text_title && getval("k","")=="") 
+    //Get group logo value
+    $curr_group = get_usergroup($usergroup);
+    if (!empty($curr_group["group_specific_logo"]))
         {
-       $linkUrl=isset($header_link_url) ? $header_link_url : $homepage_url;
-       $onclick = (substr($linkUrl, 0, strlen($baseurl)) === $baseurl || substr($linkUrl, 0, strlen($baseurl_short)) === $baseurl_short) ? "" : ' onclick="return CentralSpaceLoad(this,true);"';
-        ?><a class="headerlink" href="<?php echo $linkUrl ?>"<?php echo $onclick?>></a><?php
-        }
-    if ($header_text_title)
-        {?>
-        <div id="TextHeader"><?php if (getval("k","")==""){?><a href="<?php echo $homepage_url?>"  onClick="return CentralSpaceLoad(this,true);"><?php } ?><?php echo $applicationname;?><?php if (getval("k","")==""){?></a><?php } ?></div>
-        <?php if ($applicationdesc!="")
-            {?>
-            <div id="TextDesc"><?php echo i18n_get_translated($applicationdesc);?></div>
-            <?php 
-            }
+        $linkedheaderimgsrc = (isset($storageurl)? $storageurl : $baseurl."/filestore"). "/admin/groupheaderimg/group".$usergroup.".".$curr_group["group_specific_logo"];
         }
     }
-else
+
+$linkUrl=isset($header_link_url) ? $header_link_url : $homepage_url;
+if($slimheader)
     {
-    $currenttheme = (isset($userfixedtheme)&&$userfixedtheme!='') ? $userfixedtheme : $defaulttheme;
-    $colourcss = getval('colourcss',''); 
-    $currenttheme = $colourcss!='' ? $colourcss : $currenttheme;
     ?>
-    <div id="Header" <?php echo ($currenttheme=="whitegry"||$currenttheme==="multi") ? "class='slimheader_darken'":"";?>>
+    <div id="Header" <?php echo ($theme=="whitegry"||$theme=="multi") ? "class='slimheader_darken'":"";?>>
     <?php hook("responsiveheader");
     if($header_text_title) 
         {?>
@@ -368,10 +352,9 @@ else
         }
     else
         {
-        $linkUrl=isset($header_link_url) ? $header_link_url : $homepage_url;
         if($linkedheaderimgsrc !="") 
             {
-            $header_img_src = $baseurl.$linkedheaderimgsrc;
+            $header_img_src = $linkedheaderimgsrc;
             }
         else 
             {
@@ -380,6 +363,32 @@ else
         ?>
         <a href="<?php echo $linkUrl; ?>" onClick="return CentralSpaceLoad(this,true);" class="HeaderImgLink"><img src="<?php echo $header_img_src; ?>" id="HeaderImg"></img></a>
         <?php
+        }
+    }
+else
+    {
+    ?>
+    <div id="Header" <?php if ($header_text_title){?>style="background-image:none;"<?php } ?>>
+    <?php hook("responsiveheader");
+    if ($header_link && !$header_text_title && getval("k","")=="") 
+        {
+       if(isset($header_link_height) || isset($header_link_width)){
+           # compile style attribute for headerlink
+           $headerlink_style='';
+           if(isset($header_link_height)){$headerlink_style.="height:".$header_link_height."px;";}
+           if(isset($header_link_width)){$headerlink_style.="width:".$header_link_width."px;";}
+       }
+       $onclick = (substr($linkUrl, 0, strlen($baseurl)) === $baseurl || substr($linkUrl, 0, strlen($baseurl_short)) === $baseurl_short) ? "" : ' onclick="return CentralSpaceLoad(this,true);"';
+        ?><a class="headerlink" <?php if(isset($headerlink_style)){?> style="<?php echo $headerlink_style?>" <?php } ?> href="<?php echo $linkUrl ?>"<?php echo $onclick?>></a><?php
+        }
+    if ($header_text_title)
+        {?>
+        <div id="TextHeader"><?php if (getval("k","")==""){?><a href="<?php echo $homepage_url?>"  onClick="return CentralSpaceLoad(this,true);"><?php } ?><?php echo $applicationname;?><?php if (getval("k","")==""){?></a><?php } ?></div>
+        <?php if ($applicationdesc!="")
+            {?>
+            <div id="TextDesc"><?php echo i18n_get_translated($applicationdesc);?></div>
+            <?php 
+            }
         }
     }
 
@@ -394,14 +403,16 @@ if (isset($username) && ($pagename!="login") && ($loginterms==false) && getval("
 hook("beforeheadernav1");
 if (isset($anonymous_login) && ($username==$anonymous_login))
 	{
-	if (!hook("replaceheadernav1anon")) {
-	?>
-	<ul>
-	<li><a href="<?php echo $baseurl?>/login.php"><?php echo $lang["login"]?></a></li>
-	<?php if ($contact_link) { ?><li><a href="<?php echo $baseurl?>/pages/contact.php" onClick="return CentralSpaceLoad(this,true);"><?php echo $lang["contactus"]?></a></li><?php } ?>
-	</ul>
-	<?php
-	} /* end replaceheadernav1anon */
+	if (!hook("replaceheadernav1anon")) 
+        {
+    	?>
+    	<ul>
+    	<li><a href="<?php echo $baseurl?>/login.php"><?php echo $lang["login"]?></a></li>
+    	<?php hook("addtoplinksanon");?>
+    	<?php if ($contact_link) { ?><li><a href="<?php echo $baseurl?>/pages/contact.php" onClick="return CentralSpaceLoad(this,true);"><?php echo $lang["contactus"]?></a></li><?php } ?>
+    	</ul>
+    	<?php
+    	} /* end replaceheadernav1anon */
 	}
 else
 	{
@@ -445,12 +456,12 @@ include (dirname(__FILE__) . "/header_links.php");
 $omit_searchbar_pages=array("index","preview_all","search_advanced","preview","admin_header","login");
 $modified_omit_searchbar_pages=hook("modifyomitsearchbarpages");
 if ($modified_omit_searchbar_pages){$omit_searchbar_pages=$modified_omit_searchbar_pages;}
-if (!in_array($pagename,$omit_searchbar_pages) && ($loginterms==false) && getvalescaped('k', '') == '') 	
+if (!in_array($pagename,$omit_searchbar_pages) && ($loginterms==false) && getvalescaped('k', '') == '' && !hook("replace_searchbarcontainer")) 	
 	{
 	?>
     <div id="SearchBarContainer">
     <?php
-	include "searchbar.php";
+	include dirname(__FILE__)."/searchbar.php";
 	
 	?>
     </div>
@@ -478,6 +489,8 @@ hook("afterheader");
 
 } // end if !ajax
 
+// Non-ajax specific hook 
+hook("start_centralspace");
 
 # Include theme bar?
 if ($use_theme_bar && (getval("k","")=="") && !in_array($pagename,array("themes","preview_all","done","search_advanced","login","preview","admin_header","user_password","user_request")) && ($pagename!="terms") && (getval("url","")!="index.php"))

@@ -63,14 +63,30 @@ function upload_file($ref,$no_exif=false,$revert=false,$autorotate=false)
 			}
 		else {$filename=$processfile['name'];}
 
-	}
+		global $filename_field;
+		if($no_exif && isset($filename_field)) {
+			$user_set_filename = get_data_by_field($ref, $filename_field);
+			if(trim($user_set_filename) != '') {
+				// Get extension of file just in case the user didn't provide one
+				$path_parts = pathinfo($filename);
+				$original_extension = $path_parts['extension'];
 
+				$filename = $user_set_filename;
+
+				// If the user filename doesn't have an extension add the original one
+				$path_parts = pathinfo($filename);
+				if(!isset($path_parts['extension'])) {
+					$filename .= '.' . $original_extension;
+				}
+			}
+		}
+	}
     # Work out extension
 	if (!isset($extension)){
 		# first try to get it from the filename
 		$extension=explode(".",$filename);
 		if(count($extension)>1){
-			$extension=trim(strtolower($extension[count($extension)-1]));
+			$extension=escape_check(trim(strtolower($extension[count($extension)-1])));
 			} 
 		# if not, try exiftool	
 		else if ($exiftool_fullpath!=false)
@@ -346,7 +362,7 @@ function extract_exif_comment($ref,$extension="")
 	if (!file_exists($image)) {return false;}
 	hook("pdfsearch");
 
-	global $exif_comment,$exiftool_no_process,$exiftool_resolution_calc, $disable_geocoding, $embedded_data_user_select_fields;
+	global $exif_comment,$exiftool_no_process,$exiftool_resolution_calc, $disable_geocoding, $embedded_data_user_select_fields,$filename_field;
 	$exiftool_fullpath = get_utility_path("exiftool");
 	if (($exiftool_fullpath!=false) && !in_array($extension,$exiftool_no_process))
 		{
@@ -485,7 +501,6 @@ function extract_exif_comment($ref,$extension="")
 			foreach ($field as $subfield)
 				{
 				$subfield = strtoupper($subfield); // convert to upper case for easier comparision
-				global $filename_field;
 				if (in_array($subfield, array_keys($metadata)) && $metadata[$subfield] != "-" && trim($metadata[$subfield])!="")
 					{
 					$read=true;
@@ -823,13 +838,13 @@ function iptc_return_utf8($text)
 	{
 	# For the given $text, return the utf-8 equiv.
 	# Used for iptc headers to auto-detect the character encoding.
-	global $iptc_expectedchars;
+	global $iptc_expectedchars,$mysql_charset;
 	
 	# No inconv library? Return text as-is
 	if (!function_exists("iconv")) {return $text;}
 	
 	# No expected chars set? Return as is
-	if ($iptc_expectedchars=="") {return $text;}
+	if ($iptc_expectedchars=="" || $mysql_charset=="utf8") {return $text;}
 	
 	$try=array("UTF-8","ISO-8859-1","Macintosh","Windows-1252");
 	for ($n=0;$n<count($try);$n++)
@@ -853,7 +868,14 @@ function create_previews($ref,$thumbonly=false,$extension="jpg",$previewonly=fal
 	# Debug
 	debug("create_previews(ref=$ref,thumbonly=$thumbonly,extension=$extension,previewonly=$previewonly,previewbased=$previewbased,alternative=$alternative,ingested=$ingested)");
 
-	if (!$previewonly) {generate_file_checksum($ref,$extension);}
+	if (!$previewonly) {
+		// make sure the extension is the same as the original so checksums aren't done for previews
+		$o_ext=sql_value("select file_extension value from resource where ref={$ref}","");
+		if($extension==$o_ext){
+			debug("create_previews - generate checksum for $ref");
+			generate_file_checksum($ref,$extension);
+		}
+	}
 	# first reset preview tweaks to 0
 	sql_query("update resource set preview_tweaks = '0|1' where ref = '$ref'");
 
@@ -929,17 +951,34 @@ function create_previews($ref,$thumbonly=false,$extension="jpg",$previewonly=fal
 				$aref=add_alternative_file($ref,$image_alternatives[$n]["name"]);
 				$apath=get_resource_path($ref,true,"",true,$image_alternatives[$n]["target_extension"],-1,1,false,"",$aref);
 				
+				$source_profile = '';
+				if ($image_alternatives[$n]["icc"] === true)
+					{
+					$iccpath = get_resource_path($ref,true,'',false,$extension).'.icc';
+					global $icc_extraction;
+	                global $ffmpeg_supported_extensions;
+					if (!file_exists($iccpath) && $extension!="pdf" && !in_array($extension,$ffmpeg_supported_extensions))
+						{
+						// extracted profile doesn't exist. Try extracting.
+						extract_icc_profile($ref,$extension);
+						}
+					if (file_exists($iccpath))
+						{
+						$source_profile = ' -strip -profile ' . $iccpath;
+						}
+					}
+
 				# Process the image
 				$version=get_imagemagick_version();
 				if($version[0]>5 || ($version[0]==5 && $version[1]>5) || ($version[0]==5 && $version[1]==5 && $version[2]>7 ))
 					{
 					// Use the new imagemagick command syntax (file then parameters)
-					$command = $convert_fullpath . " " . escapeshellarg($file) . " " . $image_alternatives[$n]["params"] . " " . escapeshellarg($apath);
+					$command = $convert_fullpath . ' ' . escapeshellarg($file) . (($extension == 'psd') ? '[0] +matte' : '') . $source_profile . ' ' . $image_alternatives[$n]['params'] . ' ' . escapeshellarg($apath);
 					}
 				else
 					{
 					// Use the old imagemagick command syntax (parameters then file)
-					$command = $convert_fullpath . " " . $image_alternatives[$n]["params"] . " " . escapeshellarg($file) . " " . escapeshellarg($apath);
+					$command = $convert_fullpath . $source_profile . " " . $image_alternatives[$n]["params"] . " " . escapeshellarg($file) . " " . escapeshellarg($apath);
 					}
 			
                 
@@ -1064,7 +1103,7 @@ function create_previews($ref,$thumbonly=false,$extension="jpg",$previewonly=fal
 
 function create_previews_using_im($ref,$thumbonly=false,$extension="jpg",$previewonly=false,$previewbased=false,$alternative=-1,$ingested=false)
 	{
-	global $keep_for_hpr,$imagemagick_path,$imagemagick_preserve_profiles,$imagemagick_quality,$imagemagick_colorspace,$default_icc_file,$autorotate_no_ingest,$always_make_previews;
+	global $keep_for_hpr,$imagemagick_path,$imagemagick_preserve_profiles,$imagemagick_quality,$imagemagick_colorspace,$default_icc_file,$autorotate_no_ingest,$always_make_previews,$lean_preview_generation;
 
 	$icc_transform_complete=false;
 	debug("create_previews_using_im(ref=$ref,thumbonly=$thumbonly,extension=$extension,previewonly=$previewonly,previewbased=$previewbased,alternative=$alternative,ingested=$ingested)");
@@ -1130,6 +1169,19 @@ function create_previews_using_im($ref,$thumbonly=false,$extension="jpg",$previe
 		# Get image's dimensions.
 		$identcommand = $identify_fullpath . ' -format %wx%h '. escapeshellarg($prefix . $file) .'[0]';
 		$identoutput=run_command($identcommand);
+		if($lean_preview_generation){
+			$all_sizes=false;
+			if(!$thumbonly && !$previewonly){
+				// seperate width and height
+				$all_sizes=true;
+				if(!empty($identoutput)){
+					$wh=explode("x",$identoutput);
+					$o_width=$wh[0];
+					$o_height=$wh[1];
+				}
+			}
+		}
+		
 		preg_match('/^([0-9]+)x([0-9]+)$/ims',$identoutput,$smatches);
 				if ((@list(,$sw,$sh) = $smatches)===false) { return false; }
 
@@ -1139,6 +1191,23 @@ function create_previews_using_im($ref,$thumbonly=false,$extension="jpg",$previe
 		if ($previewonly) {$sizes=" where id='thm' or id='col' or id='pre' or id='scr'";}
 
 		$ps=sql_query("select * from preview_size $sizes order by width desc, height desc");
+		if($lean_preview_generation && $all_sizes){
+			$force_make=array("pre","thm","col");
+			if($extension!="jpg" || $extension!="jpeg"){
+				array_push($force_make,"hpr","scr");
+			}
+			$count=count($ps)-1;
+			$oversized=0;
+			for($s=$count;$s>0;$s--){
+				if(!in_array($ps[$s]['id'],$force_make) && !in_array($ps[$s]['id'],$always_make_previews) && (isset($o_width) && isset($o_height) && $ps[$s]['width']>$o_width && $ps[$s]['height']>$o_height)){
+					$oversized++;
+				}
+				if($oversized>0){
+					unset($ps[$s]);
+				}
+			}
+			$ps = array_values($ps);
+		}
 		$created_count=0;
 		for ($n=0;$n<count($ps);$n++)
 			{ 
@@ -1224,7 +1293,8 @@ function create_previews_using_im($ref,$thumbonly=false,$extension="jpg",$previe
 					// we have an extracted ICC profile, so use it as source
 					$targetprofile = dirname(__FILE__) . '/../iccprofiles/' . $icc_preview_profile;
 					$profile  = " -strip -profile $iccpath $icc_preview_options -profile $targetprofile -strip ";
-					$icc_transform_complete=true;
+					// consider ICC transformation complete, if one of the sizes has been rendered that will be used for the smaller sizes
+                    if ($id == 'hpr' || $id == 'lpr' || $id == 'scr') $icc_transform_complete=true;
 				} else {
 					// use existing strategy for color profiles
 					# Preserve colour profiles? (omit for smaller sizes)
@@ -1687,19 +1757,22 @@ function base64_to_jpeg( $imageData, $outputfile ) {
  
 }
 
-function extract_indd_pages ($filename){
+function extract_indd_pages($filename)
+    {
     $exiftool_fullpath = get_utility_path("exiftool");
-    if ($exiftool_fullpath!=false)
+    if ($exiftool_fullpath)
         {
-        $array=run_command($exiftool_fullpath.' -b -j -pageimage '.$filename);
-        $array=json_decode( $array);
+        $array = run_command($exiftool_fullpath.' -b -j -pageimage ' . escapeshellarg($filename));
+        $array = json_decode($array);
         
-        $array=$array[0]->PageImage;
-        
-        return $array;
-		}     
-}
- 
+        if (isset($array[0]->PageImage))
+        	{
+        	return $array[0]->PageImage;
+        	}
+        }
+    return false;
+    }
+
 function generate_file_checksum($resource,$extension,$anyway=false)
 	{
 	global $file_checksums;
@@ -1898,98 +1971,122 @@ function extract_text($ref,$extension,$path="")
 	
 function get_image_orientation($file)
     {
-    $exiftool_fullpath = get_utility_path("exiftool");
-    if ($exiftool_fullpath==false)
+    $exiftool_fullpath = get_utility_path('exiftool');
+    if ($exiftool_fullpath == false)
         {
         return 0;
         }
-    else    
+    $orientation = run_command($exiftool_fullpath . ' -s -s -s -orientation ' . escapeshellarg($file));
+    $orientation = str_replace('Rotate', '', $orientation);
+    
+    if (strpos($orientation, 'CCW'))
         {
-        $orientation=run_command($exiftool_fullpath.' -s -s -s -orientation '.$file);
-        $orientation=str_replace("Rotate","",$orientation);
-        //only handles CW rotation, haven't seen CCW yet
-        if (strpos($orientation,"CCW")){$rotation="CCW";} else {$rotation="CW";}
-        if ($rotation=="CW")
-            {
-            $orientation=trim(str_replace("CW","",$orientation));
-            }
-        else
-            {
-            $orientation=trim(str_replace("CCW","",360-$orientation));
-            }
-        return $orientation;
+        $orientation = trim(str_replace('CCW', '', 360-$orientation));
+        } 
+    else 
+        {
+        $orientation = trim(str_replace('CW', '', $orientation));
         }
+    return $orientation;
     }
 
-function AutoRotateImage ($src_image,$ref=false){
-	# use $ref to pass a resource ID in case orientation data needs to be taken from a non-ingested image to properly rotate a preview image
-	global $imagemagick_path;
-	global $camera_autorotation_ext, $camera_autorotation_gm;
+function AutoRotateImage($src_image, $ref = false) 
+    {
+    # use $ref to pass a resource ID in case orientation data needs to be taken
+    # from a non-ingested image to properly rotate a preview image
+    global $imagemagick_path, $camera_autorotation_ext, $camera_autorotation_gm;
+    
+    if (!isset($imagemagick_path)) 
+        {
+        return false;
+        # for the moment, this only works for imagemagick
+        # note that it would be theoretically possible to implement this
+        # with a combination of exiftool and GD image rotation functions.
+        }
 
-	if (!isset($imagemagick_path)){
-		return false; // for the moment, this only works for imagemagick
-			      // note that it would be theoretically possible to implement this
-                              // with a combination of exiftool and GD image rotation functions.
-	}
     # Locate imagemagick.
     $convert_fullpath = get_utility_path("im-convert");
-    if ($convert_fullpath==false) {return false;}
+    if ($convert_fullpath == false) 
+        {
+        return false;
+        }
+    
+    $exploded_src = explode('.', $src_image);
+    $ext = $exploded_src[count($exploded_src) - 1];
+    $triml = strlen($src_image) - (strlen($ext) + 1);
+    $noext = substr($src_image, 0, $triml);
+    
+    if (count($camera_autorotation_ext) > 0 && (!in_array(strtolower($ext), $camera_autorotation_ext))) 
+        {
+        # if the autorotation extensions are set, make sure it is allowed for this extension
+        return false;
+        }
 
-	$exploded_src = explode('.',$src_image);
-	$ext = $exploded_src[count($exploded_src)-1];
-	$triml = strlen($src_image) - (strlen($ext)+1);
-	$noext = substr($src_image,0,$triml);
-
-	if (count($camera_autorotation_ext) > 0 && (!in_array(strtolower($ext),$camera_autorotation_ext))) { 
-		return false; // if the autorotation extensions are set, make sure it is allowed for this extension
-	}
-
-	$new_image = $noext . '-autorotated.' . $ext ;
-	$src_image = $src_image;
-
-	if ($camera_autorotation_gm) {
-		$exiftool_fullpath=get_utility_path("exiftool");
-		$orientation=get_image_orientation($src_image);
-			if ($orientation!=0)
-				{
-                if ($convert_fullpath!=false)
-                    {
-                    $command = $convert_fullpath .' '. $src_image .' -rotate +' . $orientation  .' '. $new_image;
-                    $wait = run_command($command);
-                    }
-				}
-		$command = $exiftool_fullpath. ' Orientation=1 '. $new_image;
-	}
-	else {
-		if($ref!=false){
-			# use the original file to get the orientation info
-			$extension=sql_value("select file_extension value from resource where ref=$ref",'');
-			$file=get_resource_path($ref,true,"",false,$extension,-1,1,false,"",-1);
-			# get the orientation
-			$orientation=get_image_orientation($file);
-			if ($orientation!=0){
-                if ($convert_fullpath!=false){
-                    $command = $convert_fullpath . ' -rotate +' . $orientation .' '. escapeshellarg($src_image) .' ' .escapeshellarg($new_image);
-                    $wait=run_command($command);
-                    # change the orientation metadata
-                    $exiftool_fullpath=get_utility_path("exiftool");
-                    $command = $exiftool_fullpath. ' Orientation=1 '. escapeshellarg($new_image);
+    $exiftool_fullpath = get_utility_path("exiftool");
+    $new_image = $noext . '-autorotated.' . $ext;
+    
+    if ($camera_autorotation_gm) 
+        {
+        $orientation = get_image_orientation($src_image);
+        if ($orientation != 0) 
+            {
+            $command = $convert_fullpath . ' ' . escapeshellarg($src_image) . ' -rotate +' . $orientation . ' ' . escapeshellarg($new_image);
+            run_command($command);
+            }
+        $command = $exiftool_fullpath . ' Orientation=1 ' . escapeshellarg($new_image);
+        } 
+    else
+        {
+        if ($ref != false) 
+            {
+            # use the original file to get the orientation info
+            $extension = sql_value("select file_extension value from resource where ref=$ref", '');
+            $file = get_resource_path($ref, true, "", false, $extension, -1, 1, false, "", -1);
+            # get the orientation
+            $orientation = get_image_orientation($file);
+            if ($orientation != 0) 
+                {
+                $command = $convert_fullpath . ' -rotate +' . $orientation . ' ' . escapeshellarg($src_image) . ' ' . escapeshellarg($new_image);
+                run_command($command);
+                # change the orientation metadata
+                $command = $exiftool_fullpath . ' Orientation=1 ' . escapeshellarg($new_image);
                 }
-			}
-		}
-		else{
-	    	$command = $convert_fullpath . ' ' . escapeshellarg($src_image) . ' -auto-orient ' .  escapeshellarg($new_image);
-			run_command($command);
-		}
-	}
-	if (file_exists($new_image)){
-		unlink($src_image);
-		rename($new_image,$src_image);
-		return true;
-	} else {
-		return false;
-	}
-}
+            } 
+        else
+            {
+            $command = $convert_fullpath . ' ' . escapeshellarg($src_image) . ' -auto-orient ' . escapeshellarg($new_image);
+            run_command($command);
+            }
+        }
+
+    if (!file_exists($new_image)) 
+        {
+        return false;
+        }
+
+    if (!$ref) 
+        {
+        # preserve custom metadata fields with exiftool        
+        # save the new orientation
+        # $new_orientation=run_command($exiftool_fullpath.' -s -s -s -orientation -n '.$new_image);
+        $old_orientation = run_command($exiftool_fullpath . ' -s -s -s -orientation -n ' . escapeshellarg($src_image));
+        
+        $exiftool_copy_command = $exiftool_fullpath . " -TagsFromFile " . escapeshellarg($src_image) . " -all:all " . escapeshellarg($new_image);
+        run_command($exiftool_copy_command);
+        
+        # If orientation was empty there's no telling if rotation happened, so don't assume.
+        # Also, don't go through this step if the old orientation was set to normal
+        if ($old_orientation != '' && $old_orientation != 1) 
+            {
+            $fix_orientation = $exiftool_fullpath . ' Orientation=1 -n ' . escapeshellarg($new_image);
+            run_command($fix_orientation);
+            }
+        }
+    
+    unlink($src_image);
+    rename($new_image, $src_image);
+    return true; 
+    }
 
 function extract_icc_profile ($ref,$extension){
 	// this is provided for compatibility. However, we are now going to rely on the caller to tell us the
@@ -2023,7 +2120,7 @@ function extract_icc($infile) {
       unlink($outfile);
    }
 
-   $cmdout = run_command("$convert_fullpath $infile $outfile $stderrclause");
+   $cmdout = run_command("$convert_fullpath $infile" . '[0]' . " $outfile $stderrclause");
    
    if ( preg_match("/no color profile is available/",$cmdout) || !file_exists($outfile) ||filesize_unlimited($outfile) == 0){
    // the icc profile extraction failed. So delete file.

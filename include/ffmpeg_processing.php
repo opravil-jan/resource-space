@@ -247,6 +247,14 @@ if (isset($ffmpeg_alternatives))
 					$ffmpeg_alt_previews[]=basename($apath);
 					}
 				}
+
+				if(!file_exists($apath) && file_exists($targetfile) && RUNNING_ASYNC) {
+					error_log('FFmpeg alternative failed: ' . $shell_exec_cmd);
+					# SQL Connection may have hit a timeout
+					sql_connect();
+					# Change flag as the preview was created and that is the most important of them all
+					sql_query("UPDATE resource SET is_transcoding = 0 WHERE ref = '" . escape_check($ref) . "'");
+				}
 			}
 		/*// update the resource table with any ffmpeg_alt_previews	
 		if (count($ffmpeg_alt_previews)>0){

@@ -38,6 +38,3 @@
 		$debug_expires += time();
 		sql_query("INSERT INTO sysvars VALUES ('debug_override_user','{$debug_user}'), ('debug_override_expires','{$debug_expires}')");
 		}
-
-?>
-

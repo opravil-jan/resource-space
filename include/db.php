@@ -15,17 +15,15 @@
 
 # ensure no caching (dynamic site)
 
+# Functions used for debugging via System Console
+include_once "debug_functions.php";
+
 # Switch on output buffering.
 ob_start(null,4096);
 
 $pagetime_start = microtime();
 $pagetime_start = explode(' ', $pagetime_start);
 $pagetime_start = $pagetime_start[1] + $pagetime_start[0];
-
-
-include_once "debug_functions.php";
-
-
 
 if (!isset($suppress_headers) || !$suppress_headers)
 	{
@@ -43,7 +41,8 @@ function errorhandler($errno, $errstr, $errfile, $errline)
 	?>
 	</select></table></table></table>
 	<div style="box-shadow: 3px 3px 20px #666;font-family:ubuntu,arial,helvetica,sans-serif;position:absolute;top:150px;left:150px; background-color:white;width:450px;padding:20px;font-size:15px;color:#fff;border-radius:5px;">
-	<table cellpadding=5 cellspacing=0><tr><td valign=middle><img src="<?php echo $baseurl?>/pages/admin/gfx/cherrybomb.gif" width="48" height="48"></td><td valign=middle align=left><span style="font-size:26px;">Sorry, an error has occurred</span></td></tr></table>
+	<div style="font-size:30px;background-color:red;border-radius:50%;min-width:35px;float:left;text-align:center;font-weight:bold;">!</div>
+	<span style="font-size:30px;color:black;padding:14px;">Sorry, an error has occurred</span>
 	<p style="font-size:14px;color:black;margin-top:20px;">Please <a href="#" onClick="history.go(-1)">go back</a> and try something else.</p>
 	<?php global $show_error_messages; if ($show_error_messages) { ?>
 	<p style="font-size:14px;color:black;">You can <a href="<?php echo $baseurl?>/pages/check.php">check</a> your installation configuration.</p>
@@ -71,6 +70,10 @@ if (file_exists(dirname(__FILE__)."/config.default.php")) {include dirname(__FIL
 # Load the real config
 if (!file_exists(dirname(__FILE__)."/config.php")) {header ("Location: pages/setup.php" );die(0);}
 include (dirname(__FILE__)."/config.php");
+
+if($system_down_redirect && getval('show', '') === '') {
+	redirect($baseurl . '/pages/system_down.php?show=true');
+}
 
 # Set time limit
 set_time_limit($php_time_limit);
@@ -108,7 +111,7 @@ function sql_connect() {
 	# Set MySQL Strict Mode (if configured)
 	if ($mysql_force_strict_mode)
 		{
-		sql_query("SET SESSION sql_mode='STRICT_ALL_TABLES'");	
+		sql_query("SET SESSION sql_mode='STRICT_ALL_TABLES'",false,-1,true,0);	
 		}
 }
 sql_connect();
@@ -130,109 +133,110 @@ $querylog=array();
 # -----------LANGUAGES AND PLUGINS-------------------------------
 
 # Setup plugin configurations
-if ($use_plugins_manager){
+if ($use_plugins_manager)
+	{
 	include "plugin_functions.php";
 	$legacy_plugins = $plugins; # Make a copy of plugins activated via config.php
-	#Check that manually (via config.php) activated plugins are included in the plugins table.
-	foreach($plugins as $plugin_name){
-		if ($plugin_name!=''){
-			if(sql_value("SELECT inst_version AS value FROM plugins WHERE name='$plugin_name'",'')==''){
-				#Installed plugin isn't marked as installed in the DB.  Update it now.
-				#Check if there's a plugin.yaml file to get version and author info.
+	# Check that manually (via config.php) activated plugins are included in the plugins table.
+	foreach($plugins as $plugin_name)
+		{
+		if ($plugin_name!='')
+			{
+			if (sql_value("SELECT inst_version AS value FROM plugins WHERE name='$plugin_name'",'')=='')
+				{
+				# Installed plugin isn't marked as installed in the DB.  Update it now.
+				# Check if there's a plugin.yaml file to get version and author info.
 				$plugin_yaml_path = dirname(__FILE__)."/../plugins/{$plugin_name}/{$plugin_name}.yaml";
 				$p_y = get_plugin_yaml($plugin_yaml_path, false);
-				#Write what information we have to the plugin DB.
-				sql_query("REPLACE plugins(inst_version, author, descrip, name, info_url, update_url, config_url) ".
+				# Write what information we have to the plugin DB.
+				sql_query("REPLACE plugins(inst_version, author, descrip, name, info_url, update_url, config_url, priority) ".
 						  "VALUES ('{$p_y['version']}','{$p_y['author']}','{$p_y['desc']}','{$plugin_name}'," .
-						  "'{$p_y['info_url']}','{$p_y['update_url']}','{$p_y['config_url']}')");
+						  "'{$p_y['info_url']}','{$p_y['update_url']}','{$p_y['config_url']}','{$p_y['default_priority']}')");
+				}
 			}
 		}
-	}
     # Need verbatum queries for this query
     $mysql_vq = $mysql_verbatim_queries;
     $mysql_verbatim_queries = true;
-	$active_plugins = (sql_query("SELECT name,enabled_groups,config,config_json FROM plugins WHERE inst_version>=0 order by priority"));
+	$active_plugins = sql_query("SELECT name,enabled_groups,config,config_json FROM plugins WHERE inst_version>=0 order by priority");
     $mysql_verbatim_queries = $mysql_vq;
-	foreach($active_plugins as $plugin){
 
+	$plugins = array();
+	foreach($active_plugins as $plugin)
+		{
 		# Check group access, only enable for global access at this point
 		if ($plugin['enabled_groups']=='')
 			{
 			# Add to the plugins array if not already present which is what we are working with
 			# later on.
-			if (!in_array($plugin['name'],$plugins)) {$plugins[]=$plugin['name'];}
+			$plugins[]=$plugin['name'];
+			}
+		}
+	for ($n=count($active_plugins)-1;$n>=0;$n--)
+		{
+		$plugin=$active_plugins[$n];
+		if ($plugin['enabled_groups']=='')
+			{
 			include_plugin_config($plugin['name'], $plugin['config'], $plugin['config_json']);
 			}
+		}
 	}
-} else {
+else
+	{
 	for ($n=count($plugins)-1;$n>=0;$n--)
 		include_plugin_config($plugins[$n]);
-}
+	}
 
 # Include the appropriate language file
 $pagename=safe_file_name(str_replace(".php","",pagename()));
 
-if (isset($_COOKIE["language"])) {$language=$_COOKIE["language"];}
-if (isset($_GET["language_set"]))
-    {
-    $language=$_GET["language_set"];
-    # Cannot use the general.php: rs_setcookie() here since general may not have been included.
-    if ($global_cookies)
-        {
-        # Remove previously set cookies to avoid clashes
-        setcookie("language", "", time() - 3600, $baseurl_short . "pages/", '', false, true);
-        setcookie("language", "", time() - 3600, $baseurl_short, '', false, true);
-        # Set new cookie
-        setcookie("language", $language, time() + (3600*24*1000), "/", '', false, true);
-        }
-    else
-        {
-        # Set new cookie
-        setcookie("language", $language, time() + (3600*24*1000));
-        setcookie("language", $language, time() + (3600*24*1000), $baseurl_short . "pages/", '', false, true);
-        }
-    }
-
-# Languages disabled - always use the default.
-if ($disable_languages) {$language=$defaultlanguage;}
+$language=setLanguage();
 
 # Fix due to rename of US English language file
 if (isset($language) && $language=="us") {$language="en-US";}
-
-# Make sure the provided language is a valid language
-if (empty($language) || !array_key_exists($language,$languages))
-	{
-		if (isset($defaultlanguage))
-			$language=$defaultlanguage;
-		else
-			$language='en';
-	}
 
 # Always include the english pack (in case items have not yet been translated)
 include dirname(__FILE__)."/../languages/en.php";
 if ($language!="en")
 	{
 	if (substr($language, 2, 1)=='-' && substr($language, 0, 2)!='en')
-		@include dirname(__FILE__)."/../languages/" . safe_file_name(substr($language, 0, 2)) . ".php";
+	@include dirname(__FILE__)."/../languages/" . safe_file_name(substr($language, 0, 2)) . ".php";
 	@include dirname(__FILE__)."/../languages/" . safe_file_name($language) . ".php";
 	}
 
 # Register all plugins
 for ($n=0;$n<count($plugins);$n++)
-	{
 	register_plugin($plugins[$n]);
+# Register their languages in reverse order
+for ($n=count($plugins)-1;$n>=0;$n--)
 	register_plugin_language($plugins[$n]);
-	}
-    
+
+global $suppress_headers;
 # Set character set.
-if (($pagename!="download") && ($pagename!="graph")) {header("Content-Type: text/html; charset=UTF-8");} // Make sure we're using UTF-8.
+if (($pagename!="download") && ($pagename!="graph") && !$suppress_headers) {header("Content-Type: text/html; charset=UTF-8");} // Make sure we're using UTF-8.
 #------------------------------------------------------
 
 
 # Pre-load all text for this page.
+$pagefilter="AND (page = '" . $pagename . "' OR page = 'all' OR page = '')";
+if ($pagename=="team_content") {$pagefilter="";} # Special case for the team content manager. Pull in all content from all pages so it's all overridden.
+
 $site_text=array();
 $results=sql_query("select language,name,text from site_text where (page='$pagename' or page='all') and (specific_to_group is null or specific_to_group=0)");
 for ($n=0;$n<count($results);$n++) {$site_text[$results[$n]["language"] . "-" . $results[$n]["name"]]=$results[$n]["text"];}
+
+$results=sql_query("select name,text,page from site_text where language='" . escape_check($language) . "' $pagefilter and (specific_to_group is null or specific_to_group=0)");
+for ($n=0;$n<count($results);$n++) 
+		{
+		if ($results[$n]["page"]=="") 
+			{
+			$lang[$results[$n]["name"]]=$results[$n]["text"];
+			} 
+		else 
+			{
+			$lang[$results[$n]["page"] . "__" . $results[$n]["name"]]=$results[$n]["text"];
+			}
+		}
 
 # Blank the header insert
 $headerinsert="";
@@ -244,6 +248,10 @@ hook("initialise");
 $hook_cache = array();
 $hook_cache_hits = 0;
 
+# Load the language specific stemming algorithm, if one exists
+$stemming_file=dirname(__FILE__) . "/../lib/stemming/" . safe_file_name($defaultlanguage) . ".php"; # Important - use the system default language NOT the user selected language, because the stemmer must use the system defaults when indexing for all users.
+if (file_exists($stemming_file)) {include ($stemming_file);}
+	
 function hook($name,$pagename="",$params=array())
 	{
 	# Plugin architecture.  Look for hooks with this name (and corresponding page, if applicable) and run them sequentially.
@@ -302,7 +310,7 @@ function hook($name,$pagename="",$params=array())
 	return hook($name,$pagename,$params);	
 	}
 
-function sql_query($sql,$cache=false,$fetchrows=-1,$dbstruct=true)
+function sql_query($sql,$cache=false,$fetchrows=-1,$dbstruct=true, $logthis=2)
     {
     # sql_query(sql) - execute a query and return the results as an array.
 	# Database functions are wrapped in this way so supporting a database server other than MySQL is 
@@ -312,14 +320,15 @@ function sql_query($sql,$cache=false,$fetchrows=-1,$dbstruct=true)
     # just fetch $fetchrows row but pad the array to the full result set size with empty values.
     # This has been added retroactively to support large result sets, yet a pager can work as if a full
     # result set has been returned as an array (as it was working previously).
-    global $db,$config_show_performance_footer,$debug_log,$debug_log_override,$mysql_verbatim_queries,$use_mysqli,$user;
-
+	# $logthis parameter is only relevant if $mysql_log_transactions is set.  0=don't log, 1=always log, 2=detect logging - i.e. SELECT statements will not be logged
+    global $db,$config_show_performance_footer,$debug_log,$debug_log_override,$mysql_verbatim_queries,$use_mysqli, $mysql_log_transactions;
+    
 	if (!isset($debug_log_override))
 		{
 		check_debug_log_override();
 		}
-
-	if ($config_show_performance_footer)
+	
+    if ($config_show_performance_footer)
     	{
     	# Stats
     	# Start measuring query time
@@ -328,9 +337,49 @@ function sql_query($sql,$cache=false,$fetchrows=-1,$dbstruct=true)
 		$querycount++;
     	}
     	
-    if ($debug_log || $debug_log_override)
+    if ($debug_log || $debug_log_override) 
 		{
 		debug("SQL: " . $sql);
+		}
+	
+    if($mysql_log_transactions && !($logthis==0))
+    	{	
+		global $mysql_log_location, $lang;
+		$requirelog=true;
+		if($logthis==2)
+			{
+			// Ignore any SELECTs if the decision to log has not been indicated by function call, 	
+			if(strtoupper(substr(trim($sql),0,6))=="SELECT")
+				{$requirelog=false;}
+			}
+			
+		if($logthis==1 || $requirelog)
+			{
+			# Log this to a transaction log file so it can be replayed after restoring database backup
+			$mysql_log_dir = dirname($mysql_log_location);
+			if (!is_dir($mysql_log_dir))
+				{
+				@mkdir($mysql_log_dir, 0333, true);
+				if (!is_dir($mysql_log_dir))
+					{exit("ERROR: Unable to create  folder for \$mysql_log_location specified in config file: " . $mysql_log_location);}
+				}	
+			
+			if(!file_exists($mysql_log_location))
+				{
+				global $mysql_db;
+				$mlf=@fopen($mysql_log_location,"wb");
+				@fwrite($mlf,"USE " . $mysql_db . ";\r\n");
+				if(!file_exists($mysql_log_location))
+					{exit("ERROR: Invalid \$mysql_log_location specified in config file: " . $mysql_log_location);}
+				// Set the permissions if we can to prevent browser access(will not work on Windows)
+				chmod($mysql_log_location,0333);
+				}
+			
+			$mlf=@fopen($mysql_log_location,"ab");
+			fwrite($mlf,"/* " . date("Y-m-d H:i:s") . " */ " .  $sql . ";\n"); // Append the ';' so the file can be used to replay the changes
+			fclose ($mlf);		
+			}
+		
 		}
     
     # Execute query    
@@ -429,7 +478,7 @@ function sql_value($query,$default)
     {
     # return a single value from a database query, or the default if no rows
     # The value returned must have the column name aliased to 'value'
-    $result=sql_query($query);
+    $result=sql_query($query,false,-1,true,0); // This is a select so we don't need to log this in the mysql log
     if (count($result)==0) {return $default;} else {return $result[0]["value"];}
     }
 
@@ -438,7 +487,7 @@ function sql_array($query)
 	# Like sql_value() but returns an array of all values found.
     # The value returned must have the column name aliased to 'value'
 	$return=array();
-    $result=sql_query($query);
+    $result=sql_query($query,false,-1,true,0); // This is a select so we don't need to log this in the mysql log
     for ($n=0;$n<count($result);$n++)
     	{
     	$return[]=$result[$n]["value"];
@@ -615,23 +664,46 @@ function CheckDBStruct($path)
 					$f=fopen($path . "/" . $file,"r");
 					while (($col = fgetcsv($f,5000)) !== false)
 						{
-						if (count($col)> 1){
+						if (count($col)> 1)
+							{
 							# Look for this column in the existing columns.
 							$found=false;
 							for ($n=0;$n<count($existing);$n++)
 								{
-								if ($existing[$n]["Field"]==$col[0]) {$found=true;}
+								if ($existing[$n]["Field"]==$col[0])
+									{
+									$found=true;
+									$existingcoltype=strtoupper($existing[$n]["Type"]);
+									$basecoltype=strtoupper(str_replace("§",",",$col[1]));									
+									# Check the column is of the correct type
+									preg_match('/\s*(\w+)\s*\((\d+)\)/i',$basecoltype,$matchbase);
+									preg_match('/\s*(\w+)\s*\((\d+)\)/i',$existingcoltype,$matchexisting);
+									// Checks added so that we don't trim off data if a varchar size has been increased manually or by a plugin. 
+									// - If column is of same type but smaller number, update
+									// - If target column is of type text, update
+									
+									if	(
+										(count($matchbase)==3 && count($matchexisting)==3 && $matchbase[1] == $matchexisting[1] && $matchbase[2] > $matchexisting[2])
+										 ||
+										(stripos($basecoltype,"text")!==false && stripos($existingcoltype,"text")===false)
+									       )
+										{        
+										debug("DBSTRUCT - updating column " . $col[0] . " in table " . $table . " from " . $existing[$n]["Type"] . " to " . str_replace("§",",",$col[1]) );
+										// Update the column type
+										sql_query("alter table $table modify `" .$col[0] . "` " .  $col[1]);       
+										}																				
+									}							
 								}
 							if (!$found)
-								{
-								# Add this column.
-								$sql="alter table $table add column ";
-								$sql.=$col[0] . " " . str_replace("§",",",$col[1]); # Allow commas to be entered using '§', necessary for a type such as decimal(2,10)
-								if ($col[4]!="") {$sql.=" default " . $col[4];}
-								if ($col[3]=="PRI") {$sql.=" primary key";}
-								if ($col[5]=="auto_increment") {$sql.=" auto_increment ";}
-								sql_query($sql,false,-1,false);
-								}
+									{
+									# Add this column.										
+									$sql="alter table $table add column ";
+									$sql.=$col[0] . " " . str_replace("§",",",$col[1]); # Allow commas to be entered using '§', necessary for a type such as decimal(2,10)
+									if ($col[4]!="") {$sql.=" default " . $col[4];}
+									if ($col[3]=="PRI") {$sql.=" primary key";}
+									if ($col[5]=="auto_increment") {$sql.=" auto_increment ";}
+									sql_query($sql,false,-1,false);
+									}	
 							}
 						}
 					}
@@ -778,8 +850,7 @@ function nicedate($date,$time=false,$wordy=true)
 function redirect($url)
 	{
 	# Redirect to the provided URL using a HTTP header Location directive.
-	global $baseurl;
-	
+	global $baseurl,$baseurl_short;
 	if (getval("ajax","")!="")
 		{
 		# When redirecting from an AJAX loaded page, forward the AJAX parameter automatically so headers and footers are removed.	
@@ -796,7 +867,7 @@ function redirect($url)
 	if (substr($url,0,1)=="/")
 		{
 		# redirect to an absolute URL
-		header ("Location: " . (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' ? "https://" : "http://") . $_SERVER["HTTP_HOST"] . $url);
+		header ("Location: " . str_replace('/[\\\/]/D',"",$baseurl) . str_replace($baseurl_short,"/",$url));
 		}
 	else
 		{	
@@ -813,20 +884,20 @@ function redirect($url)
 		}
 	exit();
 	}
-/* Language Function Unused, Replaced by Script on the Login Page */
+
 function http_get_preferred_language($strict_mode=false)
 	{
 	global $languages;
 
-	if (!isset($_SERVER['HTTP_ACCEPT_LANGUAGE']))
-		return null;
-	$lang_variable=$_SERVER['HTTP_ACCEPT_LANGUAGE'];
-	if (empty($lang_variable))
+	if (empty($_SERVER['HTTP_ACCEPT_LANGUAGE']))
 		return null;
 
-	$accepted_languages=preg_split('/,\s*/',$lang_variable);
+	$accepted_languages=preg_split('/,\s*/',$_SERVER['HTTP_ACCEPT_LANGUAGE']);
 	$current_lang=false;
 	$current_quality=0;
+	$language_map = array();
+	foreach ($languages as $key => $value)
+		$language_map[strtolower($key)] = $key;
 
 	foreach ($accepted_languages as $accepted_language)
 		{
@@ -844,30 +915,64 @@ function http_get_preferred_language($strict_mode=false)
 
 		while (count($lang_code))
 			{
-			$found=false;
-			foreach ($languages as $short => $name)
+			$short=strtolower(join('-', $lang_code));
+			if (array_key_exists($short, $language_map) && $lang_quality > $current_quality)
 				{
-				if (strtolower($short)==strtolower(join('-', $lang_code)))
-					{
-					if ($lang_quality > $current_quality)
-						{
-						$current_lang=$short;
-						$current_quality=$lang_quality;
-						$found=true;
-						break;
-						}
-					}
+				$current_lang=$language_map[$short];
+				$current_quality=$lang_quality;
 				}
 
-				if ($strict_mode || $found)
-					break;
+			if ($strict_mode)
+				break;
 
-				array_pop($lang_code);
+			array_pop($lang_code);
 			}
 		}
 
         return $current_lang;
 	}
+
+function setLanguage()
+	{
+	global $browser_language,$disable_languages,$defaultlanguage,$languages;
+	$language="";
+	if (isset($_GET["language_set"]))
+	    {
+	    $language=$_GET["language_set"];
+	    if(array_key_exists($language,$languages)) 
+			{
+		    # Cannot use the general.php: rs_setcookie() here since general may not have been included.
+		    if ($global_cookies)
+		        {
+		        # Remove previously set cookies to avoid clashes
+		        setcookie("language", "", time() - 3600, $baseurl_short . "pages/", '', false, true);
+		        setcookie("language", "", time() - 3600, $baseurl_short, '', false, true);
+		        # Set new cookie
+		        setcookie("language", $language, time() + (3600*24*1000), "/", '', false, true);
+		        }
+		    else
+		        {
+		        # Set new cookie
+		        setcookie("language", $language, time() + (3600*24*1000));
+		        setcookie("language", $language, time() + (3600*24*1000), $baseurl_short . "pages/", '', false, true);
+		        }
+		    return $language;
+		    }
+		    else{$language="";}
+	    }
+	if (isset($_GET["language"]) && array_key_exists($_GET["language"],$languages)) {return $_GET["language"];}	
+	if (isset($_POST["language"]) && array_key_exists($_POST["language"],$languages)) {return $_POST["language"];}
+	if (isset($_COOKIE["language"]) && array_key_exists($_COOKIE["language"],$languages)) {return $_COOKIE["language"];}
+
+	if(!$disable_languages && $browser_language && isset($_SERVER['HTTP_ACCEPT_LANGUAGE']))
+		{
+		$language = http_get_preferred_language();
+		if(!empty($language)){return $language;}
+		} 
+	if(($disable_languages || $language ==="") && isset($defaultlanguage)) {return $defaultlanguage;}
+	if($language===""){return 'en';}else{return $language;}
+	}
+
 
 function checkperm($perm)
     {
@@ -890,8 +995,16 @@ function pagename()
     
 function text($name)
 	{
-	global $config_disable_nohelp_warning;
+	global $site_text,$pagename,$language,$languages,$usergroup,$lang;
+	
+	# Look for the site content in the language strings. These will already be overridden with site content if present.
+	$key=$pagename . "__" . $name;
+	if (array_key_exists($key,$lang)) {return $lang[$key];}
+	else if(array_key_exists("all__" . $name,$lang)) {return $lang["all__" . $name];}
 
+	/*
+		Old method, commented for reference; look directly in the site content table.
+	
 	# Returns site text with name $name, or failing that returns dummy text.
 	global $site_text,$pagename,$language,$languages,$usergroup;
 	if (array_key_exists($language . "-" . $name,$site_text)) {return $site_text[$language . "-" .$name];} 
@@ -905,7 +1018,8 @@ function text($name)
 		{
 		if (array_key_exists("en-" . $name,$site_text)) {return $site_text["en-" . $name];}
 		}
-
+	*/
+	
 	return "";
 	}
     
@@ -1012,26 +1126,30 @@ function daily_stat($activity_type,$object_ref)
 	$date=getdate();$year=$date["year"];$month=$date["mon"];$day=$date["mday"];
 	
 
-    # Set object ref to zero if not set.
-
-    if ($object_ref=="") {$object_ref=0;}
+	# Set object ref to zero if not set.
+    
+	if ($object_ref=="") {$object_ref=0;}
 
     
 	# Find usergroup
 	global $usergroup;
 	if (!isset($usergroup)) {$usergroup=0;}
 	
+	# External or not?
+	global $k;$external=0;
+	if (getval("k","")!="") {$external=1;}
+	
 	# First check to see if there's a row
-	$count=sql_value("select count(*) value from daily_stat where year='$year' and month='$month' and day='$day' and usergroup='$usergroup' and activity_type='$activity_type' and object_ref='$object_ref'",0);
+	$count=sql_value("select count(*) value from daily_stat where year='$year' and month='$month' and day='$day' and usergroup='$usergroup' and activity_type='$activity_type' and object_ref='$object_ref' and external='$external'",0);
 	if ($count==0)
 		{
 		# insert
-		sql_query("insert into daily_stat(year,month,day,usergroup,activity_type,object_ref,count) values ('$year','$month','$day','$usergroup','$activity_type','$object_ref','1')");
+		sql_query("insert into daily_stat(year,month,day,usergroup,activity_type,object_ref,external,count) values ('$year','$month','$day','$usergroup','$activity_type','$object_ref','$external','1')",false,-1,true,0);
 		}
 	else
 		{
 		# update
-		sql_query("update daily_stat set count=count+1 where year='$year' and month='$month' and day='$day' and usergroup='$usergroup' and activity_type='$activity_type' and object_ref='$object_ref'");
+		sql_query("update daily_stat set count=count+1 where year='$year' and month='$month' and day='$day' and usergroup='$usergroup' and activity_type='$activity_type' and object_ref='$object_ref' and external='$external'",false,-1,true,0);
 		}
 	}    
 }

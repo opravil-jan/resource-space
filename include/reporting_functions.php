@@ -260,5 +260,19 @@ function unsubscribe_periodic_report($unsubscribe)
 	sql_query("delete from report_periodic_emails where user='$userref' and ref='$unsubscribe'");
 	}
 
+function get_translated_activity_type($activity_type)
+	{
+	# Activity types are stored in plain text english in daily_stat. This function will use language strings to resolve a translated value where one is set.
+	global $lang;
+	$key="stat-" . strtolower(str_replace(" ","",$activity_type));
+	if (!isset($lang[$key]))
+		{
+		return $activity_type;
+		}
+	else
+		{
+		return $lang[$key];
+		}
+	}
 
 ?>

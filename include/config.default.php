@@ -36,9 +36,20 @@ $mysql_force_strict_mode=false;
 # to them. Unless you need to store '\' in your fields, you can safely keep the default.
 $mysql_verbatim_queries=false;
 
+# Ability to record important DB transactions (e.g. INSERT, UPDATE, DELETE) in a sql file to allow replaying of changes since DB was last backed.
+# You may schedule cron jobs to delete this sql log file and perform a mysqldump of the database at the same time.
+# Note that there is no built in database backup, you need to take care of this yourself!
+#
+# WARNING!! Ensure the location defined by $mysql_log_location is not in a web accessible directory -it is advisable to either block access in the web server configuration or make the file write only by the web service account
+$mysql_log_transactions=false;
+#$mysql_log_location="/var/resourcespace_backups/sql_log.sql";
+
 $baseurl="http://my.site/resourcespace"; # The 'base' web address for this installation. Note: no trailing slash
 $email_from="resourcespace@my.site"; # Where system e-mails appear to come from
 $email_notify="resourcespace@my.site"; # Where resource/research/user requests are sent
+
+# Indicates which users can update very low level configuration options for example debug_log.
+$system_architect_user_names = array('admin');		// Warning: this is for experienced technical users, typically ResourceSpace providers.
 
 $spider_password="TBTT6FD"; # The password required for spider.php - IMPORTANT - randomise this for each new installation. Your resources will be readable by anyone that knows this password.
 $spider_usergroup=2; # The user group that will be used to access the resource list for the spider index.
@@ -136,6 +147,9 @@ $header_text_title=false;
 
 #If using the old background method, create a clickable area of the resourcespace logo graphic. Defaults to Homepage
 $header_link=false;
+#If using $header_link set the link height and width to match the size of the logo graphic in pixels
+#$header_link_height=;
+#$header_link_width=;
 
 ###### SLIM HEADER DESIGN ######
 #In order to maintain backwards compatibility you must do the following to turn on the Slim Header Design
@@ -162,7 +176,7 @@ $include_rs_header_info=true;
 
 # Available languages
 # If $defaultlanguage is not set, the brower's default language will be used instead
-$defaultlanguage="en"; # default language, uses ISO 639-1 language codes ( en, es etc.)
+$defaultlanguage="en-US"; # default language, uses ISO 639-1 language codes ( en, es etc.)
 $languages["en"]="British English";
 $languages["en-US"]="American English";
 $languages["ar"]="العربية";
@@ -184,6 +198,7 @@ $languages["pl"]="Polski"; # Polish
 $languages["pt"]="Português"; # Portuguese
 $languages["pt-BR"]="Português do Brasil"; # Brazilian Portuguese
 $languages["ru"]="Русский язык"; # Russian
+$languages["fi"]="Suomi"; # Finnish
 $languages["sv"]="Svenska"; # Swedish
 
 
@@ -193,8 +208,8 @@ $disable_languages=false;
 # Show the language chooser on the bottom of each page
 $show_language_chooser=true;
 
-# Allow Browser Language Detection to also render the page in the browser specified language (If Detected).
-$login_browser_language=true;
+# Allow Browser Language Detection
+$browser_language=true;
 
 # FTP settings for batch upload
 # Only necessary if you plan to use the FTP upload feature.
@@ -237,10 +252,36 @@ $homeanim_folder="gfx/homeanim/gfx";
 # $home_slideshow_width=517;
 # $home_slideshow_height=350;
 
+# Big slideshow mode (Fullscreen slideshow)
+# ----------------------------------
+# You will need to configure much bigger slideshow images with $home_slideshow_width and $home_slideshow_height, and regenerate
+# your slideshow images using the transform plugin. This is recommended to be used along with the slim header.
+$slideshow_big=false;
+
+
+# Enable home dash functionality (on by default, recommended)
+$home_dash = true;
+# Define the available styles per type.
+$tile_styles["srch"]=array("thmbs","multi");
+# Place the default dash (tiles set for all_users) on the home page for anonymous users with none of the drag 'n' drop functionality.
+$anonymous_default_dash=true;
+# use shadows on tile content (Suitable for transparent tiles)
+$dash_tile_shadows=false;
+
 
 # Optional 'quota size' for allocation of a set amount of disk space to this application. Value is in GB.
 # Note: Unix systems only.
 # $disksize=150;
+
+# Disk Usage Warnings - require running check_disk_usage.php
+# Percentage of disk space used before notification is sent out. The number should be between 1 and 100.
+#$disk_quota_notification_limit_percent_warning=90;
+# interval in hours to wait before sending another percent warning 
+#$disk_quota_notification_interval=24;
+$disk_quota_notification_email='';
+# GB of disk space left before uploads are disabled.
+# This causes disk space to be checked before each upload attempt
+$disk_quota_limit_size_warning_noupload=10;
 
 # Set your time zone below (default GMT)
 if (function_exists("date_default_timezone_set")) {date_default_timezone_set("GMT");}
@@ -337,6 +378,8 @@ $pdf_pages=30;
 # When uploading PDF files, split each page to a separate resource file?
 $pdf_split_pages_to_resources=false;
 
+# Use VideoJS for video playback (as opposed to FlashPlayer, which we are deprecating)
+$videojs=true;
 
 # Create a preview video for ffmpeg compatible files? A FLV (Flash Video) file will automatically be produced for supported file types (most video types - AVI, MOV, MPEG etc.)
 $ffmpeg_preview=true; 
@@ -358,8 +401,14 @@ $ffmpeg_global_options = "";
 # Example for use on Linux using nice to avoid slowing down the server
 # $ffmpeg_command_prefix = "nice - n 10";
 
-# If uploaded file is FLV, should we transcode it anyway?
+# If uploaded file is in the preview format already, should we transcode it anyway?
+# Note this is now ON by default as of switching to MP4 previews, because it's likely that uploaded MP4 files will need a lower bitrate preview and
+# were not intended to be the actual preview themselves.
 $ffmpeg_preview_force=false;
+
+# Option to always try and play the original file instead of preview - ueful if recent change to $ffmpeg_preview_force doesn't suit e.g. if all users are
+# on internal network and want to see HQ video
+$video_preview_original=false;
 
 # Encode preview asynchronous?
 $ffmpeg_preview_async=false;
@@ -376,6 +425,9 @@ $ffmpeg_use_qscale = true;
 # The blocks must be numbered sequentially (0, 1, 2).
 # Ensure the formats you are specifiying with vcodec and acodec are supported by checking 'ffmpeg -formats'.
 # "lines_min" refers to the minimum number of lines (vertical pixels / height) needed in the source file before this alternative video file will be created. It prevents the creation of alternative files that are larger than the source in the event that alternative files are being used for creating downscaled copies (e.g. for web use).
+#
+# Params examples for different cases:
+# Converting .mov to .avi use "-g 60 -vcodec msmpeg4v2 -acodec pcm_u8 -f avi";
 #
 # $ffmpeg_alternatives[0]["name"]="QuickTime H.264 WVGA";
 # $ffmpeg_alternatives[0]["filename"]="quicktime_h264";
@@ -470,6 +522,8 @@ $theme_category_levels=1;
 # $theme_category_levels must be greater than 1.
 $theme_direct_jump=false;
 
+#Force Collections lists on the Themes page to be in Descending order.
+$descthemesorder=false;
 
 ##  Advanced Search Options
 ##  Defaults (all false) shows advanced search in the search bar but not the home page or top navigation.
@@ -573,6 +627,9 @@ $orderbyrating=false;
 # (And don't forget to set $archiver_path etc. in the path section.)
 $collection_download = false;
 
+# The total size, in bytes, of the collection download possible PRIOR to zipping. Prevents users attempting very large downloads.
+$collection_download_max_size = 1024 * 1024 * 1024; # default 1GB.
+
 # Example given for Linux with the zip utility:
 # $collection_download_settings[0]["name"] = 'ZIP';
 # $collection_download_settings[0]["extension"] = 'zip';
@@ -608,6 +665,8 @@ $collection_download = false;
 
 # Option to write a text file into zipped collections containing resource data
 $zipped_collection_textfile=false;
+# Set default option for text file download to "no"
+$zipped_collection_textfile_default_no=false;
 
 # Enable speed tagging feature? (development)
 $speedtagging=false;
@@ -746,6 +805,9 @@ $contact_sheet_add_link=true;
 $contact_sheet_add_link_option=false;
 
 $contact_sheet_single_select_size=false;
+
+# Set this to FALSE in order to remove the link from the collection bar
+$contact_sheet_link_on_collection_bar = true;
 
 ##  Contact Print settings - paper size options
 $papersize_select = '
@@ -899,6 +961,9 @@ $save_as=false;
 $allow_share=true;
 $enable_theme_category_sharing=false;
 
+# Always create a collection when sharing an individual resource via email
+$share_resource_as_collection=false;
+
 # Use a custom stylesheet when sharing externally.
 # Note: $custom_stylesheet_external_share_path can be set anywhere inside websites' root folder.
 # eg.: '/plugins/your plugin name/css/external_shares.css'
@@ -913,6 +978,9 @@ $enable_theme_category_edit=true;
 
 # Should those with 'restricted' access to a resource be able to share the resource?
 $restricted_share=false;
+
+# Should those that have been granted open access to an otherwise restricted resource be able to share the resource?
+$allow_custom_access_share=false;
 
 # Should a user that has contributed a resource always have open access to it?
 $open_access_for_contributor=false;
@@ -952,12 +1020,33 @@ $upload_force_mycollection=false;
 # When batch uploading, enable the 'copy resource data from existing resource' feature
 $enable_copy_data_from=true;
 
+# Show clear button on the upload page
+$clearbutton_on_upload=true;
+
+# Show clear button on the edit page
+$clearbutton_on_edit=true;
+
+# Store Resource Refs when uploading, this is useful for other developer tools to hook into the upload.
+$store_uploadedrefs=false;
+
 # Always record the name of the resource creator for new records.
 # If false, will only record when a resource is submitted into a provisional status.
 $always_record_resource_creator = true;
 
 # Enable the 'related resources' field when editing resources.
 $enable_related_resources=true;
+
+# Adds an option to the upload page which allows Resources Uploaded together to all be related 
+/* requires $enable_related_resources=true */
+/* $php_path MUST BE SET */
+$relate_on_upload=false;
+
+# Option to make relating all resources at upload the default option if $relate_on_upload is set
+$relate_on_upload_default=false;
+
+#Size of the related resource previews on the resource page. Usually requires some restyling (#RelatedResources .CollectionPanelShell)
+#Takes the preview code such as "col","thm"
+$related_resource_preview_size="col";
 
 # Enable the 'keep me logged in at this workstation' option at the login form
 # If the user then selects this, a 100 day expiry time is set on the cookie.
@@ -1058,6 +1147,9 @@ $password_brute_force_delay=4;
 # Use imperial instead of metric for the download size guidelines
 $imperial_measurements=false;
 
+# Use day-month-year format? If set to false format will be month-day-year.
+$date_d_m_y=true;
+
 # What is the default resource type to use for batch upload templates?
 $default_resource_type=1;
 
@@ -1152,6 +1244,10 @@ $feedback_resource_select=false;
 # The value is in MB.
 # $preview_generate_max_file_size=100;
 
+# Prevent previews from creating versions that result in the same size?
+# If true pre, thm, and col sizes will not be considered.
+$lean_preview_generation=false;
+
 # Should resource views be logged for reporting purposes?
 # Note that general daily statistics for each resource are logged anyway for the statistics graphs
 # - this option relates to specific user tracking for the more detailed report.
@@ -1160,6 +1256,13 @@ $log_resource_views=false;
 # A list of file extentions of file types that cannot be uploaded for security reasons.
 # For example; uploading a PHP file may allow arbirtary execution of code, depending on server security settings.
 $banned_extensions=array("php","cgi","pl","exe","asp","jsp");
+
+#Set a default access value for the upload page. This will override the default resource template value.
+#Change the value of this option to the access id number
+$override_access_default=false;
+#Set a default status value for the upload page. This will override the default resource template value.
+#Change the value of this option to the status id number
+$override_status_default=false;
 
 # When adding resource(s), in the upload template by the status and access fields are hidden.
 # Set the below option to 'true' to enable these options during this process.
@@ -1173,7 +1276,8 @@ $show_status_and_access_on_upload_perm = function_exists("checkperm") ? !checkpe
 # Show Status and Access = true && Show Access = false - Only Status Shown
 # Show Status and Access = false && Show Access = false - Neither Shown
 # DEFAULT VALUE: = $show_status_and_access_on_upload;
-$show_access_on_upload = $show_status_and_access_on_upload;
+$show_access_on_upload = &$show_status_and_access_on_upload;
+
 
 # Permission required to show "access" field on upload. True = No permission required. 
 # Example below ensures they have permissions to edit active resources.
@@ -1218,6 +1322,8 @@ $simple_search_dropdown_filtering=false;
 $search_includes_themes=false;
 $search_includes_public_collections=false;
 $search_includes_user_collections=false;
+# Should the Clear button leave collection searches off by default?
+$clear_button_unchecks_collections=true;
 
 # include keywords from collection titles when indexing collections
 $index_collection_titles = true;
@@ -1238,11 +1344,21 @@ $config_separators=array("/","_",".","; ","-","(",")","'","\"","\\", "?");
 # leave blank for no extra trimming.
 $config_trimchars="";
 
+# Resource field verbatim keyword regex
+# Using the index value of [resource field], specifies regex criteria for adding verbatim strings to keywords.
+# It solves the problem, for example, indexing an entire "nnn.nnn.nnn" string value when '.' are used in $config_separators.
+# $resource_field_verbatim_keyword_regex[1] = '/\d+\.\d+\w\d+\.\d+/';		// this example would add 994.1a9.93 to indexed keywords for field 1.  This can be found using quoted search.
+
 # Global permissions
 # Permissions that will be prefixed to all user group permissions
 # Handy for setting global options, e.g. for fields
-# By default do not allow the 'original filename' and 'camera make/model' fields to be edited.
 $global_permissions="";
+
+# Global permissions
+# Permissions that will be removed from all user group permissions
+# Useful for temporarily disabling permissions globally, e.g. to make the system readonly during maintenance.
+# Suggested setting for a 'read only' mode: $global_permissions_mask="a,t,c,d,e0,e1,e2,e-1,e-2,i,n,h";
+$global_permissions_mask="";
 
 # User account application - auto creation
 # By default this is switched off and applications for new user accounts will be sent as e-mails
@@ -1348,6 +1464,12 @@ $small_thumbs_display_extended_fields=array();
 $list_display_fields=array(8,3,12);
 $list_search_results_title_trim=25;
 
+# When returning to search results from the view page via "all" link, bring user to result location of viewed resource?
+$search_anchors=true;
+
+# Highlight last viewed result when using $search_anchros
+$search_anchors_highlight=false;
+
 # Related Resource title trim: set to 0 to disable
 $related_resources_title_trim=15;
 	
@@ -1391,6 +1513,10 @@ $top_nav_upload_type="plupload"; # The upload type. Options are plupload, ftp, l
 
 # You can set the following line to ''  to disable chunking. May resolve issues with flash uploader.
 $plupload_chunk_size='5mb';
+
+# Use the JQuery UI Widget instead of the Queue interface (includes a stop button and optional thumbnail mode
+$plupload_widget=false;
+$plupload_widget_thumbnails=true;
 
 # Allow users to delete resources?
 # (Can also be controlled on a more granular level with the "D" restrictive permission.)
@@ -1458,24 +1584,26 @@ $ffmpeg_supported_extensions = array(
 		'wmv',
 		'divx',
 		'xvid',
+		'm4v',
 	);
 
 # A list of extensions which will be ported to mp3 format for preview.
 # Note that if an mp3 file is uploaded, the original mp3 file will be used for preview.
 $ffmpeg_audio_extensions = array(
-	'wav',
-	'ogg',
-	'aiff',
-	'au',
-	'cdda',
-	'm4a',
-	'wma',
-	'mp2',
-	'aac',
-	'ra',
-	'rm',
-	'gsm'
-	);
+    'wav',
+    'ogg',
+    'aif',
+    'aiff',
+    'au',
+    'cdda',
+    'm4a',
+    'wma',
+    'mp2',
+    'aac',
+    'ra',
+    'rm',
+    'gsm'
+    );
 	
 # The audio settings for mp3 previews
 $ffmpeg_audio_params = "-acodec libmp3lame -ab 64k -ac 1"; # Default to 64Kbps mono
@@ -1586,6 +1714,15 @@ $request_adds_to_collection=false;
 # $image_alternatives[0]["filename"]="alternative_png";
 # $image_alternatives[0]["target_extension"]="png";
 # $image_alternatives[0]["params"]="-density 300"; # 300 dpi
+# $image_alternatives[0]["icc"]=false;
+
+# $image_alternatives[1]["name"]="CMYK JPEG";
+# $image_alternatives[1]["source_extensions"]="jpg,tif";
+# $image_alternatives[1]["filename"]="cmyk";
+# $image_alternatives[1]["target_extension"]="jpg";
+# $image_alternatives[1]["params"]="-quality 100 -flatten $icc_preview_options -profile ".dirname(__FILE__) . "/../iccprofiles/name_of_cmyk_profile.icc"; # Quality 100 JPEG with specific CMYK ICC Profile
+# $image_alternatives[1]["icc"]=true; # use source ICC profile in command
+
 
 
 # For reports, the list of default reporting periods
@@ -1598,17 +1735,17 @@ $checkbox_and=false;
 # Option to show resource ID in the thumbnail, next to the action icons.
 $display_resource_id_in_thumbnail=false;
 
-# Display a title above the search results for non-search cases, for example collections, recent resources
-$display_search_titles=true;
-
 # Show "Save" and "Clear" buttons at the top of the resource edit form as well as at the bottom
 $edit_show_save_clear_buttons_at_top=false;
 
 # Allow empty collections to be shared?
 $collection_allow_empty_share=false;
 
-# Allow collections with not approved resources to be shared?
+# Allow collections containing resources that are not active to be shared?
 $collection_allow_not_approved_share=false;
+
+#Allow the smartsearch to override $access rules when searching
+$smartsearch_accessoverride=true;
 
 # Image preview zoom using jQuery.zoom (hover over the preview image to zoom in on the resource view page)
 $image_preview_zoom=false;
@@ -1657,6 +1794,8 @@ $paypal_url="https://www.paypal.com/cgi-bin/webscr";
 # ------------------------------------------------------------------------------------------------------------------
 $syncdir="/var/www/r2000/accounted"; # The sync folder
 $nogo="[folder1]"; # A list of folders to ignore within the sign folder.
+# Maximum number of files to process per execution of staticsync.php
+$staticsync_max_files = 10000;
 $staticsync_autotheme=true; # Automatically create themes based on the first and second levels of the sync folder structure.
 # Allow unlimited theme levels to be created based on the folder structure. 
 # Script will output a new $theme_category_levels number which must then be updated in config.php
@@ -1715,6 +1854,9 @@ $staticsync_alternatives_suffix="_alternatives";
 # if false, the system will always synthesize a title from the filename and path, even
 # if an embedded title is found in the file. If true, the embedded title will be used.
 $staticsync_prefer_embedded_title = true;
+
+# Do we allow deletion of files located in $syncdir through the UI?
+$staticsync_allow_syncdir_deletion=false;
 
 # End of StaticSync settings
 
@@ -1907,7 +2049,7 @@ $debug_log=false;
 $view_resource_collections=false;
 
 # enable titles on the search page that help describe the current context
-$search_titles=true;
+$search_titles=false;
 # whether all/additional keywords should be displayed in search titles (ex. "Recent 1000 / pdf")
 $search_titles_searchcrumbs=false;
 # whether field-specific keywords should include their shortnames in searchcrumbs (if $search_titles_searchcrumbs=true;) ex. "originalfilename:pdf"
@@ -2103,18 +2245,15 @@ $sharing_userlists=false; // enable users to save/select predefined lists of use
 
 $public_collections_header_only=false; // show public collections page in header, omit from Themes and Manage Collections
 
-$ckeditor_toolbars="'Styles', 'Bold', 'Italic', 'Underline', 'RemoveFormat', 'PasteFromWord', 'TextColor','BGColor'";
+$ckeditor_toolbars="'Styles', 'Bold', 'Italic', 'Underline','FontSize', 'RemoveFormat', 'TextColor','BGColor'";
 $ckeditor_content_toolbars="
-	{ name: 'basicstyles', items : [ 'Bold','Italic','Underline','Strike','Subscript','Superscript','-','RemoveFormat' ] },
-	{ name: 'clipboard', items : [ 'Cut','Copy','Paste','PasteText','PasteFromWord','-','Undo','Redo' ] },
-	{ name: 'colors', items : [ 'TextColor','BGColor' ] },
-	{ name: 'styles', items : [ 'Styles','Format','Font','FontSize' ] },
-	'/',
-	{ name: 'paragraph', items : [ 'NumberedList','BulletedList','-','Outdent','Indent','-','Blockquote',
-	'-','JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock','-','BidiLtr','BidiRtl' ] },
-	{ name: 'links', items : [ 'Link','Unlink','Anchor' ] },
+	{ name: 'basicstyles', items : [ 'Bold','Italic','Underline','Strike','RemoveFormat' ] },
+	{ name: 'clipboard', items : [ 'Cut','Copy','Paste','PasteText','-','Undo','Redo' ] },
+	{ name: 'styles', items : [ 'Format' ] },
+	{ name: 'paragraph', items : [ 'NumberedList','BulletedList' ] },
+	{ name: 'links', items : [ 'Link','Unlink' ] },
 	{ name: 'insert', items : [ 'Image','HorizontalRule'] },
-	{ name: 'tools', items : [ 'Source', 'Maximize', 'ShowBlocks','-','About' ] }
+	{ name: 'tools', items : [ 'Source', 'Maximize' ] }
 ";
 
 # Automatically save the edit form after making changes?
@@ -2153,6 +2292,9 @@ $use_mysqli=function_exists("mysqli_connect");
 # The second query is the same but returns only a count of the full result set, which is used to pad the result array to the correct size (so counts display correctly).
 # This means that large volumes of resource data are not passed around unnecessarily, which can significantly improve performance on systems with large data sets.
 $search_sql_double_pass_mode=true;
+
+# Experimental performance enhancement - only search for fields with matching keywords that are supposed to be indexed.
+$search_sql_force_field_index_check = false;
 
 # Use the new tab ordering system. This will sort the tabs by the order by value set in System Setup
 $use_order_by_tab_view=false;
@@ -2238,8 +2380,15 @@ $ajax_loading_timer=1500;
 #Option for downloaded filename to be just <resource id>.extension, without indicating size or whether an alternative file. Will override $original_filenames_when_downloading which is set as default
 $download_filename_id_only = false;
 
+# Append the size to the filename when downloading
+# Required: $download_filename_id_only = true;
+$download_id_only_with_size = false;
+
 # Index the 'contributed by' field?
 $index_contributed_by=false;
+
+# Index the resource type, so searching for the resource type string will work (e.g. if you have a resource of type "photo" then "cat photo" will match even if the resource metadata itself doesn't contain the word 'photo')
+$index_resource_type=true;
 
 # Use CKEditor for site content?
 $site_text_use_ckeditor=false;
@@ -2278,8 +2427,8 @@ $download_chunk_size=(2 << 20);
 #what to search for in advanced search by default - "Global", "Collections" or resource type id (e.g. 1 for photo in default installation, can be comma separated to enable multiple selections
 $default_advanced_search_mode="Global";
 
-#Option to turn off metadata download in view.php
-$metadata_download=true;
+#Option to turn on metadata download in view.php.
+$metadata_download=false;
 
 # settings for commenting on resources - currently not enabled by default
 
@@ -2291,6 +2440,7 @@ $comments_max_characters=200;					# maximum number of characters for a comment
 $comments_email_notification_address="";		# email address to use for flagged comment notifications
 $comments_show_anonymous_email_address=false;	# by default keep anonymous commenter's email address private
 $comments_policy_external_url="";				# if specified, will popup a new window fulfilled by URL (when clicking on "comment policy" link)
+$comments_view_panel_show_marker=true;			# show an astrisk by the comment view panel title if comments exist
 
 # show the login panel for anonymous users
 $show_anonymous_login_panel=true;
@@ -2365,6 +2515,8 @@ $hide_geolocation_panel=false;
 
 # Option to move the welcome text into the Home Picture Panel. Stops text from falling behind other panels.
 $welcome_text_picturepanel=false;
+# Hide Welcome Text
+$no_welcometext = false;
 
 #Show a specified metadata field below the resource preview image on the view page. Useful for phoo captions. 
 #$display_field_below_preview=18;
@@ -2427,7 +2579,7 @@ $share_resource_include_related=false;
 # Allow users to skip upload and create resources with no attached file
 $upload_no_file=false;
 
-# Normalize keywords when indexing and searching? Having this set to true means that various character encodings of e.g. diacritics will be standardised when indexing and searching. Requires internationalization functions (PHP versions >5.3)
+# Normalize keywords when indexing and searching? Having this set to true means that various character encodings of e.g. diacritics will be standardised when indexing and searching. Requires internationalization functions (PHP versions >5.3). For example, there are several different ways of encoding "é" (e acute) and this will ensure that a standard form of "é" will always be used.
 $normalize_keywords=true;
 
 # Having keywords_remove_diacritics set to true means that diacritics will be removed for indexing e.g. 'zwälf' is indexed as 'zwalf', 'café' is indexed as 'cafe'.
@@ -2476,5 +2628,50 @@ $send_collection_to_admin = FALSE;
 # Set to true if you want to share internally a collection which is not private
 $ignore_collection_access = FALSE;
 
-# Indicates which users can update very low level configuration options for example debug_log.
-$system_architect_user_names = array('Montala Support');		// Warning: this is for experienced technical users, typically ResourceSpace providers.
+# Show/ hide "Remove resources" link from collection bar:
+$remove_resources_link_on_collection_bar = FALSE;
+
+# Show group filter and user search at top of team_user.php
+$team_user_filter_top=false;
+
+# Stemming support - at this stage, experimental. Indexes stems of words only, so plural / singular (etc) forms of keywords are indexed as if they are equivalent. Requires a full reindex.
+$stemming=false;
+
+# Show the > symbol in the resource tools
+$resourcetoolsGT=true;
+
+# Initialize array for classes to be added to <body> element
+$body_classes = array();
+
+# Manage requests automatically using $manage_request_admin[resource type ID] = user ID;
+# IMPORTANT: the admin user needs to have permissions R and Rb set otherwise this will not work.
+// $manage_request_admin[1] = 1; // Photo
+// $manage_request_admin[2] = 1; // Document
+// $manage_request_admin[3] = 1; // Video
+// $manage_request_admin[4] = 1; // Audio
+
+# Number of seconds for slideshow to wait before changing image (must be greater than 1)
+#$slideshow_photo_delay = 7;
+
+# Notify on resource change. If the primary resource file is replaced or an alternative file is added, users who have 
+# downloaded the resource in the last X days will be sent an email notifying them that there has been a change with a link to the resource view page
+# Set to 0 to disable this functionality;
+$notify_on_resource_change_days=0;
+
+# Allow passwords to be emailed directly to users. Settign this to true is a security risk so should be used with caution.
+$allow_password_email=false;
+
+# Do not show any notification text if a password reset attempt fails to find a valid user. Setting this to false means potential hackers can discover valid email addresses
+$hide_failed_reset_text=true;
+
+# Show and allow to remove custom access for users when editing a resource
+$delete_resource_custom_access = false;
+
+# Enable this option to display a system down message to all users
+$system_down_redirect = false;
+
+# Option for the system to empty the configured temp folder of old files when it is creating new temporary files there.
+# Set to 0 (off) by default.
+# Please use with care e.g. make sure your IIS/Apache service account doesn't have write access to the whole server
+$purge_temp_folder_age=0;
+
