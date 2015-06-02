@@ -259,7 +259,7 @@ $homeanim_folder="gfx/homeanim/gfx";
 $slideshow_big=false;
 
 
-# Home Dash - RapiDash
+# Enable home dash functionality (on by default, recommended)
 $home_dash = true;
 # Define the available styles per type.
 $tile_styles["srch"]=array("thmbs","multi");

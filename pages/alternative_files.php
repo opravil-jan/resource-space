@@ -26,13 +26,6 @@ if ((!get_edit_access($ref,$resource["archive"], false,$resource) || checkperm('
 
 hook("pageevaluation");
 
-# Handle adding a new file
-if (getval("newfile","")!="")
-	{
-	$newfile=add_alternative_file($ref,getvalescaped("newfile",""));
-	redirect($baseurl_short."pages/alternative_file.php?resource=$ref&ref=$newfile&search=".urlencode($search)."&offset=$offset&order_by=$order_by&sort=$sort&archive=$archive");
-	}
-
 # Handle deleting a file
 if (getval("filedelete","")!="")
 	{
@@ -105,22 +98,7 @@ for ($n=0;$n<count($files);$n++)
 </table>
 </div>
 
-<!--Create a new file-->
-<div class="BasicsBox">
-    <h1><?php echo $lang["addalternativefile"]?></h1>
-    <form method="post" action="<?php echo $baseurl_short?>pages/alternative_files.php">
-		<div class="Question">
-			<label for="newcollection"><?php echo $lang["name"]?></label>
-			<div class="tickset">
-			 <div class="Inline"><input type=text name="newfile" id="newfile" value="" maxlength="100" class="shrtwidth"></div>
-			 <div class="Inline"><input name="Submit" type="submit" value="&nbsp;&nbsp;<?php echo $lang["create"]?>&nbsp;&nbsp;" /></div>
-			</div>
-		<div class="clearerleft"> </div>
-		<br />
-		<p><a onClick="return CentralSpaceLoad(this,true);" href="<?php echo $baseurl_short?>pages/upload_plupload.php?alternative=<?php echo urlencode($ref) ?>&search=<?php echo urlencode($search)?>&offset=<?php echo urlencode($offset)?>&order_by=<?php echo urlencode($order_by)?>&sort=<?php echo $sort?>&archive=<?php echo urlencode($archive)?>">&gt;&nbsp;<?php echo $lang["alternativebatchupload"] ?></a></p>
-	    </div>
-	</form>
-</div>
+<p><a onClick="return CentralSpaceLoad(this,true);" href="<?php echo $baseurl_short?>pages/upload_plupload.php?alternative=<?php echo urlencode($ref) ?>&search=<?php echo urlencode($search)?>&offset=<?php echo urlencode($offset)?>&order_by=<?php echo urlencode($order_by)?>&sort=<?php echo $sort?>&archive=<?php echo urlencode($archive)?>">&gt;&nbsp;<?php echo $lang["alternativebatchupload"] ?></a></p>
 
 
 </form>

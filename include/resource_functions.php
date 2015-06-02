@@ -1751,55 +1751,9 @@ function save_alternative_file($resource,$ref)
 	# Saves the 'alternative file' edit form back to the database
 	$sql="";
 	
-	# Uploaded file provided?
-	if (array_key_exists("userfile",$_FILES))
-    	{
-    	# Fetch filename / path
-    	$processfile=$_FILES['userfile'];
-   	    $filename=strtolower(str_replace(" ","_",$processfile['name']));
-    
-    	# Work out extension
-    	$extension=explode(".",$filename);$extension=trim(strtolower($extension[count($extension)-1]));
-
-		# Find the path for this resource.
-    	$path=get_resource_path($resource, true, "", true, $extension, -1, 1, false, "", $ref);
-
-		if ($filename!="")
-			{
-			if(!hook('replacemovealtfile'))
-				{
-				# Debug
-				debug("Uploading alternative file $ref with extension $extension to $path");
-				$result=move_uploaded_file($processfile['tmp_name'], $path);
-				}
-
-			if ($result==false)
-				{
-				exit("File upload error. Please check the size of the file you are trying to upload.");
-				}
-			else
-				{
-				chmod($path,0777);
-				$file_size = @filesize_unlimited($path);
-				$sql.=",file_name='" . escape_check($filename) . "',file_extension='" . escape_check($extension) . "',file_size='" . $file_size . "',creation_date=now()";
-				}
-			
-			# Preview creation for alternative files (enabled via config)
-			global $alternative_file_previews,$lang;
-			if ($alternative_file_previews)
-				{
-				create_previews($resource,false,$extension,false,false,$ref);
-				}			
-			# Log this
-			resource_log($resource,"b","",$ref . ": " . getvalescaped("name","") . ", " . getvalescaped("description","") . ", " . escape_check($filename));
-			}
-		}
 	# Save data back to the database.
 	sql_query("update resource_alt_files set name='" . getvalescaped("name","") . "',description='" . getvalescaped("description","") . "',alt_type='" . getvalescaped("alt_type","") . "' $sql where resource='$resource' and ref='$ref'");
-	
-	# Update disk usage
-	update_disk_usage($resource);
-	}
+    	}
 	
 if (!function_exists("user_rating_save")){	
 function user_rating_save($userref,$ref,$rating)
