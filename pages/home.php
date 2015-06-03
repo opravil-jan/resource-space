@@ -444,6 +444,10 @@ if (checkperm("s"))
 					$all_users=1;
 					$url="pages/ajax/dash_tile.php?tltype=conf&tlstyle=custm";
 					$link=$custom_home_panels[$n]["link"];
+					if(strpos($custom_home_panels[$n]['link'], 'pages/') === false)
+						{
+						$link = 'pages/' . $custom_home_panels[$n]['link'];
+						}
 					$text=$custom_home_panels[$n]["text"];
 					$reload_interval=0;
 					$resource_count=0;
