@@ -125,7 +125,11 @@ if (getval("save",false))
 		$sql.="{$column}='{$val}'";
 		}
 	$sql.=" where ref='{$ref}'";
-	sql_query($sql);redirect("{$baseurl_short}pages/admin/admin_group_management.php?{$url_params}");		// return to the user group management page
+	sql_query($sql);
+	
+	hook("usergroup_edit_add_form_save","",array($ref));
+	
+	redirect("{$baseurl_short}pages/admin/admin_group_management.php?{$url_params}");		// return to the user group management page
 	exit;
 	}
 
@@ -224,6 +228,8 @@ include "../../include/header.php";
 				?>			</select>
 			<div class="clearerleft"></div>
 		</div>
+
+	<?php hook("usergroup_edit_add_form",'',array($record));?>
 
 	</div>
 
