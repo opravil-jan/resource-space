@@ -110,7 +110,17 @@ function contact_sheet_add_fields($resourcedata)
 			$pdf->SetXY($currentx,$currenty);
 			}
 		else if ($sheetstyle=="single")
-			{		
+			{
+			$query = sprintf(
+					   "SELECT `value`
+					      FROM resource_data AS rd
+					INNER JOIN resource_type_field AS rtf ON rd.resource_type_field = rtf.ref AND rtf.ref = '%s'
+					     WHERE rd.resource = '%s';"
+				,
+				$getfields[$ff],
+				$resourcedata['ref']
+			);
+			$value = sql_value($query, '');
 			$pdf->MultiCell($pagewidth-2,0,$value,'','L',false,1);		
 			}
 			
@@ -381,7 +391,7 @@ for ($n=0;$n<count($result);$n++){
 				else if ($sheetstyle=="single")
 					{									
 					#Add image
-					contact_sheet_add_image();											
+					contact_sheet_add_image();
 					contact_sheet_add_fields($result[$n]);
 					}
 				}
