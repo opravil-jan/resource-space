@@ -219,7 +219,7 @@ function set_language($defaultlanguage)
 
 
 //Development Mode:  Set to true to change the config.php check to devel.config.php and output to devel.config.php instead.  Also displays the config file output in a div at the bottom of the page.
-$develmode = false;
+$develmode = true;
 if ($develmode)
 	$outputfile = '../include/devel.config.php';
 else
@@ -1354,14 +1354,15 @@ else
 </form>
 <script>
 	jQuery("#use_smtp").click(function(){
-		console.log(jQuery(this).val());
-		if(jQuery(this).prop('checked')) {
+		if(jQuery(this).prop("checked")) {
 			jQuery("#use-SMTP-settings").show(300);
 		} else {
 			jQuery("#use-SMTP-settings").hide(300);
 		}
 	});
-	jQuery("#use-SMTP-settings").hide();
+	if(!jQuery("#use_smtp").prop("checked")) {
+		jQuery("#use-SMTP-settings").hide();
+	}
 </script>
 <?php }
 if (($develmode)&& isset($config_output))
