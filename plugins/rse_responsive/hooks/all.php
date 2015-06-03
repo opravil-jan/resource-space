@@ -106,7 +106,7 @@ function HookRse_responsiveAllResponsivethumbsloaded()
     if (!$lazyload) { ?>
     <script type="text/javascript">
         jQuery(document).ready(function() {
-            if(responsive_newpage === true) {
+            if(typeof responsive_newpage !== 'undefined' && responsive_newpage === true) {
                 hideMyCollectionsCols();
                 responsiveCollectionBar();
                 responsive_newpage = false;
@@ -164,7 +164,7 @@ function HookRse_responsiveAllResponsivescripts()
             jQuery("#HeaderImg").attr("src",bg);
             jQuery("#Header").addClass("clearResponsiveBackground");
         }
-        function toggleSimpleSearch() {    
+        function toggleSimpleSearch() {
             if(jQuery("#searchspace").hasClass("ResponsiveSimpleSearch")) {
                 jQuery("#searchspace").removeClass("ResponsiveSimpleSearch");
                 jQuery("#Rssearchexpand").val("<?php echo $lang["responsive_more"];?>");
@@ -228,6 +228,7 @@ function HookRse_responsiveAllResponsivescripts()
                 });
             }
         }
+
         var responsive_show = "<?php echo $lang['responsive_collectiontogglehide'];?>";
         var responsive_hide;
         var responsive_newpage = true;
