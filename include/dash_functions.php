@@ -184,7 +184,7 @@ function get_default_dash()
 
 function existing_tile($title,$all_users,$url,$link,$reload_interval,$resource_count,$text="")
 	{
-	$sql = "SELECT ref FROM dash_tile WHERE url='".$url."' AND link='".$link."' AND title='".$title."' AND reload_interval_secs=".$reload_interval." AND all_users=".$all_users." AND resource_count=".$resource_count." AND txt='".escape_check($text)."'";
+	$sql = "SELECT ref FROM dash_tile WHERE url='".$url."' AND link='".$link."' AND title='".escape_check($title)."' AND reload_interval_secs=".$reload_interval." AND all_users=".$all_users." AND resource_count=".$resource_count." AND txt='".escape_check($text)."'";
 	$existing = sql_query($sql);
 	if(isset($existing[0]["ref"]))
 		{
