@@ -419,6 +419,11 @@ foreach($active_plugins as $plugin)
 		$plugins[]=$plugin['name'];
 		}
 	}
+
+foreach($plugins as $plugin){
+	hook("afterregisterplugin","",array($plugin));
+}	
+
 hook('handleuserref','',array($userref));
 if (($userpassword=="b58d18f375f68d13587ce8a520a87919" || $userpassword== "b975fc60c53ab4780623e0cd813095e328ddf8ff5a3d01d134f6df7391c42ff5" ) && $pagename!="user_preferences"  && $pagename!="collections"){?>
 <script>

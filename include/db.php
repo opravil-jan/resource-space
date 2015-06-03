@@ -205,8 +205,12 @@ if ($language!="en")
 	}
 
 # Register all plugins
-for ($n=0;$n<count($plugins);$n++)
+for ($n=0;$n<count($plugins);$n++){
 	register_plugin($plugins[$n]);
+	hook("afterregisterplugin");
+}
+
+	
 # Register their languages in reverse order
 for ($n=count($plugins)-1;$n>=0;$n--)
 	register_plugin_language($plugins[$n]);
@@ -516,6 +520,7 @@ function check_db_structs()
 		{
 		CheckDBStruct("plugins/" . $plugins[$n] . "/dbstruct");
 		}
+	hook("checkdbstruct");
 	}
 
 function CheckDBStruct($path)
@@ -524,9 +529,11 @@ function CheckDBStruct($path)
 	# Add tables / columns / data / indices as necessary.
 	global $mysql_db, $resource_field_column_limit;
 	
-	# Check for path
-	$path=dirname(__FILE__) . "/../" . $path; # Make sure this works when called from non-root files..
-	if (!file_exists($path)) {return false;}
+	if (!file_exists($path)){
+		# Check for path
+		$path=dirname(__FILE__) . "/../" . $path; # Make sure this works when called from non-root files..
+		if (!file_exists($path)) {return false;}
+	}
 	
 	# Tables first.
 	# Load existing tables list
