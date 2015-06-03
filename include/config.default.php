@@ -1723,6 +1723,13 @@ $request_adds_to_collection=false;
 # $image_alternatives[1]["params"]="-quality 100 -flatten $icc_preview_options -profile ".dirname(__FILE__) . "/../iccprofiles/name_of_cmyk_profile.icc"; # Quality 100 JPEG with specific CMYK ICC Profile
 # $image_alternatives[1]["icc"]=true; # use source ICC profile in command
 
+# Example - automatically create a JPG2000 file alternative when an TIF file is uploaded
+# $image_alternatives[2]['name']              = 'JPG2000 File';
+# $image_alternatives[2]['source_extensions'] = 'tif';
+# $image_alternatives[2]['filename']          = 'New JP2 Alternative';
+# $image_alternatives[2]['target_extension']  = 'jp2';
+# $image_alternatives[2]['params']            = '';
+# $image_alternatives[2]['icc']               = false;
 
 
 # For reports, the list of default reporting periods
