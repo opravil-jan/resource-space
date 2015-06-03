@@ -448,6 +448,11 @@ if (checkperm("s"))
 						{
 						$link = 'pages/' . $custom_home_panels[$n]['link'];
 						}
+					if(strpos($custom_home_panels[$n]['link'], $baseurl . '/') !== false)
+						{
+						$link = $custom_home_panels[$n]['link'];
+						$link = str_replace($baseurl . '/', '', $custom_home_panels[$n]['link']);
+						}
 					$text=$custom_home_panels[$n]["text"];
 					$reload_interval=0;
 					$resource_count=0;
