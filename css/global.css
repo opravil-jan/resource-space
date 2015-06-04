@@ -148,7 +148,7 @@ input.defaultbutton {position: absolute; left: -100%; width: 0; height: 0;}
 #CentraSpace .SearchWidthExp {width:200px;font-size: 0.9em ;margin: 0px 0px;padding: 0px;}
 
 
-.CollectionPanelShell {padding:0;float: left;margin: 0px 15px 5px 0px;width: 97px;height: 120px;}
+.CollectionPanelShell {padding:0;float: left;margin: 0px 15px 5px 0px;width: 97px;height: 120px; text-align: left;}
 .CollectionPanelInfo{}
 .CollectionResourceAlign {width:97px;height:85px;text-align: center;vertical-align: middle;}
 
@@ -189,6 +189,7 @@ input.defaultbutton {position: absolute; left: -100%; width: 0; height: 0;}
 .IconResourceType4  {background: url(../gfx/interface/IcAudio.png);}
 .ResourcePanelShell a:link, .ResourcePanelShell a:visited {text-decoration:none;}
 .ResourcePanelShell a:hover, .ResourcePanelShell a:active {text-decoration:underline;}
+.ResourcePanelShell.ui-draggable {text-align: left;}
 
 
 .ResourcePanelShellSmall {padding:0;float: left;margin: 0px 15px 10px 0px;width: 105px;}
@@ -196,6 +197,7 @@ input.defaultbutton {position: absolute; left: -100%; width: 0; height: 0;}
 .ResourceAlignSmall {width:105px;height:90px;text-align: center;vertical-align: middle;}
 
 .ResourcePanelShellLarge {padding:0 0 10px; float: left;margin: 0px 15px 0px 0px;width: 365px;}
+.ResourcePanelShellLarge.ui-draggable {text-align: left;}
 .ResourcePanelLarge {padding:0;margin:0;width: 365px;padding-bottom:5px;}
 .ResourceAlignLarge {width:365px;height:365px;text-align: center;vertical-align: middle;}
 
