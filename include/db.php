@@ -222,7 +222,7 @@ if (($pagename!="download") && ($pagename!="graph") && !$suppress_headers) {head
 
 
 # Pre-load all text for this page.
-$pagefilter="AND (page = '" . $pagename . "' OR page = 'all' OR page = '')";
+$pagefilter="AND (page = '" . $pagename . "' OR page = 'all' OR page = '' " .  (($pagename=="dash_tile")?" OR page = 'home'":"") . ")";
 if ($pagename=="team_content") {$pagefilter="";} # Special case for the team content manager. Pull in all content from all pages so it's all overridden.
 
 $site_text=array();
@@ -1005,7 +1005,7 @@ function text($name)
 	global $site_text,$pagename,$language,$languages,$usergroup,$lang;
 	
 	# Look for the site content in the language strings. These will already be overridden with site content if present.
-	$key=$pagename . "__" . $name;
+	$key=$pagename . "__" . $name;	
 	if (array_key_exists($key,$lang)) {return $lang[$key];}
 	else if(array_key_exists("all__" . $name,$lang)) {return $lang["all__" . $name];}
 
