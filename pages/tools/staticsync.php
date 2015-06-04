@@ -114,7 +114,7 @@ function ProcessFolder($folder)
     global $lang, $syncdir, $nogo, $staticsync_max_files, $count, $done, $modtimes, $lastsync, $ffmpeg_preview_extension, 
            $staticsync_autotheme, $staticsync_folder_structure, $staticsync_extension_mapping_default, 
            $staticsync_extension_mapping, $staticsync_mapped_category_tree, $staticsync_title_includes_path, 
-           $staticsync_ingest, $staticsync_mapfolders, $staticsync_alternatives_suffix, $theme_category_levels;
+           $staticsync_ingest, $staticsync_mapfolders, $staticsync_alternatives_suffix, $theme_category_levels, $staticsync_defaultstate;
     
     $collection = 0;
     
@@ -314,7 +314,7 @@ function ProcessFolder($folder)
                         }
 
                     # update access level
-                    sql_query("UPDATE resource SET access = '$accessval' WHERE ref = '$r'");
+                    sql_query("UPDATE resource SET access = '$accessval',archive='$staticsync_defaultstate' WHERE ref = '$r'");
 
                     # Add any alternative files
                     $altpath = $fullpath . $staticsync_alternatives_suffix;

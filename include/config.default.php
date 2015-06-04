@@ -1823,6 +1823,9 @@ $staticsync_ingest=false;
 $autorotate_no_ingest=false;
 # Try to rotate images automatically when ingesting resources? If set to TRUE you must also set $imagemagick_preserve_profiles=true;
 $autorotate_ingest=false;
+# The default workflow state for imported files (-2 = pending submission, -1 = pending review, etc.)
+$staticsync_defaultstate=0;
+
 #
 # StaticSync Path to metadata mapping
 # ------------------------
