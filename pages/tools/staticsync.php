@@ -4,6 +4,15 @@ include dirname(__FILE__) . "/../../include/general.php";
 include dirname(__FILE__) . "/../../include/resource_functions.php";
 include dirname(__FILE__) . "/../../include/image_processing.php";
 
+$sapi_type = php_sapi_name();
+if (substr($sapi_type, 0, 3) != 'cli')
+    {
+    exit;
+    }
+
+
+if(isset($staticsync_userref)){$userref=$staticsync_userref;}
+
 ob_end_clean();
 set_time_limit(60*60*40);
 
@@ -133,7 +142,16 @@ function ProcessFolder($folder)
         $shortpath = str_replace($syncdir . "/", '', $fullpath);
         # Work out extension
         $extension = explode(".", $file);
-        $extension = trim(strtolower($extension[count($extension)-1]));
+        if(count($extension)>1)
+            {
+            $extension = trim(strtolower($extension[count($extension)-1]));
+            }
+        else
+            {
+            //No extension
+            $extension="";
+            }
+       
         
         if ($staticsync_mapped_category_tree)
             {

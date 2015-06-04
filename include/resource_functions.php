@@ -19,7 +19,6 @@ function create_resource($resource_type,$archive=999,$user=-1)
 		global $userref;
 		$user=$userref;
 		} else {$user=-1;}
-	
 	sql_query("insert into resource(resource_type,creation_date,archive,created_by) values ('$resource_type',now(),'$archive','$user')");
 	
 	$insert=sql_insert_id();
@@ -1581,7 +1580,18 @@ function update_resource($r,$path,$type,$title,$ingest=false,$createPreviews=tru
 	update_resource_type($r, $type);
 
 	# Work out extension based on path
-	$extension=explode(".",$path);$extension=trim(strtolower(end($extension)));
+	$extension=explode(".",$path);
+        
+        if(count($extension)>1)
+            {
+            $extension=trim(strtolower(end($extension)));
+            }
+        else
+            {
+            //No extension
+            $extension="";
+            }
+            
 
 	# file_path should only really be set to indicate a staticsync location. Otherwise, it should just be left blank.
 	if ($ingest){$file_path="";} else {$file_path=escape_check($path);}
@@ -1667,7 +1677,7 @@ function import_resource($path,$type,$title,$ingest=false,$createPreviews=true)
 
 	# Create resource
 	$r=create_resource($type);
-	return update_resource($r, $path, $type, $title, $ingest, $createPreviews);
+        return update_resource($r, $path, $type, $title, $ingest, $createPreviews);
 	}
 
 function get_alternative_files($resource,$order_by="",$sort="")

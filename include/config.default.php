@@ -1826,6 +1826,9 @@ $autorotate_ingest=false;
 # The default workflow state for imported files (-2 = pending submission, -1 = pending review, etc.)
 $staticsync_defaultstate=0;
 
+# ref of the user account that the staticsync resources will be 'created by' 
+$staticsync_userref=-1;
+
 #
 # StaticSync Path to metadata mapping
 # ------------------------
