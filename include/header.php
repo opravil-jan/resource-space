@@ -94,39 +94,6 @@ jQuery.noConflict();
 </script>
 
 <?php } ?>
-<?php if ($pagename=="login") { ?>
-<script type="text/javascript">
-jQuery(document).ready(function() {
-
-    /* 
-    * Bind to capslockstate events and update display based on state 
-    */
-    jQuery(window).bind("capsOn", function(event) {
-        if (jQuery("#password:focus").length > 0) {
-            jQuery("#capswarning").show();
-        }
-    });
-    jQuery(window).bind("capsOff capsUnknown", function(event) {
-        jQuery("#capswarning").hide();
-    });
-    jQuery("#password").bind("focusout", function(event) {
-        jQuery("#capswarning").hide();
-    });
-    jQuery("#password").bind("focusin", function(event) {
-        if (jQuery(window).capslockstate("state") === true) {
-            jQuery("#capswarning").show();
-        }
-    });
-
-    /* 
-    * Initialize the capslockstate plugin.
-    * Monitoring is happening at the window level.
-    */
-    jQuery(window).capslockstate();
-
-});
-</script>
-<?php } ?>
 <!-- end of jQuery / jQueryUI load -->
 
 <script type="text/javascript">

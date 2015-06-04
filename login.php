@@ -128,8 +128,6 @@ if (!hook("replaceloginform")) {
   <?php if ($allow_password_reset) { ?><br/><a id="account_pw_reset" href="pages/user_password.php">&gt; <?php echo $lang["forgottenpassword"]?></a><?php } ?>
   <?php hook("loginformlink") ?> 
   </p>
-  
-  
   <?php if ($error!="") { ?><div class="FormIncorrect"><?php echo $error?></div><?php } ?>
   <form id="loginform" method="post" <?php if (!$login_autocomplete) { ?>AUTOCOMPLETE="OFF"<?php } ?>>
   <input type="hidden" name="langupdate" id="langupdate" value="">  
@@ -180,6 +178,35 @@ if (!hook("replaceloginform")) {
 ?>
 <script type="text/javascript">
 document.getElementById('username').focus();
+
+jQuery(document).ready(function() {
+    /* 
+    * Bind to capslockstate events and update display based on state 
+    */
+    jQuery(window).bind("capsOn", function(event) {
+        if (jQuery("#password:focus").length > 0) {
+            jQuery("#capswarning").show();
+        }
+    });
+    jQuery(window).bind("capsOff capsUnknown", function(event) {
+        jQuery("#capswarning").hide();
+    });
+    jQuery("#password").bind("focusout", function(event) {
+        jQuery("#capswarning").hide();
+    });
+    jQuery("#password").bind("focusin", function(event) {
+        if (jQuery(window).capslockstate("state") === true) {
+            jQuery("#capswarning").show();
+        }
+    });
+
+    /* 
+    * Initialize the capslockstate plugin.
+    * Monitoring is happening at the window level.
+    */
+    jQuery(window).capslockstate();
+
+});
 </script>
 
 <?php
