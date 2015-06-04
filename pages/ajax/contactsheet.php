@@ -112,7 +112,8 @@ function contact_sheet_add_fields($resourcedata)
 		else if ($sheetstyle=="single")
 			{
 			$query = sprintf(
-					   "SELECT `value`
+					   "SELECT rd.`value`, 
+					           rtf.`type` AS field_type
 					      FROM resource_data AS rd
 					INNER JOIN resource_type_field AS rtf ON rd.resource_type_field = rtf.ref AND rtf.ref = '%s'
 					     WHERE rd.resource = '%s';"
@@ -120,7 +121,16 @@ function contact_sheet_add_fields($resourcedata)
 				$getfields[$ff],
 				$resourcedata['ref']
 			);
-			$value = sql_value($query, '');
+			$raw_value = sql_query($query);
+
+			// Default value:
+			$value = $raw_value[0]['value'];
+			// When values have been saved using CKEditor make sure to remove html tags and decode html entitities:
+			if($raw_value[0]['field_type'] == '8')
+				{
+				$value = strip_tags($raw_value[0]['value']);
+				$value = mb_convert_encoding($value, 'UTF-8', 'HTML-ENTITIES');
+				}
 			$pdf->MultiCell($pagewidth-2,0,$value,'','L',false,1);		
 			}
 			
