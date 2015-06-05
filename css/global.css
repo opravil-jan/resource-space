@@ -843,6 +843,7 @@ a.HomePanel:hover {
   	font-size:50px;
   	min-width:100%;
 }
+.manage-all-user-tiles{float:left;}
 #HomePanelContainer .HomePanel .PanelShadow{display:none;}
 a.HomePanel:active {color:transparent;}
 .HomePanel h2.title {

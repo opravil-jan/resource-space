@@ -11,7 +11,7 @@ include "../../include/header.php";
 <p>
 	<a href="<?php echo $baseurl_short?>pages/team/team_home.php" onClick="return CentralSpaceLoad(this,true);">&lt;&nbsp;<?php echo $lang["backtoteamhome"]?></a>
 </p>
-	<div id="HomePanelContainer">
+	<div id="HomePanelContainer" class="manage-all-user-tiles">
 	<?php
 	get_default_dash();
 	?>
