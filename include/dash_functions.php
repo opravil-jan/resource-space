@@ -82,7 +82,7 @@ function get_default_dash()
 	{
 	global $baseurl,$baseurl_short,$lang,$anonymous_login,$username,$dash_tile_shadows;
 	#Build Tile Templates
-	$tiles = sql_query("SELECT dash_tile.ref AS 'tile',dash_tile.title,dash_tile.url,dash_tile.reload_interval_secs,dash_tile.link,dash_tile.default_order_by as 'order_by' FROM dash_tile WHERE all_users=1 ORDER BY default_order_by");
+	$tiles = sql_query("SELECT dash_tile.ref AS 'tile',dash_tile.title,dash_tile.url,dash_tile.reload_interval_secs,dash_tile.link,dash_tile.default_order_by as 'order_by' FROM dash_tile WHERE dash_tile.all_users=1 AND (dash_tile.allow_delete=1 OR (dash_tile.allow_delete=0 AND dash_tile.ref IN (SELECT DISTINCT user_dash_tile.dash_tile FROM user_dash_tile))) ORDER BY default_order_by");
 	$order=10;
 	if(count($tiles)==0){echo $lang["nodashtilefound"];exit;}
 	foreach($tiles as $tile)
