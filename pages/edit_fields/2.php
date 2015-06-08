@@ -13,8 +13,10 @@ $option_trans_simple=array();
 for ($m=0;$m<count($options);$m++)
 	{
 	$trans=i18n_get_translated($options[$m]);
-	$option_trans[$options[$m]]=$trans;
-	$option_trans_simple[]=$trans;
+	if ($trans!=""){
+		$option_trans[$options[$m]]=$trans;
+		$option_trans_simple[]=$trans;
+	}
 	}
 
 if ($auto_order_checkbox && !hook("ajust_auto_order_checkbox","",array($field))) {
@@ -22,7 +24,7 @@ if ($auto_order_checkbox && !hook("ajust_auto_order_checkbox","",array($field)))
 	else{natsort($option_trans);}
 }
 $options=array_keys($option_trans); # Set the options array to the keys, so it is now effectively sorted by translated string	
-	
+$options=array_diff($options, array(''));
 $set=trim_array(explode(",",$value));
 $wrap=0;
 
@@ -52,6 +54,9 @@ if ($edit_autosave) { ?>
 		}
 	</script>
 <?php }
+
+array_filter($options);
+array_filter($option_trans);
 
 global $checkbox_ordered_vertically;
 if ($checkbox_ordered_vertically)
