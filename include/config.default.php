@@ -176,7 +176,7 @@ $include_rs_header_info=true;
 
 # Available languages
 # If $defaultlanguage is not set, the brower's default language will be used instead
-$defaultlanguage="en-US"; # default language, uses ISO 639-1 language codes ( en, es etc.)
+$defaultlanguage="en"; # default language, uses ISO 639-1 language codes ( en, es etc.)
 $languages["en"]="British English";
 $languages["en-US"]="American English";
 $languages["ar"]="العربية";
