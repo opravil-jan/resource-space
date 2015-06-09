@@ -60,7 +60,7 @@ if(!hook("swfplayer"))
 		global $ffmpeg_preview_extension,$css_reload_key;
 		?>
 		<link href="<?php echo $baseurl_short?>lib/videojs/video-js.css?r=<?=$css_reload_key?>" rel="stylesheet">
-        <script src="<?php echo $baseurl_short?>lib/videojs/video.js?r=<?=$css_reload_key?>"></script>
+        <script src="<?php echo $baseurl_short?>lib/videojs/video.dev.js?r=<?=$css_reload_key?>"></script>
 		<!-- START VIDEOJS -->
 		<video 
 			id="introvideo" 
