@@ -749,6 +749,7 @@ function get_related_resources($ref)
 function average_length($array)
 	{
 	# Returns the average length of the strings in an array
+        if (count($array)==0) {return 0;}
 	$total=0;
 	for ($n=0;$n<count($array);$n++)
 		{
@@ -1312,6 +1313,13 @@ function get_site_text($page,$name,$language,$group)
 		{
                 return $text[0]["text"];
                 }
+                
+        # Fall back to default group.
+	$text=sql_query ("select * from site_text where page='$page' and name='$name' and language='$defaultlanguage' and specific_to_group is null");
+	if (count($text)>0)
+		{
+                return $text[0]["text"];
+                }
         
         # Fall back to language strings.
         if ($page=="") {$key=$name;} else {$key=$page . "__" . $name;}
@@ -1337,7 +1345,7 @@ function save_site_text($page,$name,$language,$group)
 
 	if ($group=="") {$g="null";$gc="is";} else {$g="'" . $group . "'";$gc="=";}
 	
-	global $custom,$newcustom;
+	global $custom,$newcustom,$defaultlanguage;
 	
 	if($newcustom)
 		{
@@ -1378,6 +1386,11 @@ function save_site_text($page,$name,$language,$group)
 			# Update existing row
 			sql_query("update site_text set text='" . getvalescaped("text","") . "' where page='$page' and name='$name' and language='$language' and specific_to_group $gc $g");
 			}
+                        
+                # Language clean up - remove all entries that are exactly the same as the default text.
+                $defaulttext=sql_value ("select text value from site_text where page='$page' and name='$name' and language='$defaultlanguage' and specific_to_group $gc $g","");
+                sql_query("delete from site_text where page='$page' and name='$name' and language!='$defaultlanguage' and trim(text)='" . trim(escape_check($defaulttext)) . "'");
+                
 		}
 	}
 	

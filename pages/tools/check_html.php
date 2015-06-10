@@ -9,11 +9,10 @@ include "../../include/resource_functions.php";
 echo "<pre>";
 
 $text=getval("text","");
-if($text == ""){exit;}
 
 $html=trim($text);
 $result=validate_html($html);
-if ($result===true)
+if ($result===true || $html=="")
     {
     echo "OK\n";
     }

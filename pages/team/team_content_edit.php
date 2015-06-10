@@ -44,6 +44,11 @@ if ((getval("save","")!="") && (getval("langswitch","")==""))
 	
 # Fetch user data
 $text=get_site_text($page,$name,$editlanguage,$editgroup);
+$defaulttext=get_site_text($page,$name,$defaultlanguage,"");
+
+# Default text? Show that this is the case
+$text_info="";
+if ($text==$defaulttext && ($editlanguage!=$defaultlanguage || $editgroup!="")) {$text_info="<b>" . str_replace("?",$languages[$defaultlanguage],$lang["managecontent_defaulttextused"]) . "</b>";}
 
 include "../../include/header.php";
 ?>
@@ -94,7 +99,7 @@ for ($n=0;$n<count($groups);$n++) { ?>
 if ($site_text_use_ckeditor)
 	{?>
 	<p><label for="text"><?php echo $lang["text"]?></label></p><br>
-	<textarea name="text" class="stdwidth" rows=15 cols=50 id="<?php echo $lang["text"]?>" ><?php echo htmlspecialchars($text)?></textarea>
+	<?php echo $text_info ?><textarea name="text" class="stdwidth" rows=15 cols=50 id="<?php echo $lang["text"]?>" ><?php echo htmlspecialchars($text)?></textarea>
 	<script type="text/javascript">
 	<?php if(!hook("ckeditorinit")){ ?>
 		var editor = CKEDITOR.instances['<?php echo $lang["text"]?>'];
@@ -112,7 +117,7 @@ if ($site_text_use_ckeditor)
 	<?php }
 else
 	{?>
-		<label for="text"><?php echo $lang["text"]?></label><textarea name="text" class="stdwidth" rows=15 cols=50><?php echo htmlspecialchars($text)?></textarea>
+		<label for="text"><?php echo $lang["text"]?></label><?php echo $text_info ?><textarea name="text" class="stdwidth" rows=15 cols=50><?php echo htmlspecialchars($text)?></textarea>
 	<?php } ?>
 
 <div class="clearerleft"> </div>

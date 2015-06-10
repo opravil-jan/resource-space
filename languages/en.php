@@ -2158,3 +2158,5 @@ $lang["systemconsoleonsqllognotsetorfound"]="\$mysql_log_transactions not set or
 $lang['trash_bin_title'] = 'Remove';
 $lang['trash_bin_delete_dialog_title'] = 'Remove resource from current collection?';
 /* End of Global Trash Bin strings */
+
+$lang["managecontent_defaulttextused"]="!! The text for the default language (?) is currently being used. Edit the text below to create an alternative version for this language / user group selection !!";
