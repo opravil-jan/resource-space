@@ -98,7 +98,7 @@ function SwapCSS(css){
 ?>	</span><span id="FooterLanguages">
 <?php } ?>
 <?php if ($disable_languages==false && $show_language_chooser){?>
-<?php echo $lang["language"]?>: <a onClick="return CentralSpaceLoad(this,true);" href="<?php echo $baseurl?>/pages/change_language.php"><?php echo $languages[$language]?></a>
+<?php echo $lang["language"]?>: <a onClick="return CentralSpaceLoad(this,true);" href="<?php echo $baseurl?>/pages/change_language.php"><?php echo @$languages[$language]?></a>
 <?php } ?>
 </span></div>
 
