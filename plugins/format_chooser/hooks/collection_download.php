@@ -17,9 +17,9 @@ function HookFormat_chooserCollection_downloadReplaceuseoriginal()
 		?><script>
 			var originalDownloadFunction = ajax_download;
 			ajax_download = function() {
+				originalDownloadFunction();
 				jQuery('#downloadformat').attr('disabled', 'disabled');
 				jQuery('#profile').attr('disabled', 'disabled');
-				return originalDownloadFunction();
 			}
 		</script><?php
 		}
