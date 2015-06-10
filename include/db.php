@@ -974,10 +974,11 @@ function setLanguage()
 	if(!$disable_languages && $browser_language && isset($_SERVER['HTTP_ACCEPT_LANGUAGE']))
 		{
 		$language = http_get_preferred_language();
-		if(!empty($language)){return $language;}
+		if(!empty($language) && array_key_exists($language,$languages)){return $language;}
 		} 
 	if(($disable_languages || $language ==="") && isset($defaultlanguage)) {return $defaultlanguage;}
-	if($language===""){return 'en';}else{return $language;}
+	# Final case.
+	return 'en';
 	}
 
 
