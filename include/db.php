@@ -1033,7 +1033,7 @@ function text($name)
     
 function get_section_list($page)
 	{
-	return sql_array("select name value from site_text where page='$page' and name<>'introtext' order by name");
+	return sql_array("select distinct name value from site_text where page='$page' and name<>'introtext' order by name");
 	}
 
 function resolve_user_agent($agent)
@@ -1055,7 +1055,9 @@ function resolve_user_agent($agent)
                     "msie 8."=>"IE8",
                     "msie 9."=>"IE9",
                     "msie 10."=>"IE10",
-                    "msie"=>"IE",
+                    "trident/7.0"=>"IE11",
+		    "msie"=>"IE",
+		    "trident"=>"IE",
                     "netscape"=>"Netscape",
                     "mozilla"=>"Mozilla"
                     #catch all for mozilla references not specified above
