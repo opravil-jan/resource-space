@@ -261,7 +261,10 @@ function hook($name,$pagename="",$params=array())
 	# Plugin architecture.  Look for hooks with this name (and corresponding page, if applicable) and run them sequentially.
 	# Utilises a cache for significantly better performance.  
 	# Enable $draw_performance_footer in config.php to see stats.
-	
+
+	# Allow modifications to the hook itself:
+	if(function_exists("hook_modifier") && !hook_modifier($name, $pagename, $params)) return;
+
 	global $hook_cache;	
 	if ($pagename=="") global $pagename;		
 	
