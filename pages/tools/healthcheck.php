@@ -25,6 +25,27 @@ if ($check!==$hash) {exit("FAIL - test write to disk returned a different string
 $avail=disk_total_space($storagedir);
 $free=disk_free_space($storagedir);
 if (($avail/$free)<0.1) {exit("FAIL - less than 10% disk space free.");} 
-        
+
+
+// Check write access to sql_log
+if($mysql_log_transactions)
+    {
+    $mysql_log_dir=dirname($mysql_log_transactions);
+    if(!is_writeable($mysql_log_dir) || (file_exists($mysql_log_location) && !is_writeable($mysql_log_location)))
+	{
+	exit("FAIL - invalid \$mysql_log_location specified in config file: " . $mysql_log_location); 
+	}
+    }
+    
+// Check write access to debug_log 
+if($debug_log)
+    {
+    if (!isset($debug_log_location)){$debug_log_location=get_debug_log_dir() . "/debug.txt";}
+    $debug_log_dir=dirname($debug_log_location);
+    if(!is_writeable($debug_log_dir) || (file_exists($debug_log_location) && !is_writeable($debug_log_location)))
+        {
+        exit("FAIL - invalid \$debug_log_location specified in config file: " . $debug_log_location); 
+        }        
+    }
 
 exit("OK");
