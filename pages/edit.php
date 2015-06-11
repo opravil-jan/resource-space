@@ -933,11 +933,11 @@ function check_display_condition($n, $field)
                 $scriptconditions[$condref]['options'] = $fields[$cf]['options'];
 
                 $checkvalues=$s[1];
-                $validvalues=explode("|",strtoupper($checkvalues));
+                $validvalues=explode("|",mb_strtoupper($checkvalues));
                 $scriptconditions[$condref]["valid"]= "\"";
                 $scriptconditions[$condref]["valid"].= implode("\",\"",$validvalues);
                 $scriptconditions[$condref]["valid"].= "\"";
-                $v=trim_array(explode(",",strtoupper($fields[$cf]["value"])));
+                $v=trim_array(explode(",",mb_strtoupper($fields[$cf]["value"])));
 
                 // If blank edit template is used, on upload form the dependent fields should be hidden
                 if($blank_edit_template && $ref < 0 && $use === '-1') {
