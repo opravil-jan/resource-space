@@ -69,13 +69,12 @@ for ($n=0;$n<count($keywords);$n++)
 	
 	
 # Set the text search box to the stripped value.
+$quicksearch=join(" ",trim_array($simple));
 
-if ($quoted_string){
-	$quicksearch=join(" ",trim_array($simple));
-} else {
-	$quicksearch=join(", ",trim_array($simple));
+if (!$quoted_string)
+	{
 	$quicksearch=str_replace(",-"," -",$quicksearch);
-}
+	}
 
 # Add the quotes back, if a quoted string
 if ($quoted_string) {$quicksearch="\"" . trim($quicksearch) . "\"";}
