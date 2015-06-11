@@ -985,6 +985,9 @@ $allow_custom_access_share=false;
 # Should a user that has contributed a resource always have open access to it?
 $open_access_for_contributor=false;
 
+# Should a user that has contributed a resource always have edit access to it? (even if the resource is live)
+$edit_access_for_contributor=false;
+
 # Auto-completion of search (quick search only)
 $autocomplete_search=true;
 $autocomplete_search_items=15;

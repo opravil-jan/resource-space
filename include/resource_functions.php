@@ -2407,7 +2407,7 @@ function get_edit_access($resource,$status=-999,$metadata=false,&$resourcedata="
 	# For the provided resource and metadata, does the  edit access does the current user have to this resource?
 	# Checks the edit permissions (e0, e-1 etc.) and also the group edit filter which filters edit access based on resource metadata.
 	
-	global $userref,$usereditfilter;
+	global $userref,$usereditfilter,$edit_access_for_contributor;
 	if (hook("customediteaccess")) {return true;}
 	if (!is_array($resourcedata)) # Resource data  may not be passed 
 		{
@@ -2419,6 +2419,9 @@ function get_edit_access($resource,$status=-999,$metadata=false,&$resourcedata="
 		
 	if ($resource==0-$userref) {return true;} # Can always edit their own user template.
 
+        # If $edit_access_for_contributor is true in config then users can always edit their own resources.
+        if ($edit_access_for_contributor && $userref==$resourcedata["created_by"]) {return true;}
+        
 	if (!checkperm("e" . $status)) {return false;} # Must have edit permission to this resource first and foremost, before checking the filter.
 	
 	if (checkperm("z" . $status) || ($status<0 && !(checkperm("t") || $resourcedata['created_by'] == $userref))) {return false;} # Cannot edit if z permission, or if other user uploads pending approval and not admin
