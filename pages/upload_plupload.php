@@ -425,6 +425,7 @@ if ($_FILES)
                     elseif ($replace=="" && $replace_resource!="")
                             {
                             # Replacing an existing resource file
+                            daily_stat("Resource upload",$replace_resource);
                             $status=upload_file($replace_resource,(getval("no_exif","")=="yes" && getval("exif_override","")==""),false,(getval('autorotate','')!=''));
                             hook("additional_replace_existing");
                             echo "SUCCESS: " . htmlspecialchars($replace_resource);
@@ -447,6 +448,7 @@ if ($_FILES)
 								if(count($target_resource)==1)
 									{
 									// A single resource has been found with the same filename
+									daily_stat("Resource upload",$target_resource[0]);
 									$status=upload_file($target_resource[0],(getval("no_exif","")=="yes" && getval("exif_override","")==""),false,(getval('autorotate','')!='')); # Upload to the specified ref.
 									echo "SUCCESS: " . htmlspecialchars($target_resource[0]);
 									// Check to see if we need to notify users of this change							
@@ -486,6 +488,7 @@ if ($_FILES)
 										$ref=trim($s[0]);
 										if (is_numeric($ref)) # is the first part of the filename numeric?
                                                                                     {
+										    daily_stat("Resource upload",$ref);
                                                                                     $status=upload_file($ref,(getval("no_exif","")=="yes" && getval("exif_override","")==""),false,(getval('autorotate','')!='')); # Upload to the specified ref.
                                                                                     echo "SUCCESS: " . htmlspecialchars($ref);}
                                                                                 else
