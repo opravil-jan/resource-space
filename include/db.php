@@ -229,19 +229,34 @@ $site_text=array();
 $results=sql_query("select language,name,text from site_text where (page='$pagename' or page='all') and (specific_to_group is null or specific_to_group=0)");
 for ($n=0;$n<count($results);$n++) {$site_text[$results[$n]["language"] . "-" . $results[$n]["name"]]=$results[$n]["text"];}
 
-$results=sql_query("select name,text,page from site_text where language='" . escape_check($language) . "' $pagefilter and (specific_to_group is null or specific_to_group=0)");
-for ($n=0;$n<count($results);$n++) 
-		{
-		if ($results[$n]["page"]=="") 
-			{
-			$lang[$results[$n]["name"]]=$results[$n]["text"];
-			} 
-		else 
-			{
-			$lang[$results[$n]["page"] . "__" . $results[$n]["name"]]=$results[$n]["text"];
-			}
-		}
+$results=sql_query("select name,text,page,language from site_text where language='" . escape_check($language) . "'  or language='" . escape_check($defaultlanguage) . "' $pagefilter and (specific_to_group is null or specific_to_group=0)");
 
+// Go through the results twice, setting the default language first, then repeat for the user language so we can override the default with any language specific entries
+for ($n=0;$n<count($results);$n++) 
+	{
+	if($results[$n]["language"]!=$defaultlanguage){continue;}
+	if ($results[$n]["page"]=="") 
+		{
+		$lang[$results[$n]["name"]]=$results[$n]["text"];
+		} 
+	else 
+		{
+		$lang[$results[$n]["page"] . "__" . $results[$n]["name"]]=$results[$n]["text"];
+		}
+	}
+for ($n=0;$n<count($results);$n++) 
+	{
+	if($results[$n]["language"]!=$language){continue;}
+	if ($results[$n]["page"]=="") 
+		{
+		$lang[$results[$n]["name"]]=$results[$n]["text"];
+		} 
+	else 
+		{
+		$lang[$results[$n]["page"] . "__" . $results[$n]["name"]]=$results[$n]["text"];
+		}
+	}
+	
 # Blank the header insert
 $headerinsert="";
 
