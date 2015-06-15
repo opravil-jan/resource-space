@@ -1,6 +1,6 @@
 <?php
 /**
- * Manage content string page (part of Team Center)
+ * Manage content string page (part of System area)
  * 
  * @package ResourceSpace
  * @subpackage Pages_Team
@@ -20,7 +20,7 @@ $page=getvalescaped("page","");
 $name=getvalescaped("name","");
 
 
-if ($page && $name){redirect($baseurl_short."pages/team/team_content_edit.php?page=$page&name=$name&offset=$offset&save=true&custom=1");}
+if ($page && $name){redirect($baseurl_short."pages/admin/admin_content_edit.php?page=$page&name=$name&offset=$offset&save=true&custom=1");}
 
 include "../../include/header.php";
 ?>
@@ -38,7 +38,7 @@ $per_page=15;
 $results=count($text);
 $totalpages=ceil($results/$per_page);
 $curpage=floor($offset/$per_page)+1;
-$url=$baseurl_short."pages/team/team_content.php?findpage=" . urlencode($findpage)."&findname=".urlencode($findname)."&findtext=".urlencode($findtext);
+$url=$baseurl_short."pages/admin/admin_content.php?findpage=" . urlencode($findpage)."&findname=".urlencode($findname)."&findtext=".urlencode($findtext);
 $jumpcount=1;
 
 ?><div style="float:right;margin-top:-5px;"><?php pager();?></div>
@@ -57,13 +57,13 @@ for ($n=$offset;(($n<count($text)) && ($n<($offset+$per_page)));$n++)
 	{
 	?>
 	<tr>
-	<td><div class="ListTitle"><a href="<?php echo $baseurl_short?>pages/team/team_content_edit.php?page=<?php echo $text[$n]["page"]?>&name=<?php echo $text[$n]["name"]?>&findpage=<?php echo $findpage?>&findname=<?php echo $findname?>&findtext=<?php echo $findtext?>&offset=<?php echo $offset?>" onClick="return CentralSpaceLoad(this,true);"><?php echo highlightkeywords(($text[$n]["page"]==""||$text[$n]["page"]=="all"?$lang["all"]:$text[$n]["page"]),$findpage,true);?></a></div></td>
+	<td><div class="ListTitle"><a href="<?php echo $baseurl_short?>pages/admin/admin_content_edit.php?page=<?php echo $text[$n]["page"]?>&name=<?php echo $text[$n]["name"]?>&findpage=<?php echo $findpage?>&findname=<?php echo $findname?>&findtext=<?php echo $findtext?>&offset=<?php echo $offset?>" onClick="return CentralSpaceLoad(this,true);"><?php echo highlightkeywords(($text[$n]["page"]==""||$text[$n]["page"]=="all"?$lang["all"]:$text[$n]["page"]),$findpage,true);?></a></div></td>
 	
-	<td><div class="ListTitle"><a href="<?php echo $baseurl_short?>pages/team/team_content_edit.php?page=<?php echo $text[$n]["page"]?>&name=<?php echo $text[$n]["name"]?>&findpage=<?php echo $findpage?>&findname=<?php echo $findname?>&findtext=<?php echo $findtext?>&offset=<?php echo $offset?>" onClick="return CentralSpaceLoad(this,true);"><?php echo highlightkeywords($text[$n]["name"],$findname,true)?></a></div></td>
+	<td><div class="ListTitle"><a href="<?php echo $baseurl_short?>pages/admin/admin_content_edit.php?page=<?php echo $text[$n]["page"]?>&name=<?php echo $text[$n]["name"]?>&findpage=<?php echo $findpage?>&findname=<?php echo $findname?>&findtext=<?php echo $findtext?>&offset=<?php echo $offset?>" onClick="return CentralSpaceLoad(this,true);"><?php echo highlightkeywords($text[$n]["name"],$findname,true)?></a></div></td>
 	
-	<td><a href="<?php echo $baseurl_short?>pages/team/team_content_edit.php?page=<?php echo $text[$n]["page"]?>&name=<?php echo $text[$n]["name"]?>&findpage=<?php echo $findpage?>&findname=<?php echo $findname?>&findtext=<?php echo $findtext?>&offset=<?php echo $offset?>" onClick="return CentralSpaceLoad(this,true);"><?php echo highlightkeywords(tidy_trim(htmlspecialchars($text[$n]["text"]),100),$findtext,true)?></a></td>
+	<td><a href="<?php echo $baseurl_short?>pages/admin/admin_content_edit.php?page=<?php echo $text[$n]["page"]?>&name=<?php echo $text[$n]["name"]?>&findpage=<?php echo $findpage?>&findname=<?php echo $findname?>&findtext=<?php echo $findtext?>&offset=<?php echo $offset?>" onClick="return CentralSpaceLoad(this,true);"><?php echo highlightkeywords(tidy_trim(htmlspecialchars($text[$n]["text"]),100),$findtext,true)?></a></td>
 	
-	<td><div class="ListTools"><a href="<?php echo $baseurl_short?>pages/team/team_content_edit.php?page=<?php echo $text[$n]["page"]?>&name=<?php echo $text[$n]["name"]?>&findpage=<?php echo $findpage?>&findname=<?php echo $findname?>&findtext=<?php echo $findtext?>&offset=<?php echo $offset?>" onClick="return CentralSpaceLoad(this,true);">&gt;&nbsp;<?php echo $lang["action-edit"]?> </a></div></td>
+	<td><div class="ListTools"><a href="<?php echo $baseurl_short?>pages/admin/admin_content_edit.php?page=<?php echo $text[$n]["page"]?>&name=<?php echo $text[$n]["name"]?>&findpage=<?php echo $findpage?>&findname=<?php echo $findname?>&findtext=<?php echo $findtext?>&offset=<?php echo $offset?>" onClick="return CentralSpaceLoad(this,true);">&gt;&nbsp;<?php echo $lang["action-edit"]?> </a></div></td>
 	</tr>
 	<?php
 	}
@@ -76,7 +76,7 @@ for ($n=$offset;(($n<count($text)) && ($n<($offset+$per_page)));$n++)
 
 
 <div class="BasicsBox">
-    <form method="post" action="<?php echo $baseurl_short?>pages/team/team_content.php" onsubmit="return CentralSpacePost(this);">
+    <form method="post" action="<?php echo $baseurl_short?>pages/admin/admin_content.php" onsubmit="return CentralSpacePost(this);">
 		<div class="Question">
 			<label for="find"><?php echo $lang["searchcontent"]?><br/><?php echo $lang["searchcontenteg"]?></label>
 			<div class="tickset">
@@ -99,7 +99,7 @@ for ($n=$offset;(($n<count($text)) && ($n<($offset+$per_page)));$n++)
 
 <?php if ($site_text_custom_create){?>
 <div class="BasicsBox">
-    <form method="post" action="<?php echo $baseurl_short?>pages/team/team_content.php">
+    <form method="post" action="<?php echo $baseurl_short?>pages/admin/admin_content.php">
 		<div class="Question">
 			<label for="find"><?php echo $lang["addnewcontent"]?></label>
 			<div class="tickset">

@@ -223,7 +223,7 @@ if (($pagename!="download") && ($pagename!="graph") && !$suppress_headers) {head
 
 # Pre-load all text for this page.
 $pagefilter="AND (page = '" . $pagename . "' OR page = 'all' OR page = '' " .  (($pagename=="dash_tile")?" OR page = 'home'":"") . ")";
-if ($pagename=="team_content") {$pagefilter="";} # Special case for the team content manager. Pull in all content from all pages so it's all overridden.
+if ($pagename=="admin_content") {$pagefilter="";} # Special case for the team content manager. Pull in all content from all pages so it's all overridden.
 
 $site_text=array();
 $results=sql_query("select language,name,text from site_text where (page='$pagename' or page='all') and (specific_to_group is null or specific_to_group=0)");

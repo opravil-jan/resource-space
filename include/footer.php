@@ -141,7 +141,7 @@ function SwapCSS(css){
 //titlebar modifications
 
 if ($show_resource_title_in_titlebar){
-$general_title_pages=array("team_content","team_archive","team_resource","team_user","team_request","team_research","team_plugins","team_mail","team_export","team_stats","team_report","team_user_log","research_request","team_user_edit","team_content_edit","team_request_edit","team_research_edit","requests","edit","themes","collection_public","collection_manage","team_home","help","home","tag","upload_java_popup","upload_java","contact","geo_search","search_advanced","about","contribute","user_preferences","view_shares","check","index");
+$general_title_pages=array("admin_content","team_archive","team_resource","team_user","team_request","team_research","team_plugins","team_mail","team_export","team_stats","team_report","team_user_log","research_request","team_user_edit","admin_content_edit","team_request_edit","team_research_edit","requests","edit","themes","collection_public","collection_manage","team_home","help","home","tag","upload_java_popup","upload_java","contact","geo_search","search_advanced","about","contribute","user_preferences","view_shares","check","index");
 $search_title_pages=array("contactsheet_settings","search","preview_all","collection_edit","edit","collection_download","collection_share","collection_request");
 $resource_title_pages=array("view","delete","log","alternative_file","alternative_files","resource_email","edit","preview");
 $additional_title_pages=array(hook("additional_title_pages_array"));
@@ -229,7 +229,7 @@ $additional_title_pages=array(hook("additional_title_pages_array"));
 		else if (isset($lang[str_replace("_","",$pagename)])){
 			$pagetitle=$lang[str_replace("_","",$pagename)];
 		}
-		else if ($pagename=="team_content"){
+		else if ($pagename=="admin_content"){
 			$pagetitle=$lang['managecontent'];
 		}
 		else if ($pagename=="collection_public"){
@@ -325,7 +325,7 @@ $additional_title_pages=array(hook("additional_title_pages_array"));
 				$pagetitle.=" ".$ref;
 			}
 		}
-		else if($pagename=="team_content_edit"){
+		else if($pagename=="admin_content_edit"){
 			$pagetitle=$lang["editcontent"];
 		}
 		else if($pagename=="team_request_edit"){

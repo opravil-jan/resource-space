@@ -1,6 +1,6 @@
 <?php
 /**
- * Edit content strings page (part of Team Center)
+ * Edit content strings page (part of System area)
  * 
  * @package ResourceSpace
  * @subpackage Pages_Team
@@ -20,7 +20,7 @@ $newhelp=getvalescaped("newhelp","");
 $editlanguage=getvalescaped("editlanguage",$language);
 $editgroup=getvalescaped("editgroup","");
 
-# get custom value from database, unless it has been newly passed from team_content.php
+# get custom value from database, unless it has been newly passed from admin_content.php
 if (getval("custom","")==1){ $custom=1; $newcustom=true; } else {$custom=check_site_text_custom($page,$name); $newcustom=false;}
 
 if ((getval("save","")!="") && (getval("langswitch","")==""))
@@ -29,16 +29,16 @@ if ((getval("save","")!="") && (getval("langswitch","")==""))
 	save_site_text($page,$name,$editlanguage,$editgroup);
 	if ($newhelp!=""){
 		if (getval("returntolist","")==""){
-			redirect($baseurl_short."pages/team/team_content_edit.php?page=help&name=".$newhelp."&offset=".$offset."&findpage=".$findpage."&findname=".$findname."&findtext=".$findtext);
+			redirect($baseurl_short."pages/admin/admin_content_edit.php?page=help&name=".$newhelp."&offset=".$offset."&findpage=".$findpage."&findname=".$findname."&findtext=".$findtext);
 		}
 		}
 	if (getval("custom","")==1){
 		if (getval("returntolist","")==""){
-			redirect($baseurl_short."pages/team/team_content_edit.php?page=$page&name=$name&offset=".$offset."&findpage=".$findpage."&findname=".$findname."&findtext=".$findtext);
+			redirect($baseurl_short."pages/admin/admin_content_edit.php?page=$page&name=$name&offset=".$offset."&findpage=".$findpage."&findname=".$findname."&findtext=".$findtext);
 		}
 		}	
 	if (getval("returntolist","")!=""){
-		redirect ($baseurl_short."pages/team/team_content.php?nc=" . time()."&findpage=".$findpage."&findname=".$findname."&findtext=".$findtext."&offset=".$offset);
+		redirect ($baseurl_short."pages/admin/admin_content.php?nc=" . time()."&findpage=".$findpage."&findname=".$findname."&findtext=".$findtext."&offset=".$offset);
 	}
 	}
 	
@@ -52,11 +52,11 @@ if ($text==$defaulttext && ($editlanguage!=$defaultlanguage || $editgroup!="")) 
 
 include "../../include/header.php";
 ?>
-<div class="BasicsBox"><p><a href="<?php echo $baseurl_short?>pages/team/team_content.php?nc=<?php echo time()?>&findpage=<?php echo $findpage?>&findname=<?php echo $findname?>&findtext=<?php echo $findtext?>&offset=<?php echo $offset?>" onClick="return CentralSpaceLoad(this,true);">&lt;&nbsp;<?php echo $lang["backtomanagecontent"]?></a></p>
+<div class="BasicsBox"><p><a href="<?php echo $baseurl_short?>pages/admin/admin_content.php?nc=<?php echo time()?>&findpage=<?php echo $findpage?>&findname=<?php echo $findname?>&findtext=<?php echo $findtext?>&offset=<?php echo $offset?>" onClick="return CentralSpaceLoad(this,true);">&lt;&nbsp;<?php echo $lang["backtomanagecontent"]?></a></p>
 
 <h1><?php echo $lang["editcontent"]?></h1>
 
-<form method= post id="mainform" action="<?php echo $baseurl_short?>pages/team/team_content_edit.php?page=<?php echo $page;?>&name=<?php echo $name;?>&editlanguage=<?php echo $editlanguage;?>&editgroup=<?php echo $editgroup;?>&findpage=<?php echo $findpage?>&findname=<?php echo $findname?>&findtext=<?php echo $findtext?>&offset=<?php echo $offset?>">
+<form method= post id="mainform" action="<?php echo $baseurl_short?>pages/admin/admin_content_edit.php?page=<?php echo $page;?>&name=<?php echo $name;?>&editlanguage=<?php echo $editlanguage;?>&editgroup=<?php echo $editgroup;?>&findpage=<?php echo $findpage?>&findname=<?php echo $findname?>&findtext=<?php echo $findtext?>&offset=<?php echo $offset?>">
 <input type=hidden name=page value="<?php echo $page?>">
 <input type=hidden name=name value="<?php echo $name?>">
 <input type=hidden name=langswitch id=langswitch value="">
