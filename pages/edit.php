@@ -557,7 +557,6 @@ function SaveAndClearButtons($extraclass="")
          </div>
          <?php 
          }
-      $custompermshowfile=false;
       hook("custompermshowfile");
       if ((!$is_template && !checkperm("F*"))||$custompermshowfile) 
          { ?>

@@ -83,18 +83,17 @@ if ($load_ubuntu_font)
 	echo "<link href='" . $urlprefix . "fonts.googleapis.com/css?family=Ubuntu:400,700' rel='stylesheet' type='text/css'>";
 	}
 
-if ($contact_sheet){?>
-<script type="text/javascript" src="<?php echo $baseurl?>/lib/js/contactsheet.js"></script>
-<script>
-contactsheet_previewimage_prefix = '<?php echo addslashes($storageurl)?>';
-</script>
-<script type="text/javascript">
-jQuery.noConflict();
-
-</script>
-
-<?php } ?>
-<!-- end of jQuery / jQueryUI load -->
+if ($contact_sheet)
+    {?>
+    <script type="text/javascript" src="<?php echo $baseurl?>/lib/js/contactsheet.js"></script>
+    <script>
+    contactsheet_previewimage_prefix = '<?php echo addslashes($storageurl)?>';
+    </script>
+    <script type="text/javascript">
+    jQuery.noConflict();
+    </script>
+    <?php 
+    } ?>
 
 <script type="text/javascript">
 	ajaxLoadingTimer=<?php echo $ajax_loading_timer;?>;

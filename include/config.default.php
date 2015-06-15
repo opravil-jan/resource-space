@@ -1625,6 +1625,11 @@ $default_display="thumbs";
 $alternative_file_previews=true;
 $alternative_file_previews_batch=true;
 
+
+# Permission to show the replace file, preview image only and alternative files options on the resource edit page.
+# Overrides required permission of F*
+$custompermshowfile=false;
+
 # Display resource title on alternative file management page
 $alternative_file_resource_title=true;
 # Display resource title on replace file page
