@@ -30,7 +30,7 @@ if (($avail/$free)<0.1) {exit("FAIL - less than 10% disk space free.");}
 // Check write access to sql_log
 if($mysql_log_transactions)
     {
-    $mysql_log_dir=dirname($mysql_log_transactions);
+    $mysql_log_dir=dirname($mysql_log_location);
     if(!is_writeable($mysql_log_dir) || (file_exists($mysql_log_location) && !is_writeable($mysql_log_location)))
 	{
 	exit("FAIL - invalid \$mysql_log_location specified in config file: " . $mysql_log_location); 
