@@ -1258,37 +1258,54 @@ function get_all_site_text($findpage="",$findname="",$findtext="")
 	{
 	# Returns a list of all available editable site text (content).
 	# If $find is specified a search is performed across page, name and text fields.
-	global $defaultlanguage,$lang;	
+	global $defaultlanguage,$languages,$applicationname,$storagedir,$homeanim_folder;	
 	$findname=trim($findname);
 	$findpage=trim($findpage);
 	$findtext=trim($findtext);
 	
         $return=array();
         
-        ksort($lang);#,function ($a,$b) {return (is_array($a)?false:strpos($a,"__")===false);});
-        
-        # Find language strings.
-        foreach ($lang as $key=>$text)
+        if ($findtext!="")
             {
-            $pagename="";
-            $s=explode("__",$key);
-            if (count($s)>1) {$pagename=$s[0];$key=$s[1];}
+            # When searching text, search all languages to pick up matches for languages other than the default
+            $search_languages=array_keys($languages);
+            }
+        else
+            {
+            # Process only the default language when not searching.
+            $search_languages=array($defaultlanguage);
+            }
             
-            if
-                (
-                !is_array($text) # Do not support overrides for array values (used for months)... complex UI needed and very unlikely to need overrides.
-                &&
-                ($findname=="" || stripos($key,$findname)!==false)
-                &&            
-                ($findpage=="" || stripos($pagename,$findpage)!==false || strtolower($findpage)==strtolower($lang["all"]))
-                &&
-                ($findtext=="" || stripos($text,$findtext)!==false)
-                )
+        foreach ($search_languages as $search_language)
+            {
+            # Reset $lang and include the appropriate file to search.
+            $lang=array();
+            include dirname(__FILE__)."/../languages/" . safe_file_name($search_language) . ".php";
+            
+            # Find language strings.
+            ksort($lang);
+            foreach ($lang as $key=>$text)
                 {
-                $row["page"]=$pagename;
-                $row["name"]=$key;
-                $row["text"]=$text;
-                $return[]=$row;
+                $pagename="";
+                $s=explode("__",$key);
+                if (count($s)>1) {$pagename=$s[0];$key=$s[1];}
+                
+                if
+                    (
+                    !is_array($text) # Do not support overrides for array values (used for months)... complex UI needed and very unlikely to need overrides.
+                    &&
+                    ($findname=="" || stripos($key,$findname)!==false)
+                    &&            
+                    ($findpage=="" || stripos($pagename,$findpage)!==false || strtolower($findpage)==strtolower($lang["all"]))
+                    &&
+                    ($findtext=="" || stripos($text,$findtext)!==false)
+                    )
+                    {
+                    $row["page"]=$pagename;
+                    $row["name"]=$key;
+                    $row["text"]=$text;
+                    $return[]=$row;
+                    }
                 }
             }
         
