@@ -177,10 +177,9 @@ input.defaultbutton {position: absolute; left: -100%; width: 0; height: 0;}
 .ResourcePanelPreview {height: 156px;width: 156px;margin: 3px;}
 .ResourcePanelInfo {margin-right: 5px;margin-left: 5px;margin-bottom: 4px;overflow:hidden;white-space:nowrap;padding:0;margin-top:0;}	
 .ResourcePanelCountry {margin-right: 5px;margin-left: 5px;margin-bottom: 0px;float: left;clear: left;display:inline;}	
-.ResourcePanelIcons {padding-left: 5px;display:inline;}	
-.ResourcePanelSmallIcons {padding-left: 5px;display:inline;}	
-/*.ResourcePanelIcon {margin-right: 3px;margin-left: 5px;display: block;float: right;}
-.ResourcePanelIcon img {margin-left: 2px;border-style: none;}*/
+.ResourcePanelIcons {padding-left: 5px;}	
+.ResourcePanelSmallIcons {padding-left: 5px;}	
+
 .ResourceAlign {width:172px;height:177px;text-align: center;vertical-align: middle;}
 .ResourceTypeIcon { height: 16px;width:16px;float:right;margin-right:5px;margin-top:6px; }
 .IconResourceType1  {background: url(../gfx/interface/IcPhoto.png); }
