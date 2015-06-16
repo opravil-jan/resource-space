@@ -24,7 +24,7 @@ if ($check!==$hash) {exit("FAIL - test write to disk returned a different string
 # Check free disk space is sufficient.
 $avail=disk_total_space($storagedir);
 $free=disk_free_space($storagedir);
-if (($avail/$free)<0.1) {exit("FAIL - less than 10% disk space free.");} 
+if (($free/$avail)<0.1) {exit("FAIL - less than 10% disk space free.");} 
 
 
 // Check write access to sql_log
