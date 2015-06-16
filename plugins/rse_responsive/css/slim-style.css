@@ -110,7 +110,7 @@
         margin-top:1px;
     }
     .BasicsBox .Question {
-        overflow-x:scroll;
+        overflow-x:auto;
     }
 
 }
@@ -851,7 +851,7 @@
     }
     .Listview {
         margin:0;
-        overflow-x: scroll;
+        overflow-x: auto;
     }
     #submissionResponse {padding-left: 20px;}
 }
