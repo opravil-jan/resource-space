@@ -1076,6 +1076,15 @@ $url=$baseurl_short."pages/search.php?search=" . urlencode($search) . "&amp;orde
 					}
 				}
 			}
+
+		if($k == '')
+			{
+			?>
+			<div class="InpageNavLeftBlock">
+				<a href="/pages/csv_export_results_metadata.php?search=<?php echo urlencode($search); ?>&restype=<?php echo urlencode($restypes); ?>&order_by=<?php echo urlencode($order_by); ?>&archive=<?php echo urlencode($archive); ?>&sort=<?php echo urlencode($sort); ?>&starsearch=<?php echo urlencode($starsearch); ?>">&gt;&nbsp;<?php echo $lang['csvExportResultsMetadata']; ?></a>
+			</div>
+			<?php
+			}
 		hook("resultsbottomtoolbar");
 		}?>
 	<!--End of hook("replacesearchbottomnav")-->

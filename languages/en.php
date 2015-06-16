@@ -1712,6 +1712,10 @@ $lang["manageresources-overquota"]="Resource management disabled - you have exce
 $lang["searchitemsdiskusage"]="Disk space used by results";
 $lang["matchingresourceslabel"]="Matching resources";
 
+# CSV Export of Search results
+$lang['csvExportResultsMetadata'] = 'CSV Export - Results metadata';
+$lang['csvAddMetadataCSVToArchive'] = 'Include metadata CSV file to the archive?';
+
 $lang["saving"]="Saving...";
 $lang["saved"]="Saved";
 $lang["changessaved"]="Changes Saved";

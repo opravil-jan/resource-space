@@ -6,6 +6,7 @@ include_once "../include/collections_functions.php";
 $k=getvalescaped("k","");if (($k=="") || (!check_access_key_collection(getvalescaped("collection","",true),$k))) {include "../include/authenticate.php";}
 include "../include/search_functions.php";
 include "../include/resource_functions.php";
+include_once '../include/csv_export_functions.php';
 
 $uniqid="";$id="";
 $collection=getvalescaped("collection","",true);  if ($k!=""){$usercollection=$collection;}
@@ -448,6 +449,25 @@ if ($submitted != "")
         $deletion_array[]=$textfile;	
     }
 
+    // Include the CSV file with the metadata of the resources found in this collection
+	if(getvalescaped('include_csv_file', '') == 'yes')
+		{
+		$csv_file    = get_temp_dir(false, $id) . '/Col-' . $collection . '-metadata-export.csv';
+		$csv_fh      = fopen($csv_file, 'w') OR die("can't open file");
+		$csv_content = generateResourcesMetadataCSV($result);
+		fwrite($csv_fh, $csv_content);
+		fclose($csv_fh);
+
+		if($use_zip_extension)
+			{
+			$zip->addFile($csv_file, '/Col-' . $collection . '-metadata-export.csv');
+			}
+		else
+			{
+			$path .= $csv_file . "\r\n";
+			}
+		$deletion_array[] = $csv_file;
+		}
 
 	# Write command parameters to file.
 	//update_progress_file("writing zip command");	
@@ -767,6 +787,14 @@ if ($archiver)
     <div class="clearerleft"></div></div><br>
     </div><?php
     } ?>
+
+
+<!-- Add CSV file with the metadata of all the resources found in this colleciton -->
+<div class="Question">
+	<label for="include_csv_file"><?php echo $lang['csvAddMetadataCSVToArchive']; ?></label>
+	<input type="checkbox" id="include_csv_file" name="include_csv_file" value="yes">
+</div>
+<div class="clearerleft"></div></div>
 
 <div class="QuestionSubmit" id="downloadbuttondiv"> 
 <label for="download"> </label>
