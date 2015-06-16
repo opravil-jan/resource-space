@@ -4,7 +4,6 @@
  * Ajax functions for the homepage dash interface
  *
  */
-
 include "../../include/db.php";
 include "../../include/general.php";
 include "../../include/authenticate.php";

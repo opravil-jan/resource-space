@@ -147,9 +147,9 @@ function addColumnHeader($orderName, $labelKey)
 	global $baseurl, $group, $order_by, $find, $lang;
 
 	if ($order_by == $orderName)
-		$image = '<image src="' . $baseurl . '/gfx/whitegry/interface/ASC.gif" border="0" />';
+		$image = '<span class="ASC"></span>';
 	else if ($order_by == $orderName . ' desc')
-		$image = '<image src="' . $baseurl . '/gfx/whitegry/interface/DESC.gif" border="0" />';
+		$image = '<span class="DESC"></span>';
 	else
 		$image = '';
 

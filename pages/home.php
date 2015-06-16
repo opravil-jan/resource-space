@@ -10,6 +10,7 @@ include "../include/dash_functions.php";
 # Fetch promoted collections ready for display later
 $home_collections=get_home_page_promoted_collections();
 $welcometext=false;
+global $welcome_text_picturepanel,$home_dash,$slideshow_big;
 
 hook("homeheader");
 
@@ -18,10 +19,10 @@ include "../include/header.php";
 if (!hook("replacehome")) { 
 function loadWelcomeText() 
 	{
-	global $welcome_text_picturepanel,$no_welcometext;
+	global $welcome_text_picturepanel,$no_welcometext,$home_dash;
 	if (!hook('homereplacewelcome') && !$no_welcometext)
 		{ ?>
-		<div class="BasicsBox" id="HomeSiteText">
+		<div class="BasicsBox <?php echo $home_dash ? 'dashtext':''; ?>" id="HomeSiteText">
 			<div id="HomeSiteTextInner">
 	    	<h1><?php echo text("welcometitle")?></h1>
 	    	<p><?php echo text("welcometext")?></p>
@@ -30,6 +31,7 @@ function loadWelcomeText()
 		<?php 
 		}
 	}
+
 if (!hook("replaceslideshow")) 
 	{
 	global $slideshow_photo_delay;
@@ -65,12 +67,7 @@ if (!hook("replaceslideshow"))
 				  # Include the checksum calculated so far, to ensure a reloaded image if the image on disk has changed.
 			      	  ?>
 				 <script type="text/javascript">
-				 var big_slideshow_timer = 6;
-				 <?php
-				 if(isset($slideshow_photo_delay) && $slideshow_photo_delay > 1) { ?>
-				 	big_slideshow_timer = <?php echo $slideshow_photo_delay; ?>;
-				 <?php }
-				 ?>
+				 var big_slideshow_timer = <?php echo $slideshow_photo_delay;?>;
 				 RegisterSlideshowImage('<?php echo $baseurl_short . $homeanim_folder ?>/<?php echo $f ?>?nc=<?php echo $checksum ?>','<?php echo $linkref ?>');
 				 </script>
 				 <?php
@@ -85,12 +82,7 @@ if (!hook("replaceslideshow"))
 		<script type="text/javascript">
 
 		var num_photos=<?php echo $homeimages?>;  // <---- number of photos (/images/slideshow?.jpg)
-		var photo_delay=5; // <---- photo delay in seconds
-		<?php
-		if(isset($slideshow_photo_delay) && $slideshow_photo_delay > 1) { ?>
-			photo_delay = <?php echo $slideshow_photo_delay; ?>;
-		<?php }
-		?>
+		var photo_delay= <?php echo $slideshow_photo_delay;?>;
 		var link = new Array();
 
 		<?php 

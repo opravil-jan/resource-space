@@ -17,7 +17,7 @@ function checkResponsiveCollection() {
     thumbs = getCookie("thumbs");
     if(thumbs==="show") {
         showResponsiveCollection();
-    }else if(thumbs==="hide") {
+    } else if(thumbs==="hide") {
         hideResponsiveCollection();
     }
 }
@@ -30,7 +30,7 @@ function PopCollection(thumbs) {
     }
 }
 function responsiveCollectionBar() {
-    if(jQuery(window).width()<=900 && !(jQuery('#responsive_collection_toggle').length)) { 
+    if(jQuery(window).width()<=900 && !(jQuery('#responsive_collection_toggle').length)) {
         jQuery('#CollectionDiv').hide(0);
         responsive_hide = function() {
             return jQuery('#CollectionMinitems').html();
@@ -55,7 +55,7 @@ function responsiveCollectionBar() {
         jQuery("#responsive_collection_toggle").show();
         hideResponsiveCollection();
     }
-    else if(jQuery(window).width()>900 && (jQuery('#responsive_collection_toggle').length)) { 
+    else if(jQuery(window).width()>900 && (jQuery('#responsive_collection_toggle').length)) {
         jQuery("#CollectionDiv").show();
         jQuery("#responsive_collection_toggle").hide();
         thumbs = getCookie("thumbs");
@@ -64,7 +64,6 @@ function responsiveCollectionBar() {
         }else if(thumbs==="hide") {
             showResponsiveCollection();
             HideThumbs();
-        }
-        
+        } 
     }
 }

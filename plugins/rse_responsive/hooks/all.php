@@ -19,21 +19,14 @@ function serveHeader() {
         }
     else 
         {
-        if($slimheader)
-            {
-            $header_img_src = $baseurl.'/gfx/titles/title.png';
-            }
-        else
-            {
-            $header_img_src = $baseurl. ($theme=="slimcharcoal")? '/gfx/titles/title_large.png':'/gfx/'.$theme.'/titles/title.gif';
-            }
+        $header_img_src = $baseurl.'/gfx/titles/title.png';
         }
 
     if (!$slimheader)
         {
         ?>
         <a href="<?php echo $baseurl; ?>"><img src="<?php echo $baseurl.$header_img_src; ?>" id="HeaderImg" style="display:none;"></img></a>
-        <style>#Header{background-image: url(<?php echo $baseurl.$header_img_src; ?>);}</style>
+        
         <?php
         }
     else 
@@ -115,23 +108,6 @@ function HookRse_responsiveAllResponsivethumbsloaded()
     </script>
     <?php } 
     }
-function HookRse_responsiveAllFooterthemechangescript()
-    {
-        global $lang, $baseurl, $linkedheaderimgsrc, $defaulttheme, $userfixedtheme, $slimheader, $rcsskey;
-        if(!$slimheader)
-            {
-            if($linkedheaderimgsrc==="")
-                {
-                $theme=((isset($userfixedtheme) && $userfixedtheme!=""))?$userfixedtheme:getval("colourcss",$defaulttheme);
-                $header_img_src = $baseurl.'/gfx/'.$theme.'/titles/title.gif';
-                echo "jQuery('#HeaderImg').attr(\"src\",'".$baseurl."/gfx/' + css + '/titles/title.gif?rcsskey=".$rcsskey."');";
-                }
-            else
-                {
-                echo "jQuery('#HeaderImg').attr(\"src\",'".$linkedheaderimgsrc."');";
-                } 
-            } 
-    }
 function HookRse_responsiveAllResponsivescripts() 
     {
 	global $lang, $baseurl, $slimheader,$rcsskey;
@@ -151,19 +127,6 @@ function HookRse_responsiveAllResponsivescripts()
                 jQuery("td:nth-child(8),th:nth-child(8)").show();
             }
         }
-        function swapHeadImg() {
-            jQuery("#Header").removeClass("clearResponsiveBackground");
-            var bg = jQuery("#Header").css("background-image");
-            bg = (bg)? bg.replace("url(","").replace(")","") : 1;
-            if(bg === 1) {
-                return false;
-            }
-            if(bg.charAt(0) === "'" || bg.charAt(0) === '"') {
-                bg = bg.substring(1, bg.length-1);
-            }
-            jQuery("#HeaderImg").attr("src",bg);
-            jQuery("#Header").addClass("clearResponsiveBackground");
-        }
         function toggleSimpleSearch() {
             if(jQuery("#searchspace").hasClass("ResponsiveSimpleSearch")) {
                 jQuery("#searchspace").removeClass("ResponsiveSimpleSearch");
@@ -178,6 +141,7 @@ function HookRse_responsiveAllResponsivescripts()
             jQuery("#SearchResultFound").hide();
         }
         <?php 
+        /* Responsive Stylesheet inclusion based upon viewing device */
         if(!$slimheader) 
             { ?>
             if (document.createStyleSheet){
@@ -214,6 +178,7 @@ function HookRse_responsiveAllResponsivescripts()
         <?php
 
         }?>
+
         function touchScroll(id){
             if(is_touch_device()){
                 var el=document.getElementById(id);
@@ -232,6 +197,7 @@ function HookRse_responsiveAllResponsivescripts()
         var responsive_show = "<?php echo $lang['responsive_collectiontogglehide'];?>";
         var responsive_hide;
         var responsive_newpage = true;
+
         if(jQuery(window).width()<=700) {
             touchScroll("UICenter");
         }
@@ -239,7 +205,7 @@ function HookRse_responsiveAllResponsivescripts()
             hideMyCollectionsCols();
             responsiveCollectionBar();
         });
-        if(jQuery(window).width()<=900) { 
+        if(jQuery(window).width()<=900) {
             jQuery('#CollectionDiv').hide(0);
         }
         jQuery("#HeaderNav1Click").click(function(event) {

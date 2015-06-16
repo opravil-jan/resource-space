@@ -2,15 +2,14 @@
 hook("before_footer_always");
 
 # Do not display header / footer when dynamically loading CentralSpace contents.
-if (getval("ajax","")=="" && !hook("replace_footer")) { 
-
-hook("beforefooter");
-
-# Include theme bar?
-if ($use_theme_bar && !in_array($pagename,array("search_advanced","login","preview","admin_header","user_password","user_request")) && ($loginterms==false))
-	{
-	?></td></tr></table><?php
-	}
+if (getval("ajax","")=="" && !hook("replace_footer")) 
+	{ 
+	hook("beforefooter");
+	# Include theme bar?
+	if ($use_theme_bar && !in_array($pagename,array("search_advanced","login","preview","admin_header","user_password","user_request")) && ($loginterms==false))
+		{
+		?></td></tr></table><?php
+		}
 ?>
 <div class="clearer"></div>
 
@@ -30,100 +29,52 @@ if ($use_theme_bar && !in_array($pagename,array("search_advanced","login","previ
 
 <?php hook("footertop"); ?>
 
-<?php if (($pagename!="login") && ($pagename!="user_request") && ($pagename!="user_password") && ($pagename!="preview_all")&& ($pagename!="done") && ($pagename!="preview") && ($pagename!="change_language") && ($loginterms==false)) { ?>
+<?php if (($pagename!="login") && ($pagename!="user_request") && ($pagename!="user_password") && ($pagename!="preview_all")&& ($pagename!="done") && ($pagename!="preview") && ($pagename!="change_language") && ($loginterms==false)) 
+{ ?>
 
 <!--Global Footer-->
 <div id="Footer">
 
-<?php if (!hook("replaceswapcss")){?>
-<script type="text/javascript">
-function SwapCSS(css){
-	if (css.substr(-5)=="space"){
-	document.getElementById('colourcss').href='<?php echo $baseurl?>/plugins/'+css+'/css/Col-' + css + '.css?css_reload_key=<?php echo $css_reload_key?>';	
-
-	} else { 
-	document.getElementById('colourcss').href='<?php echo $baseurl?>/css/Col-' + css + '.css?css_reload_key=<?php echo $css_reload_key?>';
-	}
-
-	SetCookie("colourcss",css,1000);  
-
-	jQuery.ajax({
-			url:"<?php echo $baseurl?>/pages/ajax/get_plugin_css.php?theme="+css,
-			success: function(response) {
-				jQuery('head').append(response); // add new css
-				jQuery('.plugincss0').remove(); // then remove old
-				jQuery('.plugincss').attr('class', 'plugincss0'); // set up new css for later removal
-				<?php
-				hook("footerthemechangescript");
-				if($slimheader)
-	            	{
-			    	?>
-			    	if(css==="whitegry" || css==="multi") {
-			    		jQuery("#Header").addClass("slimheader_darken");
-			    	}else{
-			    		jQuery("#Header").removeClass("slimheader_darken");
-			    	}
-			    	<?php
-		            if(empty($linkedheaderimgsrc))
-		                {
-		                $header_img_src = $baseurl.'/gfx/titles/title.png';
-		                echo "jQuery('#HeaderImg').attr(\"src\",'".$header_img_src."?css_reload_key=".$css_reload_key."');";
-		                }
-		            else
-		                {
-		                echo "jQuery('#HeaderImg').attr(\"src\",'".$linkedheaderimgsrc."');";
-		                } 
-		            } ?>
-		        }
-			});
-}
-
-</script>
-<?php } ?>
-
-<?php if (getval("k","")=="") { ?>
-<div id="FooterNavLeft" class=""><span id="FooterThemes" aria-hidden="true" role="presentation"><?php if (isset($userfixedtheme) && $userfixedtheme=="") { ?><?php echo $lang["interface"]?>:&nbsp;&nbsp;
-<?php if (!hook("replacecustomthemechips"))	{
-	// enable custom theme chips 
-	if (count($available_themes)!=0){
-		foreach ($available_themes as $available_theme){
-		if (!in_array($available_theme, $available_themes_by_default)){?>
-		&nbsp;<a href="#" onClick="SwapCSS('<?php echo $available_theme?>');return false;" name="choosetheme"><label class="ui-helper-hidden-accessible" for="choosetheme"><?php echo $lang['changethemeto'] . ' ' . ucfirst($available_theme); ?></label><img src="<?php echo $baseurl?>/plugins/<?php echo $available_theme?>/gfx/interface/<?php echo ucfirst($available_theme)?>Chip.gif" alt="<?php echo ucfirst($available_theme); ?> Theme Chip" width="11" height="11" /></a>
-		<?php } else {?>
-		&nbsp;<a href="#" onClick="SwapCSS('<?php echo $available_theme?>');return false;" name="choosetheme"><label class="ui-helper-hidden-accessible" for="choosetheme"><?php echo $lang['changethemeto'] . ' ' . ucfirst($available_theme); ?></label><img src="<?php echo $baseurl?>/gfx/interface/<?php echo ucfirst($available_theme)?>Chip.gif" alt="<?php echo ucfirst($available_theme); ?> Theme Chip" width="11" height="11" /></a>
-		<?php } ?>
-	<?php }
-	}
-	}/*End hook("replacecustomthemechips")*/
-?>	</span><span id="FooterLanguages">
-<?php } ?>
-<?php if ($disable_languages==false && $show_language_chooser){?>
-<?php echo $lang["language"]?>: <a onClick="return CentralSpaceLoad(this,true);" href="<?php echo $baseurl?>/pages/change_language.php"><?php echo @$languages[$language]?></a>
-<?php } ?>
-</span></div>
-
-
-<?php if (!hook("replacefooternavright")){?>
-<?php if ($about_link || $contact_link) { ?>
-<div id="FooterNavRight" class="HorizontalNav HorizontalWhiteNav">
-		<ul>
-<?php if (!hook("replacefooterlinks")){?>
-		<?php if (!$use_theme_as_home && !$use_recent_as_home) { ?><li><a href="<?php echo $baseurl?>/pages/<?php echo $default_home_page?>" onClick="return CentralSpaceLoad(this,true);"><?php echo $lang["home"]?></a></li><?php } ?>
-		<?php if ($about_link) { ?><li id="footer_about_link"><a href="<?php echo $baseurl?>/pages/about.php" onClick="return CentralSpaceLoad(this,true);"><?php echo $lang["aboutus"]?></a></li><?php } ?>
-		<?php if ($contact_link || $nav2contact_link) { ?><li><a href="<?php echo $baseurl?>/pages/contact.php" onClick="return CentralSpaceLoad(this,true);"><?php echo $lang["contactus"]?></a></li><?php } ?>
-<?php } /* end hook replacefooterlinks */ ?>
-		</ul>
-</div>
-<?php } ?>
-<?php } /* end hook replacefooternavright */ ?>
-
-<?php } ?>
+<?php if (getval("k","")=="") 
+	{ ?>
+	<div id="FooterNavLeft" class="">
+	<span id="FooterLanguages">
+	<?php 
+	if ($disable_languages==false && $show_language_chooser)
+		{
+		echo $lang["language"]?>: <a onClick="return CentralSpaceLoad(this,true);" href="<?php echo $baseurl?>/pages/change_language.php"><?php echo $languages[$language]?></a>
+		<?php 	
+		} ?>
+	</span>
+	</div>
+	<?php 
+	if (!hook("replacefooternavright"))
+		{
+		if ($about_link || $contact_link) 
+			{ ?>
+			<div id="FooterNavRight" class="HorizontalNav HorizontalWhiteNav">
+			<ul>
+			<?php 
+			if (!hook("replacefooterlinks"))
+				{
+				if (!$use_theme_as_home && !$use_recent_as_home) { ?><li><a href="<?php echo $baseurl?>/pages/<?php echo $default_home_page?>" onClick="return CentralSpaceLoad(this,true);"><?php echo $lang["home"]?></a></li><?php }
+				if ($about_link) { ?><li id="footer_about_link"><a href="<?php echo $baseurl?>/pages/about.php" onClick="return CentralSpaceLoad(this,true);"><?php echo $lang["aboutus"]?></a></li><?php }
+				if ($contact_link || $nav2contact_link) { ?><li><a href="<?php echo $baseurl?>/pages/contact.php" onClick="return CentralSpaceLoad(this,true);"><?php echo $lang["contactus"]?></a></li><?php }
+				} /* end hook replacefooterlinks */ 
+			?>
+			</ul>
+			</div>
+			<?php 
+			}
+		} /* end hook replacefooternavright */
+	} ?>
 
 <div id="FooterNavRightBottom" class="OxColourPale"><?php echo text("footer")?></div>
 
 <div class="clearer"></div>
 </div>
-<?php } ?>
+<?php 
+} ?>
 
 <br />
 

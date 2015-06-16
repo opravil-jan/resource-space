@@ -258,6 +258,9 @@ $homeanim_folder="gfx/homeanim/gfx";
 # your slideshow images using the transform plugin. This is recommended to be used along with the slim header.
 $slideshow_big=false;
 
+# Number of seconds for slideshow to wait before changing image (must be greater than 1)
+$slideshow_photo_delay = 5;
+
 
 # Enable home dash functionality (on by default, recommended)
 $home_dash = true;
@@ -684,22 +687,28 @@ $videotypes=array(3);
 $resource_type_icons=false;
 
 # Sets the default colour theme (defaults to white)
-$defaulttheme="multi";
+$defaulttheme="";
 
-# Theme chips available. This makes it possible to add new themes and chips using the same structure.
-# To create a new theme, you need a chip in gfx/interface, a graphics folder called gfx/<themename>,
-# and a css file called css/Col-<themename>.css
-# this is a basic way of adding general custom themes that do not affect SVN checkouts, 
-# though css can also be added in plugins as usual.
- 
-$available_themes=array("multi", "whitegry","greyblu","black");
 
-# NOTE: Do not add custom themes to $available_themes_by_default.
-# This is being used to know which themes are custom
-$available_themes_by_default = array("multi", "whitegry","greyblu","black","slimcharcoal");
+/** DEPRECATED **/
 
-# Uncomment and set the next line to lock to one specific colour scheme (e.g. greyblu/whitegry).
-# $userfixedtheme="whitegry";
+	# Theme chips available. This makes it possible to add new themes and chips using the same structure.
+	# To create a new theme, you need a chip in gfx/interface, a graphics folder called gfx/<themename>,
+	# and a css file called css/Col-<themename>.css
+	# this is a basic way of adding general custom themes that do not affect SVN checkouts, 
+	# though css can also be added in plugins as usual.
+	 
+	$available_themes=array("multi", "whitegry","greyblu","black");
+
+	# NOTE: Do not add custom themes to $available_themes_by_default.
+	# This is being used to know which themes are custom
+	$available_themes_by_default = array("multi", "whitegry","greyblu","black","slimcharcoal");
+
+	# Uncomment and set the next line to lock to one specific colour scheme (e.g. greyblu/whitegry).
+	# $userfixedtheme="whitegry";
+
+/** END OF DEPRECATED **/
+
 
 # List of active plugins.
 # Note that multiple plugins must be specified within array() as follows:
@@ -2670,9 +2679,6 @@ $body_classes = array();
 // $manage_request_admin[2] = 1; // Document
 // $manage_request_admin[3] = 1; // Video
 // $manage_request_admin[4] = 1; // Audio
-
-# Number of seconds for slideshow to wait before changing image (must be greater than 1)
-#$slideshow_photo_delay = 7;
 
 # Notify on resource change. If the primary resource file is replaced or an alternative file is added, users who have 
 # downloaded the resource in the last X days will be sent an email notifying them that there has been a change with a link to the resource view page

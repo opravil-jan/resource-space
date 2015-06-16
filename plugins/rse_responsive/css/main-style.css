@@ -16,11 +16,6 @@
 }
 
 @media(max-width:1100px) {
-    #Header {
-        width:94%;
-        margin-left:3%;
-        margin-right:3%;
-    }
     #SearchBarContainer {
         margin:0;
         width:94%;
@@ -165,11 +160,9 @@
 }
 @media(max-width:1100px) {
     #Header {
-    margin-top: 20px;
-    margin-bottom:20px;
     border: 0;
     }
-    #HeaderNav2, #HeaderNav1 {
+    #HeaderNav2 {
         margin-top:32px;
     }
     #HeaderNav2 li, #HeaderNav1 li {
@@ -200,9 +193,8 @@
         display:block;
     }
     #Header {
-        margin-top:15px;
         margin-bottom:0px;
-        background:0 !important;
+        background-image:none !important;
         padding:0;
     }
     #HeaderNav1 {
@@ -428,6 +420,7 @@
     #HomeSiteText {
         width: 100%;
         max-width: 100%;
+        padding:0;
     }
 }
 @media(max-width:559px) {

@@ -211,7 +211,11 @@
         padding:0;
         border:0;
     }
-    #Header .HorizontalNav ul li a{
+    #Header .HorizontalNav ul li a, 
+    .SlimHeader #Header.slimheader_darken .HorizontalNav ul li a:link,
+    .SlimHeader #Header.slimheader_darken .HorizontalNav ul li a:active,
+    .SlimHeader #Header.slimheader_darken .HorizontalNav ul li a:hover,
+    .SlimHeader #Header.slimheader_darken .HorizontalNav ul li a:visited{
         color: #4E4646;
         display:inline-block;
         text-align: center;
@@ -468,6 +472,7 @@
         width: 99%;
         margin-left: 0.5%;
         max-width: 98.5%;
+        padding:0;
     }
     #HomePanelContainer {
         float:none;

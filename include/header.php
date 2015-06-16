@@ -1,6 +1,26 @@
 <?php 
 
-$theme=((isset($userfixedtheme) && $userfixedtheme!=""))?$userfixedtheme:getval("colourcss",$defaulttheme);
+$theme=((isset($userfixedtheme) && $userfixedtheme!=""))? $userfixedtheme:getval("colourcss",$defaulttheme);
+
+# Legacy color theme support
+# User preference for colour selection can make use of the same cookies, just change this to check the theme variable above.
+# Until the change functionality is present we need to ignore cookies and other variables
+
+global $userfixedtheme,$defaulttheme,$plugins;
+if((isset($userfixedtheme) && $userfixedtheme!="") || (isset($defaulttheme) && $defaulttheme!=""))
+    {
+    $ctheme =  (isset($userfixedtheme) && $userfixedtheme!="") ? $userfixedtheme : $defaulttheme;
+    switch($ctheme)
+        {
+        case "multi": array_push($plugins,"col-multi");$slimheader_darken=true;break;
+        case "whitegry": array_push($plugins,"col-whitegry");$slimheader_darken=true;break;
+        case "black": array_push($plugins,"col-black");break;
+        case "blue": array_push($plugins,"col-blue");break;
+        case "charcoal":
+        case "slimcharcoal": array_push($plugins,"col-charcoal");break;
+        }
+    }
+# End Legacy Support
 
 hook ("preheaderoutput");
  
@@ -20,7 +40,8 @@ if(!isset($thumbs) && ($pagename!="login") && ($pagename!="user_password") && ($
     }
 // blank starsearch cookie in case $star_search was turned off
 setcookie("starsearch","",0,'','',false,true);
-if ($display_user_rating_stars && $star_search){
+if ($display_user_rating_stars && $star_search)
+    {
 	# if seardch is not a special search (ie. !recent), use starsearchvalue.
 	if (getval("search","")!="" && strpos(getval("search",""),"!")!==false)
 		{
@@ -34,14 +55,19 @@ if ($display_user_rating_stars && $star_search){
 	}
 	
 ?><!DOCTYPE html>
-<html>	<?php if ($include_rs_header_info){?>
-<!--<?php hook("copyrightinsert");?>
-ResourceSpace version <?php echo $productversion?>
+<html>	
+<?php 
+if ($include_rs_header_info)
+    {?>
+    <!--<?php hook("copyrightinsert");?>
+    ResourceSpace version <?php echo $productversion?>
 
-For copyright and license information see documentation/licenses/resourcespace.txt
-http://www.resourcespace.org/
--->
-<?php } ?>
+    For copyright and license information see documentation/licenses/resourcespace.txt
+    http://www.resourcespace.org/
+    -->
+    <?php 
+    }
+?>
 <head>
 <?php if(!hook("customhtmlheader")): ?>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
@@ -227,14 +253,15 @@ echo $headerinsert;
 $extrafooterhtml="";
 ?>
 
+<!-- Structure Stylesheet -->
 <link href="<?php echo $baseurl?>/css/global.css?css_reload_key=<?php echo $css_reload_key?>" rel="stylesheet" type="text/css" media="screen,projection,print" />
-<?php if (!hook("adjustcolortheme")){ ?>
-<link href="<?php echo $baseurl?>/css/Col-<?php echo (isset($userfixedtheme) && $userfixedtheme!="")?$userfixedtheme:getval("colourcss",$defaulttheme)?>.css?css_reload_key=<?php echo $css_reload_key?>" rel="stylesheet" type="text/css" media="screen,projection,print" id="colourcss" />
-<?php } ?>
+<!-- Colour stylesheet -->
+<link href="<?php echo $baseurl?>/css/colour.css?css_reload_key=<?php echo $css_reload_key?>" rel="stylesheet" type="text/css" media="screen,projection,print" />
+
 <?php if ($pagename!="preview_all"){?><!--[if lte IE 7]> <link href="<?php echo $baseurl?>/css/globalIE.css?css_reload_key=<?php echo $css_reload_key?>" rel="stylesheet" type="text/css"  media="screen,projection,print" /> <![endif]--><?php } ?>
 <!--[if lte IE 5.6]> <link href="<?php echo $baseurl?>/css/globalIE5.css?css_reload_key=<?php echo $css_reload_key?>" rel="stylesheet" type="text/css"  media="screen,projection,print" /> <![endif]-->
 
-<?php 
+<?php
 echo get_plugin_css($theme)
 // after loading these tags we change the class on them so a new set can be added before they are removed (preventing flickering of overridden theme)
 ?>
@@ -260,10 +287,6 @@ if($slimheader)
     {
     $body_classes[] = 'SlimHeader';
     }
-if($pagename=="home")
-    {
-    $body_classes[] = $pagename;
-    }
 ?>
 </head>
 <body lang="<?php echo $language ?>" class="<?php echo implode(' ', $body_classes); ?>" <?php if (isset($bodyattribs)) { ?><?php echo $bodyattribs?><?php } if($infobox) {?> onmousemove="InfoBoxMM(event);"<?php } ?>>
@@ -287,7 +310,6 @@ if ($use_theme_as_home){$homepage_url=$baseurl."/pages/themes.php";}
 if ($use_recent_as_home){$homepage_url=$baseurl."/pages/search.php?search=".urlencode('!last'.$recent_search_quantity);}
 if ($pagename=="login" || $pagename=="user_request" || $pagename=="user_password"){$homepage_url=$baseurl."/index.php";}
 
-
 hook("beforeheader");
 
 # Calculate Header Image Display #
@@ -305,7 +327,7 @@ $linkUrl=isset($header_link_url) ? $header_link_url : $homepage_url;
 if($slimheader)
     {
     ?>
-    <div id="Header" <?php echo ($theme=="whitegry"||$theme=="multi") ? "class='slimheader_darken'":"";?>>
+    <div id="Header" <?php echo (isset($slimheader_darken) && $slimheader_darken) ? "class='slimheader_darken'":"";?>>
     <?php hook("responsiveheader");
     if($header_text_title) 
         {?>
@@ -338,12 +360,13 @@ else
     <?php hook("responsiveheader");
     if ($header_link && !$header_text_title && getval("k","")=="") 
         {
-       if(isset($header_link_height) || isset($header_link_width)){
-           # compile style attribute for headerlink
-           $headerlink_style='';
-           if(isset($header_link_height)){$headerlink_style.="height:".$header_link_height."px;";}
-           if(isset($header_link_width)){$headerlink_style.="width:".$header_link_width."px;";}
-       }
+       if(isset($header_link_height) || isset($header_link_width))
+            {
+            # compile style attribute for headerlink
+            $headerlink_style='';
+            if(isset($header_link_height)){$headerlink_style.="height:".$header_link_height."px;";}
+            if(isset($header_link_width)){$headerlink_style.="width:".$header_link_width."px;";}
+            }
        $onclick = (substr($linkUrl, 0, strlen($baseurl)) === $baseurl || substr($linkUrl, 0, strlen($baseurl_short)) === $baseurl_short) ? "" : ' onclick="return CentralSpaceLoad(this,true);"';
         ?><a class="headerlink" <?php if(isset($headerlink_style)){?> style="<?php echo $headerlink_style?>" <?php } ?> href="<?php echo $linkUrl ?>"<?php echo $onclick?>></a><?php
         }
