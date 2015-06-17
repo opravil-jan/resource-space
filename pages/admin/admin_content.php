@@ -55,15 +55,16 @@ $jumpcount=1;
 <?php
 for ($n=$offset;(($n<count($text)) && ($n<($offset+$per_page)));$n++)
 	{
+	$url=$baseurl_short . "pages/admin/admin_content_edit.php?page=" . $text[$n]["page"] . "&name=" . $text[$n]["name"] . "&editlanguage=" . $text[$n]["language"] . "&editgroup=" . $text[$n]["group"] . "&findpage=" . $findpage . "&findname=" . $findname . "&findtext=" . $findtext . "&offset=" . $offset;
 	?>
 	<tr>
-	<td><div class="ListTitle"><a href="<?php echo $baseurl_short?>pages/admin/admin_content_edit.php?page=<?php echo $text[$n]["page"]?>&name=<?php echo $text[$n]["name"]?>&findpage=<?php echo $findpage?>&findname=<?php echo $findname?>&findtext=<?php echo $findtext?>&offset=<?php echo $offset?>" onClick="return CentralSpaceLoad(this,true);"><?php echo highlightkeywords(($text[$n]["page"]==""||$text[$n]["page"]=="all"?$lang["all"]:$text[$n]["page"]),$findpage,true);?></a></div></td>
+	<td><div class="ListTitle"><a href="<?php echo $url ?>"><?php echo highlightkeywords(($text[$n]["page"]==""||$text[$n]["page"]=="all"?$lang["all"]:$text[$n]["page"]),$findpage,true);?></a></div></td>
 	
-	<td><div class="ListTitle"><a href="<?php echo $baseurl_short?>pages/admin/admin_content_edit.php?page=<?php echo $text[$n]["page"]?>&name=<?php echo $text[$n]["name"]?>&findpage=<?php echo $findpage?>&findname=<?php echo $findname?>&findtext=<?php echo $findtext?>&offset=<?php echo $offset?>" onClick="return CentralSpaceLoad(this,true);"><?php echo highlightkeywords($text[$n]["name"],$findname,true)?></a></div></td>
+	<td><div class="ListTitle"><a href="<?php echo $url ?>" onClick="return CentralSpaceLoad(this,true);"><?php echo highlightkeywords($text[$n]["name"],$findname,true)?></a></div></td>
 	
-	<td><a href="<?php echo $baseurl_short?>pages/admin/admin_content_edit.php?page=<?php echo $text[$n]["page"]?>&name=<?php echo $text[$n]["name"]?>&findpage=<?php echo $findpage?>&findname=<?php echo $findname?>&findtext=<?php echo $findtext?>&offset=<?php echo $offset?>" onClick="return CentralSpaceLoad(this,true);"><?php echo highlightkeywords(tidy_trim(htmlspecialchars($text[$n]["text"]),100),$findtext,true)?></a></td>
+	<td><a href="<?php echo $url ?>" onClick="return CentralSpaceLoad(this,true);"><?php echo highlightkeywords(tidy_trim(htmlspecialchars($text[$n]["text"]),100),$findtext,true)?></a></td>
 	
-	<td><div class="ListTools"><a href="<?php echo $baseurl_short?>pages/admin/admin_content_edit.php?page=<?php echo $text[$n]["page"]?>&name=<?php echo $text[$n]["name"]?>&findpage=<?php echo $findpage?>&findname=<?php echo $findname?>&findtext=<?php echo $findtext?>&offset=<?php echo $offset?>" onClick="return CentralSpaceLoad(this,true);">&gt;&nbsp;<?php echo $lang["action-edit"]?> </a></div></td>
+	<td><div class="ListTools"><a href="<?php echo $url ?>" onClick="return CentralSpaceLoad(this,true);">&gt;&nbsp;<?php echo $lang["action-edit"]?> </a></div></td>
 	</tr>
 	<?php
 	}

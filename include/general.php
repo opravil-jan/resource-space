@@ -1304,11 +1304,29 @@ function get_all_site_text($findpage="",$findname="",$findtext="")
                     $row["page"]=$pagename;
                     $row["name"]=$key;
                     $row["text"]=$text;
+                    $row["language"]=$search_language;
+                    $row["group"]="";
                     $return[]=$row;
                     }
                 }
             }
         
+        # If searching, also search overridden text in site_text and return that also.
+        if ($findtext!="")
+            {
+            $site_text=sql_query ("select * from site_text where text like '%" . escape_check($findtext) . "%'");
+            foreach ($site_text as $text)
+                {
+                $row["page"]=$text["page"];
+                $row["name"]=$text["name"];
+                $row["text"]=$text["text"];
+                $row["language"]=$text["language"];
+                $row["group"]=$text["specific_to_group"];
+                $return[]=$row;
+                }
+            }
+            
+            
         return $return;
 	}
 
