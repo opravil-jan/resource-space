@@ -1312,9 +1312,13 @@ function get_all_site_text($findpage="",$findname="",$findtext="")
             }
         
         # If searching, also search overridden text in site_text and return that also.
-        if ($findtext!="")
+        if ($findtext!="" || $findpage!="" || $findname!="")
             {
-            $site_text=sql_query ("select * from site_text where text like '%" . escape_check($findtext) . "%'");
+            if ($findtext!="") {$search="text like '%" . escape_check($findtext) . "%'";}
+            if ($findpage!="") {$search="page like '%" . escape_check($findpage) . "%'";}         
+            if ($findname!="") {$search="name like '%" . escape_check($findname) . "%'";}          
+            
+            $site_text=sql_query ("select * from site_text where $search");
             foreach ($site_text as $text)
                 {
                 $row["page"]=$text["page"];
