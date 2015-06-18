@@ -1,8 +1,8 @@
 <?php
-include "../include/db.php";
-include "../include/general.php";
-include "../include/authenticate.php";
-include "../include/research_functions.php";
+include_once "../include/db.php";
+include_once "../include/general.php";
+include_once "../include/authenticate.php";
+include_once "../include/research_functions.php";
 
 $name        = getval('name', '');
 $email       = getval('email', '');

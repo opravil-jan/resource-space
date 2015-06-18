@@ -8,27 +8,33 @@ if($resetvalues!="")
     $rplength=strlen($resetvalues);
     $resetuserref=substr($resetvalues,0,$rplength-15);
     $resetkey=substr($resetvalues,$rplength-15);
-    $resetvaliduser=sql_query("select ref, username, fullname, usergroup, password, password_reset_hash from user where ref='" . escape_check($resetuserref)  . "'",""); 
-
-    $resetuser=$resetvaliduser[0];
-    
-    $keycheck=array();
-    $keycheck[]=substr(hash('sha256', date("Ymd") .  $resetuser["password_reset_hash"] . $resetuser["username"] . $scramble_key),0,15); 
-    $keycheck[]=substr(hash('sha256', date("Ymd", time() + 60 * 60 * 24 ) .  $resetuser["password_reset_hash"] . $resetuser["username"] . $scramble_key),0,15); 
-
-    if(in_array($resetkey, $keycheck))
-	{
-	$userref=$resetuser["ref"];
-	$username=$resetuser["username"];
-	$userfullname=$resetuser["fullname"];
-	$usergroup=$resetuser["usergroup"];
-	$userpassword=$resetuser["password"];
-	$password_reset_mode=true;
-	}
+    $valid_reset_link=false;
+	$resetvaliduser=sql_query("select ref, username, email, fullname, usergroup, password, password_reset_hash, last_active from user where ref='" . escape_check($resetuserref)  . "'",""); 
+	if(count($resetvaliduser)==1)
+		{
+		$resetuser=$resetvaliduser[0];
+  		$keycheck=array();
+		$keycheck[]=substr(hash('sha256', date("Ymd") .  $resetuser["password_reset_hash"] . $resetuser["username"] . $scramble_key),0,15); 
+		$keycheck[]=substr(hash('sha256', date("Ymd", time() + 60 * 60 * 24 ) .  $resetuser["password_reset_hash"] . $resetuser["username"] . $scramble_key),0,15); 
+		if(in_array($resetkey, $keycheck))
+			{$valid_reset_link=true;}
+		}
+	if($valid_reset_link)
+		{		
+		$userref=$resetuser["ref"];
+		$username=$resetuser["username"];
+		$userfullname=$resetuser["fullname"];
+		$email=$resetuser["email"];
+		$usergroup=$resetuser["usergroup"];
+		$userpassword=$resetuser["password"];
+		$last_active=$resetuser["last_active"];
+		$password_reset_mode=true;
+		}
     else
-	{
-	redirect ($baseurl . "/login.php?error=passwordlinkexpired");     
-	}
+		{
+		redirect ($baseurl . "/login.php?error=passwordlinkexpired");     
+		exit();
+		}
     }
 
 
@@ -57,8 +63,16 @@ if (getval("save","")!="")
 		    $message=change_password(getvalescaped("password",""));
     		if ($message===true)
 	    		{
+				if($last_active=="" && $password_reset_mode && $email!="")
+					{
+					// This account has just been created, probably an auto approved account. Send the welcome email
+					email_user_welcome($email,$username,$lang["hidden"],$usergroup);
+					redirect($baseurl_short."pages/done.php?text=password_changed&notloggedin=true");
+					exit();
+					}
 		    	redirect($baseurl_short."pages/" . ($use_theme_as_home?'themes.php':$default_home_page));
-			    }
+			    exit();
+				}
     		else
 	    		{
 		    	$error=true;
@@ -66,6 +80,7 @@ if (getval("save","")!="")
 		    }
 		}
 	}
+	
 include "../include/header.php";
 ?>
 <div class="BasicsBox"> 
@@ -74,7 +89,18 @@ include "../include/header.php";
 	<h1><?php echo $lang["changeyourpassword"]?></h1>
 	<?php } ?> <!-- End hook("replaceuserpreferencesheader") -->
 
-    <p><?php echo text("introtext")?></p>
+    <p><?php 
+	if($password_reset_mode && $last_active=="")
+		{
+		// The user is a new account setting a password for the first time
+		echo text("introtext_new");
+		}
+	else
+		{
+		echo text("introtext");
+		}
+		?>
+	</p>
 
 	<?php if (getval("expired","")!="") { ?><div class="FormError">!! <?php echo $lang["password_expired"]?> !!</div><?php } ?>
 
@@ -95,7 +121,11 @@ include "../include/header.php";
 	else
 	    {?>
 	    <input type="hidden" name="rp" id="resetkey" value="<?php echo htmlspecialchars($resetuserref) . htmlspecialchars($resetkey)  ?>" />    
-	    
+	    <div class="Question">
+	    <label for="username"><?php echo $lang["username"]?></label>
+	    <div class="fixed" ><?php echo $username ?></div>
+	    <div class="clearerleft"> </div>
+	    </div>
 	    <?php
 	    }
 	    ?>

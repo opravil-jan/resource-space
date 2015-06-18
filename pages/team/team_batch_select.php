@@ -2,7 +2,7 @@
 include "../../include/db.php";
 include "../../include/general.php";
 include "../../include/authenticate.php"; if (!checkperm("c")) {exit ("Permission denied.");}
-include "../../include/collections_functions.php";
+include_once "../../include/collections_functions.php";
 
 $use_local = getvalescaped('use_local', '') !== '';
 $resource_type = getvalescaped('resource_type','');

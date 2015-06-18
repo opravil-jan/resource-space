@@ -10,7 +10,7 @@ include "../../include/general.php";
 include "../../include/authenticate.php";
 include "../../include/resource_functions.php";
 include "../../include/search_functions.php";
-include "../../include/collections_functions.php";
+include_once "../../include/collections_functions.php";
 
 $offset=getvalescaped("offset",0);
 $ref=getvalescaped("ref","",true);

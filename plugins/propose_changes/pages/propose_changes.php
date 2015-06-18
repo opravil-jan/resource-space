@@ -92,6 +92,7 @@ if (getval("save","")!="")
 			# Has this field been accepted?
 			if (getval("accept_change_" . $proposefields[$n]["ref"],"")!="")
 				{	
+				debug("propose_changes - accepted proposed change for field " . $proposefields[$n]["title"]);
 				$acceptedchanges[$acceptedchangescount]["field"]=$proposefields[$n]["title"];
 				$acceptedchanges[$acceptedchangescount]["value"]=$proposefields[$n]["value"];
 				$acceptedchangescount++;
@@ -100,7 +101,8 @@ if (getval("save","")!="")
 				}
 			# Has this field been deleted?
 			if (getval("delete_change_" . $proposefields[$n]["ref"],"")!="")
-				{	
+				{					
+				debug("propose_changes - deleted proposed change for field " . $proposefields[$n]["title"]);
 				foreach($proposed_changes as $proposed_change)
 					{
 					if($proposed_change["resource_type_field"]==$proposefields[$n]["ref"])

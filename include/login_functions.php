@@ -165,5 +165,5 @@ function generate_session_hash($password_hash)
 		}	
 		
 	}
-	
-?>
+
+

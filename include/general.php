@@ -1082,12 +1082,8 @@ function email_reset_link($email,$newuser=false)
 	if (count($details)==0) {sleep($password_brute_force_delay);return false;}
 	$details=$details[0];
 	global $applicationname,$email_from,$baseurl,$lang,$email_url_remind_user;
-        $resetuniquecode=make_password();
-    	$password_reset_hash=hash('sha256', date("Ymd") . md5("RS" . $resetuniquecode . $details["username"] . $scramble_key));  
-	sql_query("update user set password_reset_hash='$password_reset_hash' where username='" . escape_check($details["username"]) . "'");
-	
-        $password_reset_url_key=hash('sha256', date("Ymd") . $password_reset_hash . $details["username"] . $scramble_key);        
-        $templatevars['url']=$baseurl . "/?rp=" . $details["ref"] . substr($password_reset_url_key,0,15);
+        $password_reset_url_key=create_password_reset_key($details["username"]);        
+	$templatevars['url']=$baseurl . "/?rp=" . $details["ref"] . $password_reset_url_key;
         
 	if($newuser)
             {
@@ -1131,7 +1127,7 @@ function auto_create_user_account()
 		if (sql_value("select allow_registration_selection value from usergroup where ref='$usergroup'",0)!=1) {exit("Invalid user group selection");}
 		}
 
-	$username=escape_check(make_username(getval("name","")));
+	$newusername=escape_check(make_username(getval("name","")));
 
 	#check if account already exists
 	$check=sql_value("select email value from user where email = '$user_email'","");
@@ -1166,13 +1162,39 @@ function auto_create_user_account()
 		}
 
 	# Create the user
-	sql_query("insert into user (username,password,fullname,email,usergroup,comments,approved) values ('" . $username . "','" . $password . "','" . getvalescaped("name","") . "','" . $email . "','" . $usergroup . "','" . escape_check($customContents) . "'," . (($approve)?1:0) . ")");
+	sql_query("insert into user (username,password,fullname,email,usergroup,comments,approved) values ('" . $newusername . "','" . $password . "','" . getvalescaped("name","") . "','" . $email . "','" . $usergroup . "','" . escape_check($customContents) . "'," . (($approve)?1:0) . ")");
 	$new=sql_insert_id();
     hook("afteruserautocreated", "all",array("new"=>$new));
 	if ($approve)
 		{
-		# Auto approving, send mail direct to user
-		email_user_welcome($email,$username,$password,$usergroup);
+		# Auto approving, we can take user direct to the password reset page to set the new account
+		$password_reset_url_key=create_password_reset_key($newusername);
+                global $anonymous_login;
+		if(isset($anonymous_login))
+			{
+			global $rs_session;
+			$rs_session=get_rs_session_id();
+			if($rs_session==false){break;}
+			# Copy any anonymous session collections to the new user account 
+			if (!function_exists("get_session_collections"))
+				{
+				include_once dirname(__FILE__) . "/../include/collections_functions.php";
+				}
+			global $username, $userref;
+			$username=$anonymous_login;
+			$userref=sql_value("SELECT ref value FROM user where username='$anonymous_login'","");
+			$sessioncollections=get_session_collections($rs_session,$userref,false);
+			if(count($sessioncollections)>0)
+				{
+				foreach($sessioncollections as $sessioncollection)
+					{
+					update_collection_user($sessioncollection,$new);
+					}
+				sql_query("UPDATE user SET current_collection='$sessioncollection' WHERE ref='$new'");
+				}
+			}
+		redirect($baseurl . "?rp=" . $new . $password_reset_url_key);			
+		exit();
 		}
 	else
 		{
@@ -3251,7 +3273,7 @@ function purchase_set_size($collection,$resource,$size,$price)
 	return true;
 	}
 
-function payment_set_complete($collection)
+function payment_set_complete($collection,$emailconfirmation="")
 	{
 	global $applicationname,$baseurl,$userref,$username,$useremail,$userfullname,$email_notify,$lang,$currency_symbol;
 	# Mark items in the collection as paid so they can be downloaded.
@@ -3273,6 +3295,7 @@ function payment_set_complete($collection)
 	send_mail($email_notify,$applicationname . ": " . $lang["purchase_complete_email_admin"],$message,"","","",null,"","",true);
 	
 	#Send email to user
+	$confirmation_address=($emailconfirmation!="")?$emailconfirmation:$useremail;	
 	$userconfirmmessage= $lang["purchase_complete_email_user_body"] . $summary . "<br><br>$baseurl/?c=" . $collection . "<br>";
 	send_mail($useremail,$applicationname . ": " . $lang["purchase_complete_email_user"] ,$userconfirmmessage,"","","",null,"","",true);
 	
@@ -4091,3 +4114,33 @@ function tail($filename, $lines = 10, $buffer = 4096)
 	fclose($f);
 	return $output;
 	}	
+	
+function create_password_reset_key($username)
+    {
+    global $scramble_key;
+    $resetuniquecode=make_password();
+    $password_reset_hash=hash('sha256', date("Ymd") . md5("RS" . $resetuniquecode . $username . $scramble_key));  
+    sql_query("update user set password_reset_hash='$password_reset_hash' where username='" . escape_check($username) . "'");	
+    $password_reset_url_key=substr(hash('sha256', date("Ymd") . $password_reset_hash . $username . $scramble_key),0,15);
+    return $password_reset_url_key;
+    }
+	
+function get_rs_session_id($create=false)
+    {
+    //exit();
+        
+    // Note this is not a PHP session, we are using this is to create an ID so we can distinguish between anonymous users
+    if(isset($_COOKIE["rs_session"]))
+        {
+        return($_COOKIE["rs_session"]);
+        }
+    if ($create) 
+        {
+        // Create a new ID - numeric values only so we can search for it easily
+        $rs_session= rand();
+        global $baseurl;
+        rs_setcookie("rs_session",$rs_session, 7, "", "", substr($baseurl,0,5)=="https", true);
+		return $rs_session;
+        }
+    return false;
+    }

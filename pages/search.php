@@ -12,9 +12,25 @@ $k=getvalescaped("k","");if (($k=="") || (!check_access_key_collection(str_repla
  # Disable info box for external users.
 if ($k!="") {$infobox=false;}
 else {
-       #note current user collection for add/remove links
-       $user=get_user($userref);$usercollection=$user['current_collection'];
-}
+    #note current user collection for add/remove links if we haven't got it set already
+    if(!isset($usercollection))
+		{
+		if((isset($anonymous_login) && ($username==$anonymous_login)) && isset($rs_session) && $anonymous_user_session_collection)
+			{	
+			$sessioncollections=get_session_collections($rs_session,$userref,true); 
+			$usercollection=$sessioncollections[0];
+			$collection_allow_creation=false; // Hide all links that allow creation of new collections						
+			}
+		else
+			{
+			if(isset($user))
+				{
+				$user=get_user($userref);
+				}
+			$usercollection=$user['current_collection'];
+			}
+		}
+	}
 # Disable checkboxes for external users.
 if ($k!="") {$use_checkboxes_for_selection=false;}
 

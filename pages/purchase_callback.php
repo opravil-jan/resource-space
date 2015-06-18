@@ -38,7 +38,8 @@ else
 			echo "Verified.";
 			
 			// Mark these items as bought.
-			payment_set_complete(getvalescaped("custom",""));
+			$emailconfirmation=getvalescaped("emailconfirmation","");
+			payment_set_complete(getvalescaped("custom",""),$emailconfirmation);
 			
 			hook("payment_complete");
 			} 

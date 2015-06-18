@@ -932,6 +932,7 @@ $lang["password_not_min_numeric"]="The password must have at least ? numeric (0-
 $lang["password_not_min_special"]="The password must have at least ? non alpha-numeric characters (!@$%&* etc.)";
 $lang["password_matches_existing"]="The entered password is the same as your existing password";
 $lang["password_expired"]="Your password has expired and you must now enter a new password";
+$lang["done__password_changed"]="Your password has been changed and you may now log in.";
 $lang["max_login_attempts_exceeded"]="You have exceeded the maximum number of login attempts. You must now wait ? minutes before you can attempt to log in again.";
 
 $lang["newlogindetails"]="Please find your new login details below."; # For new password mail
@@ -1390,6 +1391,7 @@ $lang["purchase_complete_email_admin"] = "Notification of purchase";
 $lang["purchase_complete_email_admin_body"] = "The following purchase has been completed.";
 $lang["purchase_complete_email_user"] = "Confirmation of purchase";
 $lang["purchase_complete_email_user_body"] = "Thanks for your purchase. Please use the link below to access your purchased items.";
+$lang["purchase_email_address"] = "Please enter a valid email address if you wish to receive confirmation of your purchase";
 
 
 $lang["subcategories"]="Subcategories";
@@ -2069,6 +2071,7 @@ $lang["upload__introtext"]="";
 $lang["upload_swf__introtext"]="";
 $lang["user_password__introtext"]="Enter your e-mail address and your username and password will be sent to you.";
 $lang["user_preferences__introtext"]="Enter a new password below to change your password.";
+$lang["user_preferences__introtext_new"]="Please enter a password below.";
 $lang["user_request__introtext"]="Please complete the form below to request a user account.";
 $lang["view__storyextract"]="Story extract:";
 $lang["notify_resource_change_email_subject"]="A resource has been modified";

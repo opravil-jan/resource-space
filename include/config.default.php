@@ -727,7 +727,9 @@ $plugins=array();
 /* $anonymous_login = array(
 		"http://example.com" => "guest",
 		"http://test.com" => "guest2"
-		); */ 
+		); */
+
+$anonymous_user_session_collection=true;
 
 # Enable AJAX popup info box on search results.
 $infobox=true;

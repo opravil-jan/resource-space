@@ -133,6 +133,7 @@ if (array_key_exists("user",$_COOKIE) || array_key_exists("user",$_GET) || isset
 			}
 		$username=$anonymous_login;
 		$session_hash="";
+		$rs_session=get_rs_session_id(true);
 		}
 	}
 	if (!$api){ $user_select_sql="and u.session='$session_hash'"; } else { $user_select_sql="and u.username='$username'"; }
@@ -164,30 +165,54 @@ if (array_key_exists("user",$_COOKIE) || array_key_exists("user",$_GET) || isset
         $ip_restrict_group=trim($userdata[0]["ip_restrict_group"]);
         $ip_restrict_user=trim($userdata[0]["ip_restrict_user"]);
         
-        $usercollection=$userdata[0]["current_collection"];
-	// Check collection actually exists
-	$validcollection=sql_value("select ref value from collection where ref='$usercollection'",0);
-	if($validcollection==0)
-        	{
-		// Not a valid collection - switch to user's primary collection if there is one
-		$usercollection=sql_value("select ref value from collection where user='$userref' and name like 'My Collection%' order by created asc limit 1",0);
-		if ($usercollection!=0)
+        if(isset($rs_session))
+		{
+		if (!function_exists("get_user_collections"))
 			{
-			# set this to be the user's current collection
-			sql_query("update user set current_collection='$usercollection' where ref='$userref'");
+			include_once "collections_functions.php";
 			}
-		}	
+		// Get all the collections that relate to this session
+		$sessioncollections=get_session_collections($rs_session,$userref,true); 
+		if($anonymous_user_session_collection)
+			{
+			// Just get the first one if more
+			$usercollection=$sessioncollections[0];
+			$collection_allow_creation=false; // Hide all links that allow creation of new collections
+			}
+		else
+			{
+			// Unlikely scenario, but maybe we do allow anonymous users to change the selected collection for all other anonymous users
+			$usercollection==$userdata[0]["current_collection"];
+			}		
+		}
+	else
+		{	
+		$usercollection=$userdata[0]["current_collection"];
+		// Check collection actually exists
+		$validcollection=sql_value("select ref value from collection where ref='$usercollection'",0);
+		if($validcollection==0)
+			{
+			// Not a valid collection - switch to user's primary collection if there is one
+			$usercollection=sql_value("select ref value from collection where user='$userref' and name like 'My Collection%' order by created asc limit 1",0);
+			if ($usercollection!=0)
+				{
+				# set this to be the user's current collection
+				sql_query("update user set current_collection='$usercollection' where ref='$userref'");
+				}
+			}
 		
-	if ($usercollection==0 || !is_numeric($usercollection))
-        	{
-       		# Create a collection for this user
+		if ($usercollection==0 || !is_numeric($usercollection))
+			{
+			# Create a collection for this user
 			global $lang;
 			include_once "collections_functions.php"; # Make sure collections functions are included before create_collection
 			# The collection name is translated when displayed!
 			$usercollection=create_collection($userref,"My Collection",0,1); # Do not translate this string!
 			# set this to be the user's current collection
 			sql_query("update user set current_collection='$usercollection' where ref='$userref'");
-        	}
+			}
+		}
+	
         
         $usersearchfilter=$userdata[0]["search_filter"];
         $usereditfilter=$userdata[0]["edit_filter"];

@@ -409,11 +409,15 @@ else
 	?>
 	<ul>
 	<?php if (!hook("replaceheaderfullnamelink")){?>
-	<li><?php if ($allow_password_change && !checkperm("p")) { ?>
+	<li><?php if ($allow_password_change && !checkperm("p") && (!isset($password_reset_mode) || !$password_reset_mode)) { ?>
 	<a href="<?php echo $baseurl?>/pages/user_preferences.php"  onClick="return CentralSpaceLoad(this,true);"><?php } ?><?php echo htmlspecialchars(($userfullname=="" ? $username : $userfullname)) ?><?php } /* end replacefullnamelink */?><?php if ($allow_password_change && !checkperm("p")) { ?></a><?php } ?></li>
-	<?php hook("addtoplinks");?>
-	<li><a href="<?php echo $baseurl?>/login.php?logout=true&amp;nc=<?php echo time()?>"><?php echo $lang["logout"]?></a></li>
-	<?php hook("addtologintoolbarmiddle");?>
+	<?php hook("addtoplinks");
+	if(!isset($password_reset_mode) || !$password_reset_mode)
+		{?>
+		<li><a href="<?php echo $baseurl?>/login.php?logout=true&amp;nc=<?php echo time()?>"><?php echo $lang["logout"]?></a></li>
+		<?php
+		}
+	hook("addtologintoolbarmiddle");?>
 	<?php if ($contact_link) { ?><li><a href="<?php echo $baseurl?>/pages/contact.php"  onClick="return CentralSpaceLoad(this,true);"><?php echo $lang["contactus"]?></a></li><?php } ?>
 	</ul>
 	<?php

@@ -8,6 +8,7 @@ function get_user_collections($user,$find="",$order_by="name",$sort="ASC",$fetch
 	# Returns a list of user collections.
 	$sql="";
 	$keysql="";
+	$extrasql="";
 	if ($find=="!shared")
 		{
 		# only return shared collections
@@ -44,12 +45,20 @@ function get_user_collections($user,$find="",$order_by="name",$sort="ASC",$fetch
 		if ($sql==""){$sql=" where ";} else {$sql.=" and ";}	
    		$sql.=" (length(c.theme)=0 or c.theme is null) ";
    		}
+	global $anonymous_login,$username,$anonymous_user_session_collection;
+ 	if (isset($anonymous_login) && ($username==$anonymous_login) && $anonymous_user_session_collection)
+   		{
+		// Anonymous user - only get the user's own collections that are for this session - although we can still join to get collections that have been specifically shared with the anonymous user 
+		if ($sql==""){$extrasql=" where ";} else {$extrasql.=" and ";}		
+		$rs_session=get_rs_session_id(true);			
+   		$extrasql.=" (c.session_id='" . $rs_session . "')";
+   		}
 
    
 	$order_sort="";
 	if ($order_by!="name"){$order_sort=" order by $order_by $sort";}
    
-	$return="select * from (select c.*,u.username,u.fullname,count(r.resource) count from user u join collection c on u.ref=c.user and c.user='$user' left outer join collection_resource r on c.ref=r.collection $sql group by c.ref
+	$return="select * from (select c.*,u.username,u.fullname,count(r.resource) count from user u join collection c on u.ref=c.user and c.user='$user' left outer join collection_resource r on c.ref=r.collection $sql $extrasql group by c.ref
 	union
 	select c.*,u.username,u.fullname,count(r.resource) count from user_collection uc join collection c on uc.collection=c.ref and uc.user='$user' and c.user<>'$user' left outer join collection_resource r on c.ref=r.collection left join user u on c.user=u.ref $sql group by c.ref) clist $keysql group by ref $order_sort";
 
@@ -204,12 +213,37 @@ function collection_writeable($collection)
 			return false; // so "you cannot modify this collection"
 			}
 	}
-	return $userref==$collectiondata["user"] || $collectiondata["allow_changes"]==1 || checkperm("h");
+	
+	# Load a list of attached users
+	$attached=sql_array("select user value from user_collection where collection='$collection'");
+	
+	// Can edit if 
+	// - The user owns the collection (if we are anonymous user and are using session collections then this must also have the same session id )
+	// - Collection changes are allowed and :-
+	//    a) User is attached to the collection or
+	//    b) Collection is public or a theme
+    // 
+    // Removed the 'h' permission check - this is not relevant here
+	
+	
+	global $usercollection,$username,$anonymous_login,$anonymous_user_session_collection, $rs_session;
+	debug("collection session : " . $collectiondata["session_id"]);
+	debug("collection user : " . $collectiondata["user"]);
+	debug("anonymous_login : " . $anonymous_login);
+	debug("userref : " . $userref);
+	debug("username : " . $username);
+	debug("anonymous_user_session_collection : " . (($anonymous_user_session_collection)?"TRUE":"FALSE"));
+		
+	$writable=($userref==$collectiondata["user"] && (!isset($anonymous_login) || $username!=$anonymous_login || !$anonymous_user_session_collection || $collectiondata["session_id"]==$rs_session))
+		|| 
+		($collectiondata["allow_changes"]==1  && (in_array($userref,$attached) || $collectiondata["public"]==1));
+	return $writable;
+	
 	}
 	
 function collection_readable($collection)
 	{
-		global $ignore_collection_access, $collection_commenting;
+	global $ignore_collection_access, $collection_commenting;
 	# Returns true if the current user has read access to the given collection.
 
 	# Fetch collection details.
@@ -238,21 +272,33 @@ function collection_readable($collection)
 	
 function set_user_collection($user,$collection)
 	{
-	global $usercollection;
-	sql_query("update user set current_collection='$collection' where ref='$user'");
+	global $usercollection,$username,$anonymous_login,$anonymous_user_session_collection;
+	if(!(isset($anonymous_login) && $username==$anonymous_login) || !$anonymous_user_session_collection)
+		{		
+		sql_query("update user set current_collection='$collection' where ref='$user'");
+		}
 	$usercollection=$collection;
 	}
 	
 if (!function_exists("create_collection")){	
 function create_collection($userid,$name,$allowchanges=0,$cant_delete=0)
 	{
+	global $username,$anonymous_login,$rs_session, $anonymous_user_session_collection;
+	if($username==$anonymous_login && $anonymous_user_session_collection)
+		{		
+		// We need to set a collection session_id for the anonymous user. Get session ID to create collection with this set
+		$rs_session=get_rs_session_id(true);
+		}
+	else
+		{	
+		$rs_session="";
+		}
+		
 	# Creates a new collection and returns the reference
-	sql_query("insert into collection (name,user,created,allow_changes,cant_delete) values ('" . escape_check($name) . "','$userid',now(),'$allowchanges','$cant_delete')");
+	sql_query("insert into collection (name,user,created,allow_changes,cant_delete,session_id) values ('" . escape_check($name) . "','$userid',now(),'$allowchanges','$cant_delete'," . (($rs_session=="")?"NULL":"'" . $rs_session . "'") . ")");
 	$ref=sql_insert_id();
 
-	index_collection($ref);
-	
-	
+	index_collection($ref);	
 	return $ref;
 	}	
 }
@@ -439,6 +485,11 @@ function do_collections_search($search,$restypes,$archive=0)
 function add_collection($user,$collection)
 	{
 	# Add a collection to a user's 'My Collections'
+	
+	// Don't add if we are anonymous - we can only have one collection
+	global $anonymous_login,$username,$anonymous_user_session_collection;
+ 	if (isset($anonymous_login) && ($username==$anonymous_login) && $anonymous_user_session_collection)
+		{return false;}
 	
 	# Remove any existing collection first
 	remove_collection($user,$collection);
@@ -1862,6 +1913,29 @@ function show_hide_collection($colref, $show=true, $user="")
 	sql_query("update user set hidden_collections ='" . implode(",",$hidden_collections) . "' where ref='$user'");
 	}
 	
+function get_session_collections($rs_session,$userref="",$create=false)
+	{
+	$extrasql="";
+	if($userref!="")
+		{
+		$extrasql="and user='" . $userref ."'";	
+		}
+	$collectionrefs=sql_array("select ref value from collection where session_id='" . $rs_session . "' " . $extrasql,"");
+	if(count($collectionrefs)<1 && $create)
+		{
+		$collectionrefs[0]=create_collection($userref,"My Collection",0,1); # Do not translate this string!	
+		}		
+	return $collectionrefs;	
+	}
+
+function update_collection_user($collection,$newuser)
+	{	
+	if (!collection_writeable($collection))
+		{debug("FAILED TO CHANGE COLLECTION USER " . $collection);return false;}
+		
+	sql_query("UPDATE collection SET user='$newuser' WHERE ref='$collection'");  
+	return true;	
+	}
 	
 
 	
