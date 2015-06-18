@@ -117,7 +117,7 @@ function HookPosixldapauthAllExternalauth($uname, $pword)
 					if ($ldap_debug) { error_log( __FILE__ . " " . __METHOD__ . " " . __LINE__ . "  User has allready been added to RS, updating password") ; }
 					// if we get here, the user has already been added to RS.
 					$username=$uname.$ldapauth['usersuffix'];
-					$password_hash= md5("RS".$username.$password);
+					$password_hash = hash('sha256', md5('RS' . $username . $password));
 					sql_query('update user set password="'.$password_hash.'" where username="'.$username.'"');
 					//          $password=sql_value('select password value from user where username="'.$uname.$ldapauth['usersuffix'].'"',"");
 					return true;
@@ -138,7 +138,7 @@ function HookPosixldapauthAllExternalauth($uname, $pword)
 					} else {
 						$nuser['email']="$uname@mail";
 					}
-					$nuser['password']=md5("RS". $nuser['username'].$password);
+					$nuser['password'] = hash('sha256', md5('RS' . $nuser['username'] . $password));
 					
 					// Set a var so that we can keep track of the group level as we scan the access groups.
 					$currentGroupLevel = 0;
