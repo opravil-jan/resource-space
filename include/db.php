@@ -35,28 +35,56 @@ if (!isset($suppress_headers) || !$suppress_headers)
 
 # Error handling
 function errorhandler($errno, $errstr, $errfile, $errline)
-	{
-	global $baseurl,$pagename, $show_report_bug_link,$email_errors;
-	if (!error_reporting()) {return true;}
-	?>
-	</select></table></table></table>
-	<div style="box-shadow: 3px 3px 20px #666;font-family:ubuntu,arial,helvetica,sans-serif;position:absolute;top:150px;left:150px; background-color:white;width:450px;padding:20px;font-size:15px;color:#fff;border-radius:5px;">
-	<div style="font-size:30px;background-color:red;border-radius:50%;min-width:35px;float:left;text-align:center;font-weight:bold;">!</div>
-	<span style="font-size:30px;color:black;padding:14px;">Sorry, an error has occurred</span>
-	<p style="font-size:14px;color:black;margin-top:20px;">Please <a href="#" onClick="history.go(-1)">go back</a> and try something else.</p>
-	<?php global $show_error_messages; if ($show_error_messages) { ?>
-	<p style="font-size:14px;color:black;">You can <a href="<?php echo $baseurl?>/pages/check.php">check</a> your installation configuration.</p>
-	<hr style="margin-top:20px;"><p style="font-size:11px;color:black;"><?php echo htmlspecialchars("$errfile line $errline: $errstr"); ?></p>
-	<?php } ?>
-	</div>
-	<?php
-	if ($email_errors){
-		global $email_notify,$email_from,$email_errors_address,$applicationname;
-		if ($email_errors_address==""){$email_errors_address=$email_notify;}
-		send_mail($email_errors_address,$applicationname." Error",$errfile." line ".$errline.": ".$errstr,$email_from,$email_from,"",null,"Error Reporting",false);
-		}
-	exit();
-	}
+    {
+    global $baseurl, $pagename, $show_report_bug_link, $email_errors, $show_error_messages;
+    if (!error_reporting()) 
+        {
+        return true;
+        }
+
+    $error_note = "Sorry, an error has occurred. ";
+    $error_info  = "$errfile line $errline: $errstr";
+
+    if (substr(PHP_SAPI, 0, 3) == 'cli')
+        {
+        echo $error_note;
+        if ($show_error_messages) 
+            {
+            echo $error_info;
+            }
+        echo PHP_EOL;
+        }
+    else
+        {
+        ?>
+        </select></table></table></table>
+        <div style="box-shadow: 3px 3px 20px #666;font-family:ubuntu,arial,helvetica,sans-serif;position:absolute;top:150px;left:150px; background-color:white;width:450px;padding:20px;font-size:15px;color:#fff;border-radius:5px;">
+            <div style="font-size:30px;background-color:red;border-radius:50%;min-width:35px;float:left;text-align:center;font-weight:bold;">!</div>
+            <span style="font-size:30px;color:black;padding:14px;"><?php echo $error_note; ?></span>
+            <p style="font-size:14px;color:black;margin-top:20px;">Please <a href="#" onClick="history.go(-1)">go back</a> and try something else.</p>
+            <?php 
+            if ($show_error_messages) 
+                { ?>
+                <p style="font-size:14px;color:black;">You can <a href="<?php echo $baseurl?>/pages/check.php">check</a> your installation configuration.</p>
+                <hr style="margin-top:20px;">
+                <p style="font-size:11px;color:black;"><?php echo htmlspecialchars($error_info); ?></p>
+                <?php 
+                } ?>
+        </div>
+        <?php
+        }
+    if ($email_errors)
+        {
+        global $email_notify, $email_from, $email_errors_address, $applicationname;
+        if ($email_errors_address == "") 
+            { 
+            $email_errors_address = $email_notify; 
+            }
+        send_mail($email_errors_address, "$applicationname Error", $error_info, $email_from, $email_from, "", null, "Error Reporting");
+        }
+    hook('after_error_handler', '', array($errno, $errstr, $errfile, $errline));
+    exit();
+    }
 
 error_reporting(E_ALL);
 set_error_handler("errorhandler");
