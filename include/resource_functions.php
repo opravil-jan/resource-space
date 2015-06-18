@@ -947,9 +947,18 @@ function update_field($resource,$field,$value)
 		
 	# If this is a 'joined' field we need to add it to the resource column
 	$joins=get_resource_table_joins();
-	if (in_array($field,$joins)){
+	if(in_array($field,$joins))
+		{
 		global $resource_field_column_limit;
-		sql_query("update resource set field".$field."=" . trim($value,$resource_field_column_limit) . " where ref='$resource'");
+
+		$truncated_value = substr($value, 0, $resource_field_column_limit);
+		
+		if(substr($truncated_value, -1) !== '\'')
+			{
+			$truncated_value .= '\'';
+			}
+		
+		sql_query("update resource set field".$field."=" . $truncated_value . " where ref='$resource'");
 		}			
 	
         # Add any onchange code
