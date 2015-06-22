@@ -275,7 +275,9 @@ li.plupload_droptext {color:#999;}
 .HomePanelDynamicDash.TileContentShadow .help-icon {background: url("../gfx/dash/help.png") no-repeat;}
 .HomePanelDynamicDash.TileContentShadow .clock-icon {background: url("../gfx/dash/clock.png") no-repeat;}
 .HomePanel h2.title {background: transparent;color:#fff;}
+.HomePanel .HomePanelDynamicDash h2{background:transparent;}
 .HomePanelDynamicDash p.tile_corner_box {background: rgba(19, 19, 19, 0.67);border-top-left-radius: 5px;color:#fff;}
+
 /* Delete Dialog */
 .delete-dialog .ui-dialog-titlebar {
 	background-color: #d7d7d7;
