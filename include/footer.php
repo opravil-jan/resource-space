@@ -22,6 +22,7 @@ if (getval("ajax","")=="" && !hook("replace_footer"))
 </div>
 <div id="trash_bin_delete_dialog" style="display: none;"></div>
 
+<div class="clearerleft"></div>
 </div><!--End div-CentralSpace-->
 <?php if (($pagename!="login") && ($pagename!="user_password") && ($pagename!="preview_all") && ($pagename!="user_request")) { ?></div><?php } ?><!--End div-CentralSpaceContainer-->
 
