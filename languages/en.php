@@ -1796,6 +1796,8 @@ $lang["downloadingmetadata"]="Downloading Metadata";
 $lang["file-contains-metadata"]="The file you are now downloading contains all of the Metadata for this resource.";
 $lang["metadata"]="Metadata";
 $lang["textfile"]="Text File";
+$lang['pdffile'] = 'PDF File';
+$lang['metadata-pdf-title'] = 'Metadata download for resource';
 
 # Comments field titles, prompts and default placeholders
 $lang['comments_box-title']="Comments";

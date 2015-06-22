@@ -2462,6 +2462,11 @@ $default_advanced_search_mode="Global";
 #Option to turn on metadata download in view.php.
 $metadata_download=false;
 
+# Custom logo to use when downloading metadata in PDF format
+$metadata_download_header_title = 'ResourceSpace';
+#$metadata_download_pdf_logo     = '/path/to/logo/location/logo.png';
+$metadata_download_footer_text  = '';
+
 # settings for commenting on resources - currently not enabled by default
 
 # $comments_collection_enable=false; 			# reserved for future use
