@@ -200,7 +200,7 @@ div.autocomplete ul li {color: #000;}
 .ListviewBoxedTitleStyle td {background-color:#fff;}
 .NewFlag {background-color:#737373;color:#fff;}
 /* Mouseover effect on list views */
-.ListviewStyle tr:hover td {background-color: #ddd;} 
+.ListviewStyle tr:hover td {background-color: #EEE;} 
 .ListviewStyle tr.ListviewTitleStyle:hover td {background:none;background-color:#F3F3F3;} 
 .ListviewStyle tr.ListviewBoxedTitleStyle:hover td {background:none;background-color:#fff;} 
 /* single file upload progress bar */
