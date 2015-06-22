@@ -13,7 +13,9 @@ include "../include/search_functions.php";
 include "../include/dash_functions.php";
 
 if(checkperm("dtu") && !((checkperm("h") && !checkperm("hdta")) || (checkperm("dta") && !checkperm("h")))){exit($lang["error-permissiondenied"]);}
-global $baseurl,$baseurl_short,$userref;
+global $baseurl,$baseurl_short,$userref,$managed_home_dash;
+
+if($managed_home_dash && !(checkperm("h") && !checkperm("hdta")) || (checkperm("dta") && !checkperm("h"))){exit($lang["error-permissiondenied"]);}
 $error=false;
 
 /* 

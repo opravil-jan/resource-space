@@ -1070,9 +1070,13 @@ $url=$baseurl_short."pages/search.php?search=" . urlencode($search) . "&amp;orde
 		if (!checkperm("b") && $k=="") 
 			{
 			if($allow_save_search) { ?><div class="InpageNavLeftBlock"><a onClick="return CollectionDivLoad(this);" href="<?php echo $baseurl_short?>pages/collections.php?addsearch=<?php echo urlencode($search)?>&amp;restypes=<?php echo urlencode($restypes)?>&amp;archive=<?php echo urlencode($archive) ?>&amp;daylimit=<?php echo urlencode($daylimit) ?>">&gt;&nbsp;<?php echo $lang["savethissearchtocollection"]?></a></div><?php }
-			if($home_dash
-				&& !(isset($anonymous_login) && $anonymous_login==$username)
-				&& (!checkperm("dtu") || (checkperm("h") && !checkperm("hdta")) || (checkperm("dta") && !checkperm("h")))) 
+			#Home_dash is on, And not Anonymous use, And (Dash tile user (Not with a managed dash) || Dash Tile Admin)
+			if($home_dash && 
+					!(isset($anonymous_login) && $anonymous_login==$username) 
+					&&  ((!checkperm("dtu") && !$managed_home_dash)
+							|| (checkperm("h") && !checkperm("hdta")) || (checkperm("dta") && !checkperm("h"))
+						)
+				) 
 				{?> 
 				<div class="InpageNavLeftBlock">
 					<a onClick="return CentralSpaceLoad(this);" href="<?php echo $baseurl_short;?>pages/dash_tile.php?create=true&tltype=srch&freetext=true&link=<?php echo $url;?>" onClick="jQuery('this').href='<?php echo $baseurl_short;?>pages/dash_tile.php?create=true&tltype=srch&link='+window.location.href;">&gt;&nbsp;<?php echo $lang["savethissearchtodash"];?></a></div><?php }

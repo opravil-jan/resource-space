@@ -277,7 +277,13 @@ include "../include/header.php";
 			}
 		}
 	global $home_dash,$anonymous_login,$username;
-	if($home_dash && !(isset($anonymous_login) && $anonymous_login==$username) && (!checkperm("dtu") || (checkperm("h") && !checkperm("hdta")) || (checkperm("dta") && !checkperm("h")))) 
+	#Home_dash is on, And not Anonymous use, And (Dash tile user (Not with a managed dash) || Dash Tile Admin)
+	if($home_dash && 
+			!(isset($anonymous_login) && $anonymous_login==$username) 
+			&&  ((!checkperm("dtu") && !$managed_home_dash)
+					|| (checkperm("h") && !checkperm("hdta")) || (checkperm("dta") && !checkperm("h"))
+				)
+		) 
 		{?>
 		<div class="Question">
 			<label><?php echo $lang["theme_home_promote"]?></label>

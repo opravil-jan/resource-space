@@ -270,6 +270,9 @@ $tile_styles["srch"]=array("thmbs","multi");
 $anonymous_default_dash=true;
 # use shadows on tile content (Suitable for transparent tiles)
 $dash_tile_shadows=false;
+# All user permissions for the dash are revoked and the dash admin can manage a single dash for all users. 
+# Only those with admin privileges can modify the dash and this must be done from the Team Centre > Manage all user dash tiles (One dash for all)
+$managed_home_dash = false;
 
 
 # Optional 'quota size' for allocation of a set amount of disk space to this application. Value is in GB.

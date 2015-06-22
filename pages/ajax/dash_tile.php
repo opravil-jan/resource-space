@@ -65,7 +65,8 @@ if(!empty($index) && isset($tile) && !isset($usertile))
 $delete=getvalescaped("delete",false);
 if($delete && isset($usertile))
 	{
-	if(checkperm("dtu") && !((checkperm("h") && !checkperm("hdta")) || (checkperm("dta") && !checkperm("h")))){exit($lang["error-permissiondenied"]);}
+	if((checkperm("dtu") && !((checkperm("h") && !checkperm("hdta")) || (checkperm("dta") && !checkperm("h"))))){exit($lang["error-permissiondenied"]);}
+	if($managed_home_dash){exit($lang["error-permissiondenied"]);}
 	delete_user_dash_tile($usertile["ref"],$userref);
 	reorder_user_dash($userref);
 	echo "Deleted ".$usertile['ref'];

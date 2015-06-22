@@ -217,8 +217,14 @@ function DisplayTheme($themes=array())
                 <?php if ($contact_sheet==true) { ?>
                 &nbsp;<a href="<?php echo $baseurl_short?>pages/contactsheet_settings.php?ref=<?php echo $getthemes[$m]["ref"]?>"  title="<?php echo $lang["collectioncontacthover"]?>" onClick="return CentralSpaceLoad(this,true);">&gt;&nbsp;<?php echo $lang["contactsheet"]?></a>
                 <?php }
-                global $home_dash,$anonymous_login,$username;
-                if($home_dash && !(isset($anonymous_login) && $anonymous_login==$username) && (!checkperm("dtu") || (checkperm("h") && !checkperm("hdta")) || (checkperm("dta") && !checkperm("h")))) {?>
+                global $home_dash,$anonymous_login,$username,$managed_home_dash;
+                #Home_dash is on, And not Anonymous use, And (Dash tile user (Not with a managed dash) || Dash Tile Admin)
+				if($home_dash && 
+						!(isset($anonymous_login) && $anonymous_login==$username) 
+						&&  ((!checkperm("dtu") && !$managed_home_dash)
+								|| (checkperm("h") && !checkperm("hdta")) || (checkperm("dta") && !checkperm("h"))
+							)
+					) { ?>
                 &nbsp;<a href="<?php echo $baseurl_short;?>pages/dash_tile.php?create=true&tltype=srch&promoted_resource=true&freetext=true&all_users=1&link=/pages/search.php?search=!collection<?php echo urlencode($getthemes[$m]["ref"])?>&order_by=relevance&sort=DESC"  onClick="return CentralSpaceLoad(this,true);">&gt;&nbsp;<?php echo $lang["dashtile"]?></a>
                 <?php } ?>
 

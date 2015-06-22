@@ -584,13 +584,17 @@ if (checkperm("s"))
 				}
 			}
 		} # end hook homefeaturedcol
-	if($home_dash && !(isset($anonymous_login) && $anonymous_login==$username))
+	if($home_dash && !(isset($anonymous_login) && $anonymous_login==$username) && !$managed_home_dash)
 		{
 		get_user_dash($userref);	
 		}
-	else if($home_dash && $anonymous_default_dash)
+	else if($home_dash && $anonymous_default_dash && !$managed_home_dash)
 		{
 		get_default_dash();
+		}
+	else if($home_dash && $managed_home_dash)
+		{
+		get_managed_dash();
 		}
 	?>
 	<div style="clear:both;"></div>

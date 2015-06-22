@@ -197,6 +197,39 @@ function existing_tile($title,$all_users,$url,$link,$reload_interval,$resource_c
 		}
 	}
 
+function get_managed_dash()
+	{
+	global $baseurl,$baseurl_short,$lang,$anonymous_login,$username,$dash_tile_shadows;
+	#Build Tile Templates
+	$tiles = sql_query("SELECT dash_tile.ref AS 'tile',dash_tile.title,dash_tile.url,dash_tile.reload_interval_secs,dash_tile.link,dash_tile.default_order_by as 'order_by' FROM dash_tile WHERE dash_tile.all_users=1 AND (dash_tile.allow_delete=1 OR (dash_tile.allow_delete=0 AND dash_tile.ref IN (SELECT DISTINCT user_dash_tile.dash_tile FROM user_dash_tile))) ORDER BY default_order_by");
+	if(count($tiles)==0){echo $lang["nodashtilefound"];exit;}
+	foreach($tiles as $tile)
+		{
+		?>
+		<a href="<?php echo $baseurl."/".htmlspecialchars($tile["link"]);?>" onClick="if(dragging){dragging=false;e.defaultPrevented;}" class="HomePanel DashTile DashTileDraggable" id="tile<?php echo htmlspecialchars($tile["tile"]);?>">
+			<div id="contents_tile<?php echo htmlspecialchars($tile["tile"]);?>" class="HomePanelIN HomePanelDynamicDash <?php echo ($dash_tile_shadows)? "TileContentShadow":"";?>">
+				<?php if (strpos($tile["url"],"dash_tile.php")!==false) 
+					{
+                    # Only pre-render the title if using a "standard" tile and therefore we know the H2 will be in the target data.
+                    ?>
+                    <h2 class="title"><?php echo htmlspecialchars($tile["title"]);?></h2>
+                    <?php 
+                	} ?>
+				<p>Loading...</p>
+				<script>
+					height = jQuery("#contents_tile<?php echo htmlspecialchars($tile["tile"]);?>").height();
+					width = jQuery("#contents_tile<?php echo htmlspecialchars($tile["tile"]);?>").width();
+					jQuery("#contents_tile<?php echo htmlspecialchars($tile["tile"]);?>").load("<?php echo $baseurl."/".$tile["url"]."&tile=".htmlspecialchars($tile["tile"]);?>&tlwidth="+width+"&tlheight="+height);
+				</script>
+			</div>
+		</a>
+		<?php
+		} 
+	?>
+	<div class="clearerleft"></div>
+	<?php
+	}
+
 
 /*
  * User Group managements
@@ -208,7 +241,7 @@ function add_usergroup_dash_tile($usergroup)
 	}
 function get_usergroup_dash($usergroup)
 	{
-	
+
 	}
 
 /*
