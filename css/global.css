@@ -137,7 +137,7 @@ input.defaultbutton {position: absolute; left: -100%; width: 0; height: 0;}
 .CollectBack a:hover, .CollectBack a:active {text-decoration:underline;}
 
 .CollectBack form {padding:0; margin:0;}
-.CollectBack .SearchWidth {width: 150px;font-size: 0.9em;margin: 0px 0px;padding: 0px;}
+.CollectBack .SearchWidth {width: 190px;font-size: 0.9em;margin: 0px 0px;padding: 0px;}
 .CollectBack .SearchWidthExp {width: 200px;font-size: 0.9em;margin: 0px 0px;padding: 0px;}
 .CollectBack .SearchItem {margin: 0 0 10px;padding: 0;}
 .CollectBack .MinSearchItem {margin: 0;padding: 0;}
