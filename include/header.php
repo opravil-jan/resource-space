@@ -12,12 +12,12 @@ if((isset($userfixedtheme) && $userfixedtheme!="") || (isset($defaulttheme) && $
     $ctheme =  (isset($userfixedtheme) && $userfixedtheme!="") ? $userfixedtheme : $defaulttheme;
     switch($ctheme)
         {
-        case "multi": array_push($plugins,"col-multi");$slimheader_darken=true;break;
-        case "whitegry": array_push($plugins,"col-whitegry");$slimheader_darken=true;break;
-        case "black": array_push($plugins,"col-black");break;
-        case "blue": array_push($plugins,"col-blue");break;
+        case "multi": if(!in_array ("col-multi",$plugins)){array_push($plugins,"col-multi");$slimheader_darken=true;}break;
+        case "whitegry": if(!in_array("col-whitegry",$plugins)){array_push($plugins,"col-whitegry");$slimheader_darken=true;}break;
+        case "black": if(!in_array("col-black",$plugins)){array_push($plugins,"col-black");}break;
+        case "greyblu": if(!in_array("col-blue",$plugins)){array_push($plugins,"col-blue");}break;
         case "charcoal":
-        case "slimcharcoal": array_push($plugins,"col-charcoal");break;
+        case "slimcharcoal": if(!in_array ("col-slimcharcoal",$plugins)){array_push($plugins,"col-charcoal");}break;
         }
     }
 # End Legacy Support
