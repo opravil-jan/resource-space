@@ -4,6 +4,14 @@
  * Functions for the homepage dash tiles
  * 
  */
+
+/*
+ * Create a dash tile template
+ * @$all_users, 
+ *	If passed true will push the tile out to all users in your installation
+ *  If passed false you must give this tile to a user with sql_insert_id() to have it used
+ * 
+ */
 function create_dash_tile($url,$link,$title,$reload_interval,$all_users,$default_order_by,$resource_count,$text="",$delete=1)
 	{
 	
@@ -46,6 +54,11 @@ function create_dash_tile($url,$link,$title,$reload_interval,$all_users,$default
 	return $tile;
 	}
 
+/*
+ * Delete a dash tile
+ * @$tile, the dash_tile.ref number of the tile to be deleted
+ * @$cascade, whether this delete should remove the tile from all users.
+ */
 function delete_dash_tile($tile,$cascade=TRUE)
 	{
 	sql_query("DELETE FROM dash_tile WHERE ref='".$tile."' AND allow_delete=1");
@@ -54,11 +67,21 @@ function delete_dash_tile($tile,$cascade=TRUE)
 		sql_query("DELETE FROM user_dash_tile WHERE dash_tile='".$tile."'");
 		}
 	}
+
+/*
+ * Returns the position to append a tile to the default dash order
+ */
 function append_default_position()
 	{
 	$last_tile=sql_query("SELECT default_order_by from dash_tile order by default_order_by DESC LIMIT 1");
 	return isset($last_tile[0]["default_order_by"])?$last_tile[0]["default_order_by"]+10:10;
 	}
+
+/*
+ * Reorders the default dash,
+ * this is useful when you have just inserted a new tile or moved a tile and need to reorder them with the proper 10 gaps 
+ * Tiles should be ordered with values 10,20,30,40,50,60,70 for easy insertion
+ */
 function reorder_default_dash()
 	{
 	$tiles = sql_query("SELECT ref FROM dash_tile WHERE all_users=1 ORDER BY default_order_by");
@@ -69,15 +92,46 @@ function reorder_default_dash()
 		$order_by-=10;
 		}
 	}
+/*
+ * Simple updates a particular dash_tile with the new order_by.
+ * this does NOT apply to a users dash, that must done with the user_dash functions.
+ */
 function update_default_dash_tile_order($tile,$order_by)
 	{
 	return sql_query("UPDATE dash_tile SET default_order_by='".$order_by."' WHERE ref='".$tile."'");
 	}
+/*
+ * Gets the full content from a tile record row
+ *
+ */
 function get_tile($tile)
  	{
  	$result=sql_query("SELECT * FROM dash_tile WHERE ref='".$tile."'");
  	return isset($result[0])?$result[0]:false;
  	}
+
+/*
+ * Checks if a tile already exists.
+ * This is based upon  a complete set of values so unless all values match exactly it will return false.
+ *
+ */
+function existing_tile($title,$all_users,$url,$link,$reload_interval,$resource_count,$text="")
+	{
+	$sql = "SELECT ref FROM dash_tile WHERE url='".$url."' AND link='".$link."' AND title='".escape_check($title)."' AND reload_interval_secs=".$reload_interval." AND all_users=".$all_users." AND resource_count=".$resource_count." AND txt='".escape_check($text)."'";
+	$existing = sql_query($sql);
+	if(isset($existing[0]["ref"]))
+		{
+		return true;
+		}
+	else
+		{
+		return false;
+		}
+	}
+/*
+ * Retrieves the default dash which only display all_user tiles.
+ * This should only be accessible to thos with Dash Tile Admin permissions
+ */
 function get_default_dash()
 	{
 	global $baseurl,$baseurl_short,$lang,$anonymous_login,$username,$dash_tile_shadows;
@@ -87,11 +141,8 @@ function get_default_dash()
 	if(count($tiles)==0){echo $lang["nodashtilefound"];exit;}
 	foreach($tiles as $tile)
 		{
-		if(!(isset($anonymous_login) && $anonymous_login==$username))
-			{
-			if($order != $tile["order_by"] || ($tile["order_by"] % 10) > 0){update_default_dash_tile_order($tile["tile"],$order);}
-			$order+=10;
-			}
+		if($order != $tile["order_by"] || ($tile["order_by"] % 10) > 0){update_default_dash_tile_order($tile["tile"],$order);}
+		$order+=10;
 		?>
 		<a href="<?php echo $baseurl."/".htmlspecialchars($tile["link"]);?>" onClick="if(dragging){dragging=false;e.defaultPrevented;}" class="HomePanel DashTile DashTileDraggable" id="tile<?php echo htmlspecialchars($tile["tile"]);?>">
 			<div id="contents_tile<?php echo htmlspecialchars($tile["tile"]);?>" class="HomePanelIN HomePanelDynamicDash <?php echo ($dash_tile_shadows)? "TileContentShadow":"";?>">
@@ -111,9 +162,7 @@ function get_default_dash()
 		</a>
 		<?php
 		}
-
-	if(!(isset($anonymous_login) && $anonymous_login==$username))
-		{ ?>
+		?>
 		<div id="dash_tile_bin"><span class="dash_tile_bin_text"><?php echo $lang["tilebin"];?></span></div>
 		<div id="delete_dialog" style="display:none;"></div>
 	
@@ -172,31 +221,13 @@ function get_default_dash()
 			    	});
 			  	});
 		</script>
-		<?php
-		} ?>
-	<style>
-	.HomePanelDynamicDash h2, .HomePanelThemes h2 {
-		background:none !important;
-	}
-	</style>
 	<div class="clearerleft"></div>
 	<?php
 	}
-
-function existing_tile($title,$all_users,$url,$link,$reload_interval,$resource_count,$text="")
-	{
-	$sql = "SELECT ref FROM dash_tile WHERE url='".$url."' AND link='".$link."' AND title='".escape_check($title)."' AND reload_interval_secs=".$reload_interval." AND all_users=".$all_users." AND resource_count=".$resource_count." AND txt='".escape_check($text)."'";
-	$existing = sql_query($sql);
-	if(isset($existing[0]["ref"]))
-		{
-		return true;
-		}
-	else
-		{
-		return false;
-		}
-	}
-
+/*
+ * Shows only tiles that are marked for all_users (and displayed on a user dash if they are a legacy tile).
+ * No controls to modify or reorder (See $managed_home_dash config option)
+ */
 function get_managed_dash()
 	{
 	global $baseurl,$baseurl_short,$lang,$anonymous_login,$username,$dash_tile_shadows;
@@ -232,7 +263,7 @@ function get_managed_dash()
 
 
 /*
- * User Group managements
+ * User Group dash functions
  *
  */
 function add_usergroup_dash_tile($usergroup)
@@ -246,6 +277,12 @@ function get_usergroup_dash($usergroup)
 
 /*
  * User Dash Functions 
+ */
+
+/*
+ * Add a tile to a users dash
+ * Affects the user_dash_tile table, tile must be the ref of a record from dash_tile
+ *
  */
 function add_user_dash_tile($user,$tile,$order_by)
 	{
@@ -268,11 +305,23 @@ function add_user_dash_tile($user,$tile,$order_by)
 	if($reorder){reorder_user_dash($user);}
 	return true;
 	}
+
+/*
+ * Get user_dash_tile record, 
+ * this a place holder which links a dash_tile template with the user and the order that that tile should appear on THIS users dash
+ *
+ */
  function get_user_tile($tile,$user)
  	{
  	$result=sql_query("SELECT * FROM user_dash_tile WHERE ref='".$tile."' AND user=".$user);
  	return isset($result[0])?$result[0]:false;
  	}
+
+ /*
+  * Builds a users dash, this is a quick way of adding all_user tiles back to a users dash. 
+  * The Add_user_dash_tile function used checks for an existing match so that it won't duplicate tiles on a users dash
+  * 
+  */
  function create_new_user_dash($user)
  	{
  	$tiles = sql_query("SELECT dash_tile.ref AS 'tile',dash_tile.title,dash_tile.url,dash_tile.reload_interval_secs,dash_tile.link,dash_tile.default_order_by as 'order_by' FROM dash_tile WHERE dash_tile.all_users=1 AND (dash_tile.allow_delete=1 OR (dash_tile.allow_delete=0 AND dash_tile.ref IN (SELECT DISTINCT user_dash_tile.dash_tile FROM user_dash_tile))) ORDER BY default_order_by");
@@ -281,11 +330,22 @@ function add_user_dash_tile($user,$tile,$order_by)
  		add_user_dash_tile($user,$tile["ref"],$tile["order"]);
  		}
  	}
+
+/*
+ * Updates a user_dash_tile record for a specific tile on a users dash with an order.
+ *
+ */
 function update_user_dash_tile_order($user,$tile,$order_by)
 	{
 	return sql_query("UPDATE user_dash_tile SET order_by='".$order_by."' WHERE user='".$user."' and ref='".$tile."'");
 	}
-
+/*
+ * Delete a tile from a user dash
+ * this will only remove the tile from this users dash. 
+ * It must be the ref of the row in the user_dash_tile
+ * this also performs cleanup to ensure that there are no unused templates in the dash_tile table
+ *
+ */
 function delete_user_dash_tile($usertile,$user)
 	{
 	if(!is_numeric($usertile) || !is_numeric($user)){return false;}
@@ -298,6 +358,11 @@ function delete_user_dash_tile($usertile,$user)
 		}
 	}
 
+/*
+ * Reorders the users dash,
+ * this is useful when you have just inserted a new tile or moved a tile and need to reorder them with the proper 10 gaps 
+ * Tiles should be ordered with values 10,20,30,40,50,60,70 for easy insertion
+ */
 function reorder_user_dash($user)
 	{
 	$user_tiles = sql_query("SELECT user_dash_tile.ref FROM user_dash_tile LEFT JOIN dash_tile ON user_dash_tile.dash_tile = dash_tile.ref WHERE user_dash_tile.user='".$user."' ORDER BY user_dash_tile.order_by");
@@ -309,12 +374,21 @@ function reorder_user_dash($user)
 		}
 	}
 
+/*
+ * Returns the position for a tile at the end of existing tiles
+ *
+ */
 function append_user_position($user)
 	{
 	$last_tile=sql_query("SELECT order_by FROM user_dash_tile WHERE user='".$user."' ORDER BY order_by DESC LIMIT 1");
 	return isset($last_tile[0]["order_by"])?$last_tile[0]["order_by"]+10:10;
 	}
 
+/*
+ * Returns a users dash along with all necessary scripts and tools for manipulation
+ * checks for the permissions which allow for deletions and manipulation of all_user tiles from the dash
+ *
+ */
 function get_user_dash($user)
 	{
 	global $baseurl,$baseurl_short,$lang,$dash_tile_shadows;
@@ -473,17 +547,13 @@ function get_user_dash($user)
 		  	});
 
 	</script>
-	<style>
-	.HomePanelDynamicDash h2, .HomePanelThemes h2 {
-		background:none !important;
-	}
-	</style>
 	<?php
 	}
 
 
 /* 
- * Generic Display Functions for Dash 
+ * Used on the dash tile creation page for displaying a selector for the different styles of tile.
+ * Styles are config controlled.
  */
 function tileStyle($tile_type)
 	{

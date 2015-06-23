@@ -262,6 +262,7 @@ $slideshow_big=false;
 $slideshow_photo_delay = 5;
 
 
+/** Dash Config Options **/
 # Enable home dash functionality (on by default, recommended)
 $home_dash = true;
 # Define the available styles per type.
@@ -273,7 +274,9 @@ $dash_tile_shadows=false;
 # All user permissions for the dash are revoked and the dash admin can manage a single dash for all users. 
 # Only those with admin privileges can modify the dash and this must be done from the Team Centre > Manage all user dash tiles (One dash for all)
 $managed_home_dash = false;
-
+# Allows Dash Administrators to have their own dash whilst all other users have the managed dash ($managed_home_dash must be on)
+$unmanaged_home_dash_admins = false;
+/* End Dash Config Options */
 
 # Optional 'quota size' for allocation of a set amount of disk space to this application. Value is in GB.
 # Note: Unix systems only.
