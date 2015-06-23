@@ -2715,3 +2715,6 @@ $system_down_redirect = false;
 # Please use with care e.g. make sure your IIS/Apache service account doesn't have write access to the whole server
 $purge_temp_folder_age=0;
 
+# Set how long a reset password link should be valid for. Default will be 24 hours
+# Note: this is set in hours
+$password_reset_link_expiry = 24;
