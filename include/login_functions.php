@@ -47,6 +47,7 @@ function perform_login()
 	$ip=get_ip();
 
 	# This may change the $username, $password, and $password_hash
+	exit("HERE username") . $username;
     hook("externalauth","",array($username, $password)); #Attempt external auth if configured
 
 	# Generate a new session hash.

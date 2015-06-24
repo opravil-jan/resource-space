@@ -31,9 +31,9 @@ $lockouts=sql_value("select count(*) value from ip_lockout where ip='" . escape_
 $username=trim(getvalescaped("username",""));
 if($case_insensitive_username)
     {
-    $username=sql_value("select username value from user where lower(username)=lower('" . $username ."')","");       
+    $username=sql_value("select username value from user where lower(username)=lower('" . $username ."')",$username);       
     }
-        
+    
 # Also check that the username provided has not been locked out due to excessive login attempts.
 $ulockouts=sql_value("select count(*) value from user where username='" . $username . "' and login_tries>='" . $max_login_attempts_per_username . "' and date_add(login_last_try,interval " . $max_login_attempts_wait_minutes . " minute)>now()",0);
 
