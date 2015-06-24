@@ -143,7 +143,9 @@ if ($contact_sheet)
 	<link href="<?php echo $baseurl_short;?>lib/plupload_2.1.2/jquery.plupload.queue/css/jquery.plupload.queue.css?<?php echo $css_reload_key;?>" rel="stylesheet" type="text/css" media="screen,projection,print"  />
 	<script type="text/javascript" src="<?php echo $baseurl_short;?>lib/plupload_2.1.2/jquery.plupload.queue/jquery.plupload.queue.min.js?<?php echo $css_reload_key;?>"></script>
 <?php } ?>
-
+<?php if($videojs && ($pagename=='search' && $keyboard_navigation_video_search) || ($pagename=='view' && $keyboard_navigation_video_view) || (($pagename=='preview' || $pagename=='preview_all') && $keyboard_navigation_video_preview)){ ?>
+	<script type="text/javascript" src="<?php echo $baseurl_short?>lib/js/videojs-extras.js?r=<?=$css_reload_key?>"></script>
+<?php } ?>
 
 
 <script type="text/javascript">
@@ -238,7 +240,55 @@ jQuery(document).ready(function() {
                      break;
             case <?php echo $keyboard_navigation_view_all; ?>: CentralSpaceLoad('<?php echo $baseurl;?>/pages/search.php?search=!collection'+document.getElementById("currentusercollection").innerHTML+'&k='+share,true);
                      break;
-          
+            <?php if(($pagename=='search' && $keyboard_navigation_video_search) || ($pagename=='view' && $keyboard_navigation_video_view) || (($pagename=='preview' || $pagename=='preview_all') && $keyboard_navigation_video_preview)){?>
+				<?php if($video_playback_backwards){ ?>
+					case <?php echo $keyboard_navigation_video_search_backwards?>:
+						//console.log("backwards button pressed");
+						//console.log("Player is "+vidActive);
+						curPlayback=vidActive.playbackRate();
+						//console.log("Current playback rate is "+curPlayback);
+						if(playback=='backward'){
+							newPlayback=curPlayback+1;
+						}
+						else{
+							newPlayback=1;
+						}
+						//console.log("New playback rate is "+newPlayback);
+						playback='backward';
+						videoRewind(newPlayback);
+						break;
+				<?php } ?>
+				
+				case <?php echo $keyboard_navigation_video_search_play_pause?>:
+					<?php if($pagename=='view' || $pagename=='preview'){ ?>
+						vidActive=document.getElementById('introvideo<?php echo $ref?>');
+					<?php } 
+					else{ ?>
+						vidActive=document.getElementById('introvideo'+vidActiveRef);
+					<?php } ?>
+					//console.log("active="+vidActive);
+					videoPlayPause(vidActive);
+					break;
+					
+				case <?php echo $keyboard_navigation_video_search_forwards?>:
+					//console.log("forward button pressed");
+					//console.log("Player is "+vidActive);
+					// clear
+					clearInterval(intervalRewind);
+					// get current playback rate
+					curPlayback=vidActive.playbackRate();
+					//console.log("Current playback rate is "+curPlayback);
+					if(playback=='forward'){
+						newPlayback=curPlayback+1;
+					}
+					else{
+						newPlayback=1;
+					}
+					playback='forward';
+					//console.log("New playback rate is "+newPlayback);
+					vidActive.playbackRate(newPlayback);
+					break;
+				<?php } ?>
          }
          
      }

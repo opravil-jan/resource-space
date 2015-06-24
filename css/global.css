@@ -916,3 +916,7 @@ a.HomePanel:hover {
 	transform-origin: left top 0;
 	font-size: 50px;
 }
+
+div.video-js {margin:auto;}
+.video-thumbs .vjs-control-bar {font-size:7px;}
+.video-thumbs .vjs-control-bar .vjs-live-controls {display:none;}

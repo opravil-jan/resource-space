@@ -29,6 +29,28 @@ if (!hook("renderresultthumb"))
 			<?php hook("resourcetop")?>
 			<tr>
 			<td>
+				<!-- new code start -->
+				<?php
+				$show_flv=false;
+				if((in_array($result[$n]["file_extension"],$ffmpeg_supported_extensions) || $result[$n]["file_extension"]=="flv") && $video_player_thumbs_view){ 
+					$flvfile=get_resource_path($ref,true,"pre",false,$ffmpeg_preview_extension);
+					if (!file_exists($flvfile)){
+						$flvfile=get_resource_path($ref,true,"",false,$ffmpeg_preview_extension);
+					}
+					elseif(!(isset($result[$n]['is_transcoding']) && $result[$n]['is_transcoding']!=0) && file_exists($flvfile) && (strpos(strtolower($flvfile),".".$ffmpeg_preview_extension)!==false)){
+						$show_flv=true;
+					}
+				}
+				if(isset($flvfile) && hook("replacevideoplayerlogic","",array($flvfile,$result,$n))){
+				
+				}
+    			elseif($show_flv){
+					# Include the Flash player if an FLV file exists for this resource.
+					if(!hook("customflvplay")){
+						include "video_player.php";
+					}
+				}
+				else{?><!-- new code end -->
 				<div id="triangle" style="border-color: transparent transparent rgb(7, 101, 145); border-width: 0px 0px 200px 200px;"></div>
 				<a 
 					style="position:relative;" 
@@ -81,6 +103,9 @@ if (!hook("renderresultthumb"))
 						}
 					hook("aftersearchimg","",array($result[$n]))?>
 				</a>
+				<!-- new code start -->
+				<?php } ?>
+				<!-- new code end -->
 			</td>
 			</tr>
 			</table>

@@ -27,6 +27,28 @@ if (!hook("renderresultsmallthumb"))
 				<table border="0" class="ResourceAlignSmall<?php hook('searchdecorateresourcetableclass'); ?>">
 				<?php hook("resourcetop");?>
 				<tr><td>
+				<!-- new code start -->
+				<?php
+				$show_flv=false;
+				if((in_array($result[$n]["file_extension"],$ffmpeg_supported_extensions) || $result[$n]["file_extension"]=="flv") && $video_player_small_thumbs_view){ 
+					$flvfile=get_resource_path($ref,true,"pre",false,$ffmpeg_preview_extension);
+					if (!file_exists($flvfile)){
+						$flvfile=get_resource_path($ref,true,"",false,$ffmpeg_preview_extension);
+					}
+					elseif(!(isset($result[$n]['is_transcoding']) && $result[$n]['is_transcoding']!=0) && file_exists($flvfile) && (strpos(strtolower($flvfile),".".$ffmpeg_preview_extension)!==false)){
+						$show_flv=true;
+					}
+				}
+				if(isset($flvfile) && hook("replacevideoplayerlogic","",array($flvfile,$result,$n))){
+				
+				}
+    			elseif($show_flv){
+					# Include the Flash player if an FLV file exists for this resource.
+					if(!hook("customflvplay")){
+						include "video_player.php";
+					}
+				}
+				else{?><!-- new code end -->
 				<a 
 					style="position:relative" 
 					href="<?php echo $url?>"  
@@ -71,6 +93,7 @@ if (!hook("renderresultsmallthumb"))
 						}
 					hook("aftersearchimg","",array($result[$n]));?>
 				</a>
+				<?php } ?>
 				</td>
 				</tr>
 				</table>				

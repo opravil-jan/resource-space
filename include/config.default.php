@@ -2268,6 +2268,32 @@ $flv_player_xlarge_view=false;
 # show embedded swfs in xlarge thumbs view 
 $display_swf_xlarge_view=false;
 
+# show flv player in thumbs view 
+$video_player_thumbs_view=false;
+# show flv player in small thumbs view 
+$video_player_small_thumbs_view=false;
+
+# use an ffmpeg alternative for search preview playback
+$video_player_thumbs_view_alt=false;
+#$video_player_thumbs_view_alt_name='searchprev';
+
+# play vidoes on hover instead of on click
+$video_search_play_hover=false; // search.php
+$video_view_play_hover=false; // view.php
+$video_preview_play_hover=false; // preview.php and preview_all.php
+
+# hotkeys for video playback
+$keyboard_navigation_video_search=false;
+$keyboard_navigation_video_view=false;
+$keyboard_navigation_video_preview=false;
+# play backwards (in development) - default 'j'
+$video_playback_backwards=false;
+$keyboard_navigation_video_search_backwards=74;
+# play/pause - default 'k'
+$keyboard_navigation_video_search_play_pause=75;
+# play forwards - default 'l'
+$keyboard_navigation_video_search_forwards=76;
+
 # pager dropdown
 $pager_dropdown=false;
 

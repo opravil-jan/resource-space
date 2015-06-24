@@ -1,7 +1,15 @@
 <?php
 # Video player - plays the preview file created to preview video resources.
 
-global $alternative,$css_reload_key;
+global $alternative,$css_reload_key,$display,$video_search_play_hover,$video_view_play_hover,$video_preview_play_hover,$video_player_thumbs_view_alt,$video_player_thumbs_view_alt_name,$keyboard_navigation_video_search,$keyboard_navigation_video_view,$keyboard_navigation_video_preview;
+
+# Check for search page and the use of an alt file for video playback
+$use_video_alts=false;
+if($video_player_thumbs_view_alt && isset($video_player_thumbs_view_alt_name) && $pagename=='search' && $display!='list'){
+	$use_video_alts=true;
+	#  get the alt ref
+	$alternative=sql_value("select ref value from resource_alt_files where resource={$ref} and name='{$video_player_thumbs_view_alt_name}'","");
+}
 
 # First we look for a preview video with the expected extension.
 $flashfile=get_resource_path($ref,true,"pre",false,$ffmpeg_preview_extension,-1,1,false,"",$alternative);
@@ -29,6 +37,11 @@ if (!file_exists($flashfile) || $video_preview_original)
 $flashpath_raw=$flashpath;     
 $flashpath=urlencode($flashpath);
 
+if($use_video_alts){
+	# blank alt variable to use proper preview image
+	$alternative='';
+}
+
 $thumb=get_resource_path($ref,false,"pre",false,"jpg",-1,1,false,"",$alternative); 
 $thumb_raw=$thumb;
 $thumb=urlencode($thumb);
@@ -42,7 +55,35 @@ if ($theme=="black") {$bgcolor1="666666";$bgcolor2="111111";$buttoncolor="999999
 
 $width=$ffmpeg_preview_max_width;
 $height=$ffmpeg_preview_max_height;
-if ($pagename=="search"){$width="355";$height=355/$ffmpeg_preview_max_width*$ffmpeg_preview_max_height;}
+
+$preload='auto';
+// preview size adjustments for search
+if ($pagename=="search"){
+	switch($display){
+		case "xlthumbs":
+			$width="350";
+			$height=350/$ffmpeg_preview_max_width*$ffmpeg_preview_max_height;
+			break;
+		case "thumbs":
+			$width="150";
+			$height=150/$ffmpeg_preview_max_width*$ffmpeg_preview_max_height;
+			break;
+		case "smallthumbs":
+			$width="75";
+			$height=75/$ffmpeg_preview_max_width*$ffmpeg_preview_max_height;
+			break;
+	}
+}
+// play video on hover?
+$play_on_hover=false;
+if(($pagename=='search' && $video_search_play_hover) || ($pagename=='view' && $video_view_play_hover) || (($pagename=='preview' || $pagename=='preview_all') && $video_preview_play_hover)){
+	$play_on_hover=true;
+}
+// using keyboard hotkeys?
+$playback_hotkeys=false;
+if(($pagename=='search' && $keyboard_navigation_video_search) || ($pagename=='view' && $keyboard_navigation_video_view) || (($pagename=='preview' || $pagename=='preview_all') && $keyboard_navigation_video_preview)){
+	$playback_hotkeys=true;
+}
 
 if(!hook("swfplayer"))
 	{
@@ -61,21 +102,44 @@ if(!hook("swfplayer"))
 		?>
 		<link href="<?php echo $baseurl_short?>lib/videojs/video-js.css?r=<?=$css_reload_key?>" rel="stylesheet">
         <script src="<?php echo $baseurl_short?>lib/videojs/video.dev.js?r=<?=$css_reload_key?>"></script>
+		<script src="<?php echo $baseurl_short?>lib/js/videojs-extras.js?r=<?=$css_reload_key?>"></script>
 		<!-- START VIDEOJS -->
 		<video 
-			id="introvideo" 
+			id="introvideo<?php echo $ref?>"
 			controls
-			data-setup="{}"
-			preload="auto"
+			data-setup='{ 
+				<?php if($play_on_hover){?>
+					"loadingSpinner" : false,
+					"children": { 
+						"bigPlayButton":false, 
+						<?php if($pagename=='search' && $display=='smallthumbs'){?>
+							"controlBar": false
+						<?php }
+						else{ ?>
+							"controlBar": { 
+								"children": { 
+									"playToggle": false, 
+									"volumeControl":false
+								}
+							}
+						<?php } ?>
+					}
+				<?php } ?> 
+			}'
+			preload="<?php echo $preload?>"
 			width="<?php echo $width?>" 
 			height="<?php echo $height?>" 
-			class="video-js vjs-default-skin vjs-big-play-centered" 
+			class="video-js vjs-default-skin vjs-big-play-centered <?php if($pagename=='search'){echo "video-$display";}?>" 
 			poster="<?php echo $thumb_raw?>"
+			<?php if($play_on_hover){ ?>
+				onmouseout="if(this.id=='introvideo<?php echo $ref?>'){videoPause(this);}"
+				onmouseover="if(this.id=='introvideo<?php echo $ref?>'){videoPlay(this);}"
+			<?php } ?>
 		>
 		    <source src="<?php echo $flashpath_raw?>" type="video/<?php echo $ffmpeg_preview_extension?>" >
 		    <p class="vjs-no-js">To view this video please enable JavaScript, and consider upgrading to a web browser that <a href="http://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a></p>
 		</video>
 		<!-- END VIDEOJS -->
-		<?php 
+		<?php
 		}
 	}
