@@ -1140,6 +1140,9 @@ $randomised_session_hash=false;
 # Allow browsers to save the login information on the login form.
 $login_autocomplete=true;
 
+# Option to ignore case when validating username at login. 
+$case_insensitive_username=false;
+
 # Password standards - these must be met when a user or admin creates a new password.
 $password_min_length=7; # Minimum length of password
 $password_min_alpha=1; # Minimum number of alphabetical characters (a-z, A-Z) in any case

@@ -28,8 +28,14 @@ if (!hook("replaceauth")) {
 $ip=get_ip();
 $lockouts=sql_value("select count(*) value from ip_lockout where ip='" . escape_check($ip) . "' and tries>='" . $max_login_attempts_per_ip . "' and date_add(last_try,interval " . $max_login_attempts_wait_minutes . " minute)>now()",0);
 
+$username=trim(getvalescaped("username",""));
+if($case_insensitive_username)
+    {
+    $username=sql_value("select username value from user where lower(username)=lower('" . $username ."')","");       
+    }
+        
 # Also check that the username provided has not been locked out due to excessive login attempts.
-$ulockouts=sql_value("select count(*) value from user where username='" . getvalescaped("username","") . "' and login_tries>='" . $max_login_attempts_per_username . "' and date_add(login_last_try,interval " . $max_login_attempts_wait_minutes . " minute)>now()",0);
+$ulockouts=sql_value("select count(*) value from user where username='" . $username . "' and login_tries>='" . $max_login_attempts_per_username . "' and date_add(login_last_try,interval " . $max_login_attempts_wait_minutes . " minute)>now()",0);
 
 if ($lockouts>0 || $ulockouts>0)
 	{
@@ -39,7 +45,7 @@ if ($lockouts>0 || $ulockouts>0)
 # Process the submitted login
 elseif (array_key_exists("username",$_POST) && getval("langupdate","")=="")
     {
-    $username=trim(getvalescaped("username",""));
+   
     $password=trim(getvalescaped("password",""));
 
 	$result=perform_login();
