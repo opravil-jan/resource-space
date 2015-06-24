@@ -324,10 +324,10 @@ function add_user_dash_tile($user,$tile,$order_by)
   */
  function create_new_user_dash($user)
  	{
- 	$tiles = sql_query("SELECT dash_tile.ref AS 'tile',dash_tile.title,dash_tile.url,dash_tile.reload_interval_secs,dash_tile.link,dash_tile.default_order_by as 'order_by' FROM dash_tile WHERE dash_tile.all_users=1 AND (dash_tile.allow_delete=1 OR (dash_tile.allow_delete=0 AND dash_tile.ref IN (SELECT DISTINCT user_dash_tile.dash_tile FROM user_dash_tile))) ORDER BY default_order_by");
+ 	$tiles = sql_query("SELECT dash_tile.ref as 'tile',dash_tile.title,dash_tile.url,dash_tile.reload_interval_secs,dash_tile.link,dash_tile.default_order_by as 'order' FROM dash_tile WHERE dash_tile.all_users=1 AND (dash_tile.allow_delete=1 OR (dash_tile.allow_delete=0 AND dash_tile.ref IN (SELECT DISTINCT user_dash_tile.dash_tile FROM user_dash_tile))) ORDER BY default_order_by");
  	foreach($tiles as $tile)
  		{
- 		add_user_dash_tile($user,$tile["ref"],$tile["order"]);
+ 		add_user_dash_tile($user,$tile["tile"],$tile["order"]);
  		}
  	}
 
