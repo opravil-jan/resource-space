@@ -15,7 +15,11 @@ if($resetvalues!="")
 		$resetuser=$resetvaliduser[0];
   		$keycheck=array();
 		$keycheck[]=substr(hash('sha256', date("Ymd") .  $resetuser["password_reset_hash"] . $resetuser["username"] . $scramble_key),0,15); 
-		$keycheck[]=substr(hash('sha256', date("Ymd", time() + 60 * 60 * $password_reset_link_expiry) .  $resetuser["password_reset_hash"] . $resetuser["username"] . $scramble_key),0,15); 
+		// We also need to check the entered key to see if valid in the last number of days ($password_reset_link_expiry), so add these as possible values to the array
+		for($n=1;$n<=$password_reset_link_expiry;$n++)
+		    {
+		    $keycheck[]=substr(hash('sha256', date("Ymd", time() - 60 * 60 * 24 * $n) .  $resetuser["password_reset_hash"] . $resetuser["username"] . $scramble_key),0,15); 
+		    }
 		if(in_array($resetkey, $keycheck))
 			{$valid_reset_link=true;}
 		}
