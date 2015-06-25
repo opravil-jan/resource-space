@@ -2002,15 +2002,17 @@ function get_field_options_with_stats($field)
 	$return=array();
 	for ($n=0;$n<count($options);$n++)
 		{
-		# Find the option in the usage array and extract the count
-		$count=0;
-		for ($m=0;$m<count($usage);$m++)
-			{
-			$keyword=get_keyword_from_option($options[$n]);
-			if ($keyword==$usage[$m]["keyword"]) {$count=$usage[$m]["c"];}
+		if($options[$n]!=''){
+			# Find the option in the usage array and extract the count
+			$count=0;
+			for ($m=0;$m<count($usage);$m++)
+				{
+				$keyword=get_keyword_from_option($options[$n]);
+				if ($keyword==$usage[$m]["keyword"]) {$count=$usage[$m]["c"];}
+				}
+				
+			$return[]=array("option"=>$options[$n],"rawoption"=>$rawoptions[$n],"count"=>$count);
 			}
-			
-		$return[]=array("option"=>$options[$n],"rawoption"=>$rawoptions[$n],"count"=>$count);
 		}
 	return $return;
 	}
