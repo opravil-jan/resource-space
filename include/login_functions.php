@@ -47,7 +47,7 @@ function perform_login()
 	$ip=get_ip();
 
 	# This may change the $username, $password, and $password_hash
-    hook("externalauth","",array($username, $password)); #Attempt external auth if configured
+        $externalresult=hook("externalauth","",array($username, $password)); #Attempt external auth if configured
 
 	# Generate a new session hash.
 	$session_hash=generate_session_hash($password_hash);
@@ -92,7 +92,8 @@ function perform_login()
 		}
 
 	# Invalid login
-	$result['error']=$lang["loginincorrect"];
+	if(isset($externalresult["error"])){$result['error']=$externalresult["error"];} // We may have been given a better error to display
+        else {$result['error']=$lang["loginincorrect"];}
 
   hook("loginincorrect");
 
