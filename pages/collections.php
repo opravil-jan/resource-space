@@ -1020,7 +1020,7 @@ hook("thumblistextra");
 		 } else { ?>
 		<li><a onclick="return CentralSpaceLoad(this,true);" href="<?php echo $baseurl_short?>pages/search.php?search=<?php echo urlencode("!collection" . $usercollection)?>"><?php echo $lang["viewall"]?></a></li>
 		<?php } 
-		echo (isset($emptycollection) && $remove_resources_link_on_collection_bar && collection_writeable($usercollection)) ? '<li><a href="'.$baseurl_short.'pages/collections.php?ref='.urlencode($usercollection).'&removeall=true&submitted=removeall&ajax=true" onclick="if(!confirm(\''.$lang['emptycollectionareyousure'].'\')){return false;}return CollectionDivLoad(this);">'.$lang["emptycollection"].'</a></li>' : "";
+		echo (isset($emptycollection) && $remove_resources_link_on_collection_bar && collection_writeable($usercollection)) ? '<li><a href="'.$baseurl_short.'pages/collections.php?emptycollection='.urlencode($usercollection).'&removeall=true&submitted=removeall&ajax=true" onclick="if(!confirm(\''.$lang['emptycollectionareyousure'].'\')){return false;}return CollectionDivLoad(this);">'.$lang["emptycollection"].'</a></li>' : "";
 		if ((isset($zipcommand) || $collection_download) && $count_result>0) { ?>
 		<li><a onclick="return CentralSpaceLoad(this,true);" href="<?php echo $baseurl_short?>pages/terms.php?k=<?php echo $k?>&url=<?php echo urlencode("pages/collection_download.php?collection=" .  $usercollection . "&k=" . $k)?>"><?php echo $lang["action-download"]?></a></li>
 		<?php } ?>
