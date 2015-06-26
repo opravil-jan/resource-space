@@ -606,7 +606,7 @@ function ajax_download()
 	jQuery('#text').attr('disabled', 'disabled');
 	jQuery('#archivesettings').attr('disabled', 'disabled');
 
-	progress= jQuery("progress3").PeriodicalUpdater("<?php echo $baseurl_short?>pages/ajax/collection_download_progress.php?id=<?php echo urlencode($uniqid) ?>", {
+	progress= jQuery("progress3").PeriodicalUpdater("<?php echo $baseurl_short?>pages/ajax/collection_download_progress.php?id=<?php echo urlencode($uniqid) ?>&user=<?php echo urlencode($userref) ?>", {
         method: 'post',          // method; get or post
         data: '',               //  e.g. {name: "John", greeting: "hello"}
         minTimeout: 500,       // starting value for the timeout in milliseconds
