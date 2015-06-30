@@ -1318,7 +1318,7 @@ function get_all_site_text($findpage="",$findname="",$findtext="")
                     &&
                     ($findname=="" || stripos($key,$findname)!==false)
                     &&            
-                    ($findpage=="" || stripos($pagename,$findpage)!==false || strtolower($findpage)==strtolower($lang["all"]))
+                    ($findpage=="" || stripos($pagename,$findpage)!==false)
                     &&
                     ($findtext=="" || stripos($text,$findtext)!==false)
                     )
