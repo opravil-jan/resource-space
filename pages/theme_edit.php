@@ -11,6 +11,7 @@ function save_themename()
 		global $baseurl, $link, $themename, $collection_column;
 		$sql="update collection set	" . $collection_column . "='" . getvalescaped("rename","") . "' where " . $collection_column . "='" . escape_check($themename)."'";
 		sql_query($sql);
+		hook("after_save_themename");
 		redirect("pages/" . $link);
 	}
 
@@ -63,6 +64,7 @@ if (getval("rename","")!="")
 		save_themename();
 	}
 
+hook("beforethemeeditheader");
 
 include "../include/header.php";
 
@@ -103,6 +105,8 @@ if (!checkperm("t")) {
 			<label for="rename"><?php echo $lang["name"]?></label><input type=text class="stdwidth" name="rename" id="rename" value="<?php echo $themename?>" maxlength="100" />
 			<div class="clearerleft"> </div>
 		</div>
+		
+		<?php hook("morethemeeditoptions");?>
 
 		<div class="QuestionSubmit">
 			<label for="buttons"> </label>
