@@ -221,11 +221,9 @@ function collection_writeable($collection)
 	// - The user owns the collection (if we are anonymous user and are using session collections then this must also have the same session id )
 	// - Collection changes are allowed and :-
 	//    a) User is attached to the collection or
-	//    b) Collection is public or a theme
-    // 
-    // Removed the 'h' permission check - this is not relevant here
-	
-	
+	//    b) Collection is public or a theme and the user either has the 'h' permission or the collection is editable
+        
+		
 	global $usercollection,$username,$anonymous_login,$anonymous_user_session_collection, $rs_session;
 	debug("collection session : " . $collectiondata["session_id"]);
 	debug("collection user : " . $collectiondata["user"]);
@@ -236,7 +234,7 @@ function collection_writeable($collection)
 		
 	$writable=($userref==$collectiondata["user"] && (!isset($anonymous_login) || $username!=$anonymous_login || !$anonymous_user_session_collection || $collectiondata["session_id"]==$rs_session))
 		|| 
-		($collectiondata["allow_changes"]==1  && (in_array($userref,$attached) || $collectiondata["public"]==1));
+		(($collectiondata["allow_changes"]==1 || checkperm("h")) && (in_array($userref,$attached) || $collectiondata["public"]==1));
 	return $writable;
 	
 	}
