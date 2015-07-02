@@ -17,10 +17,21 @@ include "../../include/header.php";
 	
         <li><a href="<?php echo $baseurl_short?>pages/user/user_change_password.php" onClick="return CentralSpaceLoad(this,true);"><?php echo $lang["changeyourpassword"]?></a></li>
     
+        <?php
+      	if ($disable_languages==false && $show_language_chooser)
+		{
+		?>
+		<li><a href="<?php echo $baseurl_short?>pages/change_language.php" onClick="return CentralSpaceLoad(this,true);"><?php echo $lang["languageselection"]?></a></li>
+		<?php
+		}
+	?>
+	
         <li><a href="<?php echo $baseurl_short?>pages/contribute.php" onClick="return CentralSpaceLoad(this,true);"><?php echo $lang["mycontributions"]?></a></li>
 
 	<li><a href="<?php echo $baseurl_short?>pages/collection_manage.php" onClick="return CentralSpaceLoad(this,true);"><?php echo $lang["mycollections"]?></a></li>
 		
+
+	
 	</ul>
 	</div>
 
