@@ -2123,7 +2123,7 @@ $lang["tilebin"]="Remove";
 $lang["last"]="Last";
 $lang["managedefaultdash"]="Manage all user tiles";
 $lang["dashtile"]="Dash tile";
-$lang["manage_own_dash"]="Manage own dash";
+$lang["manage_own_dash"]="Manage my dash";
 $lang["manage_all_dash_h"]="Manage default dash / all user tiles (Requires h permission)";
 $lang["manage_all_dash"]="Manage default dash / all user tiles";
 $lang["dashtiledeleteaction"]="What delete action would you like to take?";
@@ -2133,6 +2133,7 @@ $lang["dashtiledelete"]="Delete dash tile";
 $lang["error-missingtileheightorwidth"]="Missing tile height or width";
 $lang["dashtileimage"]="Dash tile image";
 $lang["dashtilesmalldevice"]="Required drag functionality is not available on devices with a small screen";
+$lang["dashtileshow"]="Show tile";
 
 #Tile style strings
 $lang["tile_thmbs"]="Single";
