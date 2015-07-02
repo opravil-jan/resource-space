@@ -240,7 +240,7 @@ function upload_video()
         }
     catch (Google_Exception $e)
         {
-        $htmlBody.= sprintf('<p>A client error occurred: <code>%s</code></p>',
+        $htmlBody = sprintf('<p>A client error occurred: <code>%s</code></p>',
         htmlspecialchars($e->getMessage()));
         exit($htmlBody);
         }
