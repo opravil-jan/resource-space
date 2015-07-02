@@ -975,6 +975,8 @@ function save_user($ref)
 	if (getval("deleteme","")!="")
 		{
 		sql_query("delete from user where ref='$ref'");
+		include dirname(__FILE__) ."/dash_functions.php";
+		empty_user_dash($ref);
 		return true;
 		}
 	else
