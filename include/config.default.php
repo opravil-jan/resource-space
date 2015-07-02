@@ -692,6 +692,7 @@ $videotypes=array(3);
 # IconResourceTypeLarge<resourcetyperef> similar to videotypes, this option overrides $videtypes option
 $resource_type_icons=false;
 
+
 # Sets the default colour theme (defaults to white)
 $defaulttheme="";
 

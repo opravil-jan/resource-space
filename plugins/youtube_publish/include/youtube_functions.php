@@ -234,16 +234,16 @@ function upload_video()
           }
     catch (Google_ServiceException $e)
         {
-        $htmlBody .= sprintf('<p>A service error occurred: <code>%s</code></p>',
+        $htmlBody = sprintf('<p>A service error occurred: <code>%s</code></p>',
         htmlspecialchars($e->getMessage()));
         exit($htmlBody);
         }
     catch (Google_Exception $e)
         {
-        $htmlBody .= sprintf('<p>An client error occurred: <code>%s</code></p>',
+        $htmlBody.= sprintf('<p>A client error occurred: <code>%s</code></p>',
         htmlspecialchars($e->getMessage()));
         exit($htmlBody);
-       }
+        }
     catch (Google_ServiceException $e)
         {
         $errortext = sprintf('<p>A service error occurred: <code>%s</code></p>',
@@ -263,7 +263,7 @@ function upload_video()
         
 function youtube_upload_get_categories()
     {
-    global  $client,$youtube;   
+    global $client,$youtube;   
 	
     try
 	{
