@@ -267,6 +267,7 @@ $slideshow_photo_delay = 5;
 $home_dash = true;
 # Define the available styles per type.
 $tile_styles["srch"]=array("thmbs","multi");
+$tile_styles["ftxt"]=array("ftxt");
 # Place the default dash (tiles set for all_users) on the home page for anonymous users with none of the drag 'n' drop functionality.
 $anonymous_default_dash=true;
 # use shadows on tile content (Suitable for transparent tiles)

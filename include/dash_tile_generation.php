@@ -38,6 +38,15 @@ function tile_select($tile_type,$tile_style,$tile,$tile_id,$tile_width,$tile_hei
 			}
 		}
 	/*
+	 * Free Text Tile
+	 */
+	if($tile_type=="ftxt")
+		{
+		tile_freetext($tile,$tile_id,$tile_width,$tile_height);
+		exit;
+		}
+
+	/*
 	 * Search Type tiles
 	 */
 	if($tile_type=="srch")
@@ -148,8 +157,23 @@ function tile_config_custom($tile,$tile_id,$tile_width,$tile_height)
 	<?php
 	}
 
+
 /*
- * Search linked panels
+ * Freetext tile
+ *
+ */
+function tile_freetext($tile,$tile_id,$tile_width,$tile_height) 
+	{
+	global $lang;
+	?>
+	<span class='help-icon'></span>
+	<h2> <?php echo i18n_get_translated($tile["title"]) ?></h2>
+	<p><?php echo i18n_get_translated($tile["txt"]) ?></p>
+	<?php
+	}
+
+/*
+ * Search linked tiles
  *
  */
 function tile_search_thumbs($tile,$tile_id,$tile_width,$tile_height,$promoted_image=false)

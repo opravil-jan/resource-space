@@ -102,8 +102,9 @@ if($create)
 	$tile_nostyle = getvalescaped("nostyleoptions",FALSE);
 	$allusers=getvalescaped("all_users",FALSE);
 	$url=getvalescaped("url","");
-	$freetext = getvalescaped("freetext",false);
-	$notitle = getvalescaped("notitle",false);
+	$modifylink = getvalescaped("modifylink",FALSE);
+	$freetext = getvalescaped("freetext",FALSE);
+	$notitle = getvalescaped("notitle",FALSE);
 	$link=getvalescaped("link","");
 	$title=getvalescaped("title","");
 
@@ -141,11 +142,24 @@ if($create)
 	<h2><?php echo $lang["createnewdashtile"];?></h2>
 	<form id="create_dash" name="create_dash">
 		<input type="hidden" name="tltype" value="<?php echo htmlspecialchars($tile_type)?>" />
-		<input type="hidden" name="link" id="previewlink" value="<?php echo htmlspecialchars($link);?>" />
 		<input type="hidden" name="url" value="<?php echo htmlspecialchars($url); ?>" />
 		<input type="hidden" name="submitdashtile" value="true" />
-
 		<?php
+		if($modifylink)
+			{ 
+			?>
+			<div class="Question">
+				<label for="link" class="stdwidth"><?php echo $lang["dashtilelink"];?></label> 
+				<input type="text" name="link" value="<?php echo htmlspecialchars($link);?>"/>
+				<div class="clearerleft"></div>
+			</div>
+			<?php
+			}
+		else
+			{?>
+			<input type="hidden" name="link" id="previewlink" value="<?php echo htmlspecialchars($link);?>" />
+			<?php
+			}
 		if(!$notitle)
 			{ ?>
 			<div class="Question">
