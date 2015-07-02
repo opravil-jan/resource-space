@@ -144,7 +144,25 @@ function get_default_dash()
 		if($order != $tile["order_by"] || ($tile["order_by"] % 10) > 0){update_default_dash_tile_order($tile["tile"],$order);}
 		$order+=10;
 		?>
-		<a href="<?php echo $baseurl."/".htmlspecialchars($tile["link"]);?>" onClick="if(dragging){dragging=false;e.defaultPrevented;}" class="HomePanel DashTile DashTileDraggable" id="tile<?php echo htmlspecialchars($tile["tile"]);?>">
+		<a 
+			<?php 
+			# Check link for external or internal
+			if(mb_strtolower(substr($tile["link"],0,4))=="http")
+				{
+				$link = $tile["link"];
+				$newtab = true;
+				}
+			else
+				{
+				$link = $baseurl."/".htmlspecialchars($tile["link"]);
+				$newtab=false;
+				}
+			?>
+			href="<?php echo $link?>" <?php echo $newtab ? "target='_blank'" : "";?>
+			onClick="if(dragging){dragging=false;e.defaultPrevented;}" 
+			class="HomePanel DashTile DashTileDraggable" 
+			id="tile<?php echo htmlspecialchars($tile["tile"]);?>"
+		>
 			<div id="contents_tile<?php echo htmlspecialchars($tile["tile"]);?>" class="HomePanelIN HomePanelDynamicDash <?php echo ($dash_tile_shadows)? "TileContentShadow":"";?>">
 				<?php if (strpos($tile["url"],"dash_tile.php")!==false) {
                                 # Only pre-render the title if using a "standard" tile and therefore we know the H2 will be in the target data.
@@ -236,7 +254,25 @@ function get_managed_dash()
 	foreach($tiles as $tile)
 		{
 		?>
-		<a href="<?php echo $baseurl."/".htmlspecialchars($tile["link"]);?>" onClick="if(dragging){dragging=false;e.defaultPrevented;}" class="HomePanel DashTile DashTileDraggable" id="tile<?php echo htmlspecialchars($tile["tile"]);?>">
+		<a 
+			<?php 
+			# Check link for external or internal
+			if(mb_strtolower(substr($tile["link"],0,4))=="http")
+				{
+				$link = $tile["link"];
+				$newtab = true;
+				}
+			else
+				{
+				$link = $baseurl."/".htmlspecialchars($tile["link"]);
+				$newtab=false;
+				}
+			?>
+			href="<?php echo $link?>" <?php echo $newtab ? "target='_blank'" : "";?>
+			onClick="if(dragging){dragging=false;e.defaultPrevented;}" 
+			class="HomePanel DashTile DashTileDraggable" 
+			id="tile<?php echo htmlspecialchars($tile["tile"]);?>"
+		>
 			<div id="contents_tile<?php echo htmlspecialchars($tile["tile"]);?>" class="HomePanelIN HomePanelDynamicDash <?php echo ($dash_tile_shadows)? "TileContentShadow":"";?>">
 				<?php if (strpos($tile["url"],"dash_tile.php")!==false) 
 					{
@@ -400,8 +436,21 @@ function get_user_dash($user)
 		$order+=10;
 		?>
 		<a 
-			href="<?php echo $baseurl."/".htmlspecialchars($tile["link"]);?>" 
-			onClick="if(dragging){dragging=false;e.defaultPrevented}return CentralSpaceLoad(this,true);" 
+			<?php 
+			# Check link for external or internal
+			if(mb_strtolower(substr($tile["link"],0,4))=="http")
+				{
+				$link = $tile["link"];
+				$newtab = true;
+				}
+			else
+				{
+				$link = $baseurl."/".htmlspecialchars($tile["link"]);
+				$newtab=false;
+				}
+			?>
+			href="<?php echo $link?>" <?php echo $newtab ? "target='_blank'" : "";?> 
+			onClick="if(dragging){dragging=false;e.defaultPrevented}<?php echo $newtab? "": "return CentralSpaceLoad(this,true);";?>" 
 			class="HomePanel DashTile DashTileDraggable <?php echo ($tile['all_users']==1)? 'allUsers':'';?>"
 			tile="<?php echo $tile['tile']; ?>"
 			id="user_tile<?php echo htmlspecialchars($tile["user_tile"]);?>"
