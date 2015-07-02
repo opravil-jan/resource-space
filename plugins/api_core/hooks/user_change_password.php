@@ -1,5 +1,5 @@
 <?php
-function HookApi_coreUser_preferencesAfteruserpreferencesform(){
+function HookApi_coreUser_change_passwordAfteruserpreferencesform(){
 	global $lang,$baseurl;
 	?>	<h1><?php echo $lang["apiaccess"]?></h1>
 	<p><?php echo $lang["apiaccess-intro"]?></p>
