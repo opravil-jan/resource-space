@@ -2171,3 +2171,5 @@ $lang['trash_bin_delete_dialog_title'] = 'Remove resource from current collectio
 /* End of Global Trash Bin strings */
 
 $lang["managecontent_defaulttextused"]="!! The text for the default language (?) is currently being used. Edit the text below to create an alternative version for this language / user group selection !!";
+
+$lang["myaccount"]="My account";

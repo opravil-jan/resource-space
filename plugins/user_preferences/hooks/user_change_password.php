@@ -1,12 +1,12 @@
 <?php
 
-function HookUser_preferencesuser_preferencesReplaceuserpreferencesheader()
+function HookUser_preferencesuser_change_passwordReplaceuserpreferencesheader()
 	{
 	echo '<h1>' . $GLOBALS['lang']['user-preferences'] . '</h1>';
 	return true;
 	}
 
-function HookUser_preferencesuser_preferencesSaveadditionaluserpreferences()
+function HookUser_preferencesuser_change_passwordSaveadditionaluserpreferences()
 	{
 	global $user_preferences_change_username, $user_preferences_change_email,
 			$user_preferences_change_name, $userref, $useremail, $username, $userfullname, $lang;
@@ -58,7 +58,7 @@ function HookUser_preferencesuser_preferencesSaveadditionaluserpreferences()
 			&& (getvalescaped('password2', '')=='');
 	}
 
-function HookUser_preferencesuser_preferencesAdditionaluserpreferences()
+function HookUser_preferencesuser_change_passwordAdditionaluserpreferences()
 	{
 	global $user_preferences_change_username, $user_preferences_change_email,
 			$user_preferences_change_name, $lang, $errorUsername, $errorEmail, $errorFullname;

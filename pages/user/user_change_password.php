@@ -1,5 +1,5 @@
 <?php
-include "../include/db.php";
+include "../../include/db.php";
 
 $password_reset_mode=false;
 $resetvalues=getvalescaped("rp","");
@@ -42,10 +42,10 @@ if($resetvalues!="")
     }
 
 
-include "../include/general.php";
+include "../../include/general.php";
 if(!$password_reset_mode)
     {
-    include "../include/authenticate.php"; if (checkperm("p")) {exit("Not allowed.");}
+    include "../../include/authenticate.php"; if (checkperm("p")) {exit("Not allowed.");}
     }
    
 hook("preuserpreferencesform");
@@ -85,7 +85,7 @@ if (getval("save","")!="")
 		}
 	}
 	
-include "../include/header.php";
+include "../../include/header.php";
 ?>
 <div class="BasicsBox"> 
 	<?php if ($userpassword=="b58d18f375f68d13587ce8a520a87919" || $userpassword=="b58d18f375f68d13587ce8a520a87919"){?><div class="FormError" style="margin:0;"><?php echo $lang['secureyouradminaccount'];?></div><p></p><?php } ?>
@@ -108,7 +108,7 @@ include "../include/header.php";
 
 	<?php if (getval("expired","")!="") { ?><div class="FormError">!! <?php echo $lang["password_expired"]?> !!</div><?php } ?>
 
-	<form method="post" action="<?php echo $baseurl_short?>pages/user_preferences.php">
+	<form method="post" action="<?php echo $baseurl_short?>pages/user/user_change_password.php">
 	<input type="hidden" name="expired" value="<?php echo htmlspecialchars(getvalescaped("expired",""))?>">
 	<?php hook('additionaluserpreferences');
 	
@@ -165,5 +165,5 @@ if(!$password_reset_mode)
 
 </div>
 <?php
-include "../include/footer.php";
+include "../../include/footer.php";
 ?>

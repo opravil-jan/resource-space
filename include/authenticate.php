@@ -246,13 +246,13 @@ if (array_key_exists("user",$_COOKIE) || array_key_exists("user",$_GET) || isset
         if ($config_options!="") {eval($config_options);}
         
 
-        if ($password_expiry>0 && !checkperm("p") && $allow_password_change && $pagename!="user_preferences" && $pagename!="index" && $pagename!="collections" && strlen(trim($userdata[0]["password_last_change"]))>0)
+        if ($password_expiry>0 && !checkperm("p") && $allow_password_change && $pagename!="user_change_password" && $pagename!="index" && $pagename!="collections" && strlen(trim($userdata[0]["password_last_change"]))>0)
         	{
         	# Redirect the user to the password change page if their password has expired.
 	        $last_password_change=time()-strtotime($userdata[0]["password_last_change"]);
 			if ($last_password_change>($password_expiry*60*60*24))
 				{
-				redirect("pages/user_preferences.php?expired=true");
+				redirect("pages/user/user_change_password.php?expired=true");
 				}
         	}
         
@@ -450,9 +450,9 @@ foreach($plugins as $plugin){
 }	
 
 hook('handleuserref','',array($userref));
-if (($userpassword=="b58d18f375f68d13587ce8a520a87919" || $userpassword== "b975fc60c53ab4780623e0cd813095e328ddf8ff5a3d01d134f6df7391c42ff5" ) && $pagename!="user_preferences"  && $pagename!="collections"){?>
+if (($userpassword=="b58d18f375f68d13587ce8a520a87919" || $userpassword== "b975fc60c53ab4780623e0cd813095e328ddf8ff5a3d01d134f6df7391c42ff5" ) && $pagename!="user_change_password"  && $pagename!="collections"){?>
 <script>
-	top.location.href="<?php echo $baseurl_short?>pages/user_preferences.php";
+	top.location.href="<?php echo $baseurl_short?>pages/user/user_change_password.php";
 </script>
 <?php }
 

@@ -72,7 +72,7 @@ elseif (array_key_exists("username",$_POST) && getval("langupdate","")=="")
 		if (strpos($url,"pages/collections.php")!==false) {$url="index.php";}
 
         $accepted=sql_value("select accepted_terms value from user where username='$username' and (password='$password' or password='".$result['password_hash']."')",0);
-		if (($accepted==0) && ($terms_login) && !checkperm("p")) {redirect ("pages/terms.php?noredir=true&url=" . urlencode("pages/user_preferences.php"));} else {redirect($url);}
+		if (($accepted==0) && ($terms_login) && !checkperm("p")) {redirect ("pages/terms.php?noredir=true&url=" . urlencode("pages/user/user_change_password.php"));} else {redirect($url);}
         }
     else
         {
