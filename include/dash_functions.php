@@ -348,7 +348,7 @@ function add_user_dash_tile($user,$tile,$order_by)
  */
  function get_user_tile($tile,$user)
  	{
- 	$result=sql_query("SELECT * FROM user_dash_tile WHERE ref='".$tile."' AND user=".$user);
+ 	$result=sql_query("SELECT * FROM user_dash_tile WHERE ref='".escape_check($tile)."' AND user=".escape_check($user));
  	return isset($result[0])?$result[0]:false;
  	}
 
@@ -372,7 +372,7 @@ function add_user_dash_tile($user,$tile,$order_by)
  */
 function update_user_dash_tile_order($user,$tile,$order_by)
 	{
-	return sql_query("UPDATE user_dash_tile SET order_by='".$order_by."' WHERE user='".$user."' and ref='".$tile."'");
+	return sql_query("UPDATE user_dash_tile SET order_by='".escape_check($order_by)."' WHERE user='".escape_check($user)."' and ref='".$tile."'");
 	}
 /*
  * Delete a tile from a user dash
@@ -386,12 +386,31 @@ function delete_user_dash_tile($usertile,$user)
 	if(!is_numeric($usertile) || !is_numeric($user)){return false;}
 	$row = sql_query("SELECT * from user_dash_tile WHERE ref=".$usertile." and user=".$user);
 	sql_query("DELETE FROM user_dash_tile WHERE ref='".$usertile."' and user='".$user."'");
-	$existing = sql_query("SELECT count(*) as 'count' FROM user_dash_tile WHERE ref='".$row["dash_tile"]."'");
+	$existing = sql_query("SELECT count(*) as 'count' FROM user_dash_tile WHERE dash_tile='".$row["dash_tile"]."'");
 	if($existing[0]["count"]<1)
 		{
-		delete_dash_tile($result["dash_tile"]);
+		delete_dash_tile($row["dash_tile"]);
 		}
 	}
+
+/*
+ * Remove all tiles from a users dash
+ */
+function empty_user_dash($user)
+	{
+	$usertiles = sql_query("SELECT dash_tile FROM user_dash_tile WHERE user_dash_tile.user='".escape_check($user)."'");
+	sql_query("DELETE FROM user_dash_tile WHERE user='".$user."'");
+	foreach($usertiles as $tile)
+		{
+		$existing = sql_query("SELECT count(*) as 'count' FROM user_dash_tile WHERE dash_tile='".$tile["dash_tile"]."'");
+		if($existing[0]["count"]<1)
+			{
+			delete_dash_tile($tile["dash_tile"]);
+			}
+		}
+		
+	}
+
 
 /*
  * Reorders the users dash,
