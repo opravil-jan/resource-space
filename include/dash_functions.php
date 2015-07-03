@@ -191,8 +191,7 @@ function get_default_dash()
 				});
 			}
 			function updateDashTileOrder(index,tile) {
-				index=index+1;
-				jQuery.post( "<?php echo $baseurl?>/pages/ajax/dash_tile.php",{"tile":tile,"new_index":((index*10)+10)});
+				jQuery.post( "<?php echo $baseurl?>/pages/ajax/dash_tile.php",{"tile":tile,"new_index":((index*10))});
 			}
 			var dragging=false;
 				jQuery(function() {
@@ -343,12 +342,13 @@ function add_user_dash_tile($user,$tile,$order_by)
 
 /*
  * Get user_dash_tile record, 
+ * Provide the user_dash_tile ref as the $tile
  * this a place holder which links a dash_tile template with the user and the order that that tile should appear on THIS users dash
  *
  */
- function get_user_tile($tile,$user)
+ function get_user_tile($usertile,$user)
  	{
- 	$result=sql_query("SELECT * FROM user_dash_tile WHERE ref='".escape_check($tile)."' AND user=".escape_check($user));
+ 	$result=sql_query("SELECT * FROM user_dash_tile WHERE ref='".escape_check($usertile)."' AND user=".escape_check($user));
  	return isset($result[0])?$result[0]:false;
  	}
 
@@ -384,8 +384,10 @@ function update_user_dash_tile_order($user,$tile,$order_by)
 function delete_user_dash_tile($usertile,$user)
 	{
 	if(!is_numeric($usertile) || !is_numeric($user)){return false;}
-	$row = sql_query("SELECT * from user_dash_tile WHERE ref=".$usertile." and user=".$user);
+	
+	$row = get_user_tile($usertile,$user);
 	sql_query("DELETE FROM user_dash_tile WHERE ref='".$usertile."' and user='".$user."'");
+
 	$existing = sql_query("SELECT count(*) as 'count' FROM user_dash_tile WHERE dash_tile='".$row["dash_tile"]."'");
 	if($existing[0]["count"]<1)
 		{
@@ -395,20 +397,24 @@ function delete_user_dash_tile($usertile,$user)
 
 /*
  * Remove all tiles from a users dash
+ * Purge option does the cleanup in dash_tile removing any unused tiles
+ * Turn purge off if you are just doing a quick rebuild of the tiles.
  */
-function empty_user_dash($user)
+function empty_user_dash($user,$purge=true)
 	{
 	$usertiles = sql_query("SELECT dash_tile FROM user_dash_tile WHERE user_dash_tile.user='".escape_check($user)."'");
 	sql_query("DELETE FROM user_dash_tile WHERE user='".$user."'");
-	foreach($usertiles as $tile)
+	if($purge)
 		{
-		$existing = sql_query("SELECT count(*) as 'count' FROM user_dash_tile WHERE dash_tile='".$tile["dash_tile"]."'");
-		if($existing[0]["count"]<1)
+		foreach($usertiles as $tile)
 			{
-			delete_dash_tile($tile["dash_tile"]);
+			$existing = sql_query("SELECT count(*) as 'count' FROM user_dash_tile WHERE dash_tile='".$tile["dash_tile"]."'");
+			if($existing[0]["count"]<1)
+				{
+				delete_dash_tile($tile["dash_tile"]);
+				}
 			}
-		}
-		
+		}	
 	}
 
 
@@ -439,6 +445,87 @@ function append_user_position($user)
 	}
 
 /*
+ * All dash tiles available to the supplied userref
+ * If you provide a dash_tile ref it will check if this tile exists within the list of available tiles to the user
+ *
+ */
+function get_user_available_tiles($user,$tile="null")
+	{
+	$tilecheck = (is_numeric($tile)) ? "WHERE ref='".$tile."'":"";
+	return sql_query
+		(
+			"
+			SELECT 
+				result.*
+			FROM
+			(	(
+				SELECT 
+					dash_tile.ref,
+					'' as 'dash_tile',
+					'' as 'usertile', 
+					'' as 'user', 
+					'' as 'order_by',
+					dash_tile.ref as 'tile',
+					dash_tile.title,
+					dash_tile.txt,
+					dash_tile.link,
+					dash_tile.resource_count,
+					dash_tile.all_users,
+					dash_tile.default_order_by
+				FROM
+					dash_tile
+				WHERE
+					dash_tile.all_users = 1
+					AND
+					ref 
+					NOT IN
+					(
+						SELECT 
+							dash_tile.ref
+						FROM
+							user_dash_tile
+						RIGHT OUTER JOIN
+							dash_tile
+						ON 
+							user_dash_tile.dash_tile = dash_tile.ref
+
+						WHERE
+							user_dash_tile.user = '".$user."'
+					)
+				)
+			UNION
+				(
+				SELECT 
+					dash_tile.ref,
+					user_dash_tile.dash_tile,
+					user_dash_tile.ref as 'usertile', 
+					user_dash_tile.user, 
+					user_dash_tile.order_by,
+					dash_tile.ref as 'tile',
+					dash_tile.title,
+					dash_tile.txt,
+					dash_tile.link,
+					dash_tile.resource_count,
+					dash_tile.all_users,
+					dash_tile.default_order_by
+				FROM
+					user_dash_tile
+				RIGHT OUTER JOIN
+					dash_tile
+				ON 
+					user_dash_tile.dash_tile = dash_tile.ref
+				WHERE
+					user_dash_tile.user = '".$user."'
+				)
+			) result
+			".$tilecheck."
+			ORDER BY result.order_by,result.default_order_by
+
+			"
+		);
+	}
+
+/*
  * Returns a users dash along with all necessary scripts and tools for manipulation
  * checks for the permissions which allow for deletions and manipulation of all_user tiles from the dash
  *
@@ -447,7 +534,8 @@ function get_user_dash($user)
 	{
 	global $baseurl,$baseurl_short,$lang,$dash_tile_shadows;
 	#Build User Dash and recalculate order numbers on display
-	$user_tiles = sql_query("SELECT dash_tile.ref AS 'tile',dash_tile.title,dash_tile.all_users,dash_tile.url,dash_tile.reload_interval_secs,dash_tile.link,user_dash_tile.ref AS 'user_tile',user_dash_tile.order_by FROM user_dash_tile LEFT JOIN dash_tile ON user_dash_tile.dash_tile = dash_tile.ref WHERE user_dash_tile.user='".$user."' ORDER BY user_dash_tile.order_by");
+	$user_tiles = sql_query("SELECT dash_tile.ref AS 'tile',dash_tile.title,dash_tile.all_users,dash_tile.url,dash_tile.reload_interval_secs,dash_tile.link,user_dash_tile.ref AS 'user_tile',user_dash_tile.order_by FROM user_dash_tile JOIN dash_tile ON user_dash_tile.dash_tile = dash_tile.ref WHERE user_dash_tile.user='".$user."' ORDER BY user_dash_tile.order_by");
+
 	$order=10;
 	foreach($user_tiles as $tile)
 		{
@@ -510,8 +598,7 @@ function get_user_dash($user)
 		echo "<script>";
 		} ?>
 		function updateDashTileOrder(index,tile) {
-			index=index+1;
-			jQuery.post( "<?php echo $baseurl?>/pages/ajax/dash_tile.php",{"user_tile":tile,"new_index":((index*10)+10)});
+			jQuery.post( "<?php echo $baseurl?>/pages/ajax/dash_tile.php",{"user_tile":tile,"new_index":((index*10))});
 		}
 		var dragging=false;
 			jQuery(function() {
@@ -530,7 +617,6 @@ function get_user_dash($user)
 		          update: function(event, ui) {
 		          	nonDraggableTiles = jQuery(".HomePanel").length - jQuery(".DashTileDraggable").length;
 		          	newIndex = ui.item.index() - nonDraggableTiles;
-		          	console.log(nonDraggableTiles);
 		          	var id=jQuery(ui.item).attr("id").replace("user_tile","");
 		          	updateDashTileOrder(newIndex,id);
 		          }

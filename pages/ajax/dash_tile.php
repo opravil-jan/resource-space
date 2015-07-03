@@ -37,7 +37,6 @@ if(isset($user_rawtile) && !empty($user_rawtile))
 $index=getvalescaped("new_index","",TRUE);
 if(!empty($index) && isset($usertile))
 	{
-	$index= $index-10;
 	if($index > $usertile["order_by"])
 		{$index+=5;}
 	else 
@@ -48,7 +47,6 @@ if(!empty($index) && isset($usertile))
 	}
 if(!empty($index) && isset($tile) && !isset($usertile))
 	{
-	$index= $index-10;
 	if($index > $tile["default_order_by"])
 		{$index+=5;}
 	else 
