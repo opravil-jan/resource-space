@@ -2,10 +2,10 @@
 ob_start(); // we will use output buffering to prevent any included files 
             // from outputting stray characters that will mess up the binary download
             // we will clear the buffer and start over right before we download the file
-include "../include/db.php";
-include "../include/general.php";
-include "../include/resource_functions.php";
-include "../include/search_functions.php";
+include_once dirname(__FILE__)."/../include/db.php";
+include_once dirname(__FILE__)."/../include/general.php";
+include_once dirname(__FILE__)."/../include/resource_functions.php";
+include_once dirname(__FILE__)."/../include/search_functions.php";
 
 ob_end_clean(); 
 
@@ -16,7 +16,7 @@ if(strlen(getvalescaped('direct',''))>0){$direct = true;} else { $direct = false
 # if direct downloading without authentication is enabled, skip the authentication step entirely
 if (!($direct_download_noauth && $direct)){
 	# External access support (authenticate only if no key provided, or if invalid access key provided)
-	$k=getvalescaped("k","");if (($k=="") || (!check_access_key(getvalescaped("ref","",true),$k))) {include "../include/authenticate.php";}
+	$k=getvalescaped("k","");if (($k=="") || (!check_access_key(getvalescaped("ref","",true),$k))) {include dirname(__FILE__)."/../include/authenticate.php";}
 }
 
 $ref=getvalescaped("ref","",true);
@@ -55,6 +55,8 @@ if ($ext=="") {$ext="jpg";}
 
 $noattach=getval("noattach","");
 $path=get_resource_path($ref,true,$size,false,$ext,-1,$page,$use_watermark && $alternative==-1,"",$alternative);
+
+hook('modifydownloadpath');
 
 if (!file_exists($path)) {$path=get_resource_path($ref,true,"",false,$ext,-1,$page,false,"",$alternative);}
 
