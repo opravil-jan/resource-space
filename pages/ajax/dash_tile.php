@@ -63,17 +63,24 @@ if(!empty($index) && isset($tile) && !isset($usertile))
 $delete=getvalescaped("delete",false);
 if($delete && isset($usertile))
 	{
-	if((checkperm("dtu") && !((checkperm("h") && !checkperm("hdta")) || (checkperm("dta") && !checkperm("h"))))){exit($lang["error-permissiondenied"]);}
-	if($managed_home_dash){exit($lang["error-permissiondenied"]);}
+	if(!checkPermission_dashmanage()){exit($lang["error-permissiondenied"]);}
 	delete_user_dash_tile($usertile["ref"],$userref);
 	reorder_user_dash($userref);
-	echo "Deleted ".$usertile['ref'];
+	echo "Deleted U".$usertile['ref'];
 	exit();
 	}
 if($delete && isset($tile) && !isset($usertile))
 	{
-	if(!((checkperm("h") && !checkperm("hdta")) || (checkperm("dta") && !checkperm("h")))){exit($lang["error-permissiondenied"]);}
-	delete_dash_tile($tile["ref"]);
+	if(!checkPermission_dashmanage()){exit($lang["error-permissiondenied"]);}
+
+	#Check config tiles for permanent deletion
+	$force = false;
+	$search_string = explode('?',$tile["url"]);
+	parse_str(str_replace("&amp;","&",$search_string[1]),$search_string);
+	if($search_string["tltype"]=="conf")
+		{$force = !checkTileConfig($tile,$search_string["tlstyle"]);}
+
+	delete_dash_tile($tile["ref"],true,$force);
 	reorder_default_dash();
 	echo "Deleted ".$tile['ref'];
 	exit();

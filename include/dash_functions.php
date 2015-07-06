@@ -59,9 +59,11 @@ function create_dash_tile($url,$link,$title,$reload_interval,$all_users,$default
  * @$tile, the dash_tile.ref number of the tile to be deleted
  * @$cascade, whether this delete should remove the tile from all users.
  */
-function delete_dash_tile($tile,$cascade=TRUE)
+function delete_dash_tile($tile,$cascade=TRUE,$force=FALSE)
 	{
-	sql_query("DELETE FROM dash_tile WHERE ref='".$tile."' AND allow_delete=1");
+	#Force Delete ignores the allow_delete flag (This allows removal of config tiles)
+	$allow_delete = $force? "":"AND allow_delete=1";
+	sql_query("DELETE FROM dash_tile WHERE ref='".$tile."' ".$allow_delete);
 	if($cascade)
 		{
 		sql_query("DELETE FROM user_dash_tile WHERE dash_tile='".$tile."'");
@@ -128,6 +130,43 @@ function existing_tile($title,$all_users,$url,$link,$reload_interval,$resource_c
 		return false;
 		}
 	}
+
+
+/*
+ * Checks if this tiles config is still active
+ * @param: $tile = tile record
+ * @param: $tilestyle = extracted tilestyle of this config tile
+ */
+function checkTileConfig($tile,$tile_style)
+	{
+	switch($tile_style)
+		{
+		case "thmsl": 	global $home_themeheaders; return $home_themeheaders;
+		case "theme":	global $home_themes; return $home_themes;
+		case "mycol":	global $home_mycollections; return $home_mycollections;
+		case "advsr":	global $home_advancedsearch; return $home_advancedsearch;
+		case "mycnt":	global $home_mycontributions; return $home_mycontributions;
+		case "hlpad":	global $home_helpadvice; return $home_helpadvice;
+		case "custm":	global $custom_home_panels; return isset($custom_home_panels)? checkConfigCustomHomePanels($tile,$tile_style) : FALSE;
+						exit;
+		}
+	}
+
+function checkConfigCustomHomePanels($tile,$tile_style)
+	{
+	global $custom_home_panels;
+	$tile_config_set = FALSE;
+
+	for ($n=0;$n<count($custom_home_panels);$n++)
+			{
+			# Check Tile tile exists in dash already
+			if(existing_tile($tile["title"],$tile["all_users"],$tile["url"],$tile["link"],$tile["reload_interval_secs"],$tile["resource_count"],$tile["txt"]))
+				{
+				$tile_config_set = TRUE;
+				}
+			}
+	}
+
 /*
  * Retrieves the default dash which only display all_user tiles.
  * This should only be accessible to thos with Dash Tile Admin permissions
@@ -136,7 +175,7 @@ function get_default_dash()
 	{
 	global $baseurl,$baseurl_short,$lang,$anonymous_login,$username,$dash_tile_shadows;
 	#Build Tile Templates
-	$tiles = sql_query("SELECT dash_tile.ref AS 'tile',dash_tile.title,dash_tile.url,dash_tile.reload_interval_secs,dash_tile.link,dash_tile.default_order_by as 'order_by' FROM dash_tile WHERE dash_tile.all_users=1 AND (dash_tile.allow_delete=1 OR (dash_tile.allow_delete=0 AND dash_tile.ref IN (SELECT DISTINCT user_dash_tile.dash_tile FROM user_dash_tile))) ORDER BY default_order_by");
+	$tiles = sql_query("SELECT dash_tile.ref AS 'tile',dash_tile.title,dash_tile.url,dash_tile.reload_interval_secs,dash_tile.link,dash_tile.default_order_by as 'order_by',dash_tile.allow_delete FROM dash_tile WHERE dash_tile.all_users=1 AND (dash_tile.allow_delete=1 OR (dash_tile.allow_delete=0 AND dash_tile.ref IN (SELECT DISTINCT user_dash_tile.dash_tile FROM user_dash_tile))) ORDER BY default_order_by");
 	$order=10;
 	if(count($tiles)==0){echo $lang["nodashtilefound"];exit;}
 	foreach($tiles as $tile)
@@ -160,7 +199,7 @@ function get_default_dash()
 			?>
 			href="<?php echo $link?>" <?php echo $newtab ? "target='_blank'" : "";?>
 			onClick="if(dragging){dragging=false;e.defaultPrevented;}" 
-			class="HomePanel DashTile DashTileDraggable" 
+			class="HomePanel DashTile DashTileDraggable <?php echo $tile["allow_delete"]? "":"conftile";?>" 
 			id="tile<?php echo htmlspecialchars($tile["tile"]);?>"
 		>
 			<div id="contents_tile<?php echo htmlspecialchars($tile["tile"]);?>" class="HomePanelIN HomePanelDynamicDash <?php echo ($dash_tile_shadows)? "TileContentShadow":"";?>">
@@ -183,6 +222,7 @@ function get_default_dash()
 		?>
 		<div id="dash_tile_bin"><span class="dash_tile_bin_text"><?php echo $lang["tilebin"];?></span></div>
 		<div id="delete_dialog" style="display:none;"></div>
+		<div id="delete_permanent_dialog" style="display:none;text-align:left;"><?php echo $lang['confirmdeleteconfigtile'];?></div>
 	
 		<script>
 			function deleteDefaultDashTile(id) {
@@ -224,13 +264,31 @@ function get_default_dash()
 							id = id.replace("tile","");
 							title = jQuery(ui.draggable).find(".title").html();
 							jQuery("#dash_tile_bin").hide();
+							if(jQuery("#tile"+id).hasClass("conftile")) {
+								jQuery("#delete_permanent_dialog").dialog({
+							    	title:'<?php echo $lang["dashtiledelete"]; ?>',
+							    	modal: true,
+									resizable: false,
+									dialogClass: 'delete-dialog no-close',
+							        buttons: {
+							            "<?php echo $lang['confirmdefaultdashtiledelete'] ?>": function() {
+							            		jQuery(this).dialog("close");
+							            		deleteDefaultDashTile(id);
+							            	},    
+							            "<?php echo $lang['cancel'] ?>": function() { 
+							            		jQuery(this).dialog('close');
+							            	}
+							        }
+							    });
+							    return;
+							}
 							jQuery("#delete_dialog").dialog({
 						    	title:'<?php echo $lang["dashtiledelete"]; ?>',
 						    	modal: true,
 								resizable: false,
 								dialogClass: 'delete-dialog no-close',
 						        buttons: {
-						            "<?php echo $lang['confirmdefaultdashtiledelete'] ?>": function() {deleteDefaultDashTile(id); jQuery(this).dialog("close");},    
+						            "<?php echo $lang['confirmdefaultdashtiledelete'] ?>": function() {jQuery(this).dialog("close");deleteDefaultDashTile(id); },    
 						            "<?php echo $lang['cancel'] ?>": function() { jQuery(this).dialog('close'); }
 						        }
 						    });
@@ -580,6 +638,7 @@ function get_user_dash($user)
 		{ ?>
 		<div id="dash_tile_bin"><span class="dash_tile_bin_text"><?php echo $lang["tilebin"];?></span></div>
 		<div id="delete_dialog" style="display:none;"></div>
+		<div id="delete_permanent_dialog" style="display:none;text-align:left;"><?php echo $lang['confirmdeleteconfigtile'];?></div>
 		<script>
 			function deleteDashTile(id) {
 				jQuery.post( "<?php echo $baseurl?>/pages/ajax/dash_tile.php",{"user_tile":id,"delete":"true"},function(data){
@@ -664,7 +723,7 @@ function get_user_dash($user)
 		                });
 		            }
 		            else {
-		            	//This tile belongs to this user
+		            	//This tile belongs to this user only
 				        jQuery("#delete_dialog").dialog({
 				        	title:'<?php echo $lang["dashtiledelete"]; ?>',
 				        	modal: true,
