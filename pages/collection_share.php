@@ -118,13 +118,7 @@ include "../include/header.php";
 		# Share as a dash tile.
 		global $home_dash,$anonymous_login,$username;
 
-		#Home_dash is on, And not Anonymous use, And (Dash tile user (Not with a managed dash) || Dash Tile Admin)
-		if($home_dash && 
-				!(isset($anonymous_login) && $anonymous_login==$username) 
-				&&  ((!checkperm("dtu") && !$managed_home_dash)
-						|| (checkperm("h") && !checkperm("hdta")) || (checkperm("dta") && !checkperm("h"))
-					)
-			) 
+		if($home_dash && checkPermission_dashmanage())
 			{?>
 			<li><a href="<?php echo $baseurl_short;?>pages/dash_tile.php?create=true&tltype=srch&promoted_resource=true&freetext=true&all_users=1&link=/pages/search.php?search=!collection<?php echo $ref?>&order_by=relevance&sort=DESC"  onClick="return CentralSpaceLoad(this,true);"><?php echo $lang["createnewdashtile"];?></a></li>
 			<?php

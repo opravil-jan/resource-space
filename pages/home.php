@@ -585,17 +585,11 @@ if (checkperm("s"))
 			}
 		} # end hook homefeaturedcol
 
-	if($home_dash 
-			&& !(isset($anonymous_login) && $anonymous_login==$username) 
-			&& (
-				!$managed_home_dash 
-				|| ($unmanaged_home_dash_admins && ((checkperm("h") && !checkperm("hdta")) || (checkperm("dta") && !checkperm("h"))))
-			   )
-		)
+	if($home_dash && checkPermission_dashmanage())
 		{
 		get_user_dash($userref);	
 		}
-	else if($home_dash && ($managed_home_dash || $anonymous_default_dash))
+	else if($home_dash && !checkPermission_dashmanage())
 		{
 		get_managed_dash();
 		}

@@ -219,16 +219,16 @@ function DisplayTheme($themes=array())
                 <?php }
                 global $home_dash,$anonymous_login,$username,$managed_home_dash;
                 #Home_dash is on, And not Anonymous use, And (Dash tile user (Not with a managed dash) || Dash Tile Admin)
-				if($home_dash && 
-						!(isset($anonymous_login) && $anonymous_login==$username) 
-						&&  ((!checkperm("dtu") && !$managed_home_dash)
-								|| (checkperm("h") && !checkperm("hdta")) || (checkperm("dta") && !checkperm("h"))
-							)
-					) { ?>
-                &nbsp;<a href="<?php echo $baseurl_short;?>pages/dash_tile.php?create=true&tltype=srch&promoted_resource=true&freetext=true&all_users=1&link=/pages/search.php?search=!collection<?php echo urlencode($getthemes[$m]["ref"])?>&order_by=relevance&sort=DESC"  onClick="return CentralSpaceLoad(this,true);">&gt;&nbsp;<?php echo $lang["dashtile"]?></a>
-                <?php } ?>
+				if($home_dash && checkPermission_dashmanage()) 
+					{ ?>
+                	&nbsp;
+                	<a href="<?php echo $baseurl_short;?>pages/dash_tile.php?create=true&tltype=srch&promoted_resource=true&freetext=true&all_users=1&link=/pages/search.php?search=!collection<?php echo urlencode($getthemes[$m]["ref"])?>&order_by=relevance&sort=DESC"  onClick="return CentralSpaceLoad(this,true);">
+                		&gt;&nbsp;<?php echo $lang["dashtile"]?>
+                	</a>
+                	<?php 
+                	}
 
-                <?php if ($allow_share && (checkperm("v") || checkperm ("g"))) { ?> &nbsp;<a href="<?php echo $baseurl_short?>pages/collection_share.php?ref=<?php echo $getthemes[$m]["ref"]?>"  onClick="return CentralSpaceLoad(this,true);">&gt;&nbsp;<?php echo $lang["share"]?></a><?php } ?>
+                if ($allow_share && (checkperm("v") || checkperm ("g"))) { ?> &nbsp;<a href="<?php echo $baseurl_short?>pages/collection_share.php?ref=<?php echo $getthemes[$m]["ref"]?>"  onClick="return CentralSpaceLoad(this,true);">&gt;&nbsp;<?php echo $lang["share"]?></a><?php } ?>
 
                 <?php if (checkperm("h")) {?>&nbsp;<a href="<?php echo $baseurl_short?>pages/collection_edit.php?ref=<?php echo $getthemes[$m]["ref"]?>" onClick="return CentralSpaceLoad(this,true);">&gt;&nbsp;<?php echo $lang["action-edit"]?></a><?php } ?>
 

@@ -1429,3 +1429,33 @@ function show_pagetime(){
 	$total_time = round(($time - $pagetime_start), 4);
 	echo $total_time." sec";
 }
+
+/*
+ * Permissions Functions
+ * Each function encapsulates a more complex combination of permissions
+ *
+ */
+function checkPermission_anonymoususer()
+	{
+	global $anonymous_login;
+	return (isset($anonymous_login) && $anonymous_login==$username);
+	}
+
+
+# Dash Permissions
+function checkPermission_dashadmin()	
+	{
+	return ((checkperm("h") && !checkperm("hdta")) || (checkperm("dta") && !checkperm("h")));
+	}
+function checkPermission_dashuser()
+	{
+	return !checkperm("dtu");
+	}
+
+function checkPermission_dashmanage()
+	{
+	#Home_dash is on, And not Anonymous use, And (Dash tile user (Not with a managed dash) || Dash Tile Admin)
+	global $managed_home_dash,$unmanaged_home_dash_admins;
+	return !checkPermission_anonymoususer() && ((!$managed_home_dash && (checkPermission_dashuser() || checkPermission_dashadmin()))
+				|| ($unmanaged_home_dash_admins && checkPermission_dashadmin()));
+	}
