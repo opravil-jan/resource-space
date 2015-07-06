@@ -548,14 +548,8 @@ $descthemesorder=false;
 #Hide advanced search on search bar
 $advancedsearch_disabled = false;
 
-# Show advanced search on the home page?
-$home_advancedsearch=false;
-
 # Display the advanced search as a 'search' link in the top navigation
 $advanced_search_nav=false;
-
-# Show My Contributions on the home page?
-$home_mycontributions=false;
 
 # Do not display 'search results' link in the top navigation
 $disable_searchresults = false;
@@ -885,7 +879,8 @@ $home_themeheaders=false;
 $home_themes=true;
 $home_mycollections=true;
 $home_helpadvice=true;
-
+$home_advancedsearch=false;
+$home_mycontributions=false;
 #
 # Custom panels for the home page.
 # You can add as many panels as you like. They must be numbered sequentially starting from zero (0,1,2,3 etc.)
