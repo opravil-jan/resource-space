@@ -34,8 +34,30 @@ function build_user_dash_tile_list($user)
   				/>
   			</td>
   			<td><?php echo $tile["title"];?></td>
-  			<td><?php echo substr($tile["txt"],0,75);?></td>
-  			<td><?php echo substr($tile["link"],0,75);?></td>
+  			<td>
+  				<?php 
+  				if(strlen($tile["txt"])>75)
+  					{
+  					echo substr($tile["txt"],0,72)."...";
+  					}
+  				else
+  					{
+  					echo $tile["txt"];
+  					}
+  				?>
+  			</td>
+  			<td>
+  				<?php 
+  				if(strlen($tile["link"])>75)
+  					{
+  					echo substr($tile["link"],0,72)."...";
+  					}
+  				else
+  					{
+  					echo $tile["link"];
+  					}
+  				?>
+  			</td>
   			<td><?php echo $tile["resource_count"]? $lang["yes"]: $lang["no"];?></td>
   			<td>
   				
