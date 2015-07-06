@@ -1437,7 +1437,7 @@ function show_pagetime(){
  */
 function checkPermission_anonymoususer()
 	{
-	global $anonymous_login;
+	global $anonymous_login,$username;
 	return (isset($anonymous_login) && $anonymous_login==$username);
 	}
 
