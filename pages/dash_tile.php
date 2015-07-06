@@ -126,6 +126,7 @@ if($create)
 			{
 			include_once "../include/collections_functions.php";
 			$col= get_collection(preg_replace("/^!collection/", "", $title));
+			$promoted_resource = true;
 			$title=$col["name"];
 			}
 		else if(substr($title,0,7)=="!recent")
