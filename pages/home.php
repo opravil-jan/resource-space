@@ -154,7 +154,7 @@ if (!hook("replaceslideshow"))
 		<?php
 		}
 
-	if (!$slideshow_big) 
+	if ($small_slideshow && !$slideshow_big) 
 		{ ?>
 		<div id="SlideshowContainer">
 			<div class="HomePicturePanel"
@@ -219,6 +219,13 @@ if (!hook("replaceslideshow"))
 		</div>
 		<?php
 		}
+		// When not having the small slideshow and we also don't have big slideshow
+		// we want welcome text on top of home panels
+		if(!$small_slideshow)
+			{
+			loadWelcomeText();
+			$welcometext = true;
+			}
 	} # End of hook replaceslideshow
 if (checkperm("s")) 
 	{
@@ -599,7 +606,7 @@ if (checkperm("s"))
 	
 	<div class="clearerleft"></div>
 	<?php
-	if(!$home_dash || !$welcometext){loadWelcomeText();}
+	if($small_slideshow && (!$home_dash || !$welcometext)){loadWelcomeText();}
 	} // end of checkperm("s") 
 else 
 	{ ?>

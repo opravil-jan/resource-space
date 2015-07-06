@@ -252,6 +252,9 @@ $homeanim_folder="gfx/homeanim/gfx";
 # $home_slideshow_width=517;
 # $home_slideshow_height=350;
 
+# Small slideshow mode (old slideshow)
+$small_slideshow = true;
+
 # Big slideshow mode (Fullscreen slideshow)
 # ----------------------------------
 # You will need to configure much bigger slideshow images with $home_slideshow_width and $home_slideshow_height, and regenerate
