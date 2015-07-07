@@ -201,13 +201,13 @@ function tile_search_thumbs($tile,$tile_id,$tile_width,$tile_height,$promoted_im
 	if($found_resources)
 		{
 		$previewresource=$tile_search[0];
+		
 		if($promoted_image)
 			{
-			$search.=" ".$promoted_image;
-			$resource=do_search($search,$restypes,$order_by,$archive,1,$sort);
-			if(isset($resource[0]["ref"]))
+			$promoted_image_data=get_resource_data($promoted_image);
+			if ($promoted_image_data!==false)
 				{
-				$previewresource=$resource[0];
+				$previewresource=$promoted_image_data;
 				}
 			}
 		
