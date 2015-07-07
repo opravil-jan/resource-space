@@ -9,7 +9,7 @@ if (getval("rp","")!="")
 	{
 	# quick redirect to reset password
 	$rp=getvalescaped("rp","");
-	$topurl="pages/user_preferences.php?rp=" . $rp;
+	$topurl="pages/user/user_change_password.php?rp=" . $rp;
         redirect($topurl);
 	}
         
