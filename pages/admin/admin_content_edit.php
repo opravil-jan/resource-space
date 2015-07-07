@@ -117,7 +117,7 @@ if($html_validation !== true && $html_validation !== '')
 		?>
 		<div class="Question">
 			<label><?php echo $lang["name"]?></label>
-			<div class="Fixed"><?php echo $name?></div>
+			<div class="Fixed"><?php echo htmlspecialchars($name) ?></div>
 			<div class="clearerleft"></div>
 		</div>
 		<?php
