@@ -101,8 +101,6 @@ if($submitdashtile)
 
 		}
 
-	
-
 	/* SAVE SUCCESSFUL? */
 	if(!$error)
 		{
@@ -179,7 +177,7 @@ function tileStyle($tile_type,$existing=null)
 	}
 
 /* 
- * Create New Tile Form 
+ * Tile Form Entry
  */
 $create=getvalescaped("create",FALSE);
 $edit=getvalescaped("edit",FALSE);
@@ -271,11 +269,15 @@ else if($edit)
 	$submittext = $lang["save"];
 	}
 
+/* Start Display*/
 include "../include/header.php";
 
 if(!$validpage)
 	{
-	echo $lang["error-dashactionmissing"];
+	echo "<h2>".$lang["error"]."</h2>";
+	echo "<p>".$lang["error-dashactionmissing"]."</p>";
+	include "../include/footer.php";
+	exit;
 	}
 ?>
 <h2><?php echo $pagetitle?></h2>

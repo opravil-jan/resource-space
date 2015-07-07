@@ -2137,7 +2137,7 @@ $lang["dashtileimage"]="Dash tile image";
 $lang["dashtilesmalldevice"]="Required drag functionality is not available on devices with a small screen";
 $lang["dashtileshow"]="Show tile";
 $lang['confirmdeleteconfigtile']="This tile is controlled by configuration option(s). To permanently delete this tile, turn off the relevant options and then perform this action again.";
-$lang["error-dashactionmissing"]="No action or invalid data was submitted to this page. Nothing here to see.";
+$lang["error-dashactionmissing"]="No action or invalid data was submitted to this page. No tile template available to build. <br />Please return to this page from a suitable creation / edit link";
 #Tile style strings
 $lang["tile_thmbs"]="Single";
 $lang["tile_multi"]="Multi";
