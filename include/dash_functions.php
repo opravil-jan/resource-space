@@ -412,11 +412,68 @@ function get_managed_dash()
 
 /*
  * User Group dash functions
+ */
+
+/*
+ * Add a tile for a user group
  *
  */
-function add_usergroup_dash_tile($usergroup)
+function add_usergroup_dash_tile($usergroup,$tile,$default_order_by)
 	{
+	$reorder=TRUE;
+	if(!is_numeric($usergroup) || !is_numeric($tile))
+		{return false;}
+	if(!is_numeric($default_order_by))
+		{
+		$default_order_by=append_usergroup_position($usergroup);
+		$reorder=FALSE;
+		}
+	$existing = sql_query("SELECT * FROM usergroup_dash_tile WHERE usergroup=".$usergroup." AND dash_tile=".$tile);
+	if(!$existing)
+		{
+		$result = sql_query("INSERT INTO usergroup_dash_tile (usergroup,dash_tile,default_order_by) VALUES (".$usergroup.",".$tile.",".$default_order_by.")");
+		}
+	else
+		{
+		return $existing;
+		}
+	if($reorder){reorder_usergroup_dash($usergroup);}
+	return true;
+	}
 
+/*
+ * Get the position for a new tile at the end of the current usergroup tiles.
+ * Returns the last position or the first position if no tiles found for this usergroup
+ */
+function append_usergroup_position($usergroup)
+	{
+	$last_tile=sql_query("SELECT order_by FROM usergroup_dash_tile WHERE usergroup='".$usergroup."' ORDER BY default_order_by DESC LIMIT 1");
+	return isset($last_tile[0]["default_order_by"])?$last_tile[0]["order_by"]+10:10;
+	}
+function reorder_usergroup_dash($usergroup)
+	{
+	$usergroup_tiles = sql_query("SELECT usergroup_dash_tile.ref FROM usergroup_dash_tile LEFT JOIN dash_tile ON usergroup_dash_tile.dash_tile = dash_tile.ref WHERE usergroup_dash_tile.usergroup='".$usergroup."' ORDER BY usergroup_dash_tile.default_order_by");
+	$order_by=10 * count($usergroup_tiles);
+	for($i=count($usergroup_tiles)-1;$i>=0;$i--)
+		{
+		update_usergroup_dash_tile_order($usergroup,$usergroup_tiles[$i]["ref"],$order_by);
+		$order_by-=10;
+		}
+	}
+function update_usergroup_dash_tile_order($usergroup,$tile,$default_order_by)
+	{
+	sql_query("UPDATE usergroup_dash_tile SET default_order_by='".escape_check($default_order_by)."' WHERE usergroup='".escape_check($usergroup)."' and ref='".$tile."'");
+	}
+
+function build_usergroup_dash($user,$usergroup)
+	{
+	$usergroup_tiles = sql_query("SELECT dash_tile.ref AS 'tile',dash_tile.title,dash_tile.all_users,dash_tile.url,dash_tile.reload_interval_secs,dash_tile.link,usergroup_dash_tile.ref as 'usergroup_tile',usergroup_dash_tile.default_order_by FROM usergroup_dash_tile JOIN dash_tile ON usergroup_dash_tile.dash_tile=dash_tile.ref WHERE usergroup_dash_tile.usergroup='".$usergroup."' ORDER BY usergroup_dash_tile.default_order_by");
+	$starting_order = append_user_position($user);
+	foreach($usergroup_tiles as $tile)
+		{
+		add_user_dash_tile($user,$tile,$starting_order);
+		$starting_order+=10;
+		}
 	}
 function get_usergroup_dash($usergroup)
 	{
