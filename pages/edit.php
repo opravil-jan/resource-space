@@ -722,45 +722,56 @@ function SaveAndClearButtons($extraclass="")
 
 <?php hook("editbefresmetadata"); ?>
 <?php if (!hook("replaceedittype")) { ?>
-<?php if (!$multiple){?>
-<div class="Question" id="question_resourcetype">
-   <label for="resourcetype"><?php echo $lang["resourcetype"]?></label>
-   <select name="resource_type" id="resourcetype" class="stdwidth" 
-      onChange="<?php if ($ref>0) { ?>if (confirm('<?php echo $lang["editresourcetypewarning"]; ?>')){<?php } ?>CentralSpacePost(document.getElementById('mainform'),true);<?php if ($ref>0) { ?>}else {return}<?php } ?>">
-   <?php
-   $types=get_resource_types();
-
-
-   for ($n=0;$n<count($types);$n++)
-   {
-    if ((checkperm("XU{$types[$n]["ref"]}") || in_array($types[$n]['ref'], $hide_resource_types)) && $resource["resource_type"]!=$types[$n]["ref"]) continue;   // skip showing a resource type that we do not to have permission to change to (unless it is currently set to that)
-    ?><option value="<?php echo $types[$n]["ref"]?>" <?php if ($resource["resource_type"]==$types[$n]["ref"]) {?>selected<?php } ?>><?php echo htmlspecialchars($types[$n]["name"])?></option><?php
- }
- ?></select>
- <div class="clearerleft"> </div>
-</div>
-<?php } else {
-# Multiple method of changing resource type.
-  ?>
-  <h2 <?php echo ($collapsible_sections)?"class=\"CollapsibleSectionHead\"":""?>><?php echo $lang["resourcetype"] ?></h2>
-  <div <?php echo ($collapsible_sections)?"class=\"CollapsibleSection\"":""?> id="ResourceTypeSection<?php if ($ref==-1) echo "Upload"; ?>"><input name="editresourcetype" id="editresourcetype" type="checkbox" value="yes" onClick="var q=document.getElementById('editresourcetype_question');if (this.checked) {q.style.display='block';alert('<?php echo $lang["editallresourcetypewarning"] ?>');} else {q.style.display='none';}">&nbsp;<label for="editresourcetype"><?php echo $lang["resourcetype"] ?></label>
-   <div class="Question" style="display:none;" id="editresourcetype_question">
-      <label for="resourcetype"><?php echo $lang["resourcetype"]?></label>
-      <select name="resource_type" id="resourcetype" class="stdwidth">
-         <?php
-         $types=get_resource_types();
-         for ($n=0;$n<count($types);$n++)
-         {
-          if(in_array($types[$n]['ref'], $hide_resource_types)) { continue; }
-          ?><option value="<?php echo $types[$n]["ref"]?>" <?php if ($resource["resource_type"]==$types[$n]["ref"]) {?>selected<?php } ?>><?php echo htmlspecialchars($types[$n]["name"])?></option><?php
-       }
-       ?></select>
-       <div class="clearerleft"> </div>
+<?php 
+if(!$multiple)
+    {
+    ?>
+    <div class="Question" id="question_resourcetype">
+        <label for="resourcetype"><?php echo $lang["resourcetype"]?></label>
+        <select name="resource_type" id="resourcetype" class="stdwidth" 
+                onChange="<?php if ($ref>0) { ?>if (confirm('<?php echo $lang["editresourcetypewarning"]; ?>')){<?php } ?>CentralSpacePost(document.getElementById('mainform'),true);<?php if ($ref>0) { ?>}else {return}<?php } ?>">
+        <?php
+        $types = get_resource_types();
+        for($n = 0; $n < count($types); $n++)
+            {
+            if((checkperm("XU{$types[$n]["ref"]}") || in_array($types[$n]['ref'], $hide_resource_types)) && $resource["resource_type"]!=$types[$n]["ref"]) continue;   // skip showing a resource type that we do not to have permission to change to (unless it is currently set to that)
+            ?><option value="<?php echo $types[$n]["ref"]?>" <?php if ($resource["resource_type"]==$types[$n]["ref"]) {?>selected<?php } ?>><?php echo htmlspecialchars($types[$n]["name"])?></option><?php
+            }
+            ?>
+        </select>
+        <div class="clearerleft"></div>
     </div>
-    <?php } ?>
-<?php } # end hook("replaceedittype")
-?> 
-<?php
+    <?php
+    }
+else
+    {
+    # Multiple method of changing resource type.
+    ?>
+    <h2 <?php echo ($collapsible_sections)?"class=\"CollapsibleSectionHead\"":""?>><?php echo $lang["resourcetype"] ?></h2>
+    <div <?php echo ($collapsible_sections)?"class=\"CollapsibleSection\"":""?> id="ResourceTypeSection<?php if ($ref==-1) echo "Upload"; ?>"><input name="editresourcetype" id="editresourcetype" type="checkbox" value="yes" onClick="var q=document.getElementById('editresourcetype_question');if (this.checked) {q.style.display='block';alert('<?php echo $lang["editallresourcetypewarning"] ?>');} else {q.style.display='none';}">&nbsp;<label for="editresourcetype"><?php echo $lang["resourcetype"] ?></label>
+    <div class="Question" style="display:none;" id="editresourcetype_question">
+        <label for="resourcetype"><?php echo $lang["resourcetype"]?></label>
+        <select name="resource_type" id="resourcetype" class="stdwidth">
+            <?php
+            $types = get_resource_types();
+            for($n = 0; $n < count($types); $n++)
+                {
+                if(in_array($types[$n]['ref'], $hide_resource_types))
+                    {
+                    continue;
+                    }
+                ?>
+                <option value="<?php echo $types[$n]["ref"]?>" <?php if ($resource["resource_type"]==$types[$n]["ref"]) {?>selected<?php } ?>><?php echo htmlspecialchars($types[$n]["name"])?></option>
+                <?php
+                }
+            ?>
+        </select>
+        <div class="clearerleft"></div>
+    </div>
+    <?php
+    }
+} # end hook("replaceedittype")
+
 $lastrt=-1;
 
 if (isset($metadata_template_resource_type) && !$multiple && !checkperm("F*"))
