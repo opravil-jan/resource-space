@@ -388,7 +388,7 @@ if(!$validpage)
 				<?php foreach ($resources as $resource)
 					{
 					?>
-					<option value="<?php echo htmlspecialchars($resource["ref"]) ?>">
+					<option value="<?php echo htmlspecialchars($resource["ref"]) ?>" <?php echo $promoted_resource===$resource["ref"]? "selected='selected'":"";?>>
 						<?php echo str_replace(array("%ref", "%title"), array($resource["ref"], i18n_get_translated($resource["field" . $view_title_field])), $lang["ref-title"]) ?>
 					</option>
 					<?php
