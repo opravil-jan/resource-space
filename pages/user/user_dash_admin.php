@@ -13,7 +13,7 @@ if(!($home_dash && checkPermission_dashmanage()))
 #Building function
 function build_user_dash_tile_list($user)
 	{
-	global $lang;
+	global $lang,$baseurl_short;
 	#All available Tiles
 	$dtiles_available = get_user_available_tiles($user);
 	foreach($dtiles_available as $tile)
@@ -60,7 +60,21 @@ function build_user_dash_tile_list($user)
   			</td>
   			<td><?php echo $tile["resource_count"]? $lang["yes"]: $lang["no"];?></td>
   			<td>
-  				
+  				<?php
+  				if  (	
+  						$tile["allow_delete"]
+  						&&
+  						(
+  							($tile["all_users"] && checkPermission_dashadmin()) 
+  							|| 
+  							(!$tile["all_users"] && (checkPermission_dashuser() || checkPermission_dashadmin()))
+	  					)
+  					)
+  					{ ?>
+  					<a href="<?php echo $baseurl_short; ?>pages/dash_tile.php?edit=<?php echo $tile['ref'];?>" ><?php echo $lang["action-edit"];?></a>
+  					<?php
+  					}
+  				?>
   			</td>
   		</tr>
   		<?php

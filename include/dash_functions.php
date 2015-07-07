@@ -49,9 +49,53 @@ function create_dash_tile($url,$link,$title,$reload_interval,$all_users,$default
 	
 	if($all_users==1)
 		{
+		sql_query("DELETE FROM user_dash_tile WHERE dash_tile=".$tile);
 		$result = sql_query("INSERT user_dash_tile (user,dash_tile,order_by) SELECT user.ref,'".$tile."',5 FROM user");
 		}
 	return $tile;
+	}
+
+/* 
+ * Update Dash tile based upon ref
+ * This updates the record in the dash_tile table
+ * If the all_user flag is being changed it will only get pushed out to users not removed. That action is specifically upon delete not edit as this is a flag
+ */
+function update_dash_tile($tile,$url,$link,$title,$reload_interval,$all_users,$default_order_by,$resource_count,$text="",$delete=1)
+	{
+	if(!is_array($tile)){$tile = get_tile($tile);}
+
+	#Sensible Defaults for insertion to Database
+	if(empty($reload_interval) || !is_numeric($reload_interval))
+		{$reload_interval=0;}
+	$delete = $delete?1:0;
+	$all_users=$all_users?1:0;
+
+	if(!is_numeric($default_order_by))
+		{
+		$default_order_by=$tile["default_order_by"];
+		}
+	$resource_count = $resource_count?1:0;
+
+	sql_query("UPDATE dash_tile 
+				SET 
+					url='".escape_check($url)."',
+					link='".escape_check($link)."',
+					title='".escape_check($title)."',
+					reload_interval_secs=".$reload_interval.",
+					all_users='".$all_users."',
+					default_order_by='".$default_order_by."',
+					resource_count='".$resource_count."',
+					allow_delete='".$delete."',
+					txt='".escape_check($text)."'
+				WHERE 
+					ref='".$tile["ref"]."'");
+	# Check if the tile is being changed to an all_user tile from user specific
+	if($all_users==1 && $tile["all_users"]==0)
+		{
+		#Delete the users existing record to ensure they don't get a duplicate.
+		sql_query("DELETE FROM user_dash_tile WHERE dash_tile=".$tile["ref"]);
+		sql_query("INSERT user_dash_tile (user,dash_tile,order_by) SELECT user.ref,'".$tile["ref"]."',5 FROM user");
+		}
 	}
 
 /*
@@ -129,6 +173,15 @@ function existing_tile($title,$all_users,$url,$link,$reload_interval,$resource_c
 		{
 		return false;
 		}
+	}
+
+/*
+ * Cleanup Duplicate and Loose Tiles
+ * This removes all unused tiles that are flagged as "allowed to delete"
+ */
+function cleanup_dash_tiles()
+	{
+	sql_query("DELETE FROM dash_tile WHERE allow_delete = 1 AND ref NOT IN (SELECT DISTINCT dash_tile FROM user_dash_tile)");
 	}
 
 
@@ -423,7 +476,6 @@ function add_user_dash_tile($user,$tile,$order_by)
  		add_user_dash_tile($user,$tile["tile"],$tile["order"]);
  		}
  	}
-
 /*
  * Updates a user_dash_tile record for a specific tile on a users dash with an order.
  *
@@ -529,6 +581,7 @@ function get_user_available_tiles($user,$tile="null")
 					dash_tile.link,
 					dash_tile.resource_count,
 					dash_tile.all_users,
+					dash_tile.allow_delete,
 					dash_tile.default_order_by
 				FROM
 					dash_tile
@@ -565,6 +618,7 @@ function get_user_available_tiles($user,$tile="null")
 					dash_tile.link,
 					dash_tile.resource_count,
 					dash_tile.all_users,
+					dash_tile.allow_delete,
 					dash_tile.default_order_by
 				FROM
 					user_dash_tile
@@ -759,40 +813,5 @@ function get_user_dash($user)
 		  	});
 
 	</script>
-	<?php
-	}
-
-
-/* 
- * Used on the dash tile creation page for displaying a selector for the different styles of tile.
- * Styles are config controlled.
- */
-function tileStyle($tile_type)
-	{
-	global $lang,$tile_styles,$promoted_resource,$resource_count;
-	?>
-	<div class="Question">
-		<label for="tltype" class="stdwidth"><?php echo $lang["dashtilestyle"];?></label> 
-		<table>
-			<tbody>
-				<tr>
-					<?php
-					$check=true;
-					foreach($tile_styles[$tile_type] as $style)
-						{?>
-						<td width="10" valign="middle" >
-							<input type="radio" class="tlstyle" id="tile_style_<?php echo $style;?>" name="tlstyle" value="<?php echo $style;?>" <?php echo $check? "checked":"";?>/>
-						</td>
-						<td align="left" valign="middle" >
-							<label class="customFieldLabel" for="tile_style_<?php echo $style;?>"><?php echo $lang["tile_".$style];?></label>
-						</td>
-						<?php
-						$check=false;
-						}?>
-				</tr>
-			</tbody>
-		</table>
-		<div class="clearerleft"> </div>
-	</div>
 	<?php
 	}

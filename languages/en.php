@@ -2108,6 +2108,7 @@ $lang['disk_size_no_upload_explain']="Due to space constraints, uploading has be
 $lang["savethissearchtodash"]="Save to dash tile";
 $lang["pushtoallusers"]="Push this dash tile to all users?";
 $lang["createnewdashtile"]="Create new dash tile";
+$lang["editdashtile"]="Edit dash tile";
 $lang["createdashtilefreetext"]="Create text only dash tile";
 $lang["enterdefaultorderby"]="Enter default position number";
 $lang["dashtiletitle"]="Title";
@@ -2136,7 +2137,7 @@ $lang["dashtileimage"]="Dash tile image";
 $lang["dashtilesmalldevice"]="Required drag functionality is not available on devices with a small screen";
 $lang["dashtileshow"]="Show tile";
 $lang['confirmdeleteconfigtile']="This tile is controlled by configuration option(s). To permanently delete this tile, turn off the relevant options and then perform this action again.";
-
+$lang["error-dashactionmissing"]="No action or invalid data was submitted to this page. Nothing here to see.";
 #Tile style strings
 $lang["tile_thmbs"]="Single";
 $lang["tile_multi"]="Multi";

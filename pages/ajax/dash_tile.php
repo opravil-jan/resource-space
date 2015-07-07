@@ -93,7 +93,7 @@ if($delete && isset($tile) && !isset($usertile))
  */
 $tile_type=getvalescaped("tltype","");
 $tile_style=getvalescaped("tlstyle","");
-$tile_id= (isset($usertile)) ? "contents_user_tile".$usertile["ref"] : "contents_tile".$tile["ref"];
+$tile_id=(isset($usertile)) ? "contents_user_tile".$usertile["ref"] : "contents_tile".$tile["ref"];
 $tile_width = getvalescaped("tlwidth","");
 $tile_height = getvalescaped("tlheight","");
 if(!is_numeric($tile_width) || !is_numeric($tile_height)){exit($lang["error-missingtileheightorwidth"]);}
