@@ -202,7 +202,6 @@ function checkTileConfig($tile,$tile_style)
 		case "mycnt":	global $home_mycontributions; return $home_mycontributions;
 		case "hlpad":	global $home_helpadvice; return $home_helpadvice;
 		case "custm":	global $custom_home_panels; return isset($custom_home_panels)? checkConfigCustomHomePanels($tile,$tile_style) : FALSE;
-						exit;
 		}
 	}
 
@@ -307,7 +306,7 @@ function get_default_dash()
 				  	  },
 			          update: function(event, ui) {
 			          	nonDraggableTiles = jQuery(".HomePanel").length - jQuery(".DashTileDraggable").length;
-			          	newIndex = ui.item.index() - nonDraggableTiles;
+			          	newIndex = (ui.item.index() - nonDraggableTiles)+1;
 			          	var id=jQuery(ui.item).attr("id").replace("tile","");
 			          	updateDashTileOrder(newIndex,id);
 			          }
@@ -733,7 +732,7 @@ function get_user_dash($user)
 			  	  },
 		          update: function(event, ui) {
 		          	nonDraggableTiles = jQuery(".HomePanel").length - jQuery(".DashTileDraggable").length;
-		          	newIndex = ui.item.index() - nonDraggableTiles;
+		          	newIndex = (ui.item.index() - nonDraggableTiles)+1;
 		          	var id=jQuery(ui.item).attr("id").replace("user_tile","");
 		          	updateDashTileOrder(newIndex,id);
 		          }
