@@ -5,8 +5,8 @@
 
 
 if (!function_exists("do_search")) {
-function do_search($search,$restypes="",$order_by="relevance",$archive=0,$fetchrows=-1,$sort="desc",$access_override=false,$starsearch=0,$ignore_filters=false,$return_disk_usage=false,$recent_search_daylimit="", $go=false)
-    {   
+function do_search($search,$restypes="",$order_by="relevance",$archive=0,$fetchrows=-1,$sort="desc",$access_override=false,$starsearch=0,$ignore_filters=false,$return_disk_usage=false,$recent_search_daylimit="", $go=false, $stats_logging=true)
+    {
     debug("search=$search $go $fetchrows restypes=$restypes archive=$archive daylimit=$recent_search_daylimit");
     
     # globals needed for hooks   
@@ -453,7 +453,7 @@ function do_search($search,$restypes="",$order_by="relevance",$archive=0,$fetchr
                                     $score.="k" . $c . ".hit_count";
 
                                     # Log this
-                                    daily_stat("Keyword usage",$keyref);
+                                    if ($stats_logging) {daily_stat("Keyword usage",$keyref);}
                                     }                           
                                 
                                 }
@@ -479,7 +479,7 @@ function do_search($search,$restypes="",$order_by="relevance",$archive=0,$fetchr
                                     }
                                     
                                 # Log this
-                                daily_stat("Keyword usage",$keyref);
+                                if ($stats_logging) {daily_stat("Keyword usage",$keyref);}
                                 }
     
                             $union="select resource,";
@@ -695,7 +695,7 @@ function do_search($search,$restypes="",$order_by="relevance",$archive=0,$fetchr
                                 }
 
                             # Log this
-                            daily_stat("Keyword usage",$keyref);
+                            if ($stats_logging) {daily_stat("Keyword usage",$keyref);}
                             }
                         }
                     $skipped_last=false;

@@ -189,7 +189,7 @@ function tile_search_thumbs($tile,$tile_id,$tile_width,$tile_height,$promoted_im
 	$order_by= isset($search_string["order_by"]) ? $search_string["order_by"] : "";
 	$archive = isset($search_string["archive"]) ? $search_string["archive"] : "";
 	$sort = isset($search_string["sort"]) ? $search_string["sort"] : "";
-	$tile_search=do_search($search,$restypes,$order_by,$archive,$count,$sort);
+	$tile_search=do_search($search,$restypes,$order_by,$archive,$count,$sort,false,0,false,false,"",false,false);
 	$found_resources=true;
 	$count=count($tile_search);
 	if(!isset($tile_search[0]["ref"]))
@@ -322,7 +322,7 @@ function tile_search_multi($tile,$tile_id,$tile_width,$tile_height)
 	$order_by= isset($search_string["order_by"]) ? $search_string["order_by"] : "";
 	$archive = isset($search_string["archive"]) ? $search_string["archive"] : "";
 	$sort = isset($search_string["sort"]) ? $search_string["sort"] : "";
-	$resources = do_search($search,$restypes,$order_by,$archive,$count,$sort);
+	$resources = do_search($search,$restypes,$order_by,$archive,$count,$sort,false,0,false,false,"",false,false);
 	$img_size="pre";
 	for ($i=0;$i<count($resources) && $i<4;$i++)
         {
