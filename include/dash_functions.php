@@ -192,6 +192,7 @@ function cleanup_dash_tiles()
  */
 function checkTileConfig($tile,$tile_style)
 	{
+	#Returns whether the config is still on for these tiles
 	switch($tile_style)
 		{
 		case "thmsl": 	global $home_themeheaders; return $home_themeheaders;
@@ -205,19 +206,22 @@ function checkTileConfig($tile,$tile_style)
 		}
 	}
 
+/*
+ * Checks the configuration for each custom tile.
+ * If the config for the tile is still there then return true
+ */
 function checkConfigCustomHomePanels($tile,$tile_style)
 	{
 	global $custom_home_panels;
 	$tile_config_set = FALSE;
-
 	for ($n=0;$n<count($custom_home_panels);$n++)
 			{
-			# Check Tile tile exists in dash already
 			if(existing_tile($tile["title"],$tile["all_users"],$tile["url"],$tile["link"],$tile["reload_interval_secs"],$tile["resource_count"],$tile["txt"]))
 				{
 				$tile_config_set = TRUE;
 				}
 			}
+	return $tile_config_set;
 	}
 
 /*
