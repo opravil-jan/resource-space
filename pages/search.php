@@ -709,20 +709,8 @@ if (true) # Always show search header now.
 	<?php
 	}
 	?>
-	</div>
-	
-	<?php if ($display_selector_dropdowns || $perpage_dropdown){?>
-	<div class="InpageNavLeftBlock"><?php echo ucfirst($lang["perpage"]);?>:<br />
-		<select class="medcomplementwidth ListDropdown" style="width:auto" id="resultsdisplay" name="resultsdisplay" onchange="CentralSpaceLoad(this.value,true);">
-		<?php for($n=0;$n<count($results_display_array);$n++){
-			if ($display_selector_dropdowns || $perpage_dropdown){?>
-				<option <?php if ($per_page==$results_display_array[$n]){?>selected="selected"<?php } ?> value="<?php echo $baseurl_short?>pages/search.php?search=<?php echo urlencode($search)?>&amp;order_by=<?php echo urlencode($order_by)?>&amp;archive=<?php echo urlencode($archive) ?>&amp;k=<?php echo urlencode($k) ?>&amp;per_page=<?php echo urlencode($results_display_array[$n])?>&amp;sort=<?php echo urlencode($sort)?>"><?php echo urlencode($results_display_array[$n])?></option>
-			<?php } ?>
-		<?php } ?>	
-		</select>
-	</div>
-	<?php } 
-	
+	</div> 
+	<?php
 	if ($display_selector_dropdowns && $recent_search_period_select && strpos($search,"!")===false && getvalescaped("recentdaylimit","")==""){?>
 	<div class="InpageNavLeftBlock"><?php echo $lang["period"]?>:<br />
 		<select class="medcomplementwidth ListDropdown" style="width:auto" id="resultsdisplay" name="resultsdisplay" onchange="CentralSpaceLoad(this.value,true);">
@@ -790,7 +778,29 @@ if (true) # Always show search header now.
 		?>
 		</div>
 		<?php
-		} 
+		}
+
+		if($display_selector_dropdowns || $perpage_dropdown)
+			{
+			?>
+			<div class="InpageNavLeftBlock"><?php echo ucfirst($lang['perpage']); ?>:
+				<br />
+				<select id="resultsdisplay" class="medcomplementwidth ListDropdown" style="width:auto" name="resultsdisplay" onchange="CentralSpaceLoad(this.value,true);">
+			<?php
+			for($n = 0; $n < count($results_display_array); $n++)
+				{
+				if($display_selector_dropdowns || $perpage_dropdown)
+					{
+					?>
+					<option <?php if($per_page == $results_display_array[$n]) { ?>selected="selected"<?php } ?> value="<?php echo $baseurl_short; ?>pages/search.php?search=<?php echo urlencode($search); ?>&amp;order_by=<?php echo urlencode($order_by); ?>&amp;archive=<?php echo urlencode($archive); ?>&amp;k=<?php echo urlencode($k); ?>&amp;per_page=<?php echo urlencode($results_display_array[$n]); ?>&amp;sort=<?php echo urlencode($sort); ?>"><?php echo urlencode($results_display_array[$n]); ?></option>
+					<?php
+					}
+				}
+				?>
+				</select>
+			</div>
+		<?php }
+
 		if (!$display_selector_dropdowns && !$perpage_dropdown){?>
 		<div class="InpageNavLeftBlock"><?php echo ucfirst($lang["perpage"]);?>:<br />
 		<?php 
