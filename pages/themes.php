@@ -219,7 +219,7 @@ function DisplayTheme($themes=array())
                 <?php }
                 global $home_dash,$anonymous_login,$username,$managed_home_dash;
                 #Home_dash is on, And not Anonymous use, And (Dash tile user (Not with a managed dash) || Dash Tile Admin)
-				if($home_dash && checkPermission_dashmanage()) 
+				if($home_dash && checkPermission_dashcreate()) 
 					{ ?>
                 	&nbsp;
                 	<a href="<?php echo $baseurl_short;?>pages/dash_tile.php?create=true&tltype=srch&promoted_resource=true&freetext=true&all_users=1&link=/pages/search.php?search=!collection<?php echo urlencode($getthemes[$m]["ref"])?>&order_by=relevance&sort=DESC"  onClick="return CentralSpaceLoad(this,true);">

@@ -1459,3 +1459,17 @@ function checkPermission_dashmanage()
 	return !checkPermission_anonymoususer() && ((!$managed_home_dash && (checkPermission_dashuser() || checkPermission_dashadmin()))
 				|| ($unmanaged_home_dash_admins && checkPermission_dashadmin()));
 	}
+function checkPermission_dashcreate()
+	{
+	#Home_dash is on, And not Anonymous use, And (Dash tile user (Not with a managed dash) || Dash Tile Admin)
+	global $managed_home_dash,$unmanaged_home_dash_admins;
+	return !checkPermission_anonymoususer() 
+			&& 
+				(
+					(!$managed_home_dash && (checkPermission_dashuser() || checkPermission_dashadmin())) 
+				||
+					($managed_home_dash && checkPermission_dashadmin())
+				|| 
+					($unmanaged_home_dash_admins && checkPermission_dashadmin())
+				);
+	}

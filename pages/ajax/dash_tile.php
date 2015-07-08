@@ -71,7 +71,7 @@ if($delete && isset($usertile))
 	}
 if($delete && isset($tile) && !isset($usertile))
 	{
-	if(!checkPermission_dashmanage()){exit($lang["error-permissiondenied"]);}
+	if(!checkPermission_dashcreate()){exit($lang["error-permissiondenied"]);}
 
 	#Check config tiles for permanent deletion
 	$force = false;

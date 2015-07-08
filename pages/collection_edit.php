@@ -277,7 +277,7 @@ include "../include/header.php";
 			}
 		}
 	global $home_dash,$anonymous_login,$username;
-	if($home_dash && checkPermission_dashmanage())
+	if($home_dash && checkPermission_dashcreate())
 		{?>
 		<div class="Question">
 			<label><?php echo $lang["theme_home_promote"]?></label>

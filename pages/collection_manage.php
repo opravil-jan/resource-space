@@ -393,7 +393,7 @@ if (!hook('collectionaccessmode')) {
 	
 	global $home_dash,$anonymous_login,$username;
     #Home_dash is on, And not Anonymous use, And (Dash tile user (Not with a managed dash) || Dash Tile Admin)
-	if($home_dash && checkPermission_dashmanage())
+	if($home_dash && checkPermission_dashcreate())
     	{?>
         <a href="<?php echo $baseurl_short;?>pages/dash_tile.php?create=true&tltype=srch&promoted_resource=true&freetext=true&all_users=1&link=/pages/search.php?search=!collection<?php echo urlencode($collections[$n]["ref"])?>&order_by=relevance&sort=DESC"  onClick="return CentralSpaceLoad(this,true);">&gt;&nbsp;<?php echo $lang["dashtile"]?></a>
         <?php 
