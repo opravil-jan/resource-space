@@ -365,7 +365,7 @@ if(!$validpage)
 		<script>
 			jQuery(".tlstyle").change(function(){
 				checked=jQuery(".tlstyle:checked").val();
-				if(checked=="thmbs" || checked=="multi" || check="blank") {
+				if(checked=="thmbs" || checked=="multi" || checked="blank") {
 					jQuery("#showresourcecount").show();
 				}
 				else {
