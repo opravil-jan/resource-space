@@ -138,6 +138,7 @@ if($submitdashtile)
 function tileStyle($tile_type,$existing=null)
 	{
 	global $lang,$tile_styles,$promoted_resource,$resource_count;
+	if(empty($tile_styles[0])){return false;}
 	?>
 	<div class="Question">
 		<label for="tltype" class="stdwidth"><?php echo $lang["dashtilestyle"];?></label> 
