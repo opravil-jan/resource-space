@@ -15,7 +15,7 @@ $lang['checkmail_lastcheck']="Your IMAP account was last checked on [lastcheck].
 $lang['checkmail_cronjobprob']="Your checkmail cronjob may not be running properly, because it has been more than 5 minutes since it ran last.<br /><br />
 An example cron job which runs every minute:<br />
 * * * * * cd /var/www/resourcespace/plugins/checkmail/pages; php ./cron_check_email.php >> /var/log/cron.log 2>&1<br /><br />";
-$lang['checkmail_imap_server']="Imap Server";
+$lang['checkmail_imap_server']="Imap Server<br />(gmail=\"imap.gmail.com:993/ssl\")";
 $lang['checkmail_email']="Email";
 $lang['checkmail_password']="Password";
 $lang['checkmail_extension_mapping']="Resource Type via File Extension Mapping";
