@@ -390,7 +390,8 @@ if(!$validpage)
 				<label for="promoted_image">
 				<?php echo $lang["dashtileimage"]?></label>
 				<select class="stdwidth" id="previewimage" name="promoted_image">
-				<?php foreach ($resources as $resource)
+				<?php 
+				foreach ($resources as $resource)
 					{
 					?>
 					<option value="<?php echo htmlspecialchars($resource["ref"]) ?>" <?php echo $promoted_resource===$resource["ref"]? "selected='selected'":"";?>>

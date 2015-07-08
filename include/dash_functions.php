@@ -789,7 +789,7 @@ function get_user_dash($user)
 			  	  },
 		          update: function(event, ui) {
 		          	nonDraggableTiles = jQuery(".HomePanel").length - jQuery(".DashTileDraggable").length;
-		          	newIndex = (ui.item.index() - nonDraggableTiles)+1;
+		          	newIndex = (ui.item.index() - nonDraggableTiles);
 		          	var id=jQuery(ui.item).attr("id").replace("user_tile","");
 		          	updateDashTileOrder(newIndex,id);
 		          }
