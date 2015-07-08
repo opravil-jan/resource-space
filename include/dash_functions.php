@@ -157,6 +157,39 @@ function get_tile($tile)
  	}
 
 /*
+ * Checks if an all_user tile is currently in use and therefore active for all_users
+ * Pass the dash_tile.ref of tile to check
+ */
+function all_user_dash_tile_active($tile)
+	{
+	return	sql_query("
+			SELECT 
+				dash_tile.ref AS 'tile',
+				dash_tile.title,
+				dash_tile.url,
+				dash_tile.reload_interval_secs,
+				dash_tile.link,
+				dash_tile.default_order_by as 'order_by',
+				dash_tile.allow_delete 
+			FROM dash_tile 
+			WHERE 
+				dash_tile.all_users=1 
+				AND
+				dash_tile.ref=".$tile."
+				AND 
+				(
+					dash_tile.allow_delete=1 
+					OR 
+					(
+						dash_tile.allow_delete=0 
+						AND 
+						dash_tile.ref IN (SELECT DISTINCT user_dash_tile.dash_tile FROM user_dash_tile)
+					)
+				) ORDER BY default_order_by
+			");
+	}
+
+/*
  * Checks if a tile already exists.
  * This is based upon  a complete set of values so unless all values match exactly it will return false.
  *
@@ -221,6 +254,44 @@ function checkConfigCustomHomePanels($tile,$tile_style)
 				}
 			}
 	return $tile_config_set;
+	}
+
+/*
+ * All dash tiles available to all_users
+ * If you provide a dash_tile ref it will check if this tile exists within the list of available tiles
+ *
+ */
+function get_alluser_available_tiles($tile="null")
+	{
+	$tilecheck = (is_numeric($tile)) ? "AND ref='".$tile."'":"";
+	return sql_query
+		(
+			"
+			SELECT 
+				dash_tile.ref,
+				dash_tile.ref as 'tile',
+				dash_tile.title,
+				dash_tile.txt,
+				dash_tile.link,
+				dash_tile.url,
+				dash_tile.reload_interval_secs,
+				dash_tile.resource_count,
+				dash_tile.all_users,
+				dash_tile.allow_delete,
+				dash_tile.default_order_by,
+				(IF(ref IN (select distinct dash_tile FROM user_dash_tile),1,0)) as 'dash_tile'
+			FROM
+				dash_tile
+			WHERE
+				dash_tile.all_users=1 
+			
+			".$tilecheck."
+			ORDER BY 
+			dash_tile,
+			default_order_by
+
+			"
+		);
 	}
 
 /*
@@ -875,3 +946,76 @@ function get_user_dash($user)
 	</script>
 	<?php
 	}
+
+
+/*
+ * Dash Admin Display Functions
+ */
+#Build dash listfunction
+function build_dash_tile_list($dtiles_available)
+	{
+	global $lang,$baseurl_short;
+	foreach($dtiles_available as $tile)
+  		{
+  		$checked = false;
+  		if(!empty($tile["dash_tile"]))
+  			{$checked=true;}
+  		?>
+  		<tr>
+  			<td>
+  				<input 
+  					type="checkbox" 
+  					class="tilecheck" 
+  					name="tiles[]" 
+  					value="<?php echo $tile["ref"];?>" 
+  					onChange="changeTile(<?php echo $tile["ref"];?>,<?php echo $tile["all_users"];?>);"
+  					<?php echo $checked?"checked":"";?> 
+  				/>
+  			</td>
+  			<td><?php echo $tile["title"];?></td>
+  			<td>
+  				<?php 
+  				if(strlen($tile["txt"])>75)
+  					{
+  					echo substr($tile["txt"],0,72)."...";
+  					}
+  				else
+  					{
+  					echo $tile["txt"];
+  					}
+  				?>
+  			</td>
+  			<td>
+  				<?php 
+  				if(strlen($tile["link"])>75)
+  					{
+  					echo substr($tile["link"],0,72)."...";
+  					}
+  				else
+  					{
+  					echo $tile["link"];
+  					}
+  				?>
+  			</td>
+  			<td><?php echo $tile["resource_count"]? $lang["yes"]: $lang["no"];?></td>
+  			<td>
+  				<?php
+  				if  (	
+  						$tile["allow_delete"]
+  						&&
+  						(
+  							($tile["all_users"] && checkPermission_dashadmin()) 
+  							|| 
+  							(!$tile["all_users"] && (checkPermission_dashuser() || checkPermission_dashadmin()))
+	  					)
+  					)
+  					{ ?>
+  					<a href="<?php echo $baseurl_short; ?>pages/dash_tile.php?edit=<?php echo $tile['ref'];?>" ><?php echo $lang["action-edit"];?></a>
+  					<?php
+  					}
+  				?>
+  			</td>
+  		</tr>
+  		<?php
+  		}
+  	}

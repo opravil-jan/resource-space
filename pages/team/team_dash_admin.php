@@ -1,13 +1,10 @@
 <?php
-
 include "../../include/db.php";
 include "../../include/general.php";
 include "../../include/authenticate.php";
+if(!checkPermission_dashadmin()){exit($lang["error-permissiondenied"]);}
 include "../../include/dash_functions.php";
 
-#If can't manage own dash return to user home.
-if(!($home_dash && checkPermission_dashmanage()))
-	{header("location: ".$baseurl_short."pages/user/user_home.php");exit;}
 
 
 if(getvalescaped("quicksave",FALSE))
@@ -17,23 +14,34 @@ if(getvalescaped("quicksave",FALSE))
 	if(!empty($tile) && is_numeric($tile))
 		{
 		#Tile available to this user?
-		$available = get_user_available_tiles($userref,$tile);
+		$available = get_alluser_available_tiles($tile);
 		if(!empty($available))
 			{
-			$tile = $available[0]["tile"];
-			$usertile = $available[0]["usertile"];
-			if(get_user_tile($usertile,$userref))
+			$tile = $available[0];
+			$active = all_user_dash_tile_active($tile["ref"]);
+
+			if($active)
 				{
-				#Delete if the user already has the tile
-				delete_user_dash_tile($usertile,$userref);
-				$dtiles_available = get_user_available_tiles($userref);
+				#Delete if the tile is active		
+				#Check config tiles for permanent deletion
+				$force = false;
+				$search_string = explode('?',$tile["url"]);
+				parse_str(str_replace("&amp;","&",$search_string[1]),$search_string);
+				if($search_string["tltype"]=="conf")
+					{$force = !checkTileConfig($tile,$search_string["tlstyle"]);}
+
+				delete_dash_tile($tile["ref"],true,$force);
+				reorder_default_dash();
+				$dtiles_available = get_alluser_available_tiles();
 				exit(build_dash_tile_list($dtiles_available));
 				}
 			else
 				{
 				#Add to the front of the pile if the user already has the tile
-				add_user_dash_tile($userref,$tile,5);
-				$dtiles_available = get_user_available_tiles($userref);
+				sql_query("DELETE FROM user_dash_tile WHERE dash_tile=".$tile["ref"]);
+				sql_query("INSERT user_dash_tile (user,dash_tile,order_by) SELECT user.ref,'".$tile["ref"]."',5 FROM user");
+
+				$dtiles_available = get_alluser_available_tiles();
 				exit(build_dash_tile_list($dtiles_available));
 				}
 			}
@@ -41,31 +49,26 @@ if(getvalescaped("quicksave",FALSE))
 	exit("Save Failed");
 	}
 
-if(getvalescaped("submit",FALSE))
-	{
-	$tiles = getvalescaped("tiles","");
-	if(empty($tiles))
-		{
-		empty_user_dash($userref);
-		}
-	else
-		{
-		#Start Fresh
-		empty_user_dash($userref,false);
-		$order_by = 10;
-		foreach($tiles as $tile)
-			{
-			add_user_dash_tile($userref,$tile,$order_by);
-			$order_by+=10;
-			}
-		}
-	}
-
-
 include "../../include/header.php";
 ?>
 <div class="BasicsBox"> 
-	<h1><?php echo $lang["manage_own_dash"];?></h1>
+	<h1><?php echo $lang["managedefaultdash"];?></h1>
+<p>
+	<a href="<?php echo $baseurl_short?>pages/team/team_home.php" onClick="return CentralSpaceLoad(this,true);">
+		&lt;&nbsp;<?php echo $lang["backtoteamhome"]?>
+	</a>
+</p>
+<p>
+	<a href="<?php echo $baseurl_short?>pages/team/team_dash_tile.php" onClick="return CentralSpaceLoad(this,true);">
+		&lt;&nbsp;<?php echo $lang["managedefaultdash"]?>
+	</a>
+</p>
+<p>
+	<a href="<?php echo $baseurl."/pages/dash_tile.php?create=true&tltype=ftxt&modifylink=true&freetext=Helpful%20tips%20here&nostyleoptions=true&all_users=1&link=http://resourcespace.org/knowledge-base/&title=Knowledge%20Base";?>"
+	>
+		&gt;&nbsp;<?php echo $lang["createdashtilefreetext"]?>
+	</a>
+</p>
 	<form class="Listview">
 	<input type="hidden" name="submit" value="true" />
 	<table class="ListviewStyle">
@@ -81,17 +84,12 @@ include "../../include/header.php";
 		</thead>
 		<tbody id="dashtilelist">
 	  	<?php
-	  	$dtiles_available = get_user_available_tiles($userref);
+	  	$dtiles_available = get_alluser_available_tiles();
 		build_dash_tile_list($dtiles_available);
 	  	?>
 	  </tbody>
   	</table>
   	<div id="confirm_dialog" style="display:none;text-align:left;"><?php echo $lang["dashtiledeleteusertile"];?></div>
-  	<noscript>
-	  	<div class="QuestionSubmit">
-	  		<input type="submit" value="<?php echo $lang["save"]?>"/>
-	  	</div>
-  	</noscript>
 	</form>
 	<script type="text/javascript">
 		function processTileChange(tile) {
@@ -120,18 +118,7 @@ include "../../include/header.php";
 			}
 		}
 	</script>
-	<div>
-		<?php
-		# Create New Tile (Has dtu or dta (hdta) permissions)
-		if($home_dash && checkPermission_dashcreate())
-			{ ?>
-			<p>
-				<a href="<?php echo $baseurl."/pages/dash_tile.php?create=true&tltype=ftxt&modifylink=true&freetext=Helpful%20tips%20here&nostyleoptions=true&all_users=1&link=http://resourcespace.org/knowledge-base/&title=Knowledge%20Base";?>">&gt;&nbsp; <?php echo $lang["createdashtilefreetext"]?></a>
-			</p>
-			<?php
-			} ?>
-	</div>
 </div>
-
 <?php
 include "../../include/footer.php";
+?>
