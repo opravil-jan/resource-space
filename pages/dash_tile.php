@@ -65,14 +65,19 @@ if($submitdashtile)
 	if($updatetile && is_numeric($updatetile))
 		{
 		$tile = get_tile($updatetile);
+		$buildstring = explode('?',$tile["url"]);
+		parse_str(str_replace("&amp;","&",$buildstring[1]),$buildstring);
 
 		#Change of tilestyle?
 		$tile_style = getvalescaped("tlstyle",FALSE);
+		$promoted_image= getvalescaped("promoted_image",FALSE);
 		if($tile_style)
 			{
-			$buildstring = explode('?',$tile["url"]);
-			parse_str(str_replace("&amp;","&",$buildstring[1]),$buildstring);
 			$buildurl = str_replace("tlstyle=".$buildstring["tlstyle"],"tlstyle=".$tile_style,$tile["url"]);
+			}
+		if($promoted_image)
+			{
+			$buildurl = str_replace("promimg=".$buildstring["promimg"],"promimg=".$promoted_image,$tile["url"]);
 			}
 		
 		if(($tile["all_users"] || $all_users ) && checkPermission_dashadmin())
