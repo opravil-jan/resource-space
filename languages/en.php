@@ -2142,6 +2142,7 @@ $lang["error-dashactionmissing"]="No action or invalid data was submitted to thi
 #Tile style strings
 $lang["tile_thmbs"]="Single";
 $lang["tile_multi"]="Multi";
+$lang["tile_blank"]="Blank";
 /* * End - User Dash Strings * */
 
 /* * Start - Plugin Category Strings * */

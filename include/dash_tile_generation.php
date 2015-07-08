@@ -58,6 +58,8 @@ function tile_select($tile_type,$tile_style,$tile,$tile_id,$tile_width,$tile_hei
 							exit;
 			case "multi":	tile_search_multi($tile,$tile_id,$tile_width,$tile_height);
 							exit;
+			case "blank":	tile_search_blank($tile,$tile_id,$tile_width,$tile_height);
+							exit;
 			}
 		}
 	
@@ -387,6 +389,78 @@ function tile_search_multi($tile,$tile_id,$tile_width,$tile_height)
 		<p class="tile_corner_box">
 		<span class="count-icon"></span>
 		<?php echo count($resources); ?>
+		</p>
+		<?php
+		}
+	if(!$dash_tile_shadows)
+		{ ?>
+		<script>
+			jQuery("#<?php echo $tile_id;?>").addClass("TileContentShadow");
+		</script>
+		<?php
+		}
+	}
+
+function tile_search_blank($tile,$tile_id,$tile_width,$tile_height)
+	{
+	global $baseurl_short,$lang,$dash_tile_shadows;
+	$tile_type="srch";
+	$tile_style="blank";
+	$search_string = explode('?',$tile["link"]);
+	parse_str(str_replace("&amp;","&",$search_string[1]),$search_string);
+	$count = ($tile["resource_count"]) ? "-1" : '1';
+	$search = isset($search_string["search"]) ? $search_string["search"] :"";
+	$restypes = isset($search_string["restypes"]) ? $search_string["restypes"] : "";
+	$order_by= isset($search_string["order_by"]) ? $search_string["order_by"] : "";
+	$archive = isset($search_string["archive"]) ? $search_string["archive"] : "";
+	$sort = isset($search_string["sort"]) ? $search_string["sort"] : "";
+	$tile_search=do_search($search,$restypes,$order_by,$archive,$count,$sort,false,0,false,false,"",false,false);
+	$count=count($tile_search);
+	if(!isset($tile_search[0]["ref"]))
+		{
+		$count=0;
+		}
+	
+	$icon = ""; 
+	if(substr($search_string["search"],0,11)=="!collection")
+		{$icon="collection";}
+	else if(substr($search_string["search"],0,7)=="!recent" || substr($search_string["search"],0,5)=="!last")
+		{$icon="clock";}
+	else{$icon="search";}
+	echo "<span class='".$icon."-icon'></span>";
+
+	if(!empty($tile["title"]))
+		{ ?>
+		<h2 class="title thmbs_tile">
+		<?php echo htmlspecialchars($tile["title"]);?>
+		</h2>
+		<?php
+		}
+	else if(!empty($tile["txt"]))
+		{ ?>
+		<h2 class="title notitle thmbs_tile">
+		<?php echo htmlspecialchars($tile["txt"]);?>
+		</h2>
+		<?php
+		}
+ 	
+ 	if(!empty($tile["title"]) && !empty($tile["txt"]))
+		{ ?>
+		<p>
+		<?php echo htmlspecialchars($tile["txt"]);?>
+		</p>
+		<?php
+		}
+
+	if($count==0 && !$tile["resource_count"])
+		{
+		echo "<p class='no_resources'>".$lang["noresourcesfound"]."</p>";
+		}
+	if($tile["resource_count"])
+		{?>
+		<p class="tile_corner_box">
+		<span class="count-icon"></span>
+		<?php echo $count; ?>
 		</p>
 		<?php
 		}
