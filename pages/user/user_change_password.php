@@ -67,7 +67,7 @@ if (getval("save","")!="")
 		    $message=change_password(getvalescaped("password",""));
     		if ($message===true)
 	    		{
-				if($last_active=="" && $password_reset_mode && $email!="")
+				if($password_reset_mode && $last_active=="" && $email!="")
 					{
 					// This account has just been created, probably an auto approved account. Send the welcome email
 					email_user_welcome($email,$username,$lang["hidden"],$usergroup);
