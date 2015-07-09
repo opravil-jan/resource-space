@@ -352,6 +352,7 @@ function tile_search_multi($tile,$tile_id,$tile_width,$tile_height)
         <img style="position: absolute; top:10px;left:<?php echo ($space*1.5) ?>px;height:100%;<?php if ($shadow) { ?>box-shadow: 0 0 25px #000;<?php } ?>;transform: rotate(<?php echo 20-($i *12) ?>deg);" src="<?php echo $previewpath?>">
         <?php				
 		}
+	
 	$icon = ""; 
 	if(substr($search_string["search"],0,11)=="!collection")
 		{$icon="collection";}

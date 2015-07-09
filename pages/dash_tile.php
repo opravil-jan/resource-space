@@ -441,7 +441,24 @@ if(!$validpage)
 					</tr>
 				</tbody>
 			</table>
+			<span style='margin-top:10px;float:left;display:none;font-style:italic;' class='FormHelp clearerleft' id='all_userseditchange'><?php echo $lang["dasheditchangeall_users"];?></span>
 			<div class="clearerleft"> </div>
+			<?php 
+			if($edit && $allusers && !$managed_home_dash)
+				{ ?>
+				<script>
+					jQuery("input:radio[name='all_users']").change(function(){
+						if(jQuery(this).attr("checked") && jQuery(this).val()=='false') {
+							jQuery("#all_userseditchange").show();
+						} else {
+							jQuery("#all_userseditchange").hide();
+						}
+					});
+
+				</script>
+				<?php
+				}
+			?>
 		</div>
 		<?php 
 		} ?>
