@@ -38,7 +38,7 @@ if ($download && $download_file_type == 'text')
 			// This is the field title - the function got this by joining to the resource_type_field in the sql query
 			echo $metadata_entry['title'] . ': ';
 			// This is the value for the field from the resource_data table
-			echo tidylist(i18n_get_translated($metadata_entry['value'])) . "\n";
+			echo tidylist(i18n_get_translated($metadata_entry['value'])) . "\r\n";
 			}
 		}
 
@@ -103,13 +103,14 @@ if($download && $download_file_type === 'pdf') {
 			<?php
 			foreach ($metadata as $metadata_entry)
 			{
-				if(!empty(trim(tidylist(i18n_get_translated($metadata_entry['value'])))))
+			$metadatavalue=trim(tidylist(i18n_get_translated($metadata_entry['value'])));
+			if(!empty($metadatavalue))
 				{
 				?>
 					<tr>
 						<td valign="top" style="text-align: left;"><b><?php echo $metadata_entry['title']; ?></b></td>
 						<td style="width: 2%;"></td>
-						<td style="width: 70%; text-align: left;"><?php echo tidylist(i18n_get_translated($metadata_entry['value'])); ?></td>
+						<td style="width: 70%; text-align: left;"><?php echo $metadatavalue; ?></td>
 					</tr>
 				<?php
 				}
