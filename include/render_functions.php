@@ -110,6 +110,12 @@ function render_actions()
 
     // globals that could also be passed as a reference
     global $collectiondata, $result /*search result*/;
+
+    // Small hack for now as the code below is only for collections at the moment
+    if(substr($search, 0, 11) != '!collection')
+        {
+        return;
+        }
     ?>
     
     <div class="InpageNavLeftBlock">
