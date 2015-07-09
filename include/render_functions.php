@@ -125,6 +125,8 @@ function render_actions()
             <option value=""></option>
             <?php
             $options = '';
+
+            // Collection Actions
             if(substr($search, 0, 11) == '!collection')
                 {
                 // Select collection option
@@ -257,7 +259,16 @@ function render_actions()
                     $options .= '<option value="preview_all" ' . $extra_tag_attributes . '>' . $lang['preview_all'] . '</option>';
                     }
 
+                // Add extra collection actions through plugins
+                $extra_options = hook('render_actions_add_collection_option');
+                if(trim($extra_options) !== '')
+                    {
+                    $options .= $extra_options;
+                    }
+
                 }
+
+
 
             echo $options;
             ?>
@@ -312,6 +323,16 @@ function render_actions()
                         }
                     break;
 
+                <?php
+                // Add extra collection actions javascript case through plugins
+                // Note: if you are just going to a different page, it should be easily picked by the default case
+                $extra_options_js_case = hook('render_actions_add_collection_option_js_case');
+                if(trim($extra_options_js_case) !== '')
+                    {
+                    echo $extra_options_js_case;
+                    }
+                ?>
+
                 default:
                     /* It should handle:
                     * download_collection
@@ -326,6 +347,9 @@ function render_actions()
                     CentralSpaceLoad(option_url, true);
                     break;
                 }
+
+                // Go back to no action option
+                jQuery('#action_selection option[value=""]').attr('selected', 'selected');
 
         });
         </script>
