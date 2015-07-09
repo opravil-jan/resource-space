@@ -2,7 +2,9 @@
 
 function HookSwf_previewViewReplacerenderinnerresourcepreview()
     {
-    global $ref, $baseurl;
+    global $ref, $baseurl, $resource,$swf_preview_resource_types;
+    if(!in_array($resource["resource_type"],$swf_preview_resource_types)){return false;}
+    
      $swffile=get_resource_path($ref,true,"",false,"swf");
     if(!file_exists($swffile))
         {return false;}
