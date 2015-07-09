@@ -343,11 +343,14 @@ if (count($plugins_avail)>0)
       $plugin_row .= '</div></td></tr>';  
       if(isset($p["category"]))
          {
+         $p["category"] = trim(strtolower($p["category"]));
+         #Check for category lists
          if(preg_match("/.*,.*/",$p["category"]))
             {
             $p_cats = explode(",",$p["category"]);
             foreach($p_cats as $p_cat)
                {
+               $p_cat = trim(strtolower($p_cat));
                if(array_search("advanced",$p_cats))
                   {
                   array_push($advanced_plugins,$plugin_row);
