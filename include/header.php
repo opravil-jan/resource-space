@@ -398,9 +398,16 @@ if($slimheader)
             {
             $header_img_src = $baseurl.'/gfx/titles/title.png';
             }
-        ?>
-        <a href="<?php echo $linkUrl; ?>" onClick="return CentralSpaceLoad(this,true);" class="HeaderImgLink"><img src="<?php echo $header_img_src; ?>" id="HeaderImg"></img></a>
-        <?php
+        if($header_link && getval("k","")=="")
+	    {?>
+	    <a href="<?php echo $linkUrl; ?>" onClick="return CentralSpaceLoad(this,true);" class="HeaderImgLink"><img src="<?php echo $header_img_src; ?>" id="HeaderImg"></img></a>
+	    <?php
+	    }
+	else
+	    {?>
+	    <div class="HeaderImgLink"><img src="<?php echo $header_img_src; ?>" id="HeaderImg"></img></div>
+	    <?php
+	    }
         }
     }
 else
