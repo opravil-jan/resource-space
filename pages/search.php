@@ -799,7 +799,10 @@ if (true) # Always show search header now.
 				?>
 				</select>
 			</div>
-		<?php }
+			<?php
+			}
+
+		render_actions();
 
 		if (!$display_selector_dropdowns && !$perpage_dropdown){?>
 		<div class="InpageNavLeftBlock"><?php echo ucfirst($lang["perpage"]);?>:<br />

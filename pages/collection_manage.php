@@ -62,6 +62,19 @@ if ($delete!="")
 		set_user_collection($userref,$usercollection);
 		}
 
+	if(getvalescaped('ajax', '') !== '')
+		{
+		$response = array(
+			'success'                => 'Yes',
+			'redirect_to_collection' => $usercollection,
+			'k'                      => getvalescaped('k', ''),
+			'nc'                     => time()
+		);
+		
+		echo json_encode($response);
+		exit();
+		}
+
 	refresh_collection_frame($usercollection);
 	}
 
