@@ -93,6 +93,33 @@ function render_sort_order(array $order_fields)
     return;
     }
 
+/**
+* Renders a dropdown option
+* 
+*/
+function render_dropdown_option($value, $label, array $data_attr = array(), $extra_tag_attributes  = '')
+    {
+    $result = '<option value="' . $value . '"';
+
+    // Add any extra tag attributes
+    if(trim($extra_tag_attributes) !== '')
+        {
+        $result .= ' ' . $extra_tag_attributes;
+        }
+
+    // Add any data attributes you may need
+    foreach($data_attr as $data_attr_key => $data_attr_value)
+        {
+        $data_attr_key = str_replace(' ', '_', $data_attr_key);
+
+        $result .= ' data-' . $data_attr_key . '="' . $data_attr_value . '"';
+        }
+
+    $result .= '>' . $label . '</option>';
+
+    return $result;
+    }
+
 
 /**
 * Renders search actions functionality as a dropdown box
@@ -128,35 +155,33 @@ function render_actions()
                 // Select collection option
                 if($k == '' && !checkperm('b') && ($userrequestmode != 2 && $userrequestmode != 3))
                     {
-                    $options .= '<option value="select_collection">' . $lang['selectcollection'] . '</option>';
+                    $options .= render_dropdown_option('select_collection', $lang['selectcollection']);
                     }
 
                 // Download option
                 if(isset($zipcommand) || $collection_download) 
                     {
-                    $extra_tag_attributes  = '';
-                    $extra_tag_attributes .= sprintf('
-                            data-url="%spages/terms.php?url=%s"
-                        ',
-                        $baseurl_short,
-                        urlencode('pages/collection_download.php?collection=' . $collectiondata['ref'])
+                    $data_attribute = array(
+                        'url' => sprintf('%spages/terms.php?url=%s',
+                            $baseurl_short,
+                            urlencode('pages/collection_download.php?collection=' . $collectiondata['ref'])
+                        )
                     );
 
-                    $options .= '<option value="download_collection" ' . $extra_tag_attributes . '>' . $lang['action-download'] . '</option>';
+                    $options .= render_dropdown_option('download_collection', $lang['action-download'], $data_attribute);
                     }
 
                 // Contact Sheet
                 if($contact_sheet == true && $manage_collections_contact_sheet_link) 
                     {
-                    $extra_tag_attributes  = '';
-                    $extra_tag_attributes .= sprintf('
-                            data-url="%spages/contactsheet_settings.php?ref=%s"
-                        ',
-                        $baseurl_short,
-                        urlencode($collectiondata['ref'])
+                    $data_attribute = array(
+                        'url' => sprintf('%spages/contactsheet_settings.php?ref=%s',
+                            $baseurl_short,
+                            urlencode($collectiondata['ref'])
+                        )
                     );
 
-                    $options .= '<option value="contact_sheet" ' . $extra_tag_attributes . '>' . $lang['contactsheet'] . '</option>';
+                    $options .= render_dropdown_option('contact_sheet', $lang['contactsheet'], $data_attribute);
                     }
 
                 // Share
