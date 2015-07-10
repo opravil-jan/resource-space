@@ -62,7 +62,7 @@ if ($delete!="")
 		set_user_collection($userref,$usercollection);
 		}
 
-	if(getvalescaped('ajax', '') !== '')
+	if(getvalescaped('ajax', '') !== '' && getvalescaped('dropdown_actions', '') !== '')
 		{
 		$response = array(
 			'success'                => 'Yes',

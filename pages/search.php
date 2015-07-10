@@ -1109,52 +1109,7 @@ $url=$baseurl_short."pages/search.php?search=" . urlencode($search) . "&amp;orde
 </div> <!-- end of CentralSpaceResources -->
 <!--Bottom Navigation - Archive, Saved Search plus Collection-->
 <div class="BottomInpageNav">
-	<div class="BottomInpageNavLeft">
-	<?php 
-	if(!hook("replacesearchbottomnav"))
-		{
-		if (!checkperm("b") && $k=="") 
-			{
-			if($allow_save_search) { ?><div class="InpageNavLeftBlock"><a onClick="return CollectionDivLoad(this);" href="<?php echo $baseurl_short?>pages/collections.php?addsearch=<?php echo urlencode($search)?>&amp;restypes=<?php echo urlencode($restypes)?>&amp;archive=<?php echo urlencode($archive) ?>&amp;daylimit=<?php echo urlencode($daylimit) ?>">&gt;&nbsp;<?php echo $lang["savethissearchtocollection"]?></a></div><?php }
-			#Home_dash is on, And not Anonymous use, And (Dash tile user (Not with a managed dash) || Dash Tile Admin)
-			if($home_dash && checkPermission_dashcreate()) 
-				{?> 
-				<div class="InpageNavLeftBlock">
-					<a onClick="return CentralSpaceLoad(this);" href="<?php echo $baseurl_short;?>pages/dash_tile.php?create=true&tltype=srch&freetext=true&link=<?php echo $url;?>" onClick="jQuery('this').href='<?php echo $baseurl_short;?>pages/dash_tile.php?create=true&tltype=srch&link='+window.location.href;">
-						&gt;&nbsp;<?php echo $lang["savethissearchtodash"];?>
-					</a>
-				</div>
-				<?php 
-				}
-			if($allow_smart_collections && substr($search,0,11)!="!collection") { ?><div class="InpageNavLeftBlock"><a onClick="return CollectionDivLoad(this);" href="<?php echo $baseurl_short?>pages/collections.php?addsmartcollection=<?php echo urlencode($search)?>&amp;restypes=<?php echo urlencode($restypes)?>&amp;archive=<?php echo urlencode($archive) ?>&amp;starsearch=<?php echo urlencode($starsearch) ?>">&gt;&nbsp;<?php echo $lang["savesearchassmartcollection"]?></a></div><?php }
-			global $smartsearch; 
-			if($allow_smart_collections && substr($search,0,11)=="!collection" && (is_array($smartsearch[0]) && !empty($smartsearch[0]))) { $smartsearch=$smartsearch[0];?><div class="InpageNavLeftBlock"><a onClick="return CentralSpaceLoad(this,true);" href="search.php?search=<?php echo urlencode($smartsearch['search'])?>&amp;restypes=<?php echo urlencode($smartsearch['restypes'])?>&amp;archive=<?php echo urlencode($smartsearch['archive']) ?>&amp;starsearch=<?php echo urlencode($smartsearch['starsearch']) ?>&amp;daylimit=<?php echo urlencode($daylimit) ?>">&gt;&nbsp;<?php echo $lang["dosavedsearch"]?></a></div><?php }
-			if ($resources_count!=0)
-				{
-				if (!hook('replacesavesearchitemstocollection')) { ?>
-				<div class="InpageNavLeftBlock"><a onClick="return CollectionDivLoad(this);" href="<?php echo $baseurl_short?>pages/collections.php?addsearch=<?php echo urlencode($search)?>&amp;restypes=<?php echo urlencode($restypes)?>&amp;archive=<?php echo urlencode($archive) ?>&amp;mode=resources&amp;daylimit=<?php echo urlencode($daylimit) ?>">&gt;&nbsp;<?php echo $lang["savesearchitemstocollection"]?></a></div>
-				<?php
-				}
-				if($show_searchitemsdiskusage) 
-					{?>
-					<div class="InpageNavLeftBlock"><a onClick="return CentralSpaceLoad(this, true);" href="<?php echo $baseurl_short?>pages/search_disk_usage.php?search=<?php echo urlencode($search)?>&amp;restypes=<?php echo urlencode($restypes)?>&amp;offset=<?php echo urlencode($offset) ?>&amp;order_by=<?php echo urlencode($order_by)?>&amp;sort=<?php echo urlencode($sort)?>&amp;archive=<?php echo urlencode($archive) ?>&amp;daylimit=<?php echo urlencode($daylimit) ?>&amp;k=<?php echo urlencode($k)?>&amp;restypes=<?php echo urlencode($restypes) ?>">&gt;&nbsp;<?php echo $lang["searchitemsdiskusage"]?></a></div>
-					<?php 
-					}
-				}
-			}
-
-		if($k == '')
-			{
-			?>
-			<div class="InpageNavLeftBlock">
-				<a href="/pages/csv_export_results_metadata.php?search=<?php echo urlencode($search); ?>&restype=<?php echo urlencode($restypes); ?>&order_by=<?php echo urlencode($order_by); ?>&archive=<?php echo urlencode($archive); ?>&sort=<?php echo urlencode($sort); ?>&starsearch=<?php echo urlencode($starsearch); ?>">&gt;&nbsp;<?php echo $lang['csvExportResultsMetadata']; ?></a>
-			</div>
-			<?php
-			}
-		hook("resultsbottomtoolbar");
-		}?>
-	<!--End of hook("replacesearchbottomnav")-->
-	</div>
+	<?php hook('add_bottom_in_page_nav_left'); ?>
 	<div class="BottomInpageNavRight">	
 	<?php 
 	if (isset($draw_pager)) {pager(false);} 
