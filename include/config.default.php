@@ -2750,3 +2750,7 @@ $purge_temp_folder_age=0;
 # If it is set to 1 the link will also be valid all the next day
 $password_reset_link_expiry =1;
 
+# Show the resource view in a modal when accessed from search results.
+$resource_view_modal=true;
+
+

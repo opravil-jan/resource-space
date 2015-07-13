@@ -2184,7 +2184,8 @@ $lang["managecontent_defaulttextused"]="!! The text for the default language (?)
 
 $lang["myaccount"]="My account";
 
-
 /* Error Messages */
 $lang['error_check_html_first'] = 'Please Check HTML! The text used does not contain valid HTML.';
 /* End of Error Messages */
+
+$lang["maximise"]="Maximise";

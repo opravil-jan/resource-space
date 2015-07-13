@@ -55,7 +55,7 @@ if (!hook("renderresultthumb"))
 				<a 
 					style="position:relative;" 
 					href="<?php echo $url?>"  
-					onClick="return CentralSpaceLoad(this,true);" 
+					onClick="return <?php echo ($resource_view_modal?"Modal":"CentralSpace") ?>Load(this,true);" 
 					<?php 
 					if (!$infobox) 
 						{ ?>
@@ -191,7 +191,7 @@ if (!hook("renderresultthumb"))
 							{ // add link if necessary ?>
 							<a 
 								href="<?php echo $url?>"  
-								onClick="return CentralSpaceLoad(this,true);" 
+								onClick="return <?php echo ($resource_view_modal?"Modal":"CentralSpace") ?>Load(this,true);" 
 								<?php 
 								if (!$infobox) 
 									{ ?>
@@ -229,7 +229,7 @@ if (!hook("renderresultthumb"))
 							{ // add link if necessary ?>
 							<a 
 								href="<?php echo $url?>"  
-								onClick="return CentralSpaceLoad(this,true);" 
+								onClick="return <?php echo ($resource_view_modal?"Modal":"CentralSpace") ?>Load(this,true);" 
 								<?php 
 								if (!$infobox) 
 									{ ?>
@@ -296,7 +296,7 @@ if (!hook("renderresultthumb"))
 					{ ?>
 					<span class="IconPreview">
 						<a 
-							onClick="return CentralSpaceLoad(this,true);" 
+							onClick="return CentralSpaceLoad(this,true);"
 							href="<?php echo $baseurl_short?>pages/preview.php?from=search&amp;ref=<?php echo urlencode($ref)?>&amp;ext=<?php echo $result[$n]["preview_extension"]?>&amp;search=<?php echo urlencode($search)?>&amp;offset=<?php echo urlencode($offset)?>&amp;order_by=<?php echo urlencode($order_by)?>&amp;sort=<?php echo urlencode($sort)?>&amp;archive=<?php echo urlencode($archive)?>&amp;k=<?php echo urlencode($k)?>" 
 							title="<?php echo $lang["fullscreenpreview"]?>"
 						>

@@ -186,3 +186,13 @@ input[readonly] {color: #FFFFFF;}
 
 /* Search Anchor Highlighting */
 .search-anchor .ResourcePanel  {background-color:#999;}
+
+#modal
+    {
+    background-color:#555;
+    }
+#modal .RecordPanel
+	{
+	border:none;
+	}
+	

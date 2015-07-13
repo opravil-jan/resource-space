@@ -339,6 +339,7 @@ if ($collections_footer && !in_array($pagename,$omit_collectiondiv_load_pages) &
 			jQuery('#CollectionMinDiv').hide();
 			jQuery('#CollectionMaxDiv').show();
 			SetCookie('thumbs',"show",1000);
+			ModalCentre();
 		}
 		function HideThumbs() {
 			myLayout.sizePane("south", 40);
@@ -346,6 +347,7 @@ if ($collections_footer && !in_array($pagename,$omit_collectiondiv_load_pages) &
 			jQuery('#CollectionMinDiv').show();
 			jQuery('#CollectionMaxDiv').hide();
 			SetCookie('thumbs',"hide",1000);
+			ModalCentre();
 		}
 		function ToggleThumbs() {
 			thumbs = getCookie("thumbs");
@@ -405,6 +407,18 @@ else {?><div class="ui-layout-south" ></div><script>myLayout=jQuery('body').layo
 
 <?php hook("afteruilayout");?>
 <?php hook("responsivescripts"); ?>
+
+
+<!-- Start of modal support -->
+<div id="modal_overlay" onClick="ModalClose();"></div>
+<div id="modal_outer">
+<div id="modal">
+</div>
+</div>
+<script type="text/javascript">
+jQuery(window).bind('resize.modal', ModalCentre);
+</script>
+<!-- End of modal support ->
 
 <script type="text/javascript">
 

@@ -52,7 +52,7 @@ if (!hook("renderresultsmallthumb"))
 				<a 
 					style="position:relative" 
 					href="<?php echo $url?>"  
-					onClick="return CentralSpaceLoad(this,true);" 
+					onClick="return <?php echo ($resource_view_modal?"Modal":"CentralSpace") ?>Load(this,true);" 
 					<?php 
 					if (!$infobox) 
 						{ ?>
@@ -160,7 +160,7 @@ if (!hook("renderresultsmallthumb"))
 								?>
 								<a 
 									href="<?php echo $url?>"  
-									onClick="return CentralSpaceLoad(this,true);" 
+									onClick="return <?php echo ($resource_view_modal?"Modal":"CentralSpace") ?>Load(this,true);" 
 									<?php 
 									if (!$infobox) 
 										{ ?>
@@ -199,7 +199,7 @@ if (!hook("renderresultsmallthumb"))
 								{ // add link if necessary ?>
 								<a 
 									href="<?php echo $url?>"  
-									onClick="return CentralSpaceLoad(this,true);" 
+									onClick="return <?php echo ($resource_view_modal?"Modal":"CentralSpace") ?>Load(this,true);" 
 									<?php 
 									if (!$infobox) 
 										{ ?>

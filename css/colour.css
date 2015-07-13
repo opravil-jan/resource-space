@@ -306,3 +306,26 @@ li.plupload_droptext {color:#999;}
 .glyph_menu {background:url('../plugins/rse_responsive/gfx/responsive_spritesheet_charcoal.png') 0 0;}
 .glyph_result {background:url('../plugins/rse_responsive/gfx/responsive_spritesheet_charcoal.png') -40px 0;}
 
+#modal_overlay {
+    background: #000;
+}
+
+#modal
+    {
+    background-color:rgb(238, 238, 238);
+        box-shadow: 0 0 40px rgba(0,0,0,0.5);
+    }
+#modal .RecordHeader
+  {
+  background: linear-gradient(#424242 , #1B1B1B);
+  color: #fff;
+  }
+#modal .RecordHeader h1
+  {
+  color: #fff;
+  }
+#modal .RecordHeader a
+  {
+  color:#e0e0e0;
+  }
+    

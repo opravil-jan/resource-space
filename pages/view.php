@@ -31,6 +31,7 @@ $per_page=getvalescaped("per_page",0,true);
 $default_sort="DESC";
 if (substr($order_by,0,5)=="field"){$default_sort="ASC";}
 $sort=getval("sort",$default_sort);
+$modal=(getval("modal","")=="true");
 
 # next / previous resource browsing
 $curpos=getvalescaped("curpos","");
@@ -513,7 +514,7 @@ jQuery(document).ready(function () {
 # Check if actually coming from a search, but not if a numeric search and config_search_for_number is set or if this is a direct request e.g. ?r=1234.
 if (isset($_GET["search"]) && !($config_search_for_number && is_numeric($usearch))) { ?>
 <div class="backtoresults">
-<a class="prevLink" href="<?php echo $baseurl_short?>pages/view.php?ref=<?php echo urlencode($ref)?>&amp;search=<?php echo urlencode($search)?>&amp;offset=<?php echo urlencode($offset)?>&amp;order_by=<?php echo urlencode($order_by)?>&amp;sort=<?php echo urlencode($sort)?>&amp;archive=<?php echo urlencode($archive)?>&amp;k=<?php echo urlencode($k) ?>&amp;go=previous&amp;curpos=<?php echo urlencode($curpos) ?>&amp;restypes=<?php echo $restypes; ?>&amp;<?php echo hook("nextpreviousextraurl") ?>" onClick="return CentralSpaceLoad(this);">&lt;&nbsp;<?php echo $lang["previousresult"]?></a>
+<a class="prevLink" href="<?php echo $baseurl_short?>pages/view.php?ref=<?php echo urlencode($ref)?>&amp;search=<?php echo urlencode($search)?>&amp;offset=<?php echo urlencode($offset)?>&amp;order_by=<?php echo urlencode($order_by)?>&amp;sort=<?php echo urlencode($sort)?>&amp;archive=<?php echo urlencode($archive)?>&amp;k=<?php echo urlencode($k) ?>&amp;go=previous&amp;curpos=<?php echo urlencode($curpos) ?>&amp;restypes=<?php echo $restypes; ?>&amp;<?php echo hook("nextpreviousextraurl") ?>" onClick="return <?php echo ($modal?"Modal":"CentralSpace") ?>Load(this);">&lt;&nbsp;<?php echo $lang["previousresult"]?></a>
 <?php 
 if (!hook("viewallresults")) 
 	{
@@ -521,7 +522,12 @@ if (!hook("viewallresults"))
 	<a class="upLink" href="<?php echo $baseurl_short?>pages/search.php?search=<?php echo urlencode($search)?>&amp;offset=<?php echo urlencode($offset)?>&amp;order_by=<?php echo urlencode($order_by)?>&amp;sort=<?php echo urlencode($sort)?>&amp;archive=<?php echo urlencode($archive)?>&amp;go=up&amp;k=<?php echo urlencode($k);if($search_anchors){?>&place=<?php echo $ref; }?>" onClick="return CentralSpaceLoad(this);"><?php echo $lang["viewallresults"]?></a>
 	<?php 
 	} ?>
-<a class="nextLink" href="<?php echo $baseurl_short?>pages/view.php?ref=<?php echo urlencode($ref)?>&amp;search=<?php echo urlencode($search)?>&amp;offset=<?php echo urlencode($offset)?>&amp;order_by=<?php echo urlencode($order_by)?>&amp;sort=<?php echo urlencode($sort)?>&amp;archive=<?php echo urlencode($archive)?>&amp;k=<?php echo urlencode($k)?>&amp;go=next&amp;curpos=<?php echo urlencode($curpos) ?>&amp;restypes=<?php echo $restypes; ?>&amp;<?php echo hook("nextpreviousextraurl") ?>" onClick="return CentralSpaceLoad(this);"><?php echo $lang["nextresult"]?>&nbsp;&gt;</a>
+<a class="nextLink" href="<?php echo $baseurl_short?>pages/view.php?ref=<?php echo urlencode($ref)?>&amp;search=<?php echo urlencode($search)?>&amp;offset=<?php echo urlencode($offset)?>&amp;order_by=<?php echo urlencode($order_by)?>&amp;sort=<?php echo urlencode($sort)?>&amp;archive=<?php echo urlencode($archive)?>&amp;k=<?php echo urlencode($k)?>&amp;go=next&amp;curpos=<?php echo urlencode($curpos) ?>&amp;restypes=<?php echo $restypes; ?>&amp;<?php echo hook("nextpreviousextraurl") ?>" onClick="return <?php echo ($modal?"Modal":"CentralSpace") ?>Load(this);"><?php echo $lang["nextresult"]?>&nbsp;&gt;</a>
+
+<?php if ($modal) { ?>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="<?php echo $baseurl_short?>pages/view.php?ref=<?php echo urlencode($ref)?>&amp;search=<?php echo urlencode($search)?>&amp;offset=<?php echo urlencode($offset)?>&amp;order_by=<?php echo urlencode($order_by)?>&amp;sort=<?php echo urlencode($sort)?>&amp;archive=<?php echo urlencode($archive)?>&amp;k=<?php echo urlencode($k)?>&amp;restypes=<?php echo $restypes; ?>" onClick="return CentralSpaceLoad(this);">^&nbsp;<?php echo $lang["maximise"]?></a>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#" onClick="ModalClose();">x&nbsp;<?php echo $lang["close"] ?></a>
+<?php } ?>
 </div>
 <?php } ?>
 

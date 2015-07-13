@@ -67,7 +67,7 @@ if (!hook("replacelistitem"))
 										<?php 
 										} ?> 
 									href="<?php echo $url?>" 
-									onClick="return CentralSpaceLoad(this,true);"
+									onClick="return <?php echo ($resource_view_modal?"Modal":"CentralSpace") ?>Load(this,true);"
 								>
 							<?php 
 							} //end link conditional
@@ -194,7 +194,7 @@ if (!hook("replacelistitem"))
 		<td <?php hook("listviewcolumnstyle");?> >
 			<div class="ListTools">
 				<a 
-					onClick="return CentralSpaceLoad(this);" 
+					onClick="return <?php echo ($resource_view_modal?"Modal":"CentralSpace") ?>Load(this);" 
 					<?php 
 					if ($infobox) 
 						{ ?>

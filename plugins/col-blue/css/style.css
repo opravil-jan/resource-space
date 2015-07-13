@@ -177,3 +177,12 @@ input[readonly] {color: #FFFFFF;}
 .SlimHeader #Header #HeaderButtons a:active {color: #FFF;}
 /* Search Anchor Highlighting */
 .search-anchor .ResourcePanel  {background-color:#fff;}
+
+#modal
+    {
+    background-color:rgb(68, 102, 153)
+    }
+#modal .RecordPanel
+	{
+	border:none;
+	}
