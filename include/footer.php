@@ -384,6 +384,7 @@ if ($collections_footer && !in_array($pagename,$omit_collectiondiv_load_pages) &
 					}
 					return false;
 				}
+			ModalCentre();
 			},
 			south__onresize: function(pane){
 				if (pane=="south"){
@@ -394,6 +395,7 @@ if ($collections_footer && !in_array($pagename,$omit_collectiondiv_load_pages) &
 						ShowThumbs();
 					}
 				}
+			ModalCentre();
 			}
 		});
 		window.onload = function() {
