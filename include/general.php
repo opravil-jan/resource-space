@@ -1141,9 +1141,14 @@ function auto_create_user_account()
 
 	# Work out if we should automatically approve this account based on $auto_approve_accounts or $auto_approve_domains
 	$approve=false;
+        
+	# Block immediate reset
+	$bypassemail=false;
+        
 	if ($auto_approve_accounts==true)
 		{
 		$approve=true;
+		$bypassemail=true; // We can send user  direct to password reset page
 		}
 	elseif (count($auto_approve_domains)>0)
 		{
@@ -1155,7 +1160,7 @@ function auto_create_user_account()
 			if (substr(strtolower($email),strlen($email)-strlen($domain)-1)==("@" . strtolower($domain)))
 				{
 				# E-mail domain match.
-				$approve=true;
+				$approve=true;                                
 
 				# If user group is supplied, set this
 				if (is_numeric($set_usergroup)) {$usergroup=$set_usergroup;}
@@ -1169,9 +1174,8 @@ function auto_create_user_account()
     hook("afteruserautocreated", "all",array("new"=>$new));
 	if ($approve)
 		{
-		# Auto approving, we can take user direct to the password reset page to set the new account
-		$password_reset_url_key=create_password_reset_key($newusername);
-                global $anonymous_login;
+		# Auto approving
+		 global $anonymous_login;
 		if(isset($anonymous_login))
 			{
 			global $rs_session;
@@ -1195,8 +1199,19 @@ function auto_create_user_account()
 				sql_query("UPDATE user SET current_collection='$sessioncollection' WHERE ref='$new'");
 				}
 			}
-		redirect($baseurl . "?rp=" . $new . $password_reset_url_key);			
-		exit();
+		if($bypassemail)
+			{
+			// No requirement to check anything else e.g. a valid email domain. We can take user direct to the password reset page to set the new account
+			$password_reset_url_key=create_password_reset_key($newusername);
+			redirect($baseurl . "?rp=" . $new . $password_reset_url_key);			
+			exit();
+			}
+		else
+			{
+			email_reset_link($email, true);
+			redirect($baseurl."/pages/done.php?text=user_request");
+			exit();
+			}			
 		}
 	else
 		{
