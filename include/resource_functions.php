@@ -1482,97 +1482,117 @@ function write_metadata($path, $ref, $uniqid="")
 		$command = $exiftool_fullpath . " -m -overwrite_original -E ";
         if ($exiftool_remove_existing) {$command.= "-EXIF:all= -XMP:all= -IPTC:all= ";}
 
-        $write_to = get_exiftool_fields($resource_type); # Returns an array of exiftool fields for the particular resource type, which are basically fields with an 'exiftool field' set.
-
+        //$write_to = get_exiftool_fields($resource_type); # Returns an array of exiftool fields for the particular resource type, which are basically fields with an 'exiftool field' set.
+        $metadata_all=get_resource_field_data($ref, false,false); // Using get_resource_field_data means we honour field permissions
+        $write_to=array();
+        foreach($metadata_all as $metadata_item)
+            {
+            if(trim($metadata_item["exiftool_field"])!="")
+                {
+                $write_to[]= $metadata_item;
+                }
+            }
+        
+        $writtenfields=array(); // Need to check if we are writing to an embedded field from more than one RS field, in which case subsequent values need to be appended, not replaced
+           
         for($i = 0; $i<count($write_to); $i++) # Loop through all the found fields.
-			{
+	    {
             $fieldtype = $write_to[$i]['type'];
-            $writevalue = "";
-    
+            $writevalue = $write_to[$i]['value'];
             # Formatting and cleaning of the value to be written - depending on the RS field type.
             switch ($fieldtype)
                 {
                 case 2:
-                    # Check box list: remove initial comma if present
-                    if (substr(get_data_by_field($ref, $write_to[$i]['ref']), 0, 1)==",") {$writevalue = substr(get_data_by_field($ref, $write_to[$i]['ref']), 1);}
-                    else {$writevalue = get_data_by_field($ref, $write_to[$i]['ref']);}
-                    break;
                 case 3:
-                    # Drop down list: remove initial comma if present
-                    if (substr(get_data_by_field($ref, $write_to[$i]['ref']), 0, 1)==",") {$writevalue = substr(get_data_by_field($ref, $write_to[$i]['ref']), 1);}
-                    else {$writevalue = get_data_by_field($ref, $write_to[$i]['ref']);}
-                    break;
+                case 9:
+                case 12:
+                    # Check box list, drop down, radio buttons or dynamic keyword list: remove initial comma if present
+                    if (substr($writevalue, 0, 1)==",") {$writevalue = substr($writevalue, 1);}
+                    break;                   
                 case 4:
                 case 6:
+                case 10:
                     # Date / Expiry Date: write datetype fields in exiftool preferred format
-                    $datecheck=get_data_by_field($ref, $write_to[$i]['ref']);
-                    if ($datecheck!=""){
-						$writevalue = date("Y:m:d H:i:sP", strtotime($datecheck));
-					} 
+                    $writevalue = date("Y:m:d H:i:sP", strtotime($writevalue));					
                     break;
-                case 9:
-                    # Dynamic Keywords List: remove initial comma if present
-                    if (substr(get_data_by_field($ref, $write_to[$i]['ref']), 0, 1)==",") {$writevalue = substr(get_data_by_field($ref, $write_to[$i]['ref']), 1);}
-                    else {$writevalue = get_data_by_field($ref, $write_to[$i]['ref']);}
-                    break;
-                default:
-                    # Other types
-                    $writevalue = get_data_by_field($ref, $write_to[$i]['ref']);
+                    # Other types, already set
                 }
             $filtervalue=hook("additionalmetadatafilter", "", Array($write_to[$i]["exiftool_field"], $writevalue));
             if ($filtervalue) $writevalue=$filtervalue;
             # Add the tag name(s) and the value to the command string.
             $group_tags = explode(",", $write_to[$i]['exiftool_field']); # Each 'exiftool field' may contain more than one tag.
             foreach ($group_tags as $group_tag)
-                {
+                {                
                 $group_tag = strtolower($group_tag); # E.g. IPTC:Keywords -> iptc:keywords
                 if (strpos($group_tag,":")===false) {$tag = $group_tag;} # E.g. subject -> subject
                 else {$tag = substr($group_tag, strpos($group_tag,":")+1);} # E.g. iptc:keywords -> keywords
-
+                
+                $exifappend=false; // Need to replace values by default
+                if(isset($writtenfields[$group_tag])) 
+                        { 
+                        // This embedded field is already being updated, we need to append values from this field                          
+                        $exifappend=true;
+                        debug("write_metadata - more than one field mappped to the tag '" . $group_tag . "'. Enabling append mode for this tag. ");
+                        }
+                        
                 switch ($tag)
                     {
                     case "filesize":
                         # Do nothing, no point to try to write the filesize.
                         break;
-                    case "keywords":
+                    case "keywords":                  
+                        
                         # Keywords shall be written one at a time and not all together.
-                        $keywords = explode(",", $writevalue); # "keyword1,keyword2, keyword3" (with or with spaces)
-                        if (implode("", $keywords) == "")
+                        $keywords = explode(",", $writevalue); # "keyword1,keyword2, keyword3" (with or without spaces)
+                        if (implode("", $keywords) != "")
                         	{
-                        	# If no keywords set, write empty keyword field
-                        	$command.= escapeshellarg("-" . $group_tag . "=") . " ";
-                        	}
-                        else
-                        	{
-                        	# Only write non-empty keywords
+                        	# Only write non-empty keywords/ may be more than one field mapped to keywords so we don't want to overwrite with blank
 	                        foreach ($keywords as $keyword)
 	                            {
 	                            $keyword = trim($keyword);
 	                            if ($keyword != "")
 	                            	{
-		                            # Convert the data to UTF-8 if not already.
-		                            if (!$exiftool_write_omit_utf8_conversion && (!isset($mysql_charset) || (isset($mysql_charset) && strtolower($mysql_charset)!="utf8"))){$keyword = mb_convert_encoding($keyword, 'UTF-8');}
-		                            $command.= escapeshellarg("-" . $group_tag . "=" . htmlentities($keyword, ENT_QUOTES, "UTF-8")) . " ";
-		                        	}
+                                        if($exifappend)
+                                            {
+                                            if(strpos($writtenfields[$group_tag],$keyword)!==false)
+                                                {
+                                                // The new keyword is already included in what is being written, skip to next group tag
+                                                continue;                                
+                                                } 
+                                            $writtenfields[$group_tag].=$keyword;
+                                            }
+                                        else
+                                            {$writtenfields[$group_tag]=$writevalue;} 
+                                        # Convert the data to UTF-8 if not already.
+                                        if (!$exiftool_write_omit_utf8_conversion && (!isset($mysql_charset) || (isset($mysql_charset) && strtolower($mysql_charset)!="utf8"))){$keyword = mb_convert_encoding($keyword, 'UTF-8');}
+                                        $command.= escapeshellarg("-" . $group_tag . ($exifappend?"+":"") . "=" . htmlentities($keyword, ENT_QUOTES, "UTF-8")) . " ";
+                                        }
+                                    $exifappend=true; // Need to append for subsequent values
 	                            }
 	                        }
                         break;
                     default:
-                        # Convert the data to UTF-8 if not already.
+                        if($exifappend && strpos($writtenfields[$group_tag],$writevalue)!==false)
+                            {                                                            
+                            // The new value is already included in what is being written, skip to next group tag
+                            continue;                                
+                            }                               
+                        $writtenfields[$group_tag]=$writevalue;                          
+                        debug ("write_metadata - updating tag " . $group_tag);
+                        # Write as is, convert the data to UTF-8 if not already.
                         if (!$exiftool_write_omit_utf8_conversion && (!isset($mysql_charset) || (isset($mysql_charset) && strtolower($mysql_charset)!="utf8"))){$writevalue = mb_convert_encoding($writevalue, 'UTF-8');}
                         $command.= escapeshellarg("-" . $group_tag . "=" . htmlentities($writevalue, ENT_QUOTES, "UTF-8")) . " ";
                     }
                 }
             }
-
+            
             # Add the filename to the command string.
             $command.= " " . escapeshellarg($tmpfile);
             
             # Perform the actual writing - execute the command string.
             $output = run_command($command);
-
         return $tmpfile;
-        }
+       }
     else
         {
         return false;
