@@ -146,8 +146,8 @@ $header_favicon="gfx/interface/favicon.png";
 $header_text_title=false;
 
 #If using the old background method, create a clickable area of the resourcespace logo graphic. Defaults to Homepage
-$header_link=false;
-#If using $header_link set the link height and width to match the size of the logo graphic in pixels
+$header_link=true;
+#If $slimheader is off you must set the link height and width to match the size of the logo graphic in pixels (Legacy support)
 #$header_link_height=;
 #$header_link_width=;
 
@@ -713,6 +713,9 @@ $defaulttheme="";
 	# $userfixedtheme="whitegry";
 
 /** END OF DEPRECATED **/
+
+/** USER PREFERENCES **/
+$user_preferences = true;
 
 
 # List of active plugins.
