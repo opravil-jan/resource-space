@@ -737,7 +737,7 @@ $plugins=array();
 $anonymous_user_session_collection=true;
 
 # Enable AJAX popup info box on search results.
-$infobox=true;
+$infobox=false;
 # A list of fields to display in the info box (using the field reference number)
 $infobox_fields=array(18,10,29,53);
 # Display the resource ID in the info box?
