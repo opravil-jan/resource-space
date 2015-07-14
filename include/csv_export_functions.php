@@ -19,7 +19,7 @@ function generateResourcesMetadataCSV(array $resources)
 
     foreach($resources as $resource)
         {
-        foreach(get_resource_field_data($resource['ref']) as $field_data)
+        foreach(get_resource_field_data($resource['ref'], false, true, -1, getval("k","")!="") as $field_data)
             {
             if($field_data['name'] == '')
                 {
