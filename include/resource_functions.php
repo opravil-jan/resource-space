@@ -1483,7 +1483,8 @@ function write_metadata($path, $ref, $uniqid="")
         if ($exiftool_remove_existing) {$command.= "-EXIF:all= -XMP:all= -IPTC:all= ";}
 
         //$write_to = get_exiftool_fields($resource_type); # Returns an array of exiftool fields for the particular resource type, which are basically fields with an 'exiftool field' set.
-        $metadata_all=get_resource_field_data($ref, false,false); // Using get_resource_field_data means we honour field permissions
+        $metadata_all=get_resource_field_data($ref, false,true,-1,getval("k","")!=""); // Using get_resource_field_data means we honour field permissions
+		
         $write_to=array();
         foreach($metadata_all as $metadata_item)
             {
@@ -1572,7 +1573,7 @@ function write_metadata($path, $ref, $uniqid="")
 	                        }
                         break;
                     default:
-                        if($exifappend && strpos($writtenfields[$group_tag],$writevalue)!==false)
+                        if($exifappend && $writevalue!="" && strpos($writtenfields[$group_tag],$writevalue)!==false)
                             {                                                            
                             // The new value is already included in what is being written, skip to next group tag
                             continue;                                
