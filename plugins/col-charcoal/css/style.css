@@ -92,6 +92,7 @@ a.ResourcePanel:visited, a.ResourcePanel:active, a.ResourcePanel:link {color:#E0
 .IconCollect, .KeyCollect	{background: url(../gfx/slimcharcoal/interface/IcCol.gif) no-repeat;}
 .IconCollectOut, .KeyCollectOut	{background: url(../gfx/slimcharcoal/interface/IcColOut.gif) no-repeat;}
 .IconEmail, .KeyEmail	{background: url(../gfx/slimcharcoal/interface/IcEml.gif) no-repeat;}
+.IconEdit, .KeyEdit	{background: url(../gfx/slimcharcoal/interface/IcEdit.gif) no-repeat;}
 .IconPreview, .KeyPreview	{background: url(../gfx/slimcharcoal/interface/IcPre.gif) no-repeat;}
 .IconStar, .KeyStar	{	background: url(../gfx/slimcharcoal/interface/IcStar.gif) no-repeat;}
 .IconComment, .KeyComment	{	background: url(../gfx/slimcharcoal/interface/IcComment.gif) no-repeat;}

@@ -114,6 +114,7 @@ input[readonly] {color: #000000;}
 .IconCollect, .KeyCollect	{background: url(../gfx/interface/IcCol.gif) no-repeat;}
 .IconCollectOut, .KeyCollectOut	{background: url(../gfx/interface/IcColOut.gif) no-repeat;}
 .IconEmail, .KeyEmail	{background: url(../gfx/interface/IcEml.gif) no-repeat;}
+.IconEdit, .KeyEdit	{background: url(../gfx/interface/IcEdit.gif) no-repeat;}
 .IconPreview, .KeyPreview	{background: url(../gfx/interface/IcPre.gif) no-repeat;}
 .IconStar, .KeyStar	{	background: url(../gfx/interface/IcStar.gif) no-repeat;}
 .IconComment, .KeyComment	{	background: url(../gfx/interface/IcComment.gif) no-repeat;}
@@ -313,7 +314,7 @@ li.plupload_droptext {color:#999;}
 #modal
     {
     background-color:rgb(238, 238, 238);
-        box-shadow: 0 0 40px rgba(0,0,0,0.5);
+    box-shadow: 0 0 40px rgba(0,0,0,0.5);
     }
 #modal .RecordHeader
   {

@@ -19,6 +19,7 @@ if (strpos($search,"!")!==false) {$restypes="";}
 $default_sort="DESC";
 if (substr($order_by,0,5)=="field"){$default_sort="ASC";}
 $sort=getval("sort",$default_sort);
+$modal=(getval("modal","")=="true");
 
 $archive=getvalescaped("archive",0,true);
 if($show_status_and_access_on_upload) {
@@ -146,7 +147,7 @@ if (!get_edit_access($ref,$resource["archive"],false,$resource))
 {
     # The user is not allowed to edit this resource or the resource doesn't exist.
   $error=$lang['error-permissiondenied'];
-  error_alert($error);
+  error_alert($error,!$modal);
   exit();
 }
 
@@ -195,7 +196,7 @@ hook("editbeforeheader");
 # -----------------------------------
 #           PERFORM SAVE
 # -----------------------------------
-if ((getval("autosave","")!="") || (getval("tweak","")=="" && getval("submitted","")!="" && getval("resetform","")=="" && getval("copyfrom","")==""))
+if ((getval("autosave","")!="") || (getval("posting","")!="") || (getval("tweak","")=="" && getval("submitted","")!="" && getval("resetform","")=="" && getval("copyfrom","")==""))
 {
 
   if(($embedded_data_user_select && getval("exif_option","")=="custom") || isset($embedded_data_user_select_fields))  
@@ -236,7 +237,6 @@ if (!$multiple)
          # Perform the save
          $save_errors=save_resource_data($ref,$multiple,$autosave_field);
          
-         
          if($embedded_data_user_select)
          {
             $no_exif=getval("exif_option","");
@@ -261,11 +261,11 @@ if (!$multiple)
 
         if (($save_errors===true || $is_template)&&(getval("tweak","")==""))
         {           
-         if ($ref>0 && getval("save","")!="")
+         if ($ref>0 && (getval("save","")!="" || getval("posting","")!=""))
          {
                 # Log this
            daily_stat("Resource edit",$ref);
-           if (!hook('redirectaftersave'))
+           if (!hook('redirectaftersave') && !$modal)
            {
              redirect($baseurl_short."pages/view.php?ref=" . urlencode($ref) . "&search=" . urlencode($search) . "&offset=" . urlencode($offset) . "&order_by=" . urlencode($order_by) . "&sort=" . urlencode($sort) . "&archive=" . urlencode($archive) . "&refreshcollectionframe=true");
           }
@@ -488,14 +488,19 @@ function AutoSave(field)
 # Resource next / back browsing.
 function EditNav() # Create a function so this can be repeated at the end of the form also.
 {
-  global $baseurl_short,$ref,$search,$offset,$order_by,$sort,$archive,$lang;
+  global $baseurl_short,$ref,$search,$offset,$order_by,$sort,$archive,$lang,$modal,$restypes;
   ?>
-  <div class="TopInpageNav">
-  <a onClick="return CentralSpaceLoad(this,true);" href="<?php echo $baseurl_short?>pages/edit.php?ref=<?php echo urlencode($ref) ?>&amp;search=<?php echo urlencode($search)?>&amp;offset=<?php echo urlencode($offset) ?>&amp;order_by=<?php echo urlencode($order_by) ?>&amp;sort=<?php echo urlencode($sort) ?>&amp;archive=<?php echo urlencode($archive) ?>&amp;go=previous">&lt;&nbsp;<?php echo $lang["previousresult"]?></a>
-  |
-  <a onClick="return CentralSpaceLoad(this,true);" href="<?php echo $baseurl_short?>pages/search.php<?php if (strpos($search,"!")!==false) {?>?search=<?php echo urlencode($search)?>&amp;offset=<?php echo urlencode($offset) ?>&amp;order_by=<?php echo urlencode($order_by) ?>&amp;archive=<?php echo urlencode($archive) ?>&amp;sort=<?php echo urlencode($sort) ?><?php } ?>"><?php echo $lang["viewallresults"]?></a>
-  |
-  <a onClick="return CentralSpaceLoad(this,true);" href="<?php echo $baseurl_short?>pages/edit.php?ref=<?php echo urlencode($ref) ?>&amp;search=<?php echo urlencode($search)?>&amp;offset=<?php echo urlencode($offset) ?>&amp;order_by=<?php echo urlencode($order_by) ?>&amp;sort=<?php echo urlencode($sort) ?>&amp;archive=<?php echo urlencode($archive) ?>&amp;go=next"><?php echo         $lang["nextresult"]?>&nbsp;&gt;</a>
+  <div class="backtoresults">
+  <a class="prevLink" onClick="return <?php echo ($modal?"Modal":"CentralSpace") ?>Load(this,true);" href="<?php echo $baseurl_short?>pages/edit.php?ref=<?php echo urlencode($ref) ?>&amp;search=<?php echo urlencode($search)?>&amp;offset=<?php echo urlencode($offset) ?>&amp;order_by=<?php echo urlencode($order_by) ?>&amp;sort=<?php echo urlencode($sort) ?>&amp;archive=<?php echo urlencode($archive) ?>&amp;go=previous&amp;restypes=<?php echo $restypes; ?>"><?php echo $lang["previousresult"]?></a>
+  
+  <a class="upLink" onClick="return CentralSpaceLoad(this,true);" href="<?php echo $baseurl_short?>pages/search.php<?php if (strpos($search,"!")!==false) {?>?search=<?php echo urlencode($search)?>&amp;offset=<?php echo urlencode($offset) ?>&amp;order_by=<?php echo urlencode($order_by) ?>&amp;archive=<?php echo urlencode($archive) ?>&amp;sort=<?php echo urlencode($sort) ?>&amp;restypes=<?php echo $restypes; ?><?php } ?>"><?php echo $lang["viewallresults"]?></a>
+  
+  <a class="nextLink" onClick="return <?php echo ($modal?"Modal":"CentralSpace") ?>Load(this,true);" href="<?php echo $baseurl_short?>pages/edit.php?ref=<?php echo urlencode($ref) ?>&amp;search=<?php echo urlencode($search)?>&amp;offset=<?php echo urlencode($offset) ?>&amp;order_by=<?php echo urlencode($order_by) ?>&amp;sort=<?php echo urlencode($sort) ?>&amp;archive=<?php echo urlencode($archive) ?>&amp;go=next&amp;restypes=<?php echo $restypes; ?>"><?php echo         $lang["nextresult"]?></a>
+  
+  <?php if ($modal) { ?>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="<?php echo $baseurl_short?>pages/edit.php?ref=<?php echo urlencode($ref)?>&amp;search=<?php echo urlencode($search)?>&amp;offset=<?php echo urlencode($offset)?>&amp;order_by=<?php echo urlencode($order_by)?>&amp;sort=<?php echo urlencode($sort)?>&amp;archive=<?php echo urlencode($archive)?>&amp;restypes=<?php echo $restypes; ?>" onClick="return CentralSpaceLoad(this);"><?php echo $lang["maximise"]?></a>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#" onClick="ModalClose();"><?php echo $lang["close"] ?></a>
+<?php } ?>
   </div>
   <?php
 }
@@ -508,10 +513,10 @@ function SaveAndClearButtons($extraclass="")
    if($clearbutton_on_edit)
       { 
       ?>
-      <input name="resetform" type="submit" value="<?php echo $lang["clearbutton"]?>" />&nbsp;
+      <input name="resetform" class="resetform" type="submit" value="<?php echo $lang["clearbutton"]?>" />&nbsp;
       <?php
       } ?>
-      <input <?php if ($multiple) { ?>onclick="return confirm('<?php echo $lang["confirmeditall"]?>');"<?php } ?> name="save" type="submit" value="&nbsp;&nbsp;<?php echo ($ref>0)?$lang["save"]:$lang["next"]?>&nbsp;&nbsp;" /><br><br>
+      <input <?php if ($multiple) { ?>onclick="return confirm('<?php echo $lang["confirmeditall"]?>');"<?php } ?> name="save" class="editsave" type="submit" value="&nbsp;&nbsp;<?php echo ($ref>0)?$lang["save"]:$lang["next"]?>&nbsp;&nbsp;" /><br><br>
      <div class="clearerleft"> </div>
      </div>
    <?php 
@@ -520,10 +525,9 @@ function SaveAndClearButtons($extraclass="")
 ?>
 </script>
 
-<form method="post" action="<?php echo $baseurl_short?>pages/edit.php?ref=<?php echo urlencode($ref) ?>&amp;uploader=<?php echo urlencode(getvalescaped("uploader","")) ?>&amp;single=<?php echo urlencode(getvalescaped("single","")) ?>&amp;local=<?php echo urlencode(getvalescaped("local","")) ?>&amp;search=<?php echo urlencode($search)?>&amp;offset=<?php echo urlencode($offset) ?>&amp;order_by=<?php echo urlencode($order_by) ?>&amp;sort=<?php echo urlencode($sort) ?>&amp;archive=<?php echo urlencode($archive) ?>&amp;collection=<?php echo $collection ?>&amp;metadatatemplate=<?php echo getval("metadatatemplate","")  . $uploadparams?>" id="mainform">
+<form method="post" action="<?php echo $baseurl_short?>pages/edit.php?ref=<?php echo urlencode($ref) ?>&amp;uploader=<?php echo urlencode(getvalescaped("uploader","")) ?>&amp;single=<?php echo urlencode(getvalescaped("single","")) ?>&amp;local=<?php echo urlencode(getvalescaped("local","")) ?>&amp;search=<?php echo urlencode($search)?>&amp;offset=<?php echo urlencode($offset) ?>&amp;order_by=<?php echo urlencode($order_by) ?>&amp;sort=<?php echo urlencode($sort) ?>&amp;archive=<?php echo urlencode($archive) ?>&amp;collection=<?php echo $collection ?>&amp;metadatatemplate=<?php echo getval("metadatatemplate","")  . $uploadparams?>&modal=<?php echo getval("modal","") ?>" id="mainform" onsubmit="return <?php echo ($modal?"Modal":"CentralSpace") ?>Post(this,true);">
 
    <div class="BasicsBox">
-      <input name="save" type="submit" value="&nbsp;&nbsp;<?php echo $lang["next"]?>&nbsp;&nbsp;" class="defaultbutton" />
       <input type="hidden" name="submitted" value="true">
    <?php 
    if ($multiple) 
@@ -538,16 +542,22 @@ function SaveAndClearButtons($extraclass="")
       } 
    elseif ($ref>0)
       {
-      if (!hook('replacebacklink')) 
+      if (!hook('replacebacklink') && !$modal) 
          {?>
          <p><a href="<?php echo $baseurl_short?>pages/view.php?ref=<?php echo urlencode($ref) ?>&search=<?php echo urlencode($search)?>&offset=<?php echo urlencode($offset) ?>&order_by=<?php echo urlencode($order_by) ?>&sort=<?php echo urlencode($sort) ?>&archive=<?php echo urlencode($archive) ?>" onClick="return CentralSpaceLoad(this,true);">&lt;&nbsp;<?php echo $lang["backtoresourceview"]?></a></p><?php
          }
       if (!hook("replaceeditheader")) 
          { ?>
-         <h1 id="editresource"><?php echo $lang["editresource"]?></h1>
-         <?php
+         <div class="RecordHeader">
+          <?php
          # Draw nav
          if (!$multiple&&!hook("dontshoweditnav")) { EditNav(); }
+         ?>
+         <h1 id="editresource"><?php echo $lang["editresource"]?></h1>
+         
+        
+         </div><!-- end of RecordHeader -->
+         <?php
          if ($edit_show_save_clear_buttons_at_top) { SaveAndClearButtons("NoPaddingSaveClear");}
          ?>
          <div class="Question" id="resource_ref_div" style="border-top:none;">
@@ -566,7 +576,7 @@ function SaveAndClearButtons($extraclass="")
          <?php
          if ($resource["has_image"]==1)
             { ?>
-            <img id="preview" align="top" src="<?php echo get_resource_path($ref,false,($edit_large_preview?"pre":"thm"),false,$resource["preview_extension"],-1,1,false)?>" class="ImageBorder" style="margin-right:10px;"/>
+            <img id="preview" align="top" src="<?php echo get_resource_path($ref,false,($edit_large_preview && !$modal?"pre":"thm"),false,$resource["preview_extension"],-1,1,false)?>" class="ImageBorder" style="margin-right:10px;"/>
             <?php // check for watermarked version and show it if it exists
             if (checkperm("w"))
                {
@@ -634,7 +644,7 @@ function SaveAndClearButtons($extraclass="")
 
   if (!checkperm("F*")) { ?>
   <div class="Question" id="question_imagecorrection">
-   <label><?php echo $lang["imagecorrection"]?><br/><?php echo $lang["previewthumbonly"]?></label><select class="stdwidth" name="tweak" id="tweak" onChange="CentralSpacePost(document.getElementById('mainform'),true);">
+   <label><?php echo $lang["imagecorrection"]?><br/><?php echo $lang["previewthumbonly"]?></label><select class="stdwidth" name="tweak" id="tweak" onChange="<?php echo ($modal?"Modal":"CentralSpace") ?>Post(document.getElementById('mainform'),true);">
    <option value=""><?php echo $lang["select"]?></option>
    <?php if ($resource["has_image"]==1) { ?>
    <?php
@@ -711,10 +721,10 @@ function SaveAndClearButtons($extraclass="")
    global $clearbutton_on_upload;
    if(($clearbutton_on_upload && $ref<0 && !$multiple) || ($ref>0 && $clearbutton_on_edit)) 
      { ?>
-  <input name="resetform" type="submit" value="<?php echo $lang["clearbutton"]?>" />&nbsp;
+  <input name="resetform" class="resetform" type="submit" value="<?php echo $lang["clearbutton"]?>" />&nbsp;
   <?php
 } ?>
-<input name="save" type="submit" value="&nbsp;&nbsp;<?php echo $lang["next"]?>&nbsp;&nbsp;" /><br />
+<input name="save" class="editsave" type="submit" value="&nbsp;&nbsp;<?php echo $lang["next"]?>&nbsp;&nbsp;" /><br />
 <div class="clearerleft"> </div>
 </div>
 
@@ -729,7 +739,7 @@ if(!$multiple)
     <div class="Question" id="question_resourcetype">
         <label for="resourcetype"><?php echo $lang["resourcetype"]?></label>
         <select name="resource_type" id="resourcetype" class="stdwidth" 
-                onChange="<?php if ($ref>0) { ?>if (confirm('<?php echo $lang["editresourcetypewarning"]; ?>')){<?php } ?>CentralSpacePost(document.getElementById('mainform'),true);<?php if ($ref>0) { ?>}else {return}<?php } ?>">
+                onChange="<?php if ($ref>0) { ?>if (confirm('<?php echo $lang["editresourcetypewarning"]; ?>')){<?php } ?><?php echo ($modal?"Modal":"CentralSpace") ?>Post(document.getElementById('mainform'),true);<?php if ($ref>0) { ?>}else {return}<?php } ?>">
         <?php
         $types = get_resource_types();
         for($n = 0; $n < count($types); $n++)
@@ -1931,18 +1941,19 @@ if (!$edit_upload_options_at_top){include '../include/edit_upload_options.php';}
       global $clearbutton_on_upload;
       if(($clearbutton_on_upload && $ref<0 && !$multiple) || ($ref>0 && $clearbutton_on_edit)) 
          { ?>
-         <input name="resetform" type="submit" value="<?php echo $lang["clearbutton"]?>" />&nbsp;
+         <input name="resetform" class="resetform" type="submit" value="<?php echo $lang["clearbutton"]?>" />&nbsp;
          <?php
          } ?>
-         <input <?php if ($multiple) { ?>onclick="return confirm('<?php echo $lang["confirmeditall"]?>');"<?php } ?> name="save" type="submit" value="&nbsp;&nbsp;<?php echo ($ref>0)?$lang["save"]:$lang["next"]?>&nbsp;&nbsp;" /><br><br>
+         <input <?php if ($multiple) { ?>onclick="return confirm('<?php echo $lang["confirmeditall"]?>');"<?php } ?> name="save" class="editsave" type="submit" value="&nbsp;&nbsp;<?php echo ($ref>0)?$lang["save"]:$lang["next"]?>&nbsp;&nbsp;" /><br><br>
       <div class="clearerleft"> </div>
    </div>
    <?php 
    }
    
 # Duplicate navigation
-if (!$multiple && $ref>0 &&!hook("dontshoweditnav")) {EditNav();}
+if (!$multiple && !$modal && $ref>0 &&!hook("dontshoweditnav")) {EditNav();}
 
+if (!$is_template) { ?><p><sup>*</sup> <?php echo $lang["requiredfield"]?></p><?php } 
 
 if($collapsible_sections)
 {
@@ -1953,7 +1964,22 @@ if($collapsible_sections)
 if($multiple){echo "</div>";} ?>
 </form>
 
-<?php if (!$is_template) { ?><p><sup>*</sup> <?php echo $lang["requiredfield"]?></p><?php } ?>
+<script>
+// Helper script to assist with AJAX - when 'save' and 'reset' buttons are pressed, add a hidden value so the 'save'/'resetform' values are passed forward just as if those buttons had been clicked. jQuery doesn't do this for us.
+ jQuery(".editsave").click(function(){
+                jQuery("#mainform").append(
+                    jQuery("<input type='hidden'>").attr( { 
+                        name: "save", 
+                        value: "true" }));}
+                );
+  jQuery(".resetform").click(function(){
+                jQuery("#mainform").append(
+                    jQuery("<input type='hidden'>").attr( { 
+                        name: "resetform", 
+                        value: "true" }));}
+                );
+ 
+</script>
 
 <?php if (isset($show_error) && isset($save_errors) && !hook('replacesaveerror')) {
   ?>

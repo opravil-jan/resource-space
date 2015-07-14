@@ -3510,6 +3510,7 @@ function error_alert($error,$back=true){
 	} 
 	if ($back){include(dirname(__FILE__)."/header.php");}
 	echo "<script type='text/javascript'>
+        ModalClose();
 	alert('$error');";
 	if ($back){echo "history.go(-1);";}
 	echo "</script>";

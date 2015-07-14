@@ -378,7 +378,33 @@ if (!hook("renderresultlargethumb"))
 							$showkeyemail = true;
 							}
 						} ?>
-
+			<!-- Edit icon -->
+			<?php
+			// The permissions check here is intentionally more basic. It doesn't check edit_filter as this would be computationally intensive
+			// when displaying many resources. As such this is a convenience feature for users that have system-wide edit access to the given
+			// access level.
+			if($search_results_edit_icon && checkperm("e" . $result[$n]["archive"]) && !hook("iconedit")) 
+				{ 
+				if ($allow_share && $k=="") 
+					{ ?>
+					<span class="IconEdit">
+						<a 
+							href="<?php echo str_replace("view.php","edit.php",$url) ?>"  
+							onClick="return <?php echo ($resource_view_modal?"Modal":"CentralSpace") ?>Load(this,true);" 
+							title="<?php echo $lang["editresource"]?>"
+						>
+							<img 
+								src="<?php echo $baseurl_short?>gfx/interface/sp.gif" 
+								alt="" 
+								width="16" 
+								height="12" 
+							/>
+						</a>
+					</span>
+					<?php
+					$showkeyedit = true;
+					}
+				} ?>	
 					<!-- Star icon -->
 					<?php 
 					if (isset($result[$n][$rating]) && $result[$n][$rating]>0) 

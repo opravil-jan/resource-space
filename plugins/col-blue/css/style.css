@@ -67,6 +67,7 @@ input[readonly] {color: #FFFFFF;}
 .IconCollect, .KeyCollect	{background: url(../gfx/greyblu/interface/IcCol.gif) no-repeat;}
 .IconCollectOut, .KeyCollectOut	{background: url(../gfx/greyblu/interface/IcColOut.gif) no-repeat;}
 .IconEmail, .KeyEmail	{background: url(../gfx/greyblu/interface/IcEml.gif) no-repeat;}
+.IconEdit, .KeyEdit	{background: url(../gfx/greyblu/interface/IcEdit.gif) no-repeat;}
 .IconPreview, .KeyPreview	{background: url(../gfx/greyblu/interface/IcPre.gif) no-repeat;}
 .IconStar, .KeyStar	{	background: url(../gfx/greyblu/interface/IcStar.gif) no-repeat;}
 .IconComment, .KeyComment	{	background: url(../gfx/greyblu/interface/IcComment.gif) no-repeat;}
