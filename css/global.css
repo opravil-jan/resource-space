@@ -956,6 +956,10 @@ div.video-js {margin:auto;}
 	margin:0;
 	padding:20px 20px 0 20px;
 	}
+#modal .nopadding
+	{
+	padding:0;
+	}
 /* custom styling for image preview in edit modal */
 #modal .PreviewImageBlock
 	{
