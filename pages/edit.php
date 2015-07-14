@@ -570,6 +570,7 @@ function SaveAndClearButtons($extraclass="")
       hook("custompermshowfile");
       if ((!$is_template && !checkperm("F*"))||$custompermshowfile) 
          { ?>
+         <div class="PreviewImageBlock RecordDownload">
          <div class="Question" id="question_file">
             <label><?php echo $lang["file"]?></label>
          <div class="Fixed" style="width:50%;">
@@ -638,6 +639,7 @@ function SaveAndClearButtons($extraclass="")
         <?php hook("afterfileoptions"); ?>
      </div>
      <div class="clearerleft"> </div>
+  </div>
   </div>
   <?php }
   hook("beforeimagecorrection");
