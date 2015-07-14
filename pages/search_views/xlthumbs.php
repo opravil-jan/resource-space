@@ -362,7 +362,7 @@ if (!hook("renderresultlargethumb"))
 							{ ?>
 							<span class="IconEmail">
 								<a 
-									href="<?php echo $baseurl_short?>pages/resource_email.php?ref=<?php echo urlencode($ref)?>&amp;search=<?php echo urlencode($search)?>&amp;offset=<?php echo urlencode($offset)?>&amp;order_by=<?php echo urlencode($order_by)?>&amp;sort=<?php echo urlencode($sort)?>&amp;archive=<?php echo urlencode($archive)?>&amp;k=<?php echo urlencode($k)?>"   
+									href="<?php echo $baseurl_short?>pages/resource_share.php?ref=<?php echo urlencode($ref)?>&amp;search=<?php echo urlencode($search)?>&amp;offset=<?php echo urlencode($offset)?>&amp;order_by=<?php echo urlencode($order_by)?>&amp;sort=<?php echo urlencode($sort)?>&amp;archive=<?php echo urlencode($archive)?>&amp;k=<?php echo urlencode($k)?>"   
 									onClick="return CentralSpaceLoad(this,true);" 
 									title="<?php echo $lang["emailresourcetitle"]?>"
 								>

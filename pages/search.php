@@ -1095,7 +1095,7 @@ if (true) # Always show search header now.
                     echo $lang["key"] . " ";
                     if ($showkeystar) { ?><div class="KeyStar"><?php echo $lang["verybestresources"]?></div><?php }
                     if ($showkeycomment) { ?><div class="KeyComment"><?php echo $lang["addorviewcomments"]?></div><?php }
-                    if ($showkeyedit) { ?><div class="KeyEdit"><?php echo $lang["editresource"]?></div><?php }
+                    if ($showkeyedit) { ?><div class="KeyEdit"><?php echo $lang["share-resource"]?></div><?php }
 		    if ($showkeyemail) { ?><div class="KeyEmail"><?php echo $lang["emailresourcetitle"]?></div><?php }
                     if ($showkeycollectout) { ?><div class="KeyCollectOut"><?php echo $lang["removefromcurrentcollection"]?></div><?php }
                     if ($showkeycollect) { ?><div class="KeyCollect"><?php echo $lang["addtocurrentcollection"]?></div><?php }

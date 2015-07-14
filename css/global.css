@@ -296,7 +296,7 @@ input.defaultbutton {position: absolute; left: -100%; width: 0; height: 0;}
 	
 .RecordPanel .RecordResouce {position:relative;clear: left;} 
 .RecordPanel .Picture {float: left;margin: 0px 0px 0px 0px;}
-#previewimagewrapper {float:left;margin: 0px 10px 10px 0px;}
+#previewimagewrapper {float:left;margin: 0px 20px 15px 0px;}
 
 .RecordPanel .PictureDoc {float: left;margin: 50px 130px;}
 
@@ -937,7 +937,7 @@ div.video-js {margin:auto;}
 #modal
     {
     position:absolute;
-    width: 1225px;
+    width: 1235px;
     text-align:left;
     opacity: 1;
     display:none;
