@@ -19,7 +19,7 @@ $starsearch=getvalescaped("starsearch","");
 $default_sort="DESC";
 if (substr($order_by,0,5)=="field"){$default_sort="ASC";}
 $sort=getval("sort",$default_sort);
-$metadata=get_resource_field_data($ref);
+$metadata=get_resource_field_data($ref, false,true,-1,getval("k","")!=""); 
 $filename=$ref;
 $download=getval("download","")!="";
 $download_file_type = getval('fileType_option', '');
