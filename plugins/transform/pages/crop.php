@@ -643,14 +643,19 @@ if(!$cropperestricted)
 		    
 			    // make sure that this is a reasonable transformation before we submit the form.
 			    // fixme - could add more sophisticated validation here
-			    
-			    if (theform.xcoord.value == 0 && theform.ycoord.value == 0 && theform.new_width.value == '' && theform.new_height.value == '' <?php if ($cropper_rotation) { ?>&& theform.rotation.value == 0 & !theform.flip.checked <?php } ?>){
+			    <?php
+				if ($cropper_force_original_format)
+					{
+					// Ignore valid dimension check as user may just want to download a different file format
+					?> 
+					if (theform.xcoord.value == 0 && theform.ycoord.value == 0 && theform.new_width.value == '' && theform.new_height.value == '' <?php if ($cropper_rotation) { ?>&& theform.rotation.value == 0 & !theform.flip.checked <?php } ?>){
 				    alert('<?php echo addslashes($lang['errormustchoosecropscale']); ?>');
 				    return false;
-			    }
-    
+					}
+					<?php 
+					}
 	    
-			    <?php if (!$cropper_allow_scale_up) { ?>
+			    if (!$cropper_allow_scale_up) { ?>
 				    if (Number(theform.new_width.value) > Number(theform.origwidth.value) || Number(theform.new_height.value) > Number(theform.origheight.value)){
 					    alert('<?php echo addslashes($lang['errorspecifiedbiggerthanoriginal']); ?>');
 					    return false;
