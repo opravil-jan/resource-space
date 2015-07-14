@@ -32,6 +32,7 @@ $default_sort="DESC";
 if (substr($order_by,0,5)=="field"){$default_sort="ASC";}
 $sort=getval("sort",$default_sort);
 $modal=(getval("modal","")=="true");
+$context=($modal?"Modal":"Root"); # Set a unique context, used for JS variable scoping so this page in a modal doesn't conflict with the same page open behind the modal.
 
 # next / previous resource browsing
 $curpos=getvalescaped("curpos","");
@@ -1851,40 +1852,40 @@ if($enable_find_similar && checkperm('s') && ($k == '')) { ?>
 
 <?php } ?>
 <script type="text/javascript">
-function UpdateFSResultCount()
+function <?php echo $context ?>UpdateFSResultCount()
 	{
 	// set the target of the form to be the result count iframe and submit
 
 	// some pages are erroneously calling this function because it exists in unexpected
 	// places due to dynamic page loading. So only do it if it seems likely to work.
-	if(jQuery('#findsimilar').length > 0)
+	if(jQuery('#<?php echo $context ?>findsimilar').length > 0)
 		{
-		document.getElementById("findsimilar").target="resultcount";
-		document.getElementById("countonly").value="yes";
-		document.getElementById("findsimilar").submit();
-		document.getElementById("findsimilar").target="";
-		document.getElementById("countonly").value="";
+		document.getElementById("<?php echo $context ?>findsimilar").target="<?php echo $context ?>resultcount";
+		document.getElementById("<?php echo $context ?>countonly").value="yes";
+		document.getElementById("<?php echo $context ?>findsimilar").submit();
+		document.getElementById("<?php echo $context ?>findsimilar").target="";
+		document.getElementById("<?php echo $context ?>countonly").value="";
 		}
 	}
 </script>
 
-<form method="post" action="<?php echo $baseurl_short?>pages/find_similar.php" id="findsimilar">
+<form method="post" action="<?php echo $baseurl_short?>pages/find_similar.php?context=<?php echo $context ?>" id="<?php echo $context ?>findsimilar">
 <input type="hidden" name="resource_type" value="<?php echo $resource["resource_type"]?>">
-<input type="hidden" name="countonly" id="countonly" value="">
+<input type="hidden" name="countonly" id="<?php echo $context ?>countonly" value="">
 <?php
 $keywords=get_resource_top_keywords($ref,50);
 for ($n=0;$n<count($keywords);$n++)
 	{
 	?>
-	<div class="SearchSimilar"><input type=checkbox id="similar_search_<?php echo urlencode($keywords[$n])?>" name="keyword_<?php echo urlencode($keywords[$n])?>" value="yes"
-	onClick="UpdateFSResultCount();"><label for="similar_search_<?php echo urlencode($keywords[$n])?>">&nbsp;<?php echo htmlspecialchars(i18n_get_translated($keywords[$n]))?></label></div>
+	<div class="SearchSimilar"><input type=checkbox id="<?php echo $context ?>similar_search_<?php echo urlencode($keywords[$n])?>" name="keyword_<?php echo urlencode($keywords[$n])?>" value="yes"
+	onClick="<?php echo $context ?>UpdateFSResultCount();"><label for="similar_search_<?php echo urlencode($keywords[$n])?>">&nbsp;<?php echo htmlspecialchars(i18n_get_translated($keywords[$n]))?></label></div>
 	<?php
 	}
 ?>
 <div class="clearerleft"> </div>
 <br />
-<input name="search" type="submit" value="&nbsp;&nbsp;<?php echo $lang["searchbutton"]?>&nbsp;&nbsp;" id="dosearch"/>
-<iframe src="<?php echo $baseurl_short?>pages/blank.html" frameborder=0 scrolling=no width=1 height=1 style="visibility:hidden;" name="resultcount" id="resultcount"></iframe>
+<input name="search" type="submit" value="&nbsp;&nbsp;<?php echo $lang["searchbutton"]?>&nbsp;&nbsp;" id="<?php echo $context ?>dosearch"/>
+<iframe src="<?php echo $baseurl_short?>pages/blank.html" frameborder=0 scrolling=no width=1 height=1 style="visibility:hidden;" name="<?php echo $context ?>resultcount" id="<?php echo $context ?>resultcount"></iframe>
 </form>
 <div class="clearerleft"> </div>
 </div>
