@@ -28,7 +28,7 @@ include "../../include/header.php";
 	$options_available = 0; # Increment this to prevent a "No options available" message
 
 	/* User Colour Theme Selection */
-	if(FALSE)//(isset($userfixedtheme) && $userfixedtheme=="") && $defaulttheme=="" && count($userpreferences_plugins["colourtheme"])>0)
+	if((isset($userfixedtheme) && $userfixedtheme=="") && $defaulttheme=="" && count($userpreferences_plugins["colourtheme"])>0)
 		{ ?>
 		<div class="Question">
 			<label for="">
