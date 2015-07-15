@@ -261,7 +261,7 @@ if (!$multiple)
 
         if (($save_errors===true || $is_template)&&(getval("tweak","")==""))
         {           
-         if ($ref>0 && (getval("save","")!="" || getval("posting","")!=""))
+         if ($ref>0 && getval("save","")!="")
          {
                 # Log this
            daily_stat("Resource edit",$ref);
@@ -1486,7 +1486,7 @@ if($collapsible_sections)
  <div class="Question" id="question_copyfrom">
     <label for="copyfrom"><?php echo $lang["batchcopyfrom"]?></label>
     <input class="stdwidth" type="text" name="copyfrom" id="copyfrom" value="" style="width:80px;">
-    <input type="submit" name="copyfromsubmit" value="<?php echo $lang["copy"]?>" onClick="event.preventDefault();CentralSpacePost(document.getElementById('mainform'),true);">
+    <input type="submit" id="copyfromsubmit" name="copyfromsubmit" value="<?php echo $lang["copy"]?>" onClick="event.preventDefault();CentralSpacePost(document.getElementById('mainform'),true);">
  </div><!-- end of question_copyfrom -->
  <?php
 }
@@ -1980,7 +1980,12 @@ if($multiple){echo "</div>";} ?>
                         name: "resetform", 
                         value: "true" }));}
                 );
- 
+   jQuery("#copyfromsubmit").click(function(){
+                jQuery("#mainform").append(
+                    jQuery("<input type='hidden'>").attr( { 
+                        name: "copyfromsubmit", 
+                        value: "true" }));}
+                );
 </script>
 
 <?php if (isset($show_error) && isset($save_errors) && !hook('replacesaveerror')) {
