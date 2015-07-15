@@ -285,8 +285,8 @@ for ($n=$useraccess;$n<=1;$n++)  { ?>
 <div class="Question">
 <label><?php echo $lang["externalselectresourceexpires"]?></label>
 <select name="expires" class="stdwidth">
-<option value=""><?php echo $lang["never"]?></option>
-<?php 
+<?php if($resource_share_expire_never) { ?><option value=""><?php echo $lang["never"]?></option><?php }
+				
 for ($n=1;$n<=150;$n++)
 	{
 	$date = time()+(60*60*24*$n);
