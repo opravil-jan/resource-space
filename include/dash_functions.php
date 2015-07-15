@@ -710,6 +710,7 @@ function get_user_available_tiles($user,$tile="null")
 					dash_tile.title,
 					dash_tile.txt,
 					dash_tile.link,
+					dash_tile.url,
 					dash_tile.resource_count,
 					dash_tile.all_users,
 					dash_tile.allow_delete,
@@ -747,6 +748,7 @@ function get_user_available_tiles($user,$tile="null")
 					dash_tile.title,
 					dash_tile.txt,
 					dash_tile.link,
+					dash_tile.url,
 					dash_tile.resource_count,
 					dash_tile.all_users,
 					dash_tile.allow_delete,
@@ -954,14 +956,17 @@ function get_user_dash($user)
 #Build dash listfunction
 function build_dash_tile_list($dtiles_available)
 	{
-	global $lang,$baseurl_short;
+	global $lang,$baseurl_short,$baseurl;
 	foreach($dtiles_available as $tile)
   		{
   		$checked = false;
   		if(!empty($tile["dash_tile"]))
   			{$checked=true;}
+
+  		$buildstring = explode('?',$tile["url"]);
+		parse_str(str_replace("&amp;","&",$buildstring[1]),$buildstring);
   		?>
-  		<tr>
+  		<tr id="tile<?php echo $tile["ref"];?>">
   			<td>
   				<input 
   					type="checkbox" 
@@ -972,9 +977,19 @@ function build_dash_tile_list($dtiles_available)
   					<?php echo $checked?"checked":"";?> 
   				/>
   			</td>
-  			<td><?php echo $tile["title"];?></td>
   			<td>
   				<?php 
+  				if(isset($buildstring["tltype"]) && $buildstring["tltype"]=="conf" && $buildstring["tlstyle"]!="custm")
+  					{echo $lang[$tile["title"]];}
+  				else 
+  					{echo $tile["title"];}
+  				?>
+  			</td>
+  			<td>
+  				<?php 
+  				if(isset($buildstring["tltype"]) && $buildstring["tltype"]=="conf" && $buildstring["tlstyle"]!="custm")
+  					{$tile["txt"] = text($tile["title"]);}
+
   				if(strlen($tile["txt"])>75)
   					{
   					echo substr($tile["txt"],0,72)."...";
@@ -986,16 +1001,12 @@ function build_dash_tile_list($dtiles_available)
   				?>
   			</td>
   			<td>
-  				<?php 
-  				if(strlen($tile["link"])>75)
-  					{
-  					echo substr($tile["link"],0,72)."...";
-  					}
-  				else
-  					{
-  					echo $tile["link"];
-  					}
-  				?>
+  				<a 
+  					href="<?php echo (mb_strtolower(substr($tile["link"],0,4))=="http")? $tile["link"]: $baseurl."/".htmlspecialchars($tile["link"]);?>"
+  					target="_blank"
+  				>
+  					<?php echo $lang["dashtilevisitlink"];?>
+  				</a>
   			</td>
   			<td><?php echo $tile["resource_count"]? $lang["yes"]: $lang["no"];?></td>
   			<td>

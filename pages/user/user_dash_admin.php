@@ -8,8 +8,7 @@ include "../../include/dash_functions.php";
 #If can't manage own dash return to user home.
 if(!($home_dash && checkPermission_dashmanage()))
 	{header("location: ".$baseurl_short."pages/user/user_home.php");exit;}
-
-
+$pagename = "home";
 if(getvalescaped("quicksave",FALSE))
 	{
 	$tile = getvalescaped("tile","");
@@ -27,14 +26,14 @@ if(getvalescaped("quicksave",FALSE))
 				#Delete if the user already has the tile
 				delete_user_dash_tile($usertile,$userref);
 				$dtiles_available = get_user_available_tiles($userref);
-				exit(build_dash_tile_list($dtiles_available));
+				exit("negativeglow");
 				}
 			else
 				{
 				#Add to the front of the pile if the user already has the tile
 				add_user_dash_tile($userref,$tile,5);
 				$dtiles_available = get_user_available_tiles($userref);
-				exit(build_dash_tile_list($dtiles_available));
+				exit("positiveglow");
 				}
 			}
 		}
@@ -66,6 +65,9 @@ include "../../include/header.php";
 ?>
 <div class="BasicsBox"> 
 	<h1><?php echo $lang["manage_own_dash"];?></h1>
+	<p>
+		<?php echo $lang["manageowndashinto"];?>
+	</p>
 	<form class="Listview">
 	<input type="hidden" name="submit" value="true" />
 	<table class="ListviewStyle">
@@ -93,13 +95,20 @@ include "../../include/header.php";
 	  	</div>
   	</noscript>
 	</form>
+	<style>
+	.ListviewStyle tr.positiveglow td,.ListviewStyle tr.positiveglow:hover td{background: rgba(45, 154, 0, 0.38);}
+	.ListviewStyle tr.negativeglow td,.ListviewStyle tr.negativeglow:hover td{  background: rgba(227, 73, 75, 0.38);}
+	</style>
 	<script type="text/javascript">
 		function processTileChange(tile) {
 			jQuery.post(
 				window.location,
 				{"tile":tile,"quicksave":"true"},
 				function(data){
-					jQuery("#dashtilelist").html(data);
+					jQuery("#tile"+tile).removeClass("positiveglow");
+					jQuery("#tile"+tile).removeClass("negativeglow");
+					jQuery("#tile"+tile).addClass(data);
+					window.setTimeout(function(){jQuery("#tile"+tile).removeClass(data);},2000);
 				}
 			);
 		}
@@ -126,7 +135,7 @@ include "../../include/header.php";
 		if($home_dash && checkPermission_dashcreate())
 			{ ?>
 			<p>
-				<a href="<?php echo $baseurl."/pages/dash_tile.php?create=true&tltype=ftxt&modifylink=true&freetext=Helpful%20tips%20here&nostyleoptions=true&all_users=1&link=http://resourcespace.org/knowledge-base/&title=Knowledge%20Base";?>">&gt;&nbsp; <?php echo $lang["createdashtilefreetext"]?></a>
+				<a href="<?php echo $baseurl."/pages/dash_tile.php?create=true&tltype=ftxt&modifylink=true&freetext=Helpful%20tips%20here&nostyleoptions=true&all_users=0&link=http://resourcespace.org/knowledge-base/&title=Knowledge%20Base";?>">&gt;&nbsp; <?php echo $lang["createdashtilefreetext"]?></a>
 			</p>
 			<?php
 			} ?>

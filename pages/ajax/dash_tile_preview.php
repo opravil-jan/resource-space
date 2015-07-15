@@ -1,8 +1,8 @@
 <?php
 /*
- * User Tile Ajax Interface
- * Ajax functions for the homepage dash interface
- *
+ * Ajax generation handling for dash tile previews - Montala Ltd, Jethro Dew
+ * Separated out into a new file as there is no existing dash tile record to pull information from
+ * Content for the tile is sent via ajax to this page. Standard build functions available from include/dash_tile_generation.php
  */
 
 include "../../include/db.php";

@@ -1,8 +1,7 @@
 <?php
 /*
- * User Tile Ajax Interface
- * Ajax functions for the homepage dash interface
- *
+ * Home Dash Ajax Interface - Montala Ltd, Jethro Dew
+ * Requests from the dash interactions are processed here.
  */
 include "../../include/db.php";
 include "../../include/general.php";
@@ -11,6 +10,7 @@ include "../../include/search_functions.php";
 include_once "../../include/collections_functions.php";
 include "../../include/dash_functions.php";
 
+/* You must correctly use exit calls when functionality is complete. */
 
 global $userref,$baseurl_short;
 /* Tile */

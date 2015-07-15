@@ -5,8 +5,6 @@ include "../../include/general.php";
 include "../../include/authenticate.php";
 include "../../include/header.php";
 ?>
-
-
 <div class="BasicsBox"> 
   <h1><?php echo $lang["myaccount"]?></h1>
   <p><?php echo text("introtext")?></p>
@@ -27,6 +25,13 @@ include "../../include/header.php";
 		if($home_dash && checkPermission_dashmanage())
 			{ ?>
 			<li><a href="<?php echo $baseurl_short?>pages/user/user_dash_admin.php"	onClick="return CentralSpaceLoad(this,true);"><?php echo $lang["manage_own_dash"];?></a></li>
+			<?php
+			}
+		if($user_preferences)
+			{ ?>
+			<li>
+				<a href="<?php echo $baseurl_short?>pages/user/user_preferences.php" onClick="return CentralSpaceLoad(this,true);"><?php echo $lang["userpreferences"];?></a>
+			</li>
 			<?php
 			} ?>
 	</ul>

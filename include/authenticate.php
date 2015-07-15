@@ -221,6 +221,9 @@ if (array_key_exists("user",$_COOKIE) || array_key_exists("user",$_GET) || isset
         $userresourcedefaults=$userdata[0]["resource_defaults"];
         $userrequestmode=trim($userdata[0]["request_mode"]);
     	
+    	$userpreferences = sql_query("SELECT user,colour_theme FROM user_preferences WHERE user=".$userref);
+
+
         # Some alternative language choices for basket mode / e-commerce
         if ($userrequestmode==2 || $userrequestmode==3)
 			{

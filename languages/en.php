@@ -183,6 +183,7 @@ $lang["contactus"]="Contact us";
 $lang["home"]="Home";
 $lang["searchresults"]="Search results";
 $lang["themes"]="Featured collections";
+$lang["themeselector"]=&$lang["themes"];
 $lang["mycollections"]="My collections";
 $lang["myrequests"]="My requests";
 $lang["collections"]="Collections";
@@ -2101,9 +2102,9 @@ $lang["all__passwordnewemailhtml"]="[img_gfx/titles/title.gif]<br /><br />Please
 
 $lang['disk_size_no_upload_heading']="Uploading temporarily unavailable";
 $lang['disk_size_no_upload_explain']="Due to space constraints, uploading has been temporarily disabled. We apologize for any inconvenience.";
+
 /*
  * Start - User Dash Strings
- *
  */
 $lang["savethissearchtodash"]="Save to dash tile";
 $lang["pushtoallusers"]="Push this dash tile to all users?";
@@ -2140,6 +2141,9 @@ $lang["dasheditmodifytiles"]="Edit / modify dash tiles available";
 $lang['confirmdeleteconfigtile']="This tile is controlled by configuration option(s). To permanently delete this tile, turn off the relevant options and then perform this action again.";
 $lang["error-dashactionmissing"]="No action or invalid data was submitted to this page. No tile template available to build. <br />Please return to this page from a suitable creation / edit link";
 $lang["dasheditchangeall_users"]="Turning off this setting will not remove this tile from all dashes, you must do this from manage all user tiles. However, new users will no longer receive this tile on their dash.";
+$lang["dashtilevisitlink"]="Visit target link";
+$lang["manageowndashinto"]="Manage dash tiles available for your dash. You can add / remove or edit tiles on your dash if you have the permissions to do so.";
+
 #Tile style strings
 $lang["tile_thmbs"]="Single";
 $lang["tile_multi"]="Multi";
@@ -2180,12 +2184,17 @@ $lang['trash_bin_title'] = 'Remove';
 $lang['trash_bin_delete_dialog_title'] = 'Remove resource from current collection?';
 /* End of Global Trash Bin strings */
 
+/* My Account Strings */
 $lang["managecontent_defaulttextused"]="!! The text for the default language (?) is currently being used. Edit the text below to create an alternative version for this language / user group selection !!";
-
 $lang["myaccount"]="My account";
+$lang["userpreferences"]="User preferences";
+$lang["modifyuserpreferencesintro"]="Options on this page allow you to make changes to some of the functionality  and interface that are available to you.";
+
+/* User preferences*/
+$lang["userpreferencecolourtheme"]="Interface colour theme";
 
 /* Error Messages */
 $lang['error_check_html_first'] = 'Please Check HTML! The text used does not contain valid HTML.';
-/* End of Error Messages */
+
 
 $lang["maximise"]="Maximise";
