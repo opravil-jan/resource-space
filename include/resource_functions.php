@@ -1573,9 +1573,9 @@ function write_metadata($path, $ref, $uniqid="")
 	                        }
                         break;
                     default:
-                        if($exifappend && $writevalue!="" && strpos($writtenfields[$group_tag],$writevalue)!==false)
+                        if($exifappend && ($writevalue=="" || ($writevalue!="" && strpos($writtenfields[$group_tag],$writevalue)!==false)))
                             {                                                            
-                            // The new value is already included in what is being written, skip to next group tag
+                            // The new value is blank or already included in what is being written, skip to next group tag
                             continue;                                
                             }                               
                         $writtenfields[$group_tag]=$writevalue;                          
