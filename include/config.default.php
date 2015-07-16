@@ -2440,7 +2440,8 @@ $keyboard_navigation_toggle_thumbnails=84;
 $keyboard_navigation_view_all=86;
 # zoom to/from preview, default 'z'
 $keyboard_navigation_zoom=90;
-
+# close modal, defaut escape
+$keyboard_navigation_close=27;
 # with $keyboard_scroll_jump on arrow keys jump from picture to picture in preview_all mode (horizontal only)
 $keyboard_scroll_jump=false;
 
