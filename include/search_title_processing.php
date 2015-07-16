@@ -198,8 +198,11 @@ if ($search_titles)
         $resource=substr($search,8);
 		$resource=explode(",",$resource);
 		$resource=$resource[0];
-		$filename=get_data_by_field($resource,$filename_field);
-        $search_title = '<h1 class="searchcrumbs"><a href="'.$baseurl_short.'pages/search.php?search=!related'.$resource.$parameters_string.'" onClick="return CentralSpaceLoad(this,true);">'.str_replace('%id%', $filename, $lang["relatedresources-id"]).'</a>'.$searchcrumbs.'</h1> ';
+		$displayfield=get_data_by_field($resource,$related_search_searchcrumb_field);
+		if($displayfield==''){
+			$displayfield=get_data_by_field($resource,$filename_field);
+		}
+        $search_title = '<h1 class="searchcrumbs"><a href="'.$baseurl_short.'pages/search.php?search=!related'.$resource.$parameters_string.'" onClick="return CentralSpaceLoad(this,true);">'.str_replace('%id%', $displayfield, $lang["relatedresources-id"]).'</a>'.$searchcrumbs.'</h1> ';
         }
     elseif (substr($search,0,7)=="!unused")
         {

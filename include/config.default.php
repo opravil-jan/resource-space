@@ -1957,6 +1957,10 @@ $sort_relations_by_restype=false;
 # When using the "View these resources as a result set" link, show the original resource in search result?
 $related_search_show_self=false;
 
+# Select the field to display in searchcrumbs for a related search (defaults to filename)
+# If this is set to a different field and the value is empty fallback to filename
+$related_search_searchcrumb_field=51;
+
 # Allow the addition of 'saved searches' to collections. 
 $allow_save_search=true;
 
