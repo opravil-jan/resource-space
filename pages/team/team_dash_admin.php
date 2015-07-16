@@ -33,7 +33,7 @@ if(getvalescaped("quicksave",FALSE))
 				delete_dash_tile($tile["ref"],true,$force);
 				reorder_default_dash();
 				$dtiles_available = get_alluser_available_tiles();
-				exit(build_dash_tile_list($dtiles_available));
+				exit("negativeglow");
 				}
 			else
 				{
@@ -42,7 +42,7 @@ if(getvalescaped("quicksave",FALSE))
 				sql_query("INSERT user_dash_tile (user,dash_tile,order_by) SELECT user.ref,'".$tile["ref"]."',5 FROM user");
 
 				$dtiles_available = get_alluser_available_tiles();
-				exit(build_dash_tile_list($dtiles_available));
+				exit("positiveglow");
 				}
 			}
 		}
@@ -89,27 +89,34 @@ include "../../include/header.php";
 	  	?>
 	  </tbody>
   	</table>
-  	<div id="confirm_dialog" style="display:none;text-align:left;"><?php echo $lang["dashtiledeleteusertile"];?></div>
+  	<div id="confirm_dialog" style="display:none;text-align:left;"></div>
 	</form>
+	<style>
+	.ListviewStyle tr.positiveglow td,.ListviewStyle tr.positiveglow:hover td{background: rgba(45, 154, 0, 0.38);}
+	.ListviewStyle tr.negativeglow td,.ListviewStyle tr.negativeglow:hover td{  background: rgba(227, 73, 75, 0.38);}
+	</style>
 	<script type="text/javascript">
 		function processTileChange(tile) {
 			jQuery.post(
 				window.location,
 				{"tile":tile,"quicksave":"true"},
 				function(data){
-					jQuery("#dashtilelist").html(data);
+					jQuery("#tile"+tile).removeClass("positiveglow");
+					jQuery("#tile"+tile).removeClass("negativeglow");
+					jQuery("#tile"+tile).addClass(data);
+					window.setTimeout(function(){jQuery("#tile"+tile).removeClass(data);},2000);
 				}
 			);
 		}
 		function changeTile(tile,all_users) {
-			if(all_users==0) {
+			if(!jQuery("#tile"+tile+" .tilecheck").attr("checked")) {
 				jQuery("#confirm_dialog").dialog({
 		        	title:'<?php echo $lang["dashtiledelete"]; ?>',
 		        	modal: true,
     				resizable: false,
 					dialogClass: 'confirm-dialog no-close',
                     buttons: {
-                        "<?php echo $lang['confirmdashtiledelete'] ?>": function() {processTileChange(tile); jQuery(this).dialog( "close" );},
+                        "<?php echo $lang['confirmdefaultdashtiledelete']; ?>": function() {processTileChange(tile); jQuery(this).dialog( "close" );},
                         "<?php echo $lang['cancel'] ?>":  function() { jQuery(".tilecheck[value="+tile+"]").attr('checked', true); jQuery(this).dialog('close'); }
                     }
                 });
