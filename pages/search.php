@@ -802,7 +802,11 @@ if (true) # Always show search header now.
 			<?php
 			}
 
-		render_actions();
+		if(!isset($collectiondata))
+			{
+			$collectiondata = array();
+			}
+		render_actions($collectiondata);
 
 		if (!$display_selector_dropdowns && !$perpage_dropdown){?>
 		<div class="InpageNavLeftBlock"><?php echo ucfirst($lang["perpage"]);?>:<br />

@@ -8,6 +8,7 @@ if (checkperm("b")){exit($lang["error-permissiondenied"]);}
 include_once dirname(__FILE__)."/../include/research_functions.php";
 include_once dirname(__FILE__)."/../include/resource_functions.php";
 include_once dirname(__FILE__)."/../include/search_functions.php";
+include_once dirname(__FILE__) . '/../include/render_functions.php';
 
 
 // copied from collection_manage to support compact style collection adds (without redirecting to collection_manage)
@@ -667,87 +668,27 @@ elseif ($k!="")
 		</div>			
   </form>
 
-  
-  <?php if ($collections_compact_style){
-	 hook("beforecollectiontoolscolumn");?>
-	 <?php if (!hook("modifycompacttoolslabel")){ echo "<div style='height:5px;'></div>".$lang['tools'].":";}
-    draw_compact_style_selector($cinfo['ref']);?>	
-
-     <?php hook("aftercollectionscompacttools");?>
-
-		 
-     <div class="collectionscompactstylespacer"></div>
-     
-     <a id="toggleThumbsLink" onClick="ToggleThumbs();return false;" href="#">&gt;&nbsp;<?php echo $lang["hidethumbnails"]?></a><?php 
-    }
-    else { ?><ul>
-  	<?php
-  	if ((!collection_is_research_request($usercollection)) || (!checkperm("r"))) { 
-  		hook('beforecollectionlinks');
-  	?>
-    <?php if (checkperm("s")) { ?><li><a onclick="return CentralSpaceLoad(this,true);" href="<?php echo $baseurl_short?>pages/collection_manage.php">&gt; <?php echo $lang["managemycollections"];?></a></li>
-	<?php if ($contact_sheet==true && $contact_sheet_link_on_collection_bar) { ?><li><a onclick="return CentralSpaceLoad(this,true);" href="<?php echo $baseurl_short?>pages/contactsheet_settings.php?ref=<?php echo urlencode($usercollection) ?>">&gt;&nbsp;<?php echo $lang["contactsheet"]?></a></li><?php } ?>
-    <?php if ($allow_share) { ?>
-    	<li><a onclick="return CentralSpaceLoad(this,true);" href="<?php echo $baseurl_short?>pages/collection_share.php?ref=<?php echo urlencode($usercollection) ?>">&gt; <?php echo $lang["share"]?></a></li><?php 
-    	hook('aftershareinbottomtoolbar', '', array($usercollection));
-    } ?>
-    <?php if (($userref==$cinfo["user"]) || (checkperm("h"))) {?><li><a onclick="return CentralSpaceLoad(this,true);" href="<?php echo $baseurl_short?>pages/collection_edit.php?ref=<?php echo urlencode($usercollection) ?>">&gt;&nbsp;<?php echo $allow_share?$lang["action-edit"]:$lang["editcollection"]?></a></li><?php } ?>
-	<?php if ($preview_all){?><li><a onclick="return CentralSpaceLoad(this,true);" href="<?php echo $baseurl_short?>pages/preview_all.php?ref=<?php echo urlencode($usercollection) ?>">&gt;&nbsp;<?php echo $lang["preview_all"]?></a></li><?php } ?>
-	<?php hook("collectiontool2");?>
-    <?php if ($feedback) {?><li><a onclick="return CentralSpaceLoad(this,true);" href="<?php echo $baseurl_short?>pages/collection_feedback.php?collection=<?php echo urlencode($usercollection) ?>&k=<?php echo urlencode($k) ?>">&gt;&nbsp;<?php echo $lang["sendfeedback"]?></a></li><?php } ?>
-    
-    <?php } ?>
-    <?php } else {
-	if (!hook("replacecollectionsresearchlinks")){	
-    $research=sql_value("select ref value from research_request where collection='$usercollection'",0);	
+	<?php
+	// Render dropdown actions
+	render_actions($cinfo, false);
 	?>
-    <li><a onclick="return CentralSpaceLoad(this,true);" href="<?php echo $baseurl_short?>pages/team/team_research.php">&gt; <?php echo $lang["manageresearchrequests"]?></a></li>    
-    <li><a onclick="return CentralSpaceLoad(this,true);" href="<?php echo $baseurl_short?>pages/team/team_research_edit.php?ref=<?php echo urlencode($research) ?>">&gt; <?php echo $lang["editresearchrequests"]?></a></li>    
-    <?php } /* end hook replacecollectionsresearchlinks */ ?>
-	<?php } ?>
-    
-    <?php 
-    # If this collection is (fully) editable, then display an extra edit all link
-    if ((count($result)>0) && $show_edit_all_link && (!$edit_all_checkperms || allow_multi_edit($result))) 
-    	{ ?>
-	    <li><a onclick="return CentralSpaceLoad(this,true);" href="<?php echo $baseurl_short?>pages/search.php?search=<?php echo urlencode("!collection" . $usercollection)?>">&gt; <?php echo $lang["viewall"]?></a></li>
-	    <li><a onclick="return CentralSpaceLoad(this,true);" href="<?php echo $baseurl_short?>pages/edit.php?collection=<?php echo urlencode($usercollection) ?>">&gt; <?php echo $lang["action-editall"]?></a></li>
-	    <?php 
-	    
-	    } 
-	else { ?>
-    <li><a onclick="return CentralSpaceLoad(this,true);" href="<?php echo $baseurl_short?>pages/search.php?search=<?php echo urlencode("!collection" . $usercollection)?>">&gt; <?php echo $lang["viewall"]?></a></li>
-    <?php }
-    echo (isset($emptycollection) && $remove_resources_link_on_collection_bar && collection_writeable($usercollection)) ? '<li><a href="'.$baseurl_short.'pages/collections.php?emptycollection='.urlencode($usercollection).'&removeall=true&submitted=removeall&ajax=true" onclick="if(!confirm(\''.$lang['emptycollectionareyousure'].'\')){return false;}return CollectionDivLoad(this);"> &gt; '.$lang["emptycollection"].'</a></li>' : "";
-     if ($count_result>0)
-    	{ 
-		# Ability to request a whole collection (only if user has restricted access to any of these resources)
-		$min_access=collection_min_access($result);
-		if ($min_access!=0)
-			{
-		    ?>
-		    <li><a onclick="return CentralSpaceLoad(this,true);" href="<?php echo $baseurl_short?>pages/collection_request.php?ref=<?php echo urlencode($usercollection) ?>&k=<?php echo urlencode($k) ?>">&gt; <?php echo $lang["requestall"]?></a></li>
-		    <?php
-		    }
-	    }
-	?>
-    
-    <?php 
-    	if ($download_usage && ((isset($zipcommand) || $collection_download) && $count_result>0)) { ?>
-    		<li><a onclick="return CentralSpaceLoad(this,true);" href="<?php echo $baseurl_short?>pages/terms.php?k=<?php echo urlencode($k) ?>&url=<?php echo urlencode("pages/download_usage.php?collection=" .  $usercollection . "&k=" . $k)?>">&gt; <?php echo $lang["action-download"]?></a></li>
-    <?php } else if ((isset($zipcommand) || $collection_download) && $count_result>0) { ?>
-    <li><a onclick="return CentralSpaceLoad(this,true);" href="<?php echo $baseurl_short?>pages/terms.php?k=<?php echo urlencode($k) ?>&url=<?php echo urlencode("pages/collection_download.php?collection=" .  $usercollection . "&k=" . $k)?>">&gt; <?php echo $lang["action-download"]?></a></li>
-	<?php } ?>
-	<?php hook("collectiontool");?>
-	<?php if (!$disable_collection_toggle) { ?>
-    <li><a id="toggleThumbsLink" href="#" onClick="ToggleThumbs();return false;">&gt; <?php echo $lang["hidethumbnails"]?></a></li>
-  <?php } ?>
-</ul><?php } /* end compact collections */?>
+ 	<ul>
+	<?php
+	hook('collectiontool');
+	if(!$disable_collection_toggle)
+		{
+		?>
+		<li>
+			<a id="toggleThumbsLink" href="#" onClick="ToggleThumbs();return false;">&gt; <?php echo $lang['hidethumbnails']; ?></a>
+		</li>
+			<?php
+			}
+			?>
+	</ul>
 </div>
-<?php } ?>
-
-
-<?php } ?>
+<?php
+}
+} ?>
 
 <!--Resource panels-->
 <?php if ($collection_dropdown_user_access_mode){?>

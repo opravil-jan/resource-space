@@ -11,11 +11,6 @@ function HookLegacy_actionsSearchRender_sort_order_differently($orderFields)
     return true;
     }
 
-function HookLegacy_actionsSearchPrevent_running_render_actions()
-    {
-    return true;
-    }
-
 function HookLegacy_actionsSearchAdd_search_title_links()
     {
     global $baseurl, $baseurl_short, $lang, $search, $k, $userrequestmode, $collection_download, $contact_sheet,
