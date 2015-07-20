@@ -189,21 +189,26 @@ if ($use_plugins_manager)
 	$active_plugins = sql_query("SELECT name,enabled_groups,config,config_json FROM plugins WHERE inst_version>=0 order by priority");
     $mysql_verbatim_queries = $mysql_vq;
 
+    $active_yaml = array();
 	$plugins = array();
 	foreach($active_plugins as $plugin)
 		{
 		# Check group access, only enable for global access at this point
-		if ($plugin['enabled_groups']=='')
+		$plugin_yaml_path = dirname(__FILE__)."/../plugins/".$plugin["name"]."/".$plugin["name"].".yaml";
+		$py = get_plugin_yaml($plugin_yaml_path, false);
+		array_push($active_yaml,$py);
+		if ($plugin['enabled_groups']=='' && !isset($py["userpreferencegroup"]))
 			{
 			# Add to the plugins array if not already present which is what we are working with
 			# later on.
 			$plugins[]=$plugin['name'];
 			}
 		}
+
 	for ($n=count($active_plugins)-1;$n>=0;$n--)
 		{
 		$plugin=$active_plugins[$n];
-		if ($plugin['enabled_groups']=='')
+		if ($plugin['enabled_groups']=='' && !isset($active_yaml[$n]["userpreferencegroup"]))
 			{
 			include_plugin_config($plugin['name'], $plugin['config'], $plugin['config_json']);
 			}
@@ -212,7 +217,9 @@ if ($use_plugins_manager)
 else
 	{
 	for ($n=count($plugins)-1;$n>=0;$n--)
+		{
 		include_plugin_config($plugins[$n]);
+		}
 	}
 
 # Include the appropriate language file
@@ -233,15 +240,18 @@ if ($language!="en")
 	}
 
 # Register all plugins
-for ($n=0;$n<count($plugins);$n++){
+for ($n=0;$n<count($plugins);$n++)
+	{
 	register_plugin($plugins[$n]);
 	hook("afterregisterplugin");
-}
+	}
 
 	
 # Register their languages in reverse order
 for ($n=count($plugins)-1;$n>=0;$n--)
+	{
 	register_plugin_language($plugins[$n]);
+	}
 
 global $suppress_headers;
 # Set character set.

@@ -221,7 +221,7 @@ if (array_key_exists("user",$_COOKIE) || array_key_exists("user",$_GET) || isset
         $userresourcedefaults=$userdata[0]["resource_defaults"];
         $userrequestmode=trim($userdata[0]["request_mode"]);
     	
-    	$userpreferences = sql_query("SELECT user,colour_theme FROM user_preferences WHERE user=".$userref);
+    	$userpreferences = ($user_preferences)? sql_query("SELECT user,colour_theme FROM user_preferences WHERE user=".$userref)[0]: FALSE;
 
 
         # Some alternative language choices for basket mode / e-commerce
@@ -425,13 +425,52 @@ else
 		}
 	}	/* end replacesitetextloader */
 
+
 # Load group specific plugins and reorder plugins list
-$plugins = array();
+$plugins= array();
 $active_plugins = (sql_query("SELECT name,enabled_groups, config, config_json FROM plugins WHERE inst_version>=0 ORDER BY priority"));
+
+/* Process User Preferences
+Check Colour Theme for this user:
+1) Userfixedtheme = system/group fixed option
+2) defaulttheme = system/group & user configurable from user_preferences
+*/
+global $userfixedtheme,$defaulttheme;
+if(isset($userfixedtheme) && $userfixedtheme!="")
+    {
+    $ctheme = $userfixedtheme;
+    }
+else
+    {
+    $ctheme = (isset($userpreferences["colour_theme"]) && $userpreferences["colour_theme"]!="") ? $userpreferences["colour_theme"]: $defaulttheme;
+    }
+$ctheme = preg_replace("/^col-/","", $ctheme);
+switch($ctheme)
+    {
+    case "blue":
+    case "greyblu": $ctheme = "blue"; break;
+    case "charcoal":
+    case "slimcharcoal": $ctheme = "charcoal"; break;
+    }
+
 foreach($active_plugins as $plugin)
-	{ 
-	# Check group access, only enable for global access at this point
-	if($plugin['enabled_groups']!='')
+	{
+	#Get Yaml
+	$plugin_yaml_path = dirname(__FILE__)."/../plugins/".$plugin["name"]."/".$plugin["name"].".yaml";
+	$py="";
+	$py = get_plugin_yaml($plugin_yaml_path, false);
+
+	# Check 
+	if((isset($py["userpreferencegroup"]) && preg_replace("/^col-/","",$py["name"])==$ctheme))
+		{
+		include_plugin_config($plugin['name'],$plugin['config'],$plugin['config_json']);
+		register_plugin($plugin['name']);
+		register_plugin_language($plugin['name']);
+		$plugins[]=$plugin['name'];
+		}
+
+	# Check group access and applicable for this user in the group
+	if(!isset($py["userpreferencegroup"]) && $plugin['enabled_groups']!='')
 		{
 		$s=explode(",",$plugin['enabled_groups']);
 		if (isset($usergroup) && in_array($usergroup,$s))
@@ -442,15 +481,15 @@ foreach($active_plugins as $plugin)
 			$plugins[]=$plugin['name'];
 			}
 		}
-	else
+	else if(!isset($py["userpreferencegroup"]) && $plugin['enabled_groups']=='')
 		{
 		$plugins[]=$plugin['name'];
 		}
-	}
-
-foreach($plugins as $plugin){
+	}	
+foreach($plugins as $plugin)
+	{
 	hook("afterregisterplugin","",array($plugin));
-}	
+	}	
 
 hook('handleuserref','',array($userref));
 if (($userpassword=="b58d18f375f68d13587ce8a520a87919" || $userpassword== "b975fc60c53ab4780623e0cd813095e328ddf8ff5a3d01d134f6df7391c42ff5" ) && $pagename!="user_change_password"  && $pagename!="collections"){?>

@@ -1,5 +1,5 @@
 <?php
-
+$pagename = "home";
 include "../../include/db.php";
 include "../../include/general.php";
 include "../../include/authenticate.php";
@@ -8,7 +8,6 @@ include "../../include/dash_functions.php";
 #If can't manage own dash return to user home.
 if(!($home_dash && checkPermission_dashmanage()))
 	{header("location: ".$baseurl_short."pages/user/user_home.php");exit;}
-$pagename = "home";
 if(getvalescaped("quicksave",FALSE))
 	{
 	$tile = getvalescaped("tile","");

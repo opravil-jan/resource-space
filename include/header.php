@@ -1,27 +1,4 @@
 <?php 
-
-$theme=((isset($userfixedtheme) && $userfixedtheme!=""))? $userfixedtheme:getval("colourcss",$defaulttheme);
-
-# Legacy color theme support
-# User preference for colour selection can make use of the same cookies, just change this to check the theme variable above.
-# Until the change functionality is present we need to ignore cookies and other variables
-
-global $userfixedtheme,$defaulttheme,$plugins;
-if((isset($userfixedtheme) && $userfixedtheme!="") || (isset($defaulttheme) && $defaulttheme!=""))
-    {
-    $ctheme =  (isset($userfixedtheme) && $userfixedtheme!="") ? $userfixedtheme : $defaulttheme;
-    switch($ctheme)
-        {
-        case "multi": if(!in_array ("col-multi",$plugins)){array_push($plugins,"col-multi");$slimheader_darken=true;}break;
-        case "whitegry": if(!in_array("col-whitegry",$plugins)){array_push($plugins,"col-whitegry");$slimheader_darken=true;}break;
-        case "black": if(!in_array("col-black",$plugins)){array_push($plugins,"col-black");}break;
-        case "greyblu": if(!in_array("col-blue",$plugins)){array_push($plugins,"col-blue");}break;
-        case "charcoal":
-        case "slimcharcoal": if(!in_array ("col-slimcharcoal",$plugins)){array_push($plugins,"col-charcoal");}break;
-        }
-    }
-# End Legacy Support
-
 hook ("preheaderoutput");
  
 # Do not display header / footer when dynamically loading CentralSpace contents.
@@ -185,7 +162,7 @@ $extrafooterhtml="";
 <!--[if lte IE 5.6]> <link href="<?php echo $baseurl?>/css/globalIE5.css?css_reload_key=<?php echo $css_reload_key?>" rel="stylesheet" type="text/css"  media="screen,projection,print" /> <![endif]-->
 
 <?php
-echo get_plugin_css($theme)
+echo get_plugin_css($ctheme);
 // after loading these tags we change the class on them so a new set can be added before they are removed (preventing flickering of overridden theme)
 ?>
 <script>jQuery('.plugincss').attr('class','plugincss0');</script>

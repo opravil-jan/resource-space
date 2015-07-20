@@ -4,31 +4,49 @@ include "../../include/db.php";
 include "../../include/general.php";
 include "../../include/authenticate.php";
 
+$userpreferences_plugins= array();
+$plugin_names=array();
+$plugins_dir = dirname(__FILE__)."/../../plugins/";
+foreach($active_plugins as $plugin)
+	{
+	$plugin = $plugin["name"];
+	array_push($plugin_names,trim(mb_strtolower($plugin)));
+	$plugin_yaml = get_plugin_yaml($plugins_dir.$plugin.'/'.$plugin.'.yaml', false);
+	if(isset($plugin_yaml["userpreferencegroup"]))
+		{
+		$upg = trim(mb_strtolower($plugin_yaml["userpreferencegroup"]));
+		$userpreferences_plugins[$upg][$plugin]=$plugin_yaml;
+		}
+	}
+
+if(getvalescaped("quicksave",FALSE))
+	{
+	print_r($plugin_names);
+	$ctheme = getvalescaped("colour_theme","");
+	if($ctheme==""){exit("missing");}
+	$ctheme = trim(mb_strtolower($ctheme));
+	if(in_array($ctheme,$plugin_names))
+		{
+		sql_query("UPDATE user_preferences SET colour_theme='".escape_check(preg_replace("/^col-/","",$ctheme))."' WHERE user=".$userref);
+		exit("1");
+		}
+
+	exit("0");
+	}
 
 include "../../include/header.php";
+print_r($plugins);
 ?>
 <div class="BasicsBox"> 
   	<h1><?php echo $lang["userpreferences"]?></h1>
   	<p><?php echo $lang["modifyuserpreferencesintro"]?></p>
   	
 	<?php
-	$userpreferences_plugins= array();
-	$plugins_dir = dirname(__FILE__)."/../../plugins/";
-	foreach($plugins as $plugin)
-		{
-		$plugin_yaml = get_plugin_yaml($plugins_dir.$plugin.'/'.$plugin.'.yaml', false);
-		if(isset($plugin_yaml["userpreferencegroup"]))
-			{
-			$upg = trim(mb_strtolower($plugin_yaml["userpreferencegroup"]));
-			$userpreferences_plugins[$upg][$plugin]=$plugin_yaml;
-			}
-		}
-
 	/* Display */
 	$options_available = 0; # Increment this to prevent a "No options available" message
 
 	/* User Colour Theme Selection */
-	if((isset($userfixedtheme) && $userfixedtheme=="") && $defaulttheme=="" && count($userpreferences_plugins["colourtheme"])>0)
+	if((isset($userfixedtheme) && $userfixedtheme=="") && $defaulttheme=="" && isset($userpreferences_plugins["colourtheme"]) && count($userpreferences_plugins["colourtheme"])>0)
 		{ ?>
 		<div class="Question">
 			<label for="">
@@ -36,8 +54,12 @@ include "../../include/header.php";
 			</label>
 			<script>
 				function updateColourTheme(theme) {
-					alert("Update User Colourtheme to: "+theme);
-					//TODO post to update user preferences
+					jQuery.post(
+						window.location,
+						{"colour_theme":theme,"quicksave":"true"},
+						function(data){
+							location.reload();
+						});
 				}
 			</script>
 			<?php
@@ -54,8 +76,17 @@ include "../../include/header.php";
 			                    <input 
 			                    	type="radio" 
 			                    	name="defaulttheme" 
-			                    	value="<?php echo $colourtheme["name"];?>" 
+			                    	value="<?php echo preg_replace("/^col-/","",$colourtheme["name"]);?>" 
 			                    	onChange="updateColourTheme('<?php echo $colourtheme["name"];?>');"
+			                    	<?php 
+			                    		global $userpreferences;
+			                    		if
+			                    		(
+			                    			(isset($userpreferences["colour_theme"]) && "col-".$userpreferences["colour_theme"]==$colourtheme["name"]) 
+			                    			|| 
+			                    			(!isset($userpreferences["colour_theme"]) && $defaulttheme==$colourtheme["name"])
+			                    		) { echo "checked";}
+			                    	?>
 			                    />
 			                </td>
 			                <td align="left" valign="middle">
