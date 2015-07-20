@@ -490,7 +490,7 @@ div.autocomplete ul li {
 	{
 	position: absolute;
 	top:300px;
-	left: 30%;
+	left: 40%;
 	font-size:150%;
 	width:200px;padding:15px;
 	border: 1px solid;
@@ -932,8 +932,12 @@ div.video-js {margin:auto;}
     height: 100%;
     opacity: 0.5;
     display:none;
+    z-index: 100;
 }
-
+#modal_outer
+    {
+    z-index: 101;
+    }
 #modal
     {
     position:absolute;
@@ -942,6 +946,7 @@ div.video-js {margin:auto;}
     opacity: 1;
     display:none;
     overflow-y: scroll;
+    z-index: 102;
     }
 #modal .RecordBox
 	{
@@ -990,3 +995,4 @@ div.video-js {margin:auto;}
 .ui-state-default a, .ui-state-default a:link, .ui-state-default a:visited {
 	color: initial;
 }
+

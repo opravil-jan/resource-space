@@ -214,6 +214,10 @@ if($slimheader)
 </head>
 <body lang="<?php echo $language ?>" class="<?php echo implode(' ', $body_classes); ?>" <?php if (isset($bodyattribs)) { ?><?php echo $bodyattribs?><?php } if($infobox) {?> onmousemove="InfoBoxMM(event);"<?php } ?>>
 
+<!-- Loading graphic -->
+<div id="LoadingBox"><?php echo $lang["pleasewait"] ?><img src="<?php echo $baseurl_short ?>gfx/interface/loading.gif"></div>
+
+
 <?php hook("bodystart"); ?>
 
 <?php
@@ -399,9 +403,6 @@ else {$div="CentralSpace";}
 ?>
 <!--Main Part of the page-->
 <?php if (($pagename!="login") && ($pagename!="user_password") && ($pagename!="user_request")) { ?><div id="CentralSpaceContainer"><?php } ?>
-
-<!-- Loading graphic -->
-<div id="LoadingBox"><?php echo $lang["pleasewait"] ?><img src="<?php echo $baseurl_short ?>gfx/interface/loading.gif"></div>
 
 <div id="<?php echo $div?>">
 
