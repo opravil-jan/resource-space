@@ -221,7 +221,8 @@ if (array_key_exists("user",$_COOKIE) || array_key_exists("user",$_GET) || isset
         $userresourcedefaults=$userdata[0]["resource_defaults"];
         $userrequestmode=trim($userdata[0]["request_mode"]);
     	
-    	$userpreferences = ($user_preferences)? sql_query("SELECT user,colour_theme FROM user_preferences WHERE user=".$userref)[0]: FALSE;
+    	$userpreferences = ($user_preferences)? sql_query("SELECT user,colour_theme FROM user_preferences WHERE user=".$userref): FALSE;
+    	$userpreferences = ($userpreferences && isset($userpreferences[0])) ? $userpreferences[0]: FALSE;
 
 
         # Some alternative language choices for basket mode / e-commerce
