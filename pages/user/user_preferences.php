@@ -35,7 +35,6 @@ if(getvalescaped("quicksave",FALSE))
 	}
 
 include "../../include/header.php";
-print_r($plugins);
 ?>
 <div class="BasicsBox"> 
   	<h1><?php echo $lang["userpreferences"]?></h1>
