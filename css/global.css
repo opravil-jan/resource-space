@@ -981,3 +981,12 @@ div.video-js {margin:auto;}
 #CollectionMenu #actions_container {
 	margin: 10px 0px;
 }
+
+/* Drag & Drop */
+#CentralSpaceResourceClone, #CollectionSpaceClone {
+	text-align: left;
+}
+
+.ui-state-default a, .ui-state-default a:link, .ui-state-default a:visited {
+	color: initial;
+}

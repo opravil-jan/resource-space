@@ -144,7 +144,19 @@ if ($allow_reorder)
 				connectWith: '#CentralSpaceResources',
 				appendTo: 'body',
 				zIndex: 99000,
-				helper: 'clone',
+				helper: function(event, ui)
+					{
+					//Hack to append the element to the body (visible above others divs), 
+					//but still bellonging to the scrollable container
+					jQuery('#CollectionSpace').append('<div id="CollectionSpaceClone" class="ui-state-default">' + ui[0].outerHTML + '</div>');   
+					jQuery('#CollectionSpaceClone').hide();
+					setTimeout(function() {
+						jQuery('#CollectionSpaceClone').appendTo('body'); 
+						jQuery('#CollectionSpaceClone').show();
+					}, 1);
+					
+					return jQuery('#CollectionSpaceClone');
+					},
 				items: '.CollectionPanelShell',
 
 				start: function (event, ui)

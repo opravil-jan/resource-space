@@ -480,7 +480,19 @@ if(substr($search, 0, 11) !== '!collection')
 			connectWith: '#CollectionSpace',
 			appendTo: 'body',
 			zIndex: 99000,
-			helper: 'clone',
+			helper: function(event, ui)
+				{
+				//Hack to append the element to the body (visible above others divs), 
+				//but still bellonging to the scrollable container
+				jQuery('#CentralSpaceResources').append('<div id="CentralSpaceResourceClone" class="ui-state-default">' + ui[0].outerHTML + '</div>');   
+				jQuery('#CentralSpaceResourceClone').hide();
+				setTimeout(function() {
+					jQuery('#CentralSpaceResourceClone').appendTo('body'); 
+					jQuery('#CentralSpaceResourceClone').show();
+				}, 1);
+				
+				return jQuery('#CentralSpaceResourceClone');
+				},
 			items: '.ResourcePanelShell, .ResourcePanelShellLarge, .ResourcePanelShellSmall',
 			cancel: '.DisableSort',
 			
