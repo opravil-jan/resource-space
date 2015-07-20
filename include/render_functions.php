@@ -517,7 +517,7 @@ function render_collection_actions(array $collection_data, $top_actions)
                 urlencode($collection_data['ref'])
             );
 
-            $options .= render_dropdown_option('edit_all_in_collection', $lang['action-editall'], array(), $extra_tag_attributes);
+            $options .= render_dropdown_option('edit_all_in_collection', $lang['edit_all_resources'], array(), $extra_tag_attributes);
             }
         }
 
@@ -529,7 +529,7 @@ function render_collection_actions(array $collection_data, $top_actions)
             urlencode($usercollection)
         );
 
-        $options .= render_dropdown_option('view_all_resources_in_collection', $lang['viewall'], $data_attribute);
+        $options .= render_dropdown_option('view_all_resources_in_collection', $lang['view_all_resources'], $data_attribute);
         }
 
     // Collection log
@@ -580,7 +580,7 @@ function render_collection_actions(array $collection_data, $top_actions)
             urlencode($k)
         );
 
-        $options .= render_dropdown_option('search_items_disk_usage', $lang['searchitemsdiskusage'], array(), $extra_tag_attributes);
+        $options .= render_dropdown_option('search_items_disk_usage', $lang['collection_disk_usage'], array(), $extra_tag_attributes);
         }
 
     // Add extra collection actions through plugins

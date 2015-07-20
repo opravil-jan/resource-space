@@ -359,7 +359,9 @@ $lang["cantmodifycollection"]="You can't modify this collection.";
 $lang["currentcollection"]="Current collection";
 $lang["viewcollection"]="View collection";
 $lang["viewall"]="View all";
+$lang['view_all_resources'] = 'View all resources';
 $lang["action-editall"]="Edit all";
+$lang['edit_all_resources'] = 'Edit all resources';
 $lang["hidethumbnails"]="Hide thumbs";
 $lang["showthumbnails"]="Show thumbs";
 $lang["toggle"]="Toggle";
@@ -835,7 +837,7 @@ $lang["notapprovedresources"]="The following resources are not active and cannot
 # New for 1.3
 $lang["savesearchitemstocollection"]="Save results to collection";
 $lang["removeallresourcesfromcollection"]="Remove all resources from this collection";
-$lang["deleteallresourcesfromcollection"]="Delete all resources in this collection";
+$lang['deleteallresourcesfromcollection'] = 'Delete all resources';
 $lang["deleteallsure"]="Are you sure you wish to DELETE these resources? This will delete the resources themselves, not just remove them from this collection.";
 $lang["batchdonotaddcollection"]="(do not add to a collection)";
 $lang["collectionsthemes"]="Related featured and public collections";
@@ -1715,6 +1717,7 @@ $lang["requestassignedtoyoumail"]="A resource request has been assigned to you f
 
 $lang["manageresources-overquota"]="Resource management disabled - you have exceeded your disk usage quota";
 $lang["searchitemsdiskusage"]="Disk space used by results";
+$lang['collection_disk_usage'] = 'Disk space used by all resources';
 $lang["matchingresourceslabel"]="Matching resources";
 
 # CSV Export of Search results
