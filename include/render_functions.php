@@ -281,15 +281,17 @@ function render_actions(array $collection_data, $top_actions = true)
                         {
                         var post_data = {
                             submitted: true,
-                            ref: usercollection,
+                            ref: '<?php echo $collection_data["ref"]; ?>',
                             name: '<?php echo $collection_data["name"]; ?>',
                             public: '<?php echo $collection_data["public"]; ?>',
                             deleteall: 'on'
                         };
 
+                        console.log(post_data);
+
                         jQuery.post('<?php echo $baseurl; ?>/pages/collection_edit.php?ajax=true', post_data, function()
                             {
-                            CollectionDivLoad('<?php echo $baseurl; ?>/pages/collections.php?collection=' + usercollection);
+                            CollectionDivLoad('<?php echo $baseurl; ?>/pages/collections.php?collection=<?php echo $collection_data["ref"] ?>');
                             });
                         }
                     break;
