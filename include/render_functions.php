@@ -190,6 +190,19 @@ function render_actions(array $collection_data, $top_actions = true)
                     }
                     break;
 
+                case 'purge_collection':
+                    if(confirm('<?php echo $lang["purgecollectionareyousure"]; ?>'))
+                        {
+                        document.getElementById('collectionpurge').value='".urlencode($collections[$n]["ref"])."';
+                        document.getElementById('collectionform').submit();
+                        }
+                    break;
+                <?php
+                }
+
+            if(!$top_actions || substr($search, 0, 11) == '!collection')
+                {
+                ?>
                 case 'delete_collection':
                     if(confirm('<?php echo $lang["collectiondeleteconfirm"]; ?>')) {
                         var post_data = {
@@ -206,14 +219,6 @@ function render_actions(array $collection_data, $top_actions = true)
                                 }
                         }, 'json');    
                     }
-                    break;
-
-                case 'purge_collection':
-                    if(confirm('<?php echo $lang["purgecollectionareyousure"]; ?>'))
-                        {
-                        document.getElementById('collectionpurge').value='".urlencode($collections[$n]["ref"])."';
-                        document.getElementById('collectionform').submit();
-                        }
                     break;
                 <?php
                 }
