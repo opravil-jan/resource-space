@@ -193,14 +193,13 @@ if ($use_plugins_manager)
 	$plugins = array();
 	foreach($active_plugins as $plugin)
 		{
-		# Check group access, only enable for global access at this point
+		# Check group access && YAML, only enable for global access at this point
 		$plugin_yaml_path = dirname(__FILE__)."/../plugins/".$plugin["name"]."/".$plugin["name"].".yaml";
 		$py = get_plugin_yaml($plugin_yaml_path, false);
 		array_push($active_yaml,$py);
 		if ($plugin['enabled_groups']=='' && !isset($py["userpreferencegroup"]))
 			{
 			# Add to the plugins array if not already present which is what we are working with
-			# later on.
 			$plugins[]=$plugin['name'];
 			}
 		}

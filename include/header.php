@@ -1,4 +1,34 @@
 <?php 
+
+if(isset($userfixedtheme) && $userfixedtheme!="")
+    {
+    global $plugins;
+    $userfixedtheme = preg_replace("/^col-/","", $userfixedtheme);
+    switch($userfixedtheme)
+            {
+            case "blue":
+            case "greyblu": $userfixedtheme = "blue"; break;
+            case "charcoal":
+            case "slimcharcoal": $userfixedtheme = "charcoal"; break;
+            }
+    if(!in_array("col-".$userfixedtheme,$plugins))
+        {
+        if(!function_exists("activate_plugin"))
+            {include dirname(__FILE__). "/plugin_functions.php";}
+        if($pagename!="login")
+            {activate_plugin("col-".$userfixedtheme);}
+        $plugin = (sql_query("SELECT name,enabled_groups, config, config_json FROM plugins WHERE inst_version>=0 AND name='"."col-".escape_check($userfixedtheme)."' ORDER BY priority"));
+        if(isset($plugin[0]))
+            {
+            $plugin= $plugin[0];
+            include_plugin_config($plugin['name'],$plugin['config'],$plugin['config_json']);
+            register_plugin($plugin['name']);
+            register_plugin_language($plugin['name']);
+            $plugins[]=$plugin['name'];
+            $ctheme = "col-".$userfixedtheme;
+            }
+        }
+    }
 hook ("preheaderoutput");
  
 # Do not display header / footer when dynamically loading CentralSpace contents.
