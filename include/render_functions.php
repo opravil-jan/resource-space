@@ -287,8 +287,6 @@ function render_actions(array $collection_data, $top_actions = true)
                             deleteall: 'on'
                         };
 
-                        console.log(post_data);
-
                         jQuery.post('<?php echo $baseurl; ?>/pages/collection_edit.php?ajax=true', post_data, function()
                             {
                             CollectionDivLoad('<?php echo $baseurl; ?>/pages/collections.php?collection=<?php echo $collection_data["ref"] ?>');
