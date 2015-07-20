@@ -3,6 +3,14 @@
 function HookRefineresultsSearchBeforesearchresults()
 	{
 	global $baseurl_short,$result,$lang,$search,$k,$archive,$parameters_string, $collections;
+
+	// Only time when this would be needed is when legacy_actions is enabled otherwise we do it through dropdown actions
+	$query = 'SELECT inst_version AS `value` FROM plugins WHERE name = \'legacy_actions\';';
+	if(trim(sql_value($query, '')) === '')
+		{
+		return false;
+		}
+
 	$results=0;
 	if (is_array($result)) $results=count($result);
 	if (is_array($collections)) $results+=count($collections);

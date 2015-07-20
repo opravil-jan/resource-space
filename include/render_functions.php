@@ -220,7 +220,7 @@ function render_actions(array $collection_data, $top_actions = true)
 
             // Add extra collection actions javascript case through plugins
             // Note: if you are just going to a different page, it should be easily picked by the default case
-            $extra_options_js_case = hook('render_actions_add_collection_option_js_case');
+            $extra_options_js_case = hook('render_actions_add_option_js_case');
             if(trim($extra_options_js_case) !== '')
                 {
                 echo $extra_options_js_case;
@@ -727,6 +727,13 @@ function render_search_actions($top_actions)
         );
 
         $options .= render_dropdown_option('csv_export_results_metadata', $lang['csvExportResultsMetadata'], array(), $extra_tag_attributes);
+        }
+
+    // Add extra search actions through plugins
+    $extra_options = hook('render_search_actions_add_option');
+    if($top_actions && trim($extra_options) !== '')
+        {
+        $options .= $extra_options;
         }
 
     return $options;
