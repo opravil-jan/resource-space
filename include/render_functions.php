@@ -384,7 +384,20 @@ function render_collection_actions(array $collection_data, $top_actions)
         $options .= render_dropdown_option('select_collection', $lang['selectcollection']);
         }
 
-    #Home_dash is on, AND NOT Anonymous use, AND (Dash tile user (NOT with a managed dash) || Dash Tile Admin)
+    // Edit Collection
+    if(($userref == $collection_data['user']) || (checkperm('h'))) 
+        {
+        $extra_tag_attributes = sprintf('
+                data-url="%spages/collection_edit.php?ref=%s"
+            ',
+            $baseurl_short,
+            urlencode($collection_data['ref'])
+        );
+
+        $options .= render_dropdown_option('edit_collection', $lang['action-edit'], array(), $extra_tag_attributes);
+        }
+    
+    // Home_dash is on, AND NOT Anonymous use, AND (Dash tile user (NOT with a managed dash) || Dash Tile Admin)
     if(!$top_actions && $home_dash && checkPermission_dashcreate())
         {
         $data_attribute['url'] = sprintf('
@@ -481,12 +494,7 @@ function render_collection_actions(array $collection_data, $top_actions)
         $options .= render_dropdown_option('delete_collection', $lang['action-delete']);
         }
 
-    // Delete all
-    // Note: functionality moved from edit collection page
-    if(!$top_actions && $multi_edit && !checkperm('D') && (count($result) != 0 || $count_result != 0)) 
-        {
-        $options .= render_dropdown_option('delete_all_in_collection', $lang['deleteallresourcesfromcollection']);
-        } 
+
         
 
     // Collection Purge
@@ -495,17 +503,29 @@ function render_collection_actions(array $collection_data, $top_actions)
         $options .= render_dropdown_option('purge_collection', $lang['purgeanddelete']);
         }
 
-    // Edit Collection
-    if(($userref == $collection_data['user']) || (checkperm('h'))) 
+
+    // Collection log
+    if(($userref== $collection_data['user']) || (checkperm('h')))
         {
         $extra_tag_attributes = sprintf('
-                data-url="%spages/collection_edit.php?ref=%s"
+                data-url="%spages/collection_log.php?ref=%s"
             ',
             $baseurl_short,
             urlencode($collection_data['ref'])
         );
 
-        $options .= render_dropdown_option('edit_collection', $lang['action-edit'], array(), $extra_tag_attributes);
+        $options .= render_dropdown_option('collection_log', $lang['action-log'], array(), $extra_tag_attributes);
+        }
+        
+    // View all
+    if(count($result) > 0 && $show_edit_all_link && (!$edit_all_checkperms || allow_multi_edit($result)))
+        {
+        $data_attribute['url'] = sprintf('%spages/search.php?search=!collection%s',
+            $baseurl_short,
+            urlencode($usercollection)
+        );
+
+        $options .= render_dropdown_option('view_all_resources_in_collection', $lang['view_all_resources'], $data_attribute);
         }
 
     // Edit all
@@ -525,29 +545,15 @@ function render_collection_actions(array $collection_data, $top_actions)
             }
         }
 
-    // View all
-    if(count($result) > 0 && $show_edit_all_link && (!$edit_all_checkperms || allow_multi_edit($result)))
+    // Delete all
+    // Note: functionality moved from edit collection page
+    if(!$top_actions && $multi_edit && !checkperm('D') && (count($result) != 0 || $count_result != 0)) 
         {
-        $data_attribute['url'] = sprintf('%spages/search.php?search=!collection%s',
-            $baseurl_short,
-            urlencode($usercollection)
-        );
-
-        $options .= render_dropdown_option('view_all_resources_in_collection', $lang['view_all_resources'], $data_attribute);
+        $options .= render_dropdown_option('delete_all_in_collection', $lang['deleteallresourcesfromcollection']);
         }
+        
+        
 
-    // Collection log
-    if(($userref== $collection_data['user']) || (checkperm('h')))
-        {
-        $extra_tag_attributes = sprintf('
-                data-url="%spages/collection_log.php?ref=%s"
-            ',
-            $baseurl_short,
-            urlencode($collection_data['ref'])
-        );
-
-        $options .= render_dropdown_option('collection_log', $lang['log'], array(), $extra_tag_attributes);
-        }
 
     // Preview all
     if(count($result) != 0 && $k == '' && $preview_all)
