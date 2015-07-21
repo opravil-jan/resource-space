@@ -356,7 +356,7 @@ include "../include/header.php";
 		<?php 
 		}
 
-	if (!$collections_compact_style && $colcount!=0 && $collection['savedsearch']=='')
+	if ($colcount!=0 && $collection['savedsearch']=='')
 		{?>
 		<div class="Question">
 		<label for="removeall"><?php echo $lang["removeallresourcesfromcollection"]?></label><input type=checkbox id="removeall" name="removeall">
@@ -365,7 +365,7 @@ include "../include/header.php";
 		<?php 
 		}
 
-	if (!$collections_compact_style && $multi_edit && !checkperm("D") && $colcount!=0) 
+	if ($multi_edit && !checkperm("D") && $colcount!=0) 
 		{ ?>
 		<div class="Question">
 		<label for="deleteall"><?php echo $lang["deleteallresourcesfromcollection"]?></label><input type=checkbox id="deleteall" name="deleteall" onClick="if (this.checked) {return confirm('<?php echo $lang["deleteallsure"]?>');}">
