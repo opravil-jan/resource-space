@@ -125,7 +125,7 @@ function render_dropdown_option($value, $label, array $data_attr = array(), $ext
 * Renders search actions functionality as a dropdown box
 * 
 */
-function render_actions(array $collection_data, $top_actions = true, $two_line = true)
+function render_actions(array $collection_data, $top_actions = true, $two_line = true, $id="")
     {
     if(hook('prevent_running_render_actions'))
         {
@@ -137,7 +137,7 @@ function render_actions(array $collection_data, $top_actions = true, $two_line =
     // globals that could also be passed as a reference
     global $result /*search result*/;
 
-    $action_selection_id = 'action_selection';
+    $action_selection_id = 'action_selection' . $id;
     if(!$top_actions)
         {
         $action_selection_id .= '_bottom';

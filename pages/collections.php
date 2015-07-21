@@ -602,7 +602,7 @@ elseif ($k!="")
 	    }
 	?>
 	<?php if (!$disable_collection_toggle) { ?>
-    <br/><a  id="toggleThumbsLink" href="#" onClick="ToggleThumbs();return false;">&gt; <?php echo $lang["hidethumbnails"]?></a>
+    <br/><a  id="toggleThumbsLink" href="#" onClick="ToggleThumbs();return false;"><?php echo $lang["hidethumbnails"]?></a>
   <?php } ?>
 </div>
 <?php 
@@ -691,7 +691,7 @@ elseif ($k!="")
 		{
 		?>
 		<li>
-			<a id="toggleThumbsLink" href="#" onClick="ToggleThumbs();return false;">&gt; <?php echo $lang['hidethumbnails']; ?></a>
+			<a id="toggleThumbsLink" href="#" onClick="ToggleThumbs();return false;"><?php echo $lang['hidethumbnails']; ?></a>
 		</li>
 			<?php
 			}
@@ -930,71 +930,14 @@ hook("thumblistextra");
 
 	<!--Menu-->	
 	<div id="CollectionMinRightNav">
-	<?php hook("addcompacttoolslabelmin");?>
-	<div id="MinSearchItem">
-	  <?php if ($collections_compact_style){
-		draw_compact_style_selector($cinfo['ref'],true,true);
-	    hook("beforetogglethumbs");
-	  	 if (/*($count_result<=$max_collection_thumbs) && */!$disable_collection_toggle) { ?>&nbsp;&nbsp;<a id="toggleThumbsLink" href="#" onClick="ToggleThumbs();return false;">&gt;&nbsp;<?php echo $lang["showthumbnails"]?></a><?php } 
-		}
-		else { ?>
-		<ul>
-		<?php
-		if ((!collection_is_research_request($usercollection)) || (!checkperm("r"))) {
-			hook('beforecollectionminlinks');
-		?>
-		<?php if (checkperm("s")) { ?><?php if (!$collections_compact_style){?><li><a onclick="return CentralSpaceLoad(this,true);" href="<?php echo $baseurl_short?>pages/collection_manage.php"><?php echo $lang["managemycollections"]?></a></li><?php } ?>
-		<?php if ($contact_sheet==true) { ?>
-		<li><a onclick="return CentralSpaceLoad(this,true);" href="<?php echo $baseurl_short?>pages/contactsheet_settings.php?ref=<?php echo urlencode($usercollection) ?>">&nbsp;<?php echo $lang["contactsheet"]?></a></li>
-		<?php } ?>
-		<?php if ($allow_share) { ?><li><a onclick="return CentralSpaceLoad(this,true);" href="<?php echo $baseurl_short?>pages/collection_share.php?ref=<?php echo urlencode($usercollection) ?>"><?php echo $lang["share"]?></a></li><?php } ?>
-		
-		<?php if (($userref==$cinfo["user"]) || (checkperm("h"))) {?><li><a onclick="return CentralSpaceLoad(this,true);" href="<?php echo $baseurl_short?>pages/collection_edit.php?ref=<?php echo urlencode($usercollection) ?>">&nbsp;<?php echo $allow_share?$lang["action-edit"]:$lang["editcollection"]?></a></li><?php } ?>
-
-		<?php if ($preview_all){?><li><a onclick="return CentralSpaceLoad(this,true);" href="<?php echo $baseurl_short?>pages/preview_all.php?ref=<?php echo urlencode($usercollection) ?>"><?php echo $lang["preview_all"]?></a></li><?php } ?>
-		<?php hook('collectiontool2min');?>
-		<?php if ($feedback) {?><li><a onclick="return CentralSpaceLoad(this,true);" href="<?php echo $baseurl_short?>pages/collection_feedback.php?collection=<?php echo urlencode($usercollection)?>&k=<?php echo urlencode($k) ?>">&nbsp;<?php echo $lang["sendfeedback"]?></a></li><?php } ?>
-		
-		<?php } ?>
-		<?php } else {
-		if (!hook("replacecollectionsresearchlinks")){	
-		$research=sql_value("select ref value from research_request where collection='$usercollection'",0);	
-		?>
-		<li><a onclick="return CentralSpaceLoad(this,true);" href="<?php echo $baseurl_short?>pages/team/team_research.php"><?php echo $lang["manageresearchrequests"]?></a></li>   
-		<li><a onclick="return CentralSpaceLoad(this,true);" href="<?php echo $baseurl_short?>pages/team/team_research_edit.php?ref=<?php echo urlencode($research) ?>"><?php echo $lang["editresearchrequests"]?></a></li>         
-		<?php } /* end hook replacecollectionsresearchlinks */ ?>	
-		<?php } ?>
-		<?php 
-		# If this collection is (fully) editable, then display an extra edit all link
-		if ((count($result)>0) && checkperm("e" . $result[0]["archive"]) && allow_multi_edit($result)) { ?>
-		<li><a onclick="return CentralSpaceLoad(this,true);" href="<?php echo $baseurl_short?>pages/search.php?search=<?php echo urlencode("!collection" . $usercollection)?>"><?php echo $lang["viewall"]?></a></li>
-		<li><a onclick="return CentralSpaceLoad(this,true);" href="<?php echo $baseurl_short?>pages/edit.php?collection=<?php echo $usercollection?>"><?php echo $lang["action-editall"]?></a></li>    
-		<?php 
-		 } else { ?>
-		<li><a onclick="return CentralSpaceLoad(this,true);" href="<?php echo $baseurl_short?>pages/search.php?search=<?php echo urlencode("!collection" . $usercollection)?>"><?php echo $lang["viewall"]?></a></li>
-		<?php } 
-		echo (isset($emptycollection) && $remove_resources_link_on_collection_bar && collection_writeable($usercollection)) ? '<li><a href="'.$baseurl_short.'pages/collections.php?emptycollection='.urlencode($usercollection).'&removeall=true&submitted=removeall&ajax=true" onclick="if(!confirm(\''.$lang['emptycollectionareyousure'].'\')){return false;}return CollectionDivLoad(this);">'.$lang["emptycollection"].'</a></li>' : "";
-		if ((isset($zipcommand) || $collection_download) && $count_result>0) { ?>
-		<li><a onclick="return CentralSpaceLoad(this,true);" href="<?php echo $baseurl_short?>pages/terms.php?k=<?php echo $k?>&url=<?php echo urlencode("pages/collection_download.php?collection=" .  $usercollection . "&k=" . $k)?>"><?php echo $lang["action-download"]?></a></li>
-		<?php } ?>
-		<?php if ($count_result>0 && $k=="" && checkperm("q"))
-			{ 
-			# Ability to request a whole collection (only if user has restricted access to any of these resources)
-			$min_access=collection_min_access($result);
-			if ($min_access!=0)
-				{
-				?>
-				<li><a onclick="return CentralSpaceLoad(this,true);" href="<?php echo $baseurl_short?>pages/collection_request.php?ref=<?php echo urlencode($usercollection) ?>"><?php echo $lang["action-request"]?></a></li>
-				<?php
-				}
-			}
-		?>
-		<?php hook("collectiontoolmin");?>
-		<?php if (/*($count_result<=$max_collection_thumbs) && */!$disable_collection_toggle) { ?><li><a id="toggleThumbsLink" href="#" onClick="ToggleThumbs();return false;"><?php echo $lang["showthumbnails"]?></a></li><?php } ?>
-		
-	  </ul>
-	  <?php } ?>
+        <a id="toggleThumbsLink" href="#" onClick="ToggleThumbs();return false;"><?php echo $lang["showthumbnails"]?></a>
 	</div>
+        
+        <div id="CollectionMinRightNav">
+	<?php
+        // Render dropdown actions
+	render_actions($cinfo, false, false, "min");
+	?>
 	</div>
 	<!--Collection Dropdown-->
 	<?php if(!hook("replace_collectionmindroptitle")){?>
