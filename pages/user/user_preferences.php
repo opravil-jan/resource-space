@@ -27,8 +27,18 @@ if(getvalescaped("quicksave",FALSE))
 	$ctheme = trim(mb_strtolower($ctheme));
 	if(in_array($ctheme,$plugin_names))
 		{
-		sql_query("UPDATE user_preferences SET colour_theme='".escape_check(preg_replace("/^col-/","",$ctheme))."' WHERE user=".$userref);
-		exit("1");
+		// check that record exists for user
+		if(empty($userpreferences))
+			{
+			// create a record
+			sql_query("INSERT into user_preferences (user,colour_theme) VALUES (".$userref.",'".escape_check(preg_replace("/^col-/","",$ctheme))."')");
+			exit("1");
+			}
+		else
+			{
+			sql_query("UPDATE user_preferences SET colour_theme='".escape_check(preg_replace("/^col-/","",$ctheme))."' WHERE user=".$userref);
+			exit("1");
+			}
 		}
 
 	exit("0");
@@ -77,8 +87,7 @@ include "../../include/header.php";
 			                    	name="defaulttheme" 
 			                    	value="<?php echo preg_replace("/^col-/","",$colourtheme["name"]);?>" 
 			                    	onChange="updateColourTheme('<?php echo $colourtheme["name"];?>');"
-			                    	<?php 
-			                    		global $userpreferences;
+			                    	<?php
 			                    		if
 			                    		(
 			                    			(isset($userpreferences["colour_theme"]) && "col-".$userpreferences["colour_theme"]==$colourtheme["name"]) 
