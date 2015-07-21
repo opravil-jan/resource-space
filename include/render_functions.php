@@ -148,7 +148,7 @@ function render_actions(array $collection_data, $top_actions = true, $two_line =
         }
     ?>
     
-    <div id="actions_container" <?php if($top_actions) { echo 'class="InpageNavLeftBlock"'; } ?>>
+    <div class="ActionsContainer  <?php if($top_actions) { echo 'InpageNavLeftBlock'; } ?>">
         Actions:
         <?php if ($two_line) { ?><br /><?php } ?>
         <select id="<?php echo $action_selection_id; ?>" <?php if(!$top_actions) { echo 'class="SearchWidth"'; } ?>>

@@ -987,7 +987,7 @@ div.video-js {margin:auto;}
 	}
 
 /* Dropdown Actions */
-#CollectionMenu #actions_container {
+#CollectionMenu .ActionsContainer {
 	margin: 10px 0px;
 }
 

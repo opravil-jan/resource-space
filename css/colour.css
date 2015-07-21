@@ -331,4 +331,11 @@ li.plupload_droptext {color:#999;}
   {
   color:#e0e0e0;
   }
-    
+#CollectionDiv select
+  {
+  background-color: #555;
+  color:#fff;
+  border:none; 
+  }
+
+  
