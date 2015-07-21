@@ -125,14 +125,14 @@ function render_dropdown_option($value, $label, array $data_attr = array(), $ext
 * Renders search actions functionality as a dropdown box
 * 
 */
-function render_actions(array $collection_data, $top_actions = true)
+function render_actions(array $collection_data, $top_actions = true, $two_line = true)
     {
     if(hook('prevent_running_render_actions'))
         {
         return;
         }
 
-    global $baseurl, $lang, $search;
+    global $baseurl, $lang;
 
     // globals that could also be passed as a reference
     global $result /*search result*/;
@@ -142,11 +142,15 @@ function render_actions(array $collection_data, $top_actions = true)
         {
         $action_selection_id .= '_bottom';
         }
+    if (isset($collection_data['ref']))
+        {
+        $action_selection_id .= '_' . $collection_data['ref'];
+        }
     ?>
     
     <div id="actions_container" <?php if($top_actions) { echo 'class="InpageNavLeftBlock"'; } ?>>
         Actions:
-        <br />
+        <?php if ($two_line) { ?><br /><?php } ?>
         <select id="<?php echo $action_selection_id; ?>" <?php if(!$top_actions) { echo 'class="SearchWidth"'; } ?>>
             <option value=""></option>
             <?php
@@ -172,7 +176,7 @@ function render_actions(array $collection_data, $top_actions = true)
             switch(this.value)
                 {
             <?php
-            if(substr($search, 0, 11) == '!collection')
+            if(!empty($collection_data))
                 {
                 ?>
                 case 'select_collection':
@@ -200,7 +204,7 @@ function render_actions(array $collection_data, $top_actions = true)
                 <?php
                 }
 
-            if(!$top_actions || substr($search, 0, 11) == '!collection')
+            if(!$top_actions || !empty($collection_data))
                 {
                 ?>
                 case 'delete_collection':
@@ -324,7 +328,7 @@ function render_collection_actions(array $collection_data, $top_actions)
     {
     global $baseurl_short, $lang, $k, $userrequestmode, $collection_download, $contact_sheet,
            $manage_collections_contact_sheet_link, $manage_collections_share_link, $allow_share,
-           $manage_collections_remove_link, $username, $collection_purge, $show_edit_all_link, $result,
+           $manage_collections_remove_link, $userref, $collection_purge, $show_edit_all_link, $result,
            $edit_all_checkperms, $preview_all, $order_by, $sort, $archive, $usercollection, $contact_sheet_link_on_collection_bar,
            $show_searchitemsdiskusage, $emptycollection, $remove_resources_link_on_collection_bar, $count_result,
            $download_usage, $home_dash;
@@ -466,13 +470,13 @@ function render_collection_actions(array $collection_data, $top_actions)
         }
 
     // Remove
-    if($manage_collections_remove_link && $username != $collection_data['username'])
+    if($manage_collections_remove_link && $userref != $collection_data['user'])
         {
         $options .= render_dropdown_option('remove_collection', $lang['action-remove']);
         }
 
     // Delete
-    if((($username == $collection_data['username']) || checkperm('h')) && ($collection_data['cant_delete'] == 0)) 
+    if((($userref == $collection_data['user']) || checkperm('h')) && ($collection_data['cant_delete'] == 0)) 
         {
         $options .= render_dropdown_option('delete_collection', $lang['action-delete']);
         }
@@ -492,7 +496,7 @@ function render_collection_actions(array $collection_data, $top_actions)
         }
 
     // Edit Collection
-    if(($username == $collection_data['username']) || (checkperm('h'))) 
+    if(($userref == $collection_data['user']) || (checkperm('h'))) 
         {
         $extra_tag_attributes = sprintf('
                 data-url="%spages/collection_edit.php?ref=%s"
@@ -533,7 +537,7 @@ function render_collection_actions(array $collection_data, $top_actions)
         }
 
     // Collection log
-    if(($username == $collection_data['username']) || (checkperm('h')))
+    if(($userref== $collection_data['user']) || (checkperm('h')))
         {
         $extra_tag_attributes = sprintf('
                 data-url="%spages/collection_log.php?ref=%s"

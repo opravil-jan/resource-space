@@ -3,6 +3,8 @@ include "../include/db.php";
 include "../include/general.php";
 include "../include/authenticate.php"; #if (!checkperm("s")) {exit ("Permission denied.");}
 include_once "../include/collections_functions.php";
+include_once "../include/render_functions.php";
+include_once "../include/resource_functions.php";
 
 $offset=getvalescaped("offset",0);
 $find=getvalescaped("find",getvalescaped("saved_find",""));setcookie("saved_find",$find, 0, '', '', false, true);
@@ -207,36 +209,14 @@ for ($n=$offset;(($n<count($collections)) && ($n<($offset+$per_page)));$n++)
 		hook("beforecollectiontoolscolumn");?>
 		<td class="tools">
 			<div class="ListTools">
-   			<?php 
-   			if ($collections_compact_style)
-   				{
-         		draw_compact_style_selector($collections[$n]["ref"]);
-    			} 
-    		else 
-    			{?>
-    			<a href="<?php echo $baseurl_short?>pages/search.php?search=<?php echo urlencode("!collection" . $collections[$n]["ref"])?>" onClick="return CentralSpaceLoad(this,true);">&gt;&nbsp;<?php echo $lang["viewall"]?></a>
-				<?php 
-				if ($contact_sheet==true) 
-					{ ?>
-    				&nbsp;<a href="<?php echo $baseurl_short?>pages/contactsheet_settings.php?ref=<?php echo urlencode($collections[$n]["ref"]) ?>" onClick="return CentralSpaceLoad(this);">&gt;&nbsp;<?php echo $lang["contactsheet"]?></a>
-					<?php 
-					}
-				if (!checkperm("b")) 
-					{ ?>
-					&nbsp;<a href="#" onclick="document.getElementById('collectionadd').value='<?php echo urlencode($collections[$n]["ref"]) ?>';document.getElementById('collectionform').submit(); return false;">&gt;&nbsp;<?php echo $lang["addtomycollections"]?></a>
-					<?php 
-					}
-				global $home_dash,$anonymous_login,$username;
-                if($home_dash && checkPermission_dashcreate())
-                	{?>
-                	&nbsp;<a href="<?php echo $baseurl_short;?>pages/dash_tile.php?create=true&tltype=srch&promoted_resource=true&freetext=true&all_users=1&link=/pages/search.php?search=!collection<?php echo urlencode($collections[$n]["ref"])?>&order_by=relevance&sort=DESC"  onClick="return CentralSpaceLoad(this,true);">&gt;&nbsp;<?php echo $lang["dashtile"]?></a>
-                	<?php 
-                	} ?>
-				</div>
-				</td>
-    			<?php 
-    			} ?>
-    </tr>
+   			        <?php
+	
+				render_actions($collections[$n],true,false);
+			
+				?>
+			</div>
+		</td>
+      </tr>
 	<?php
 	}
 ?>

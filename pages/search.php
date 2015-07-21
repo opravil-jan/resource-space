@@ -864,31 +864,9 @@ if (true) # Always show search header now.
 
 	if ($search_titles)
 		{
-		hook("beforesearchtitle");
-		if (!$collections_compact_style)
-			{
-			echo $search_title;
-			hook("aftersearchtitle");
-			}
-	    else 
-	    	{
-	    	echo $search_title;hook("aftersearchtitle");
-	    	if (substr($search,0,11)=="!collection" && $k=="")
-		    	{
-		        $cinfo=get_collection(substr($search,11));
-		        $feedback=$cinfo["request_feedback"];
-		        $count_result=count($result);
-		        $collections_compact_style_titleview=true;
-		        hook("beforecollectiontoolscolumn");
-		        ?><div class="SearchResultsCollectionCompactTools"><?php
-		        echo $lang["tools"].": ";
-		        draw_compact_style_selector($cinfo["ref"]);
-		        ?></div><?php
-		        ?><br /><br /><div class="clearerleft"></div><?php
-		        $collection_compact_style_titleview=false;
-		        } /*end if a collection search and compact_style - action selector*/   
-    		}
-    	}
+		echo $search_title;
+		hook("aftersearchtitle");
+		}
 	hook("beforesearchresults");
 	
 	# Archive link

@@ -127,21 +127,9 @@ function ReorderResources(id1,id2)
 &nbsp;&nbsp;<a href="<?php echo $baseurl_short?>pages/preview_all.php?backto=<?php echo urlencode($backto)?>&ref=<?php echo urlencode($colref)?>&vertical=v&offset=<?php echo urlencode($offset)?>&search=<?php echo urlencode($search)?>&order_by=<?php echo urlencode($order_by)?>&col_order_by=<?php echo urlencode($col_order_by)?>&sort=<?php echo urlencode($sort)?>&archive=<?php echo urlencode($archive)?>&k=<?php echo urlencode($k)?>">&gt; <?php echo $lang["vertical"]; ?> </a>
 </tr>
 
-<?php if (!$collections_compact_style){
-        echo $search_title;
-        }
-    else {
-    echo $search_title;
-    ?><?php if (substr($search,0,11)=="!collection" && $k==""){
-        $cinfo=get_collection(substr($search,11));
-        $feedback=$cinfo["request_feedback"];
-        $count_result=count($result);
-        if (!$search_titles){?><br/><?php }
-        draw_compact_style_selector($cinfo['ref']);
-        ?><?php if ($vertical=="v"){?><br/><br/><?php } ?>
-    <?php } /*end if a collection search and compact_style - action selector*/ ?>    
-    <?php } ?>
-<?php
+<?php 
+echo $search_title;
+
 $n=0;
 for ($x=0;$x<count($result);$x++){
 # Load access level

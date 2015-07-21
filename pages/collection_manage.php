@@ -6,6 +6,7 @@ include "../include/authenticate.php"; if (checkperm("b")){exit("Permission deni
 include_once "../include/collections_functions.php";
 include "../include/search_functions.php";
 include "../include/resource_functions.php";
+include "../include/render_functions.php";
 
 $offset=getvalescaped("offset",0);
 $find=getvalescaped("find",getvalescaped("saved_find",""));setcookie("saved_find",$find, 0, '', '', false, true);
@@ -356,84 +357,16 @@ if (!hook('collectionaccessmode')) {
 <?php hook("beforecollectiontoolscolumn");?>
 	<td class="tools">	
         <div class="ListTools">
-        <?php if ($collections_compact_style){
-        
-        draw_compact_style_selector($collections[$n]['ref']);
-        
-        } else {
-?><a onClick="return CentralSpaceLoad(this,true);" href="<?php echo $baseurl_short?>pages/search.php?search=<?php echo urlencode("!collection" . $collections[$n]["ref"])?>">&gt;&nbsp;<?php echo $lang["viewall"]?></a>
-<!-- No need to check for permission 'b' - this check is done in the beginning of this file -->
-	&nbsp;<a href="<?php echo $baseurl_short?>pages/collections.php?collection=<?php echo urlencode($collections[$n]["ref"]); if ($autoshow_thumbs) {echo "&amp;thumbs=show";}?>" onClick="ChangeCollection(<?php echo $collections[$n]["ref"]?>, '');return false;">&gt;&nbsp;<?php echo $lang["action-select"]?></a>
-	<?php
-		if($download_usage && (isset($zipcommand) || $collection_download)) { ?>
-			<a href="<?php echo $baseurl_short?>pages/terms.php?url=<?php echo urlencode("pages/download_usage.php?collection=" . $collections[$n]["ref"]); ?>">&gt; <?php echo $lang["action-download"]?></a>
-		<?php
-		} else if (isset($zipcommand) || $collection_download) { ?>
-	&nbsp;<a onClick="return CentralSpaceLoad(this,true);" href="<?php echo $baseurl_short?>pages/terms.php?url=<?php echo urlencode("pages/collection_download.php?collection=" . $collections[$n]["ref"]) ?>"
-	>&gt;&nbsp;<?php echo $lang["action-download"]?></a>
-	<?php } ?>
+        <?php
 	
-	<?php if ($contact_sheet==true && $manage_collections_contact_sheet_link) { ?>
-    &nbsp;<a onClick="return CentralSpaceLoad(this,true);" href="<?php echo $baseurl_short?>pages/contactsheet_settings.php?ref=<?php echo urlencode($collections[$n]["ref"]) ?>">&gt;&nbsp;<?php echo $lang["contactsheet"]?></a>
-	<?php } ?>
+	render_actions($collections[$n],true,false);
 
-	<?php if ($manage_collections_share_link && $allow_share && (checkperm("v") || checkperm ("g"))) { ?> &nbsp;<a href="<?php echo $baseurl_short?>pages/collection_share.php?ref=<?php echo $collections[$n]["ref"]?>" onClick="return CentralSpaceLoad(this,true);">&gt;&nbsp;<?php echo $lang["share"]?></a><?php } ?>
-
-	<?php /*Remove Shared Collection*/if ($manage_collections_remove_link && $username!=$collections[$n]["username"])	{?>&nbsp;<a href="#" onclick="if (confirm('<?php echo $lang["removecollectionareyousure"]?>')) {document.getElementById('collectionremove').value='<?php echo urlencode($collections[$n]["ref"]) ?>';document.getElementById('collectionform').submit();} return false;">&gt;&nbsp;<?php echo $lang["action-remove"]?></a><?php } ?>
-
-	<?php if ((($username==$collections[$n]["username"]) || checkperm("h")) && ($collections[$n]["cant_delete"]==0)) {?>&nbsp;<a href="#" onclick="if (confirm('<?php echo $lang["collectiondeleteconfirm"]?>')) {document.getElementById('collectiondelete').value='<?php echo urlencode($collections[$n]["ref"]) ?>'; passQueryStrings(['paging', 'col_order_by', 'sort', 'find', 'go', 'offset'], 'collectionform'); CentralSpacePost(document.getElementById('collectionform'),false);} return false;">&gt;&nbsp;<?php echo $lang["action-delete"]?></a><?php } ?>
-
-	<?php if ($collection_purge){ 
-		if ($n == 0) {
-			?><input type=hidden name="purge" id="collectionpurge" value=""><?php 
-		}
-
-		if (checkperm("e0") && $collections[$n]["cant_delete"] == 0) {
-			?>&nbsp;<a href="#" onclick="if (confirm('<?php echo $lang["purgecollectionareyousure"]?>')) {document.getElementById('collectionpurge').value='<?php echo urlencode($collections[$n]["ref"]) ?>';document.getElementById('collectionform').submit();} return false;">&gt;&nbsp;<?php echo $lang["purgeanddelete"]?></a><?php 
-		} 
-	}
 	?>
-	<?php hook('additionalcollectiontool') ?>
-
-	<?php if (($username==$collections[$n]["username"]) || (checkperm("h"))) {?>&nbsp;<a href="<?php echo $baseurl_short?>pages/collection_edit.php?ref=<?php echo urlencode($collections[$n]["ref"]) ?>" onClick="return CentralSpaceLoad(this,true);" >&gt;&nbsp;<?php echo $lang["action-edit"]?></a><?php } ?>
-
-    <?php     
-    # If this collection is (fully) editable, then display an edit all link
-    if ($show_edit_all_link && ($collections[$n]["count"] > 0))
-	{
-	    if (!$edit_all_checkperms || allow_multi_edit($collections[$n]["ref"])) { ?>&nbsp;<a href="<?php echo $baseurl_short?>pages/edit.php?collection=<?php echo urlencode($collections[$n]["ref"]) ?>" onClick="return CentralSpaceLoad(this,true);">&gt;&nbsp;<?php echo $lang["action-editall"]?></a>&nbsp;<?php } 
-	}
-	
-	global $home_dash,$anonymous_login,$username;
-    #Home_dash is on, And not Anonymous use, And (Dash tile user (Not with a managed dash) || Dash Tile Admin)
-	if($home_dash && checkPermission_dashcreate())
-    	{?>
-        <a href="<?php echo $baseurl_short;?>pages/dash_tile.php?create=true&tltype=srch&promoted_resource=true&freetext=true&all_users=1&link=/pages/search.php?search=!collection<?php echo urlencode($collections[$n]["ref"])?>&order_by=relevance&sort=DESC"  onClick="return CentralSpaceLoad(this,true);">&gt;&nbsp;<?php echo $lang["dashtile"]?></a>
-        <?php 
-    	}
-
-	if (($username==$collections[$n]["username"]) || (checkperm("h"))) {?><a href="<?php echo $baseurl_short?>pages/collection_log.php?ref=<?php echo urlencode($collections[$n]["ref"]);?>&order_by=relevance&sort=DESC" onClick="return CentralSpaceLoad(this,true);">&gt;&nbsp;<?php echo $lang["log"]?></a><?php } ?>
-
-	<?php hook("addcustomtool"); ?>
-	
+	</div>
 	</td>
-	</tr><?php
-	}
-}
-
-	?>
+	</tr>
 	<input type=hidden name="deleteempty" id="collectiondeleteempty" value="">
-	
-	<?php if ($collections_delete_empty){
-        $use_delete_empty=false;
-        //check if delete empty is relevant
-        foreach ($collections as $collection){
-            if ($collection['count']==0){$use_delete_empty=true;}
-        }
-        if ($use_delete_empty){
-        ?>
-        <tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td></td><?php if (!$hide_access_column){?><td>&nbsp;</td><?php } ?><?php hook("addcollectionmanagespacercolumn");?><td><div class="ListTools">&nbsp;<a href="#" onclick="if (confirm('<?php echo $lang["collectionsdeleteemptyareyousure"]?>')) {document.getElementById('collectiondeleteempty').value='yes';document.getElementById('collectionform').submit();} return false;">&gt;&nbsp;<?php echo $lang["collectionsdeleteempty"]?></a></div></td></tr>
-        <?php }
+	<?php
     }
 ?>
 </table>

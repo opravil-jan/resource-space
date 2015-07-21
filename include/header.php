@@ -201,8 +201,6 @@ echo get_plugin_css($ctheme);
 
 hook("headblock");
  
-if ($collections_compact_style && $pagename!="login"){ include dirname(__FILE__)."/../lib/js/colactions.js";}
-
 # Infobox JS include
 if ($infobox)
 	{ ?>

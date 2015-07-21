@@ -3,6 +3,8 @@ include "../include/db.php";
 include "../include/general.php";
 include "../include/authenticate.php";
 include_once "../include/collections_functions.php";
+include_once "../include/resource_functions.php";
+include_once "../include/render_functions.php";
 
 global $default_perpage_list;
 $themes_order_by=getvalescaped("themes_order_by",getvalescaped("saved_themes_order_by","name"));setcookie("saved_themes_order_by",$themes_order_by, 0, '', '', false, true);
@@ -198,42 +200,12 @@ function DisplayTheme($themes=array())
 			<?php } ?>
 			<td class="count" width="5%"><?php echo $getthemes[$m]["c"]?></td>
 			<?php hook("beforecollectiontoolscolumn");?>
-			<td class="tools" nowrap><div class="ListTools">
-            <?php if ($collections_compact_style){
-            draw_compact_style_selector($getthemes[$m]["ref"]);
-            } else {
-
-                ?><a href="<?php echo $baseurl_short?>pages/search.php?search=<?php echo urlencode("!collection" . $getthemes[$m]["ref"])?>" title="<?php echo $lang["collectionviewhover"]?>" onClick="return CentralSpaceLoad(this,true);">&gt;&nbsp;<?php echo $lang["viewall"]?></a>
-
-                <?php if (!checkperm("b")) { ?>&nbsp;<?php echo change_collection_link($getthemes[$m]["ref"]); } ?>
-
-                <?php
-				if($download_usage && (isset($zipcommand) || $collection_download)) { ?>
-					&nbsp;<a href="<?php echo $baseurl_short?>pages/terms.php?url=<?php echo urlencode("pages/download_usage.php?collection=" .  $getthemes[$m]['ref']); ?>">&gt; <?php echo $lang["action-download"]?></a>
+			<td class="tools" nowrap>
+				<div class="ListTools">
 				<?php
-				} else if (isset($zipcommand) || $collection_download) { ?>
-                &nbsp;<a href="<?php echo $baseurl_short?>pages/terms.php?url=<?php echo urlencode("pages/collection_download.php?collection=" . $getthemes[$m]["ref"])?>" onClick="return CentralSpaceLoad(this,true);">&gt;&nbsp;<?php echo $lang["action-download"]?></a>
-                <?php } ?>
-                <?php if ($contact_sheet==true) { ?>
-                &nbsp;<a href="<?php echo $baseurl_short?>pages/contactsheet_settings.php?ref=<?php echo $getthemes[$m]["ref"]?>"  title="<?php echo $lang["collectioncontacthover"]?>" onClick="return CentralSpaceLoad(this,true);">&gt;&nbsp;<?php echo $lang["contactsheet"]?></a>
-                <?php }
-                global $home_dash,$anonymous_login,$username,$managed_home_dash;
-                #Home_dash is on, And not Anonymous use, And (Dash tile user (Not with a managed dash) || Dash Tile Admin)
-				if($home_dash && checkPermission_dashcreate()) 
-					{ ?>
-                	&nbsp;
-                	<a href="<?php echo $baseurl_short;?>pages/dash_tile.php?create=true&tltype=srch&promoted_resource=true&freetext=true&all_users=1&link=/pages/search.php?search=!collection<?php echo urlencode($getthemes[$m]["ref"])?>&order_by=relevance&sort=DESC"  onClick="return CentralSpaceLoad(this,true);">
-                		&gt;&nbsp;<?php echo $lang["dashtile"]?>
-                	</a>
-                	<?php 
-                	}
-
-                if ($allow_share && (checkperm("v") || checkperm ("g"))) { ?> &nbsp;<a href="<?php echo $baseurl_short?>pages/collection_share.php?ref=<?php echo $getthemes[$m]["ref"]?>"  onClick="return CentralSpaceLoad(this,true);">&gt;&nbsp;<?php echo $lang["share"]?></a><?php } ?>
-
-                <?php if (checkperm("h")) {?>&nbsp;<a href="<?php echo $baseurl_short?>pages/collection_edit.php?ref=<?php echo $getthemes[$m]["ref"]?>" onClick="return CentralSpaceLoad(this,true);">&gt;&nbsp;<?php echo $lang["action-edit"]?></a><?php } ?>
-
-                <?php hook("addcustomtool","",array($getthemes[$m]["ref"])); ?>
-			<?php } ?>
+				render_actions($getthemes[$m],true,false);
+				?>
+				</div>
 			</td>
 			</tr>
 			<?php
