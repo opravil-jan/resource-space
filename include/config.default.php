@@ -1555,8 +1555,8 @@ $allow_resource_deletion = true;
 #
 # Possible options are:
 #
-# -2	User Contributed Pending Review (not useful unless deleting user-contributed resources)
-# -1	User Contributed Pending Submission (not useful unless deleting user-contributed resources) 
+# -2	User Contributed Pending Submission (not useful unless deleting user-contributed resources)
+# -1	User Contributed Pending Review (not useful unless deleting user-contributed resources) 
 # 1		Waiting to be archived
 # 2 	Archived
 # 3		Deleted (recommended)
