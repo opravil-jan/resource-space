@@ -887,7 +887,7 @@ if (true) # Always show search header now.
 			<?php 
 			}
 		}
-	if (!$collections_compact_style){echo $search_title_links;}
+	echo $search_title_links;
 	hook("beforesearchresults2");
 	hook("beforesearchresultsexpandspace");
 	?>
