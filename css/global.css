@@ -991,6 +991,14 @@ div.video-js {margin:auto;}
 	margin: 10px 0px;
 }
 
+.ListTools .ActionsContainer select {
+	width: 150px !important; /*not permanent...until we get out of bug fix period*/
+}
+
+.ListTools .ActionsContainer .DropdownActionsLabel {
+	display: none;
+}
+
 /* Drag & Drop */
 #CentralSpaceResourceClone, #CollectionSpaceClone {
 	text-align: left;

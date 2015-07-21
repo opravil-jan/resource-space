@@ -2203,3 +2203,4 @@ $lang['error_check_html_first'] = 'Please Check HTML! The text used does not con
 $lang["maximise"]="Maximise";
 
 $lang["actions-select"]="Actions...";
+$lang['actions'] = 'Actions';

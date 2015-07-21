@@ -204,7 +204,7 @@ function DisplayTheme($themes=array())
 			<td class="tools" nowrap>
 				<div class="ListTools">
 				<?php
-				render_actions($getthemes[$m],true,false);
+				render_actions($getthemes[$m], false, false);
 				?>
 				</div>
 			</td>

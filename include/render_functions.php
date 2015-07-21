@@ -125,7 +125,7 @@ function render_dropdown_option($value, $label, array $data_attr = array(), $ext
 * Renders search actions functionality as a dropdown box
 * 
 */
-function render_actions(array $collection_data, $top_actions = true, $two_line = true, $id="")
+function render_actions(array $collection_data, $top_actions = true, $two_line = true, $id = '')
     {
     if(hook('prevent_running_render_actions'))
         {
@@ -142,17 +142,24 @@ function render_actions(array $collection_data, $top_actions = true, $two_line =
         {
         $action_selection_id .= '_bottom';
         }
-    if (isset($collection_data['ref']))
+    if(isset($collection_data['ref']))
         {
         $action_selection_id .= '_' . $collection_data['ref'];
         }
-    ?>
-    
+        ?>
+
     <div class="ActionsContainer  <?php if($top_actions) { echo 'InpageNavLeftBlock'; } ?>">
-        Actions:
-        <?php if ($two_line) { ?><br /><?php } ?>
+        <span class="DropdownActionsLabel"><?php echo $lang['actions']; ?>:</span>
+    <?php
+    if($two_line)
+        {
+        ?>
+        <br />
+        <?php
+        }
+            ?>
         <select id="<?php echo $action_selection_id; ?>" <?php if(!$top_actions) { echo 'class="SearchWidth"'; } ?>>
-            <option value="" class="SelectAction"></option>
+            <option class="SelectAction" value=""></option>
             <?php
             $options = '';
 
@@ -351,7 +358,7 @@ function render_collection_actions(array $collection_data, $top_actions)
             $options .= render_dropdown_option('manage_collections', $lang['managemycollections'], $data_attribute);
 
             // Collection feedback
-            if($collection_data['request_feedback'])
+            if(isset($collection_data['request_feedback']) && $collection_data['request_feedback'])
                 {
                 $data_attribute['url'] = sprintf('%spages/collection_feedback.php?collection=%s&k=%s',
                     $baseurl_short,
@@ -510,15 +517,11 @@ function render_collection_actions(array $collection_data, $top_actions)
         $options .= render_dropdown_option('delete_collection', $lang['action-delete']);
         }
 
-
-        
-
     // Collection Purge
     if($collection_purge && isset($collections) && checkperm('e0') && $collection_data['cant_delete'] == 0)
         {
         $options .= render_dropdown_option('purge_collection', $lang['purgeanddelete']);
         }
-
 
     // Collection log
     if(($userref== $collection_data['user']) || (checkperm('h')))
@@ -567,9 +570,6 @@ function render_collection_actions(array $collection_data, $top_actions)
         {
         $options .= render_dropdown_option('delete_all_in_collection', $lang['deleteallresourcesfromcollection']);
         }
-        
-        
-
 
     // Preview all
     if(count($result) != 0 && $k == '' && $preview_all)
