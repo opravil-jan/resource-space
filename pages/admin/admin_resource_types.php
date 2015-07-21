@@ -96,9 +96,7 @@ function addColumnHeader($orderName, $labelKey)
 ?>	
 
 <div class="BasicsBox">
-  
-  <p><a href="<?php echo $backurl ?>" onClick="return CentralSpaceLoad(this,true);">&lt;&nbsp;<?php echo $lang["back"]?></a></p>
-  
+   
   <h1><?php echo $lang["treenode-resource_types_and_fields"]?></h1>
   
   <?php

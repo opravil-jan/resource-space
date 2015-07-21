@@ -105,8 +105,6 @@ $results=count($fields);
 
 
 ?>
-   
-<a href="<?php echo $backurl ?>" onClick="return CentralSpaceLoad(this,true);">&lt;&nbsp;<?php echo $lang["back"]?></a>
 
 
 <div class="BasicsBox">

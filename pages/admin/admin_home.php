@@ -6,9 +6,7 @@ include ("../../include/header.php");
 ?>
 
 <div class="BasicsBox"> 
-  
-  <p><a href="<?php echo $baseurl_short . "pages/team/team_home.php" ?>" onClick="return CentralSpaceLoad(this,true);">&lt;&nbsp;<?php echo $lang["teamcentre"]?></a></p>
-  
+   
   <h1><?php echo $lang["systemsetup"]?></h1>
   <p><?php echo text("introtext")?></p>
 

@@ -95,8 +95,7 @@ function addColumnHeader($orderName, $labelKey)
 }
 
 ?><div class="BasicsBox"> 
-	
-	<p><a href="<?php echo $baseurl . "/pages/admin/admin_home.php" ?>" onClick="return CentralSpaceLoad(this,true);">&lt;&nbsp;<?php echo $lang["systemsetup"]?></a></p>
+
 	
 	<h1><?php echo $lang['page-title_user_group_management']; ?></h1>	
 	<p><?php echo $lang['page-subtitle_user_group_management']; ?></p>
