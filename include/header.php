@@ -1,26 +1,44 @@
 <?php 
+global $ctheme,$userfixedtheme,$defaulttheme;
 
+$lastresorttheme = "";
 if(isset($userfixedtheme) && $userfixedtheme!="")
     {
+    $lastresorttheme = $userfixedtheme;
+    }
+else if($ctheme!="")
+    {
+    $lastresorttheme = $ctheme;
+    }
+else if(isset($defaulttheme) && $defaulttheme!="" )
+    {
+    $lastresorttheme = $defaulttheme;
+    }
+else
+    {
+    $lastresorttheme = "";
+    }
+
+if($lastresorttheme)
+    {
     global $plugins;
-    $userfixedtheme = preg_replace("/^col-/","", $userfixedtheme);
-    switch($userfixedtheme)
+    $lastresorttheme = preg_replace("/^col-/","", $lastresorttheme);
+    switch($lastresorttheme)
             {
             case "blue":
-            case "greyblu": $userfixedtheme = "blue"; break;
+            case "greyblu": $lastresorttheme = "blue"; break;
             case "charcoal":
-            case "slimcharcoal": $userfixedtheme = "charcoal"; break;
+            case "slimcharcoal": $lastresorttheme = "charcoal"; break;
             }
-    if(!in_array("col-".$userfixedtheme,$plugins))
+    if(!in_array("col-".$lastresorttheme,$plugins))
         {
         if(!function_exists("activate_plugin"))
             {include dirname(__FILE__). "/plugin_functions.php";}
-        if($pagename!="login")
-            {activate_plugin("col-".$userfixedtheme);}
-        $plugin = (sql_query("SELECT name,enabled_groups, config, config_json FROM plugins WHERE inst_version>=0 AND name='"."col-".escape_check($userfixedtheme)."' ORDER BY priority"));
+        activate_plugin("col-".$lastresorttheme);
+        $plugin = (sql_query("SELECT name,enabled_groups, config, config_json FROM plugins WHERE inst_version>=0 AND name='"."col-".escape_check($lastresorttheme)."' ORDER BY priority"));
         if(isset($plugin[0]))
             {
-            $plugin= $plugin[0];
+            $plugin=$plugin[0];
             include_plugin_config($plugin['name'],$plugin['config'],$plugin['config_json']);
             register_plugin($plugin['name']);
             register_plugin_language($plugin['name']);
