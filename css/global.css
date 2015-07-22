@@ -1009,4 +1009,4 @@ div.video-js {margin:auto;}
 .ui-state-default a, .ui-state-default a:link, .ui-state-default a:visited {
 	color: initial;
 }
-
+.DropdownActionsLabel {display:inline-block;}
