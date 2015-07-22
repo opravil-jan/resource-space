@@ -403,23 +403,20 @@ function render_collection_actions(array $collection_data, $top_actions)
 
         $options .= render_dropdown_option('edit_collection', $lang['action-edit'], array(), $extra_tag_attributes);
         }
-    
-        // Upload to collection
-       if ((checkperm("c") || checkperm("d")) && $collection_data["savedsearch"]==0 && ($userref==$collection_data["user"] || $collection_data["allow_changes"]==1 || checkperm("h")))
-            {
-            $extra_tag_attributes = sprintf('
-                data-url="%spages/edit.php?uploader=%s&ref=-%s&collection_add=%s|main|collections"
-            ',
+
+    // Upload to collection
+    if((checkperm('c') || checkperm('d')) && $collection_data['savedsearch'] == 0 && ($userref == $collection_data['user'] || $collection_data['allow_changes'] == 1 || checkperm('h')))
+        {
+        $data_attribute['url'] = sprintf('%spages/edit.php?uploader=%s&ref=-%s&collection_add=%s|main|collections',
             $baseurl_short,
             urlencode($top_nav_upload_type),
             urlencode($userref),
             urlencode($collection_data['ref'])
-             );
+        );
 
-            $options .= render_dropdown_option('upload_collection', $lang['action-upload-to-collection'], array(), $extra_tag_attributes);
-            }
-    
-    
+        $options .= render_dropdown_option('upload_collection', $lang['action-upload-to-collection'], $data_attribute);
+        }
+
     // Home_dash is on, AND NOT Anonymous use, AND (Dash tile user (NOT with a managed dash) || Dash Tile Admin)
     if(!$top_actions && $home_dash && checkPermission_dashcreate())
         {
