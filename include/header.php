@@ -24,6 +24,18 @@ else if($ctheme!="" && sql_value("SELECT name as value FROM plugins WHERE inst_v
         $lastresorttheme="";
         }
     }
+// check for a cookie...useful on the login page where no authentication happens
+else if(array_key_exists('colour_theme',$_COOKIE))
+    {
+	if(!in_array("col-".$_COOKIE['colour_theme'],$plugins))
+        {
+		$lastresorttheme = $_COOKIE['colour_theme'];
+		}
+	else
+        {
+        $lastresorttheme="";
+        }
+    }
 else if(!isset($defaulttheme) || $defaulttheme=="")
     {
     #If only one plugin enabled
