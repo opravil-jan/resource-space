@@ -18,6 +18,7 @@ $search=getvalescaped("search","");
 $offset=getvalescaped("offset","",true);
 $order_by=getvalescaped("order_by","");
 $archive=getvalescaped("archive","",true);
+$setarchivestate=getvalescaped("status","",true);
 
 # Load the configuration for the selected resource type. Allows for alternative notification addresses, etc.
 resource_type_config_override($resource_type);
@@ -678,7 +679,7 @@ var pluploadconfig = {
                                             ajax: 'true',
                                             ajax_action: 'send_collection_to_admin',
                                             collection: '<?php echo $collection_add; ?>',
-                                            archive: '<?php echo $archive; ?>'
+                                            archive: '<?php echo $setarchivestate; ?>'
                                         }
                                     });
                                     console.log('A copy of the collection ID <?php echo $collection_add; ?> has been sent via e-mail to admin.');
@@ -704,7 +705,7 @@ var pluploadconfig = {
                                   uploader.bind('UploadComplete', function(up, files) {
                                         jQuery('.plupload_done').slideUp('2000', function() {
                                                         uploader.splice();
-                                                        window.location.href='<?php echo $baseurl_short?>pages/search.php?search=!contributions<?php echo urlencode($userref) ?>&archive=<?php echo urlencode($archive) ?>';
+                                                        window.location.href='<?php echo $baseurl_short?>pages/search.php?search=!contributions<?php echo urlencode($userref) ?>&archive=<?php echo urlencode($setarchivestate) ?>';
                                                         
                                         });
                                   });

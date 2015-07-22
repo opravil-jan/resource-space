@@ -37,6 +37,7 @@ $offset=getvalescaped("offset",0,true);
 $restypes=getvalescaped("restypes","");
 if (strpos($search,"!")!==false) {$restypes="";}
 $archive=getvalescaped("archive",0,true);
+$setarchive=getvalescaped("status",0,true);
 
 $default_sort="DESC";
 if (substr($order_by,0,5)=="field"){$default_sort="ASC";}
@@ -116,7 +117,7 @@ if (($ref!="")&&($resource["file_path"]!=""))
 	$titleh1 = $lang["replacefile"];
 	$titleh2="";
 	} 
-else if ($archive=="2")
+else if ($setarchive=="2")
 	{ # Add single archived resource
 	$titleh1 = $lang["newarchiveresource"];
 	$titleh2 = str_replace(array("%number","%subtitle"), array("2", $lang["upload_file"]), $lang["header-upload-subtitle"]);
@@ -163,7 +164,7 @@ function check(filename) {
 <form method="post" class="form" enctype="multipart/form-data" action="<?php echo $baseurl_short?>pages/upload.php">
 <input type="hidden" name="ref" value="<?php echo htmlspecialchars($ref) ?>" />
 <input type="hidden" name="resource_type" value="<?php echo htmlspecialchars($resource_type) ?>" />
-<input type="hidden" name="archive" value="<?php echo htmlspecialchars($archive) ?>" />
+<input type="hidden" name="archive" value="<?php echo htmlspecialchars($setarchive) ?>" />
 <br/>
 <?php if ($status!="") { ?><?php echo $status?><?php } ?>
 <div id="invalid" style="display:none;" class="FormIncorrect"><?php echo str_replace_formatted_placeholder("%extensions", str_replace(",",", ",$allowed_extensions), $lang['invalidextension_mustbe-extensions'])?></div>

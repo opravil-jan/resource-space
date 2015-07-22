@@ -303,19 +303,19 @@ function save_resource_data($ref,$multi,$autosave_field="")
 
 		#$oldarchive=sql_value("select archive value from resource where ref='$ref'","");
 		$oldarchive=$resource_data['archive'];
-		$archive=getvalescaped("status",$oldarchive,true);
+		$setarchivestate=getvalescaped("status",$oldarchive,true);
 		
-		if($archive!=$oldarchive && !checkperm("e" . $archive)) // don't allow change if user has no permission to change archive state
+		if($setarchivestate!=$oldarchive && !checkperm("e" . $setarchivestate)) // don't allow change if user has no permission to change archive state
 			{
-			$archive=$oldarchive;
+			$setarchivestate=$oldarchive;
 			}
 			
-		if ($access!=$oldaccess || $archive!=$oldarchive) // Only if changed
+		if ($access!=$oldaccess || $setarchivestate!=$oldarchive) // Only if changed
 			{
-			sql_query("update resource set archive='" . $archive . "',access='" . $access . "' $expirysql where ref='$ref'");  
-			if ($archive!=$oldarchive && $ref>0)
+			sql_query("update resource set archive='" . $setarchivestate . "',access='" . $access . "' $expirysql where ref='$ref'");  
+			if ($setarchivestate!=$oldarchive && $ref>0)
 				{
-				resource_log($ref,"s",0,"",$oldarchive,$archive);
+				resource_log($ref,"s",0,"",$oldarchive,$setarchivestate);
 				}
 			if ($access!=$oldaccess && $ref>0)
 				{
@@ -323,17 +323,17 @@ function save_resource_data($ref,$multi,$autosave_field="")
 				}
 			
 			// Notify the resources team ($email_notify) if moving from pending submission -> review.
-			if ($oldarchive==-2 && $archive==-1 && $ref>0)
+			if ($oldarchive==-2 && $setarchivestate==-1 && $ref>0)
 					{	
 					notify_user_contributed_submitted(array($ref));
 					}
-			if ($oldarchive==-1 && $archive==-2 && $ref>0)
+			if ($oldarchive==-1 && $setarchivestate==-2 && $ref>0)
 					{
 					notify_user_contributed_unsubmitted(array($ref));
 					}
 			if($user_resources_approved_email)
 				{	
-				if (($oldarchive==-2 || $oldarchive==-1) && $ref>0 && $archive==0)
+				if (($oldarchive==-2 || $oldarchive==-1) && $ref>0 && $setarchivestate==0)
 						{
 						notify_user_resources_approved(array($ref));
 						}	
@@ -602,26 +602,25 @@ function save_resource_data_multi($collection)
                             # Also update archive status                            
                             
                             $oldarchive=sql_value("select archive value from resource where ref='$ref'","");
-                            $archive=getvalescaped("status",$oldarchive,true);
-                                
-                            if($archive!=$oldarchive && !checkperm("e" . $archive)) // don't allow change if user has no permission to change archive state
+                            $setarchivestate=getvalescaped("status",$oldarchive,true); // We used to get the 'archive' value but this conflicts with the archiveused for searching                                
+                            if($setarchivestate!=$oldarchive && !checkperm("e" . $setarchivestate)) // don't allow change if user has no permission to change archive state
                                 {
-                                $archive=$oldarchive;
+                                $setarchivestate=$oldarchive;
                                 }
                                 
-                            if ($archive!=$oldarchive) // Only if changed
+                            if ($setarchivestate!=$oldarchive) // Only if changed
                                 {
-                                sql_query("update resource set archive='" . $archive . "' where ref='$ref'");  
-                                if ($archive!=$oldarchive && $ref>0)
+                                sql_query("update resource set archive='" . $setarchivestate . "' where ref='$ref'");  
+                                if ($setarchivestate!=$oldarchive && $ref>0)
                                     {
-                                    resource_log($ref,"s",0,"",$oldarchive,$archive);
+                                    resource_log($ref,"s",0,"",$oldarchive,$setarchivestate);
                                     }
                                                                 
                                 # Check states to see if notifications are necessary
                                 if (
-									($oldarchive==-2 && $archive==-1) ||
-									($oldarchive==-1 && $archive==-2) || 
-									($user_resources_approved_email && ($oldarchive==-2 || $oldarchive==-1) && $archive==0)
+									($oldarchive==-2 && $setarchivestate==-1) ||
+									($oldarchive==-1 && $setarchivestate==-2) || 
+									($user_resources_approved_email && ($oldarchive==-2 || $oldarchive==-1) && $setarchivestate==0)
 									)
 										{	
 										$notifyrefs[]=$ref;
@@ -632,19 +631,19 @@ function save_resource_data_multi($collection)
                         
 		if (count($notifyrefs)>0)
 			{
-			if ($user_resources_approved_email && ($oldarchive==-2 || $oldarchive==-1) && $archive==0) # Notify the  users that their resources have been approved	
+			if ($user_resources_approved_email && ($oldarchive==-2 || $oldarchive==-1) && $setarchivestate==0) # Notify the  users that their resources have been approved	
 				{
 				debug("Emailing approval notification for submitted resources to users");
 				notify_user_resources_approved($notifyrefs);
 				}
 			
-			if ($oldarchive==-2 && $archive==-1) # Notify the resources team ($email_notify) if moving from pending submission->pending review
+			if ($oldarchive==-2 && $setarchivestate==-1) # Notify the resources team ($email_notify) if moving from pending submission->pending review
 				{
 				debug("Emailing notification of submitted resources to " . $email_notify);
 				notify_user_contributed_submitted($notifyrefs);
 				}
 			
-			if ($oldarchive==-1 && $archive==-2) # Notify the admin users of any submitted resources.
+			if ($oldarchive==-1 && $setarchivestate==-2) # Notify the admin users of any submitted resources.
 				{
 				debug("Emailing notification of unsubmitted resources to " . $email_notify);
 				notify_user_contributed_unsubmitted($notifyrefs);

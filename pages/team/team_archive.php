@@ -13,7 +13,7 @@ include "../../include/header.php";
   
 	<div class="VerticalNav">
 	<ul>
-	<li><a href="<?php echo $baseurl_short?>pages/edit.php?ref=-<?php echo $userref?>&single=true&archive=2" onClick="return CentralSpaceLoad(this,true);"><?php echo $lang["newarchiveresource"]?></a></li>
+	<li><a href="<?php echo $baseurl_short?>pages/edit.php?ref=-<?php echo $userref?>&single=true&status=2" onClick="return CentralSpaceLoad(this,true);"><?php echo $lang["newarchiveresource"]?></a></li>
 
 	<li><a href="<?php echo $baseurl_short?>pages/search_advanced.php?archive=2" onClick="return CentralSpaceLoad(this,true);"><?php echo $lang["searcharchivedresources"]?></a></li>
 

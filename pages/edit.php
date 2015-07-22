@@ -21,11 +21,8 @@ if (substr($order_by,0,5)=="field"){$default_sort="ASC";}
 $sort=getval("sort",$default_sort);
 $modal=(getval("modal","")=="true");
 
-$archive=getvalescaped("archive",0,true);
-if($show_status_and_access_on_upload) {
-  $archive = getvalescaped('status', $archive, TRUE);
-}
-
+$archive=getvalescaped("archive",0,true); // This is the archive state for searching, NOT the archive state to be set from the form POST which we get later
+  
 $uploadparams="";
 $uploadparams.="&relateto=" . urlencode(getval("relateto",""));
 $uploadparams.="&redirecturl=" . urlencode(getval("redirecturl",""));
@@ -123,13 +120,16 @@ if ($go!="")
 
 # Fetch resource data.
 $resource=get_resource_data($ref);
-# Allow to specify resource type from url
+
+# Allow to specify resource type from url for new resources
 $resource_type=getval("resource_type","");
-if (($resource_type!="")&&($resource_type!=$resource["resource_type"]) && !checkperm("XU{$resource_type}") && getval("autosave_field","")=="")     // only if resource specified and user has permission for that resource type
-{
+if ($ref<0 && $resource_type!="" && $resource_type!=$resource["resource_type"] && !checkperm("XU{$resource_type}"))     // only if new resource specified and user has permission for that resource type
+  {
   update_resource_type($ref,$resource_type);
   $resource["resource_type"]=$resource_type;
-}
+  }
+
+$setarchivestate = getvalescaped('status', $resource["archive"], TRUE);
 
 # Allow alternative configuration settings for this resource type.
 resource_type_config_override($resource["resource_type"]);
@@ -275,24 +275,24 @@ if (!$multiple)
         if ((getval("uploader","")!="")&&(getval("uploader","")!="local"))
         {
                     # Save button pressed? Move to next step.
-          if (getval("save","")!="") {redirect($baseurl_short."pages/upload_" . getval("uploader","") . ".php?collection_add=" . getval("collection_add","")."&entercolname=".urlencode(getvalescaped("entercolname",""))."&resource_type=" . urlencode($resource_type) . "&no_exif=" . urlencode($no_exif) . "&autorotate=" . urlencode($autorotate) . "&themestring=" . urlencode(getval('themestring','')) . "&public=" . urlencode(getval('public','')) . " &archive=" . urlencode($archive) . $uploadparams . hook("addtouploadurl"));}
+          if (getval("save","")!="") {redirect($baseurl_short."pages/upload_" . getval("uploader","") . ".php?collection_add=" . getval("collection_add","")."&entercolname=".urlencode(getvalescaped("entercolname",""))."&resource_type=" . urlencode($resource_type) . "&status=" . $setarchivestate .  "&no_exif=" . urlencode($no_exif) . "&autorotate=" . urlencode($autorotate) . "&themestring=" . urlencode(getval('themestring','')) . "&public=" . urlencode(getval('public','')) . "&archive=" . urlencode($archive) . $uploadparams . hook("addtouploadurl"));}
        }
                 elseif ((getval("local","")!="")||(getval("uploader","")=="local")) // Test if fetching resource from local upload folder.
                 {
                     # Save button pressed? Move to next step.
-                   if (getval("save","")!="") {redirect($baseurl_short."pages/team/team_batch_select.php?use_local=yes&collection_add=" . getval("collection_add","")."&entercolname=".urlencode(getvalescaped("entercolname",""))."&resource_type=". urlencode($resource_type). "&no_exif=" . $no_exif . "&autorotate=" . $autorotate . $uploadparams );}
+                   if (getval("save","")!="") {redirect($baseurl_short."pages/team/team_batch_select.php?use_local=yes&collection_add=" . getval("collection_add","")."&entercolname=".urlencode(getvalescaped("entercolname",""))."&resource_type=". urlencode($resource_type) . "&status=" . $setarchivestate .  "&no_exif=" . $no_exif . "&autorotate=" . $autorotate . $uploadparams );}
                 }
                 elseif (getval("single","")!="") // Test if single upload (archived or not).
                 {
                     # Save button pressed? Move to next step. if noupload is set - create resource without uploading stage
                    if ((getval("noupload","")!="")&&(getval("save","")!="")) {$ref=copy_resource(0-$userref);redirect($baseurl_short."pages/view.php?ref=". urlencode($ref));}
 
-                   if (getval("save","")!="") {redirect($baseurl_short."pages/upload.php?resource_type=". urlencode($resource_type). "&no_exif=" . $no_exif . "&autorotate=" . urlencode($autorotate) . "&archive=" . urlencode($archive) . $uploadparams );}
+                   if (getval("save","")!="") {redirect($baseurl_short."pages/upload.php?resource_type=". urlencode($resource_type) . "&status=" . $setarchivestate .  "&no_exif=" . $no_exif . "&autorotate=" . urlencode($autorotate) . "&archive=" . urlencode($archive) . $uploadparams );}
                 }    
                 else // Hence fetching from ftp.
                 {
                     # Save button pressed? Move to next step.
-                   if (getval("save","")!="") {redirect($baseurl_short."pages/team/team_batch.php?collection_add=" . getval("collection_add","")."&entercolname=".urlencode(getvalescaped("entercolname","")). "&resource_type=". urlencode($resource_type). "&no_exif=" . $no_exif . "&autorotate=" . urlencode($autorotate) . $uploadparams );}
+                   if (getval("save","")!="") {redirect($baseurl_short."pages/team/team_batch.php?collection_add=" . getval("collection_add","")."&entercolname=".urlencode(getvalescaped("entercolname","")). "&resource_type=". urlencode($resource_type) . "&status=" . $setarchivestate .  "&no_exif=" . $no_exif . "&autorotate=" . urlencode($autorotate) . $uploadparams );}
                 }
              }
           }
@@ -690,7 +690,7 @@ function SaveAndClearButtons($extraclass="")
     elseif (getval("uploader","")=="java") {$titleh1 = $lang["addresourcebatchbrowserjava"];} # Add Resource Batch - In Browser - Java (Legacy)
     elseif (getval("single","")!="")
     {
-       if (getval("archive","")=="2")
+       if (getval("status","")=="2")
        {
             $titleh1 = $lang["newarchiveresource"]; # Add Single Archived Resource
          }
@@ -1609,33 +1609,33 @@ if ($ref<0) # Upload template.
    {
    global $override_status_default;
    $modified_defaultstatus = hook("modifydefaultstatusmode");
-   if ($archive==2)
+   if ($setarchivestate==2)
       {
-      if (checkperm("e2")) {$status = 2;} # Set status to Archived - if the user has the required permission.
-      elseif ($modified_defaultstatus) {$status = $modified_defaultstatus;}  # Set the modified default status - if set.
-      elseif (checkperm("e" . $resource["archive"])) {$status = $resource["archive"];} # Else, set status to the status stored in the user template - if the user has the required permission.
-      elseif (checkperm("c")) {$status = 0;} # Else, set status to Active - if the user has the required permission.
-      elseif (checkperm("d")) {$status = -2;} # Else, set status to Pending Submission.
+      if (checkperm("e2")) {$setarchivestate = 2;} # Set status to Archived - if the user has the required permission.
+      elseif ($modified_defaultstatus) {$setarchivestate = $modified_defaultstatus;}  # Set the modified default status - if set.
+      elseif (checkperm("e" . $resource["archive"])) {$setarchivestate = $resource["archive"];} # Else, set status to the status stored in the user template - if the user has the required permission.
+      elseif (checkperm("c")) {$setarchivestate = 0;} # Else, set status to Active - if the user has the required permission.
+      elseif (checkperm("d")) {$setarchivestate = -2;} # Else, set status to Pending Submission.
       }
    else
       {
-      if ($modified_defaultstatus) {$status = $modified_defaultstatus;}  # Set the modified default status - if set.
-      elseif ($override_status_default!==false) {$status = $override_status_default;}
-      elseif ($resource["archive"]!=2 && checkperm("e" . $resource["archive"])) {$status = $resource["archive"];} # Set status to the status stored in the user template - if the status is not Archived and if the user has the required permission.
-      elseif (checkperm("c")) {$status = 0;} # Else, set status to Active - if the user has the required permission.
-      elseif (checkperm("d") && !checkperm('e-2') && checkperm('e-1')) {$status = -1;} # Else, set status to Pending Review if the user has only edit access to Pending review
-      elseif (checkperm("d")) {$status = -2;} # Else, set status to Pending Submission.   
+      if ($modified_defaultstatus) {$setarchivestate = $modified_defaultstatus;}  # Set the modified default status - if set.
+      elseif ($override_status_default!==false) {$setarchivestate = $override_status_default;}
+      elseif ($resource["archive"]!=2 && checkperm("e" . $resource["archive"])) {$setarchivestate = $resource["archive"];} # Set status to the status stored in the user template - if the status is not Archived and if the user has the required permission.
+      elseif (checkperm("c")) {$setarchivestate = 0;} # Else, set status to Active - if the user has the required permission.
+      elseif (checkperm("d") && !checkperm('e-2') && checkperm('e-1')) {$setarchivestate = -1;} # Else, set status to Pending Review if the user has only edit access to Pending review
+      elseif (checkperm("d")) {$setarchivestate = -2;} # Else, set status to Pending Submission.   
       }
    if ($show_status_and_access_on_upload==false)
       {
       # Hide the dropdown, and set the default status.
       ?>
-      <input type=hidden name="archive" id="archive" value="<?php echo htmlspecialchars($status)?>"><?php
+      <input type=hidden name="status" id="status" value="<?php echo htmlspecialchars($setarchivestate)?>"><?php
       }
    }
 else # Edit Resource(s).
    {
-   $status = $resource["archive"];
+   $setarchivestate = $resource["archive"];
    }
 
 # Status / Access / Related Resources
@@ -1670,7 +1670,7 @@ if ($ref>0 || $show_status_and_access_on_upload===true)
          <?php
          } ?>
       <div class="Question" id="question_status" <?php if ($multiple) {?>style="display:none;"<?php } ?>>
-         <label for="archive"><?php echo $lang["status"]?></label><?php
+         <label for="status"><?php echo $lang["status"]?></label><?php
 
          # Autosave display
          if ($edit_autosave || $ctrls_to_save)
@@ -1678,14 +1678,14 @@ if ($ref>0 || $show_status_and_access_on_upload===true)
             <div class="AutoSaveStatus" id="AutoSaveStatusStatus" style="display:none;"></div>
             <?php
             } ?>
-         <select class="stdwidth" name="status" id="archive" <?php if ($edit_autosave) {?>onChange="AutoSave('Status');"<?php } ?>><?php
+         <select class="stdwidth" name="status" id="status" <?php if ($edit_autosave) {?>onChange="AutoSave('Status');"<?php } ?>><?php
          for ($n=-2;$n<=3;$n++)
             {
-            if (checkperm("e" . $n)) { ?><option value="<?php echo $n?>" <?php if ($status==$n) { ?>selected<?php } ?>><?php echo $lang["status" . $n]?></option><?php }
+            if (checkperm("e" . $n)) { ?><option value="<?php echo $n?>" <?php if ($setarchivestate==$n) { ?>selected<?php } ?>><?php echo $lang["status" . $n]?></option><?php }
             }
          foreach ($additional_archive_states as $additional_archive_state)
             {
-            if (checkperm("e" . $additional_archive_state)) { ?><option value="<?php echo $additional_archive_state?>" <?php if ($status==$additional_archive_state) { ?>selected<?php } ?>><?php echo isset($lang["status" . $additional_archive_state])?$lang["status" . $additional_archive_state]:$additional_archive_state ?></option><?php }
+            if (checkperm("e" . $additional_archive_state)) { ?><option value="<?php echo $additional_archive_state?>" <?php if ($setarchivestate==$additional_archive_state) { ?>selected<?php } ?>><?php echo isset($lang["status" . $additional_archive_state])?$lang["status" . $additional_archive_state]:$additional_archive_state ?></option><?php }
             }?>
          </select>
          <div class="clearerleft"> </div>
@@ -1848,7 +1848,7 @@ else
      }
      </script>
      <div class="Question" id="question_resource_custom_access">
-      <label for="archive">Users with custom access</label>
+      <label for="res_custom_access">Users with custom access</label>
       <!-- table here -->
       <table id="res_custom_access" cellpadding="3" cellspacing="3">
         <tbody>
