@@ -4,13 +4,40 @@ global $ctheme,$userfixedtheme,$defaulttheme;
 $lastresorttheme = "";
 if(isset($userfixedtheme) && $userfixedtheme!="")
     {
-    $lastresorttheme = $userfixedtheme;
+    if(!in_array("col-".$ctheme,$plugins))
+        {
+        $lastresorttheme = $userfixedtheme;
+        }
+    else
+        {
+        $lastresorttheme="";
+        }
     }
-else if($ctheme!="")
+else if($ctheme!="" && sql_value("SELECT name as value FROM plugins WHERE inst_version>=0 and name='col-".$ctheme."'",'')!="")
     {
-    $lastresorttheme = false;
+    if(!in_array("col-".$ctheme,$plugins))
+        {
+        $lastresorttheme = $ctheme;
+        }
+    else
+        {
+        $lastresorttheme="";
+        }
     }
-else if(isset($defaulttheme) && $defaulttheme!="" )
+else if(!isset($defaulttheme) || $defaulttheme=="")
+    {
+    #If only one plugin enabled
+    $cplugins = sql_query("SELECT name FROM plugins WHERE inst_version>=0 AND name like'"."col-%' ORDER BY priority");
+    if(count($cplugins)==1 && isset($cplugins[0]["name"]))
+        {
+        $lastresorttheme = preg_replace("/^col-/","",$cplugins[0]["name"]);
+        }
+    else
+        {
+        $lastresorttheme = "";
+        }
+    }
+else if(isset($defaulttheme) && $defaulttheme!="")
     {
     $lastresorttheme = $defaulttheme;
     }
@@ -19,6 +46,7 @@ else
     $lastresorttheme = "";
     }
 
+# Process if required the colour theme.
 if($lastresorttheme)
     {
     global $plugins;
