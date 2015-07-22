@@ -50,7 +50,7 @@ if (getval("delete","")!="")
 	
 	$targettype=getvalescaped("targettype","");
 	# Check for resources of this  type
-	$affectedresources=sql_array("select ref value from resource where resource_type='$ref'",0);
+	$affectedresources=sql_array("select ref value from resource where resource_type='$ref' and ref>0",0);
 	if(count($affectedresources)>0 && $targettype=="")
 	    {
 	    //User needs to confirm a new resource type
