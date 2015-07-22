@@ -48,6 +48,10 @@ $has_dependants=$dependant_user_count + $dependant_groups > 0;
 if (!$has_dependants && getval("deleteme",false))
 	{
 	sql_query("delete from usergroup where ref='{$ref}'");
+
+	// No need to keep any records of language content for this user group
+	sql_query('DELETE FROM site_text WHERE specific_to_group = "' . $ref . '";');
+
 	redirect("{$baseurl_short}pages/admin/admin_group_management.php?{$url_params}");		// return to the user group management page
 	exit;
 	}	
@@ -337,7 +341,7 @@ include "../../include/header.php";
 
 		<div class="Question">
 			<label for="allow_registration_selection"><?php echo $lang["property-allow_registration_selection"]; ?></label>
-			<input name="allow_registration_selection" type="checkbox" value="1" <?php if ($record['allow_registration_selection']==1) { ?> checked="checked"<?php } ?>">
+			<input name="allow_registration_selection" type="checkbox" value="1" <?php if ($record['allow_registration_selection']==1) { ?> checked="checked"<?php } ?>>
 			<div class="clearerleft"></div>
 		</div>
 
@@ -364,7 +368,7 @@ include "../../include/header.php";
 
 		<div class="Question">
 			<label><?php echo $lang["fieldtitle-tick_to_delete_group"]?></label>
-			<input name="deleteme" type="checkbox" value="yes" <?php if($has_dependants) { ?> disabled="disabled"<?php } ?>>
+			<input id="delete_user_group" name="deleteme" type="checkbox" value="yes" <?php if($has_dependants) { ?> disabled="disabled"<?php } ?>>
 			<div class="clearerleft"></div>
 		</div>
 		
@@ -383,6 +387,18 @@ include "../../include/header.php";
 
 <script>
 	registerCollapsibleSections();
+
+	jQuery('#delete_user_group').click(function () {
+		<?php
+		$language_specific_results = sql_value('SELECT count(*) AS `value` FROM site_text WHERE specific_to_group = "' . $ref . '";', 0);
+		$alert_message = str_replace('%%RECORDSCOUNT%%', $language_specific_results, $lang["delete_user_group_checkbox_alert_message"]);
+		?>
+
+		if(<?php echo $language_specific_results; ?> > 0 && jQuery('#delete_user_group').is(':checked'))
+			{
+			alert('<?php echo $alert_message; ?>');
+			}
+	});
 </script>
 
 <?php
