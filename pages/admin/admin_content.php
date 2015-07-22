@@ -72,7 +72,12 @@ for ($n=$offset;(($n<count($text)) && ($n<($offset+$per_page)));$n++)
 
 </table>
 </div>
-<div class="BottomInpageNav"><?php pager(false); ?></div>
+<div class="BottomInpageNav">
+	<?php
+	$url = $baseurl_short . 'pages/admin/admin_content.php?findpage=' . urlencode($findpage) . '&findname=' . urlencode($findname) . '&findtext=' . urlencode($findtext);
+	pager(false);
+	?>
+</div>
 </div>
 
 
