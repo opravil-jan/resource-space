@@ -864,6 +864,7 @@ if (true) # Always show search header now.
 
 	if ($search_titles)
 		{
+		hook("beforesearchtitle");
 		echo $search_title;
 		hook("aftersearchtitle");
 		}
