@@ -462,12 +462,16 @@ foreach($active_plugins as $plugin)
 	$py = get_plugin_yaml($plugin_yaml_path, false);
 
 	# Check 
-	if((isset($py["userpreferencegroup"]) && preg_replace("/^col-/","",$py["name"])==$ctheme))
+	if((!isset($userfixedtheme) || $userfixedtheme=="") && (isset($py["userpreferencegroup"]) && preg_replace("/^col-/","",$py["name"])==$ctheme))
 		{
-		include_plugin_config($plugin['name'],$plugin['config'],$plugin['config_json']);
-		register_plugin($plugin['name']);
-		register_plugin_language($plugin['name']);
-		$plugins[]=$plugin['name'];
+		$exists = sql_value("SELECT name as value FROM plugins WHERE name='".$plugin["name"]."'",'');
+		if($exists)
+			{
+			include_plugin_config($plugin['name'],$plugin['config'],$plugin['config_json']);
+			register_plugin($plugin['name']);
+			register_plugin_language($plugin['name']);
+			$plugins[]=$plugin['name'];
+			}
 		}
 
 	# Check group access and applicable for this user in the group

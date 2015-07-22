@@ -8,7 +8,7 @@ if(isset($userfixedtheme) && $userfixedtheme!="")
     }
 else if($ctheme!="")
     {
-    $lastresorttheme = $ctheme;
+    $lastresorttheme = false;
     }
 else if(isset($defaulttheme) && $defaulttheme!="" )
     {
@@ -43,7 +43,7 @@ if($lastresorttheme)
             register_plugin($plugin['name']);
             register_plugin_language($plugin['name']);
             $plugins[]=$plugin['name'];
-            $ctheme = "col-".$userfixedtheme;
+            $ctheme = "col-".$lastresorttheme;
             }
         }
     }
