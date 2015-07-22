@@ -931,9 +931,6 @@ hook("thumblistextra");
 	<!--Menu-->	
 	<div id="CollectionMinRightNav">
         <a id="toggleThumbsLink" href="#" onClick="ToggleThumbs();return false;"><?php echo $lang["showthumbnails"]?></a>
-	</div>
-        
-        <div id="CollectionMinRightNav">
 	<?php
         // Render dropdown actions
 	render_actions($cinfo, false, false, "min");

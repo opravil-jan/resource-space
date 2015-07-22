@@ -160,6 +160,8 @@ input.defaultbutton {position: absolute; left: -100%; width: 0; height: 0;}
 #CollectionMinDrop form{margin:0;padding:0}
 #CollectionMinitems{float: left;margin: 5px 10px 0px;padding:0.35em 0em}
 #CollectionMinRightNav{float: right;margin: 5px 25px 0px 0px;padding:0.25em 0em}
+#CollectionMinRightNav #toggleThumbsLink, #CollectionMinRightNav .ActionsContainer {float:right;}
+#CollectionMinRightNav .ActionsContainer {margin-right:25px;}
 .CollectionTitleLinks a {margin: 5px 4px;}
 
 #CollectionMinDrop .SearchWidth {width: 150px;margin:0;padding: 0;}
