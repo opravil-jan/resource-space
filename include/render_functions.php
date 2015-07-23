@@ -382,7 +382,7 @@ function render_collection_actions(array $collection_data, $top_actions)
         }
 
     // Select collection option
-    if($top_actions && $k == '' && !checkperm('b') && ($userrequestmode != 2 && $userrequestmode != 3))
+    if($top_actions && $k == '' && !checkperm('b'))
         {
         $options .= render_dropdown_option('select_collection', $lang['selectcollection']);
         }
@@ -403,7 +403,7 @@ function render_collection_actions(array $collection_data, $top_actions)
     // Upload to collection
     if((checkperm('c') || checkperm('d')) && $collection_data['savedsearch'] == 0 && ($userref == $collection_data['user'] || $collection_data['allow_changes'] == 1 || checkperm('h')))
         {
-        $data_attribute['url'] = sprintf('%spages/edit.php?uploader=%s&ref=-%s&collection_add=%s|main|collections',
+        $data_attribute['url'] = sprintf('%spages/edit.php?uploader=%s&ref=-%s&collection_add=%s',
             $baseurl_short,
             urlencode($top_nav_upload_type),
             urlencode($userref),
