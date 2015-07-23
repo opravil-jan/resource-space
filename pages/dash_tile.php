@@ -61,7 +61,6 @@ if($submitdashtile)
 
 	#Check for update rather than new
 	$updatetile = getvalescaped("editdashtile",FALSE);
-
 	if($updatetile && is_numeric($updatetile))
 		{
 		$tile = get_tile($updatetile);

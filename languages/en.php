@@ -2113,6 +2113,7 @@ $lang['disk_size_no_upload_explain']="Due to space constraints, uploading has be
 $lang["savethissearchtodash"]="Save to dash tile";
 $lang["pushtoallusers"]="Push this dash tile to all users?";
 $lang["createnewdashtile"]="Create new dash tile";
+$lang["specialdashtiles"]="Special dash tiles";
 $lang["editdashtile"]="Edit dash tile";
 $lang["createdashtilefreetext"]="Create text only dash tile";
 $lang["enterdefaultorderby"]="Enter default position number";
@@ -2147,7 +2148,8 @@ $lang["error-dashactionmissing"]="No action or invalid data was submitted to thi
 $lang["dasheditchangeall_users"]="Turning off this setting will not remove this tile from all dashes, you must do this from manage all user tiles. However, new users will no longer receive this tile on their dash.";
 $lang["dashtilevisitlink"]="Visit target link";
 $lang["manageowndashinto"]="Manage dash tiles available for your dash. You can add / remove or edit tiles on your dash if you have the permissions to do so.";
-
+$lang["createdashtilependingsubmission"]="Create tile for user contributions pending submission ";
+$lang["createdashtilependingreview"]="Create tile for user contributions pending review";
 #Tile style strings
 $lang["tile_thmbs"]="Single";
 $lang["tile_multi"]="Multi";

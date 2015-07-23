@@ -35,6 +35,8 @@ function tile_select($tile_type,$tile_style,$tile,$tile_id,$tile_width,$tile_hei
 							exit;
 			case "custm":	tile_config_custom($tile,$tile_id,$tile_width,$tile_height);
 							exit;
+			case "pend": 	tile_config_pending($tile,$tile_id,$tile_width,$tile_height);
+							exit;
 			}
 		}
 	/*
@@ -158,7 +160,52 @@ function tile_config_custom($tile,$tile_id,$tile_width,$tile_height)
 	<p><?php echo i18n_get_translated($tile["txt"]) ?></p>
 	<?php
 	}
+function tile_config_pending($tile,$tile_id,$tile_width,$tile_height)
+	{
+	global $lang;
+	$linkstring = explode('?',$tile["link"]);
+	parse_str(str_replace("&amp;","&",$linkstring[1]),$linkstring);
 
+	$search="";
+	$count=1;
+	$restypes = "";
+	$order_by= "relevance";
+	$archive = $linkstring["archive"];
+	$sort = "";
+	$tile_search=do_search($search,$restypes,$order_by,$archive,$count,$sort,false,0,false,false,"",false,false);
+	$found_resources=true;
+	$count=count($tile_search);
+	if(!isset($tile_search[0]["ref"]))
+		{
+		$found_resources=false;
+		$count=0;
+		}
+	/* Hide if wish to not hide */
+	if(!$found_resources)
+		{ 
+		global $usertile;
+		if(isset($usertile))
+			{
+			?>
+			<style>
+			#user_tile<?php echo htmlspecialchars($usertile["ref"]);?>
+				{
+				display:none;
+				}
+			</style>
+			<?php
+			return;
+			}
+		}
+	?>
+	<span class='collection-icon'></span>
+	<h2 class="title notitle"> <?php echo $lang[$tile["txt"]]; ?></h2>
+	<p class="tile_corner_box">
+		<span class="count-icon"></span>
+		<?php echo $count; ?>
+	</p>
+	<?php
+	}
 
 /*
  * Freetext tile
