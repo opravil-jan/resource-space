@@ -196,7 +196,8 @@ hook("editbeforeheader");
 # -----------------------------------
 #           PERFORM SAVE
 # -----------------------------------
-if ((getval("autosave","")!="") || (getval("posting","")!="") || (getval("tweak","")=="" && getval("submitted","")!="" && getval("resetform","")=="" && getval("copyfrom","")==""))
+
+if ((getval("autosave","")!="") || (getval("tweak","")=="" && getval("submitted","")!="" && getval("resetform","")=="" && getval("copyfrom","")==""))
 {
 
   if(($embedded_data_user_select && getval("exif_option","")=="custom") || isset($embedded_data_user_select_fields))  
