@@ -75,14 +75,14 @@ if($lastresorttheme)
         if(!function_exists("activate_plugin"))
             {include dirname(__FILE__). "/plugin_functions.php";}
         activate_plugin("col-".$lastresorttheme);
-        $plugin = (sql_query("SELECT name,enabled_groups, config, config_json FROM plugins WHERE inst_version>=0 AND name='"."col-".escape_check($lastresorttheme)."' ORDER BY priority"));
-        if(isset($plugin[0]))
+        $cplugin = (sql_query("SELECT name,enabled_groups, config, config_json FROM plugins WHERE inst_version>=0 AND name='"."col-".escape_check($lastresorttheme)."' ORDER BY priority"));
+        if(isset($cplugin[0]))
             {
-            $plugin=$plugin[0];
-            include_plugin_config($plugin['name'],$plugin['config'],$plugin['config_json']);
-            register_plugin($plugin['name']);
-            register_plugin_language($plugin['name']);
-            $plugins[]=$plugin['name'];
+            $cplugin=$cplugin[0];
+            include_plugin_config($cplugin['name'],$cplugin['config'],$cplugin['config_json']);
+            register_plugin($cplugin['name']);
+            register_plugin_language($cplugin['name']);
+            $plugins[]=$cplugin['name'];
             $ctheme = "col-".$lastresorttheme;
             }
         }
