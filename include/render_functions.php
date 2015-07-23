@@ -192,9 +192,6 @@ function render_actions(array $collection_data, $top_actions = true, $two_line =
 
                 case 'remove_collection':
                     if(confirm("<?php echo $lang['removecollectionareyousure']; ?>")) {
-                        // I suspect this to not work but not sure what it should do
-                        // /pages/collection_manage.php
-                        // <input type="hidden" name="remove" id="collectionremove" value="">
                         // most likely will need to be done the same way as delete_collection
                         document.getElementById('collectionremove').value = '<?php echo urlencode($collection_data["ref"]); ?>';
                         document.getElementById('collectionform').submit();
@@ -336,7 +333,7 @@ function render_collection_actions(array $collection_data, $top_actions)
     global $baseurl_short, $lang, $k, $userrequestmode, $collection_download, $contact_sheet,
            $manage_collections_contact_sheet_link, $manage_collections_share_link, $allow_share,
            $manage_collections_remove_link, $userref, $collection_purge, $show_edit_all_link, $result,
-           $edit_all_checkperms, $preview_all, $order_by, $sort, $archive, $usercollection, $contact_sheet_link_on_collection_bar,
+           $edit_all_checkperms, $preview_all, $order_by, $sort, $archive, $contact_sheet_link_on_collection_bar,
            $show_searchitemsdiskusage, $emptycollection, $remove_resources_link_on_collection_bar, $count_result,
            $download_usage, $home_dash, $top_nav_upload_type;
 
@@ -347,9 +344,8 @@ function render_collection_actions(array $collection_data, $top_actions)
         return $options;
         }
 
-    $multi_edit = allow_multi_edit($collection_data['ref']);
 
-    if(!collection_is_research_request($usercollection) || !checkperm('r'))
+    if(!collection_is_research_request($collection_data['ref']) || !checkperm('r'))
         {
         if(!$top_actions && checkperm('s'))
             {
@@ -362,7 +358,7 @@ function render_collection_actions(array $collection_data, $top_actions)
                 {
                 $data_attribute['url'] = sprintf('%spages/collection_feedback.php?collection=%s&k=%s',
                     $baseurl_short,
-                    urlencode($usercollection),
+                    urlencode($collection_data['ref']),
                     urlencode($k)
                 );
                 $options .= render_dropdown_option('collection_feedback', $lang['sendfeedback'], $data_attribute);
@@ -371,7 +367,7 @@ function render_collection_actions(array $collection_data, $top_actions)
         }
     else
         {
-        $research = sql_value('SELECT ref value FROM research_request WHERE collection="' . $usercollection . '";', 0);
+        $research = sql_value('SELECT ref value FROM research_request WHERE collection="' . $collection_data['ref'] . '";', 0);
 
         // Manage research requests
         $data_attribute['url'] = sprintf('%spages/team/team_research.php', $baseurl_short);
@@ -439,7 +435,7 @@ function render_collection_actions(array $collection_data, $top_actions)
             {
             $data_attribute['url'] = sprintf('%spages/collection_request.php?ref=%s&k=%s',
                 $baseurl_short,
-                urlencode($usercollection),
+                urlencode($collection_data['ref']),
                 urlencode($k)
             );
             $options .= render_dropdown_option('request_all', $lang['requestall'], $data_attribute);
@@ -452,7 +448,7 @@ function render_collection_actions(array $collection_data, $top_actions)
         $data_attribute['url'] = sprintf('%spages/terms.php?k=%s&url=pages/download_usage.php?collection=%s&k=%s',
             $baseurl_short,
             urlencode($k),
-            urlencode($usercollection),
+            urlencode($collection_data['ref']),
             urlencode($k)
         );
         $options .= render_dropdown_option('download_collection', $lang['action-download'], $data_attribute);
@@ -462,7 +458,7 @@ function render_collection_actions(array $collection_data, $top_actions)
         $data_attribute['url'] = sprintf('%spages/terms.php?k=%s&url=pages/collection_download.php?collection=%s&k=%s',
             $baseurl_short,
             urlencode($k),
-            urlencode($usercollection),
+            urlencode($collection_data['ref']),
             urlencode($k)
         );
         $options .= render_dropdown_option('download_collection', $lang['action-download'], $data_attribute);
@@ -534,11 +530,11 @@ function render_collection_actions(array $collection_data, $top_actions)
         }
         
     // View all
-    if(count($result) > 0 && $show_edit_all_link && (!$edit_all_checkperms || allow_multi_edit($result)))
+    if(count($result) > 0)
         {
         $data_attribute['url'] = sprintf('%spages/search.php?search=!collection%s',
             $baseurl_short,
-            urlencode($usercollection)
+            urlencode($collection_data['ref'])
         );
 
         $options .= render_dropdown_option('view_all_resources_in_collection', $lang['view_all_resources'], $data_attribute);
@@ -563,7 +559,7 @@ function render_collection_actions(array $collection_data, $top_actions)
 
     // Delete all
     // Note: functionality moved from edit collection page
-    if(!$top_actions && $multi_edit && !checkperm('D') && (count($result) != 0 || $count_result != 0)) 
+    if(!$top_actions && !checkperm('D') && (count($result) != 0 || $count_result != 0)) 
         {
         $options .= render_dropdown_option('delete_all_in_collection', $lang['deleteallresourcesfromcollection']);
         }
@@ -582,11 +578,11 @@ function render_collection_actions(array $collection_data, $top_actions)
         }
 
     // Remove all
-    if(isset($emptycollection) && $remove_resources_link_on_collection_bar && collection_writeable($usercollection))
+    if(isset($emptycollection) && $remove_resources_link_on_collection_bar && collection_writeable($collection_data['ref']))
         {
         $data_attribute['url'] = sprintf('%spages/collections.php?emptycollection=%s&removeall=true&submitted=removeall&ajax=true',
             $baseurl_short,
-            urlencode($usercollection)
+            urlencode($collection_data['ref'])
         );
 
         $options .= render_dropdown_option('empty_collection', $lang['emptycollection'], $data_attribute);
@@ -599,7 +595,7 @@ function render_collection_actions(array $collection_data, $top_actions)
                 data-url="%spages/search_disk_usage.php?search=!collection%s&k=%s"
             ',
             $baseurl_short,
-            urlencode($usercollection),
+            urlencode($collection_data['ref']),
             urlencode($k)
         );
 
