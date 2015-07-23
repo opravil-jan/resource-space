@@ -266,7 +266,21 @@ $site_text=array();
 $results=sql_query("select language,name,text from site_text where (page='$pagename' or page='all') and (specific_to_group is null or specific_to_group=0)");
 for ($n=0;$n<count($results);$n++) {$site_text[$results[$n]["language"] . "-" . $results[$n]["name"]]=$results[$n]["text"];}
 
-$results=sql_query("select name,text,page,language from site_text where language='" . escape_check($language) . "'  or language='" . escape_check($defaultlanguage) . "' $pagefilter and (specific_to_group is null or specific_to_group=0)");
+$query = sprintf('
+		SELECT `name`,
+		       `text`,
+		       `page`,
+		       `language`, specific_to_group 
+		  FROM site_text
+		 WHERE (`language` = "%s" OR `language` = "%s")
+		   %s  #pagefilter
+		   AND (specific_to_group IS NULL OR specific_to_group = 0);
+	',
+	escape_check($language),
+	escape_check($defaultlanguage),
+	$pagefilter
+);
+$results=sql_query($query);
 
 // Go through the results twice, setting the default language first, then repeat for the user language so we can override the default with any language specific entries
 for ($n=0;$n<count($results);$n++) 
