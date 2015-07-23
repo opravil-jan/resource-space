@@ -1080,7 +1080,7 @@ function email_reset_link($email,$newuser=false)
 	# Send a link to reset password
 	global $password_brute_force_delay, $scramble_key;
 	if ($email=="") {return false;}
-	$details=sql_query("select ref, username from user where email like '$email' and approved=1 and (account_expires is null or account_expires>now())");
+	$details=sql_query("select ref, username from user where email like '" . escape_check($email) . "' and approved=1 and (account_expires is null or account_expires>now())");
 	if (count($details)==0) {sleep($password_brute_force_delay);return false;}
 	$details=$details[0];
 	global $applicationname,$email_from,$baseurl,$lang,$email_url_remind_user;
@@ -1853,7 +1853,7 @@ function send_mail_phpmailer($email,$subject,$message="",$from="",$reply_to="",$
 	if ($html_template!="")
 		{
 		# Attempt to verify users by email, which allows us to get the email template by lang and usergroup
-		$to_usergroup=sql_query("select lang,usergroup from user where email ='$email'","");
+		$to_usergroup=sql_query("select lang,usergroup from user where email ='" . escape_check($email) . "'","");
 
 		if (count($to_usergroup)!=0)
 			{
