@@ -273,7 +273,7 @@ $tile_styles["srch"]=array("thmbs","multi","blank");
 $tile_styles["ftxt"]=array("ftxt");
 # Place the default dash (tiles set for all_users) on the home page for anonymous users with none of the drag 'n' drop functionality.
 $anonymous_default_dash=true;
-# use shadows on tile content (Suitable for transparent tiles)
+# use shadows on all tile content (Built in support for transparent tiles)
 $dash_tile_shadows=false;
 # All user permissions for the dash are revoked and the dash admin can manage a single dash for all users. 
 # Only those with admin privileges can modify the dash and this must be done from the Team Centre > Manage all user dash tiles (One dash for all)
@@ -281,6 +281,46 @@ $managed_home_dash = false;
 # Allows Dash Administrators to have their own dash whilst all other users have the managed dash ($managed_home_dash must be on)
 $unmanaged_home_dash_admins = false;
 /* End Dash Config Options */
+
+/*
+ * Legacy Tile options 
+ * The home_dash option and functionality has replaced these config options 
+ */
+
+	# Options to show/hide the tiles on the home page
+	$home_themeheaders=false;
+	$home_themes=true;
+	$home_mycollections=true;
+	$home_helpadvice=true;
+	$home_advancedsearch=false;
+	$home_mycontributions=false;
+	#
+	# Custom panels for the home page.
+	# You can add as many panels as you like. They must be numbered sequentially starting from zero (0,1,2,3 etc.)
+	#
+	# You may want to turn off $home_themes etc. above if you want ONLY your own custom panels to appear on the home page.
+	#
+	# The below are examples.
+	#
+	# $custom_home_panels[0]["title"]="Custom Panel A";
+	# $custom_home_panels[0]["text"]="Custom Panel Text A";
+	# $custom_home_panels[0]["link"]="search.php?search=example";
+	#
+	# You can add additional code to a link like this:
+	# $custom_home_panels[0]["additional"]="target='_blank'";
+	#
+	# $custom_home_panels[1]["title"]="Custom Panel B";
+	# $custom_home_panels[1]["text"]="Custom Panel Text B";
+	# $custom_home_panels[1]["link"]="search.php?search=example";
+	#
+	# $custom_home_panels[2]["title"]="Custom Panel C";
+	# $custom_home_panels[2]["text"]="Custom Panel Text C";
+	# $custom_home_panels[2]["link"]="search.php?search=example";
+
+/*
+ * End of Legacy Tile Config
+ */ 
+
 
 # Optional 'quota size' for allocation of a set amount of disk space to this application. Value is in GB.
 # Note: Unix systems only.
@@ -876,37 +916,6 @@ $searchbar_buttons_at_bottom=true;
 
 # Hide the main simple search field in the searchbar (if using only simple search fields for the searchbar)
 $hide_main_simple_search=false;
-
-# Options to show/hide the link panels on the home page
-$home_themeheaders=false;
-$home_themes=true;
-$home_mycollections=true;
-$home_helpadvice=true;
-$home_advancedsearch=false;
-$home_mycontributions=false;
-#
-# Custom panels for the home page.
-# You can add as many panels as you like. They must be numbered sequentially starting from zero (0,1,2,3 etc.)
-#
-# You may want to turn off $home_themes etc. above if you want ONLY your own custom panels to appear on the home page.
-#
-# The below are examples.
-#
-# $custom_home_panels[0]["title"]="Custom Panel A";
-# $custom_home_panels[0]["text"]="Custom Panel Text A";
-# $custom_home_panels[0]["link"]="search.php?search=example";
-#
-# You can add additional code to a link like this:
-# $custom_home_panels[0]["additional"]="target='_blank'";
-#
-# $custom_home_panels[1]["title"]="Custom Panel B";
-# $custom_home_panels[1]["text"]="Custom Panel Text B";
-# $custom_home_panels[1]["link"]="search.php?search=example";
-#
-# $custom_home_panels[2]["title"]="Custom Panel C";
-# $custom_home_panels[2]["text"]="Custom Panel Text C";
-# $custom_home_panels[2]["link"]="search.php?search=example";
-
 
 # Custom top navigation links.
 # You can add as many panels as you like. They must be numbered sequentially starting from zero (0,1,2,3 etc.)
