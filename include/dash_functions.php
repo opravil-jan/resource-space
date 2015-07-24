@@ -979,7 +979,7 @@ function build_dash_tile_list($dtiles_available)
   			</td>
   			<td>
   				<?php 
-  				if(isset($buildstring["tltype"]) && $buildstring["tltype"]=="conf" && $buildstring["tlstyle"]!="custm")
+  				if(isset($buildstring["tltype"]) && $buildstring["tltype"]=="conf" && $buildstring["tlstyle"]!="custm" && $buildstring["tlstyle"]!="pend")
   					{echo $lang[$tile["title"]];}
   				else 
   					{echo $tile["title"];}
@@ -987,9 +987,11 @@ function build_dash_tile_list($dtiles_available)
   			</td>
   			<td>
   				<?php 
-  				if(isset($buildstring["tltype"]) && $buildstring["tltype"]=="conf" && $buildstring["tlstyle"]!="custm")
+  				if(isset($buildstring["tltype"]) && $buildstring["tltype"]=="conf" && $buildstring["tlstyle"]!="custm" && $buildstring["tlstyle"]!="pend")
   					{$tile["txt"] = text($tile["title"]);}
-
+  				else if(isset($buildstring["tltype"]) && $buildstring["tltype"]=="conf" && $buildstring["tlstyle"]=="pend")
+  					{$tile["txt"] = $lang[$tile["txt"]];}
+  				
   				if(strlen($tile["txt"])>75)
   					{
   					echo substr($tile["txt"],0,72)."...";
