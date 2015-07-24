@@ -8,7 +8,25 @@ include "../../include/dash_functions.php";
 include "../../include/header.php";
 ?>
 <div class="BasicsBox"> 
-<h2><?php echo $lang["specialdashtiles"];?></h2>
+<h1><?php echo $lang["specialdashtiles"];?></h1>
+<p></p>
+<p>
+	<a href="<?php echo $baseurl_short?>pages/team/team_home.php" onClick="return CentralSpaceLoad(this,true);">
+		&lt;&nbsp;<?php echo $lang["backtoteamhome"]?>
+	</a>
+</p>
+<p>
+	<a href="<?php echo $baseurl_short?>pages/team/team_dash_tile.php" onClick="return CentralSpaceLoad(this,true);">
+		&lt;&nbsp;<?php echo $lang["managedefaultdash"]?>
+	</a>
+</p>
+<p>
+	<a href="<?php echo $baseurl_short?>pages/team/team_dash_admin.php" onClick="return CentralSpaceLoad(this,true);">
+		&gt;&nbsp;<?php echo $lang["dasheditmodifytiles"];?>
+	</a>
+</p>
+
+<h2><?php echo $lang["createnewdashtile"];?></h2>
 <p></p>
 <ul>
 	<li>
@@ -18,6 +36,7 @@ include "../../include/header.php";
 	</li>
 </ul>
 <h2><?php echo $lang["alluserprebuiltdashtiles"];?></h2>
+<p></p>
 <ul>
 	<li>
 		<a href="<?php echo $baseurl."/pages/dash_tile.php?create=true&submitdashtile=true&tltype=conf&tlstyle=pend&freetext=userpendingsubmission&all_users=true&link=/pages/search.php?search=%26archive=-2";?>">

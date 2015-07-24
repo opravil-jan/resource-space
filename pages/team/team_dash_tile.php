@@ -8,7 +8,12 @@ include "../../include/dash_functions.php";
 include "../../include/header.php";
 ?>
 <div class="BasicsBox"> 
-
+	<h1><?php echo $lang["manage_all_dash"];?></h1>
+<p>
+	<a href="<?php echo $baseurl_short?>pages/team/team_home.php" onClick="return CentralSpaceLoad(this,true);">
+		&lt;&nbsp;<?php echo $lang["backtoteamhome"]?>
+	</a>
+</p>
 <p>
 	<a href="<?php echo $baseurl_short?>pages/team/team_dash_admin.php" onClick="return CentralSpaceLoad(this,true);">
 		&gt;&nbsp;<?php echo $lang["dasheditmodifytiles"];?>

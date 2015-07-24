@@ -64,9 +64,8 @@ include "../../include/header.php";
 	</a>
 </p>
 <p>
-	<a href="<?php echo $baseurl."/pages/dash_tile.php?create=true&tltype=ftxt&modifylink=true&freetext=Helpful%20tips%20here&nostyleoptions=true&all_users=1&link=http://resourcespace.org/knowledge-base/&title=Knowledge%20Base";?>"
-	>
-		&gt;&nbsp;<?php echo $lang["createdashtilefreetext"]?>
+	<a href="<?php echo $baseurl_short?>pages/team/team_dash_tile_special.php" onClick="return CentralSpaceLoad(this,true);">
+		&gt;&nbsp;<?php echo $lang["specialdashtiles"];?>
 	</a>
 </p>
 	<form class="Listview">
