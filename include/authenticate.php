@@ -223,12 +223,6 @@ if (array_key_exists("user",$_COOKIE) || array_key_exists("user",$_GET) || isset
     	
     	$userpreferences = ($user_preferences)? sql_query("SELECT user,colour_theme FROM user_preferences WHERE user=".$userref): FALSE;
     	$userpreferences = ($userpreferences && isset($userpreferences[0])) ? $userpreferences[0]: FALSE;
-    	
-    	if($userpreferences!=FALSE && (!array_key_exists('colour_theme',$_COOKIE) || $userpreferences['colour_theme']!=$_COOKIE['colour_theme']))
-			{
-			# set a cookie to be used on login
-			rs_setcookie("colour_theme", $userpreferences['colour_theme'], 0, "", "", substr($baseurl,0,5)=="https", true); //astec
-			}
 
         # Some alternative language choices for basket mode / e-commerce
         if ($userrequestmode==2 || $userrequestmode==3)

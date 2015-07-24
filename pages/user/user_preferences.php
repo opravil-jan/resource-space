@@ -25,6 +25,20 @@ if(getvalescaped("quicksave",FALSE))
 	$ctheme = getvalescaped("colour_theme","");
 	if($ctheme==""){exit("missing");}
 	$ctheme = trim(mb_strtolower($ctheme));
+	if($ctheme =="default")
+		{
+		if(empty($userpreferences))
+			{
+			// create a record
+			sql_query("INSERT into user_preferences (user,colour_theme) VALUES (".$userref.",null)");
+			exit("1");
+			}
+		else
+			{
+			sql_query("UPDATE user_preferences SET colour_theme=null WHERE user=".$userref);
+			exit("1");
+			}
+		}
 	if(in_array($ctheme,$plugin_names))
 		{
 		// check that record exists for user
@@ -67,6 +81,11 @@ include "../../include/header.php";
 						window.location,
 						{"colour_theme":theme,"quicksave":"true"},
 						function(data){
+							if(theme!="default") {
+								SetCookie("colour_theme",theme,0,true);
+							} else {
+								SetCookie("colour_theme","",0,true);
+							}
 							location.reload();
 						});
 				}
@@ -78,6 +97,28 @@ include "../../include/header.php";
 				<table id="" class="radioOptionTable">
 					<tbody>
 						<tr>
+						<!-- Default option -->
+						<td valign="middle">
+		                    <input 
+		                    	type="radio" 
+		                    	name="defaulttheme" 
+		                    	value="default" 
+		                    	onChange="updateColourTheme('default');"
+		                    	<?php
+		                    		if
+		                    		(
+		                    			(isset($userpreferences["colour_theme"]) && $userpreferences["colour_theme"]=="") 
+		                    			|| 
+		                    			(!isset($userpreferences["colour_theme"]) && $defaulttheme=="")
+		                    		) { echo "checked";}
+		                    	?>
+		                    />
+		                </td>
+		                <td align="left" valign="middle">
+		                    <label class="customFieldLabel" for="defaulttheme">
+		                    	<?php echo $lang["default"];?>
+		                    </label>
+		                </td>
 						<?php
 						foreach($userpreferences_plugins["colourtheme"] as $colourtheme)
 							{ ?>
