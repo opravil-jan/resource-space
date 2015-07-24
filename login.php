@@ -67,6 +67,13 @@ elseif (array_key_exists("username",$_POST) && getval("langupdate","")=="")
         # Set default resource types
         setcookie("restypes",$default_res_types, 0, '', '', false, true);
 
+        $userpreferences = ($user_preferences)? sql_query("SELECT user,colour_theme FROM user_preferences WHERE user=".$result["ref"]): FALSE;
+        $userpreferences = ($userpreferences && isset($userpreferences[0])) ? $userpreferences[0]: FALSE;
+        if($userpreferences)
+            {
+            rs_setcookie("colour_theme", $userpreferences["colour_theme"],$expires, "/", "", substr($baseurl,0,5)=="https", true);
+            }
+
 		# If the redirect URL is the collection frame, do not redirect to this as this will cause
 		# the collection frame to appear full screen.
 		if (strpos($url,"pages/collections.php")!==false) {$url="index.php";}

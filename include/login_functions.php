@@ -75,6 +75,7 @@ function perform_login()
 		$result['valid']=true;
 		$result['session_hash']=$session_hash;
 		$result['password_hash']=$password_hash;
+		$result['ref']=$userref;
 
 		# Update the user record.
 		# Omit updating session has if using an API, because we don't want API usage to log users out, and there is no 'session' to remember in such a case.
