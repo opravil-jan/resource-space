@@ -3932,7 +3932,7 @@ function rs_setcookie($name, $value, $daysexpire = 0, $path = "", $domain = "", 
 
     if((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] === getservbyname("https", "tcp"))
     	{
-    		$secure=true;
+    	$secure=true;
     	}
      	
     if ($global_cookies)

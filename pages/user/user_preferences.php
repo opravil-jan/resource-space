@@ -21,36 +21,39 @@ foreach($active_plugins as $plugin)
 
 if(getvalescaped("quicksave",FALSE))
 	{
-	print_r($plugin_names);
 	$ctheme = getvalescaped("colour_theme","");
 	if($ctheme==""){exit("missing");}
-	$ctheme = trim(mb_strtolower($ctheme));
+	$ctheme = preg_replace("/^col-/","",trim(mb_strtolower($ctheme)));
 	if($ctheme =="default")
 		{
 		if(empty($userpreferences))
 			{
 			// create a record
 			sql_query("INSERT into user_preferences (user,colour_theme) VALUES (".$userref.",null)");
+			rs_setcookie("colour_theme", "",100, "/", "", substr($baseurl,0,5)=="https", true);
 			exit("1");
 			}
 		else
 			{
 			sql_query("UPDATE user_preferences SET colour_theme=null WHERE user=".$userref);
+			rs_setcookie("colour_theme", "",100, "/", "", substr($baseurl,0,5)=="https", true);
 			exit("1");
 			}
 		}
-	if(in_array($ctheme,$plugin_names))
+	if(in_array("col-".$ctheme,$plugin_names))
 		{
 		// check that record exists for user
 		if(empty($userpreferences))
 			{
 			// create a record
 			sql_query("INSERT into user_preferences (user,colour_theme) VALUES (".$userref.",'".escape_check(preg_replace("/^col-/","",$ctheme))."')");
+			rs_setcookie("colour_theme", escape_check(preg_replace("/^col-/","",$ctheme)),100, "/", "", substr($baseurl,0,5)=="https", true);
 			exit("1");
 			}
 		else
 			{
 			sql_query("UPDATE user_preferences SET colour_theme='".escape_check(preg_replace("/^col-/","",$ctheme))."' WHERE user=".$userref);
+			rs_setcookie("colour_theme", escape_check(preg_replace("/^col-/","",$ctheme)),100, "/", "", substr($baseurl,0,5)=="https", true);
 			exit("1");
 			}
 		}
@@ -81,11 +84,6 @@ include "../../include/header.php";
 						window.location,
 						{"colour_theme":theme,"quicksave":"true"},
 						function(data){
-							if(theme!="default") {
-								SetCookie("colour_theme",theme,0,true);
-							} else {
-								SetCookie("colour_theme","",0,true);
-							}
 							location.reload();
 						});
 				}
@@ -127,7 +125,7 @@ include "../../include/header.php";
 			                    	type="radio" 
 			                    	name="defaulttheme" 
 			                    	value="<?php echo preg_replace("/^col-/","",$colourtheme["name"]);?>" 
-			                    	onChange="updateColourTheme('<?php echo $colourtheme["name"];?>');"
+			                    	onChange="updateColourTheme('<?php echo preg_replace("/^col-/","",$colourtheme["name"]);?>');"
 			                    	<?php
 			                    		if
 			                    		(
