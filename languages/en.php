@@ -682,6 +682,7 @@ $lang["text"]="Text";
 $lang["yes"]="Yes";
 $lang["no"]="No";
 $lang["key"]="Key:"; # e.g. explanation of icons on search page
+$lang["default"]="Default";
 $lang["languageselection"]="Language selection";
 $lang["language"]="Language";
 $lang["changeyourpassword"]="Change your password";
@@ -2147,9 +2148,18 @@ $lang['confirmdeleteconfigtile']="This tile is controlled by configuration optio
 $lang["error-dashactionmissing"]="No action or invalid data was submitted to this page. No tile template available to build. <br />Please return to this page from a suitable creation / edit link";
 $lang["dasheditchangeall_users"]="Turning off this setting will not remove this tile from all dashes, you must do this from manage all user tiles. However, new users will no longer receive this tile on their dash.";
 $lang["dashtilevisitlink"]="Visit target link";
+$lang["alluserprebuiltdashtiles"]="Pre-constructed dash tiles (added for all users)";
 $lang["manageowndashinto"]="Manage dash tiles available for your dash. You can add / remove or edit tiles on your dash if you have the permissions to do so.";
-$lang["createdashtilependingsubmission"]="Create tile for user contributions pending submission ";
-$lang["createdashtilependingreview"]="Create tile for user contributions pending review";
+
+/* Create Config dash tile link descriptions (text) */
+$lang["createdashtilependingsubmission"]="Create tile for user contributions pending submission (hides if none in state)";
+$lang["createdashtilependingreview"]="Create tile for user contributions pending review (hides if none in state)";
+$lang["createdashtilethemeselector"]="Create tile to link to featured collections with a selector for a specific collection category";
+$lang["createdashtilethemes"]="Create tile to link to featured collections";
+$lang["createdashtilemycollections"]="Create tile to link to my collections (user specific)";
+$lang["createdashtileadvancedsearch"]="Create tile to link to advanced search";
+$lang["createdashtilemycontributions"]="Create tile to link to my contributions (user specific)";
+$lang["createdashtilehelpandadvice"]="Create tile to link to help and advice";
 #Tile style strings
 $lang["tile_thmbs"]="Single";
 $lang["tile_multi"]="Multi";

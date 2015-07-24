@@ -16,6 +16,9 @@ include "../../include/header.php";
 			<?php echo $lang["createdashtilefreetext"];?>
 		</a>
 	</li>
+</ul>
+<h2><?php echo $lang["alluserprebuiltdashtiles"];?></h2>
+<ul>
 	<li>
 		<a href="<?php echo $baseurl."/pages/dash_tile.php?create=true&submitdashtile=true&tltype=conf&tlstyle=pend&freetext=userpendingsubmission&all_users=true&link=/pages/search.php?search=%26archive=-2";?>">
 			<?php echo $lang["createdashtilependingsubmission"];?>
@@ -26,7 +29,62 @@ include "../../include/header.php";
 			<?php echo $lang["createdashtilependingreview"];?>
 		</a>
 	</li>
-</ul>
+	<?php 
+	if($enable_themes && !$home_themeheaders)
+		{ ?>
+		<li>
+			<a href="<?php echo $baseurl."/pages/dash_tile.php?create=true&submitdashtile=true&tltype=conf&tlstyle=thmsl&title=themeselector&all_user=true&link=pages/themes.php&url=pages/ajax/dash_tile.php%3Ftltype=conf%26tlstyle=thmsl";?>">
+				<?php echo $lang["createdashtilethemeselector"];?>
+			</a>
+		</li>
+		<?php
+		}
+	if($enable_themes && !$home_themes)
+		{ ?>
+		<li>
+			<a href="<?php echo $baseurl."/pages/dash_tile.php?create=true&submitdashtile=true&tltype=conf&tlstyle=theme&title=themes&all_user=true&link=pages/themes.php&url=pages/ajax/dash_tile.php%3Ftltype=conf%26tlstyle=theme";?>">
+				<?php echo $lang["createdashtilethemes"];?>
+			</a>
+		</li>
+		<?php
+		}
+	if(!$home_mycollections)
+		{ ?>
+		<li>
+			<a href="<?php echo $baseurl."/pages/dash_tile.php?create=true&submitdashtile=true&tltype=conf&tlstyle=mycol&title=mycollections&all_user=true&link=pages/collection_manage.php&url=pages/ajax/dash_tile.php%3Ftltype=conf%26tlstyle=mycol";?>">
+				<?php echo $lang["createdashtilemycollections"];?>
+			</a>
+		</li>
+		<?php
+		}
+	if(!$home_advancedsearch)
+		{ ?>
+		<li>
+			<a href="<?php echo $baseurl."/pages/dash_tile.php?create=true&submitdashtile=true&tltype=conf&tlstyle=advsr&title=advancedsearch&all_user=true&link=pages/search_advanced.php&url=pages/ajax/dash_tile.php%3Ftltype=conf%26tlstyle=advsr";?>">
+				<?php echo $lang["createdashtileadvancedsearch"];?>
+			</a>
+		</li>
+		<?php
+		}
+	if(!$home_mycontributions)
+		{ ?>
+		<li>
+			<a href="<?php echo $baseurl."/pages/dash_tile.php?create=true&submitdashtile=true&tltype=conf&tlstyle=mycnt&title=mycontributions&all_user=true&link=pages/contribute.php&url=pages/ajax/dash_tile.php%3Ftltype=conf%26tlstyle=mycnt";?>">
+				<?php echo $lang["createdashtilemycontributions"];?>
+			</a>
+		</li>
+		<?php
+		}
+	if(!$home_helpadvice)
+		{ ?>
+		<li>
+			<a href="<?php echo $baseurl."/pages/dash_tile.php?create=true&submitdashtile=true&tltype=conf&tlstyle=hlpad&title=helpandadvice&all_user=true&link=pages/help.php&url=pages/ajax/dash_tile.php%3Ftltype=conf%26tlstyle=hlpad";?>">
+				<?php echo $lang["createdashtilehelpandadvice"];?>
+			</a>
+		</li>
+		<?php
+		}
+	?>
 
 </div>
 <?php
