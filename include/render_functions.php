@@ -290,7 +290,7 @@ function render_actions(array $collection_data, $top_actions = true, $two_line =
                         var post_data = {
                             submitted: true,
                             ref: '<?php echo $collection_data["ref"]; ?>',
-                            name: '<?php echo $collection_data["name"]; ?>',
+                            name: '<?php echo urlencode($collection_data["name"]); ?>',
                             public: '<?php echo $collection_data["public"]; ?>',
                             deleteall: 'on'
                         };
@@ -335,7 +335,7 @@ function render_collection_actions(array $collection_data, $top_actions)
            $manage_collections_remove_link, $userref, $collection_purge, $show_edit_all_link, $result,
            $edit_all_checkperms, $preview_all, $order_by, $sort, $archive, $contact_sheet_link_on_collection_bar,
            $show_searchitemsdiskusage, $emptycollection, $remove_resources_link_on_collection_bar, $count_result,
-           $download_usage, $home_dash, $top_nav_upload_type;
+           $download_usage, $home_dash, $top_nav_upload_type, $pagename;
 
     $options = '';
 
@@ -381,8 +381,8 @@ function render_collection_actions(array $collection_data, $top_actions)
         $options .= render_dropdown_option('edit_research_requests', $lang['editresearchrequests'], $data_attribute);
         }
 
-    // Select collection option
-    if($top_actions && $k == '' && !checkperm('b'))
+    // Select collection option - not for collection bar
+    if($pagename!="collections" && $k == '' && !checkperm('b') && ($pagename=="themes" || $top_actions))
         {
         $options .= render_dropdown_option('select_collection', $lang['selectcollection']);
         }
@@ -530,7 +530,7 @@ function render_collection_actions(array $collection_data, $top_actions)
         }
         
     // View all
-    if(count($result) > 0)
+    if((isset($collection_data["c"]) && $collection_data["c"]>0) || count($result) > 0)
         {
         $data_attribute['url'] = sprintf('%spages/search.php?search=!collection%s',
             $baseurl_short,
