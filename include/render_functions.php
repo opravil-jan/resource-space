@@ -132,12 +132,12 @@ function render_actions(array $collection_data, $top_actions = true, $two_line =
         return;
         }
 
-    global $baseurl, $lang;
+    global $baseurl, $lang, $pagename;
 
     // globals that could also be passed as a reference
     global $result /*search result*/;
 
-    $action_selection_id = 'action_selection' . $id;
+    $action_selection_id = $pagename . '_action_selection' . $id;
     if(!$top_actions)
         {
         $action_selection_id .= '_bottom';
