@@ -452,6 +452,12 @@ function cleanse_string($string,$preserve_separators,$preserve_hyphen=false,$is_
 					$separators=array_diff($separators,array("-")); # Remove hyphen from separator array.
 				}
         	}
+        if (substr($string,0,1)=="!" && strpos(substr($string,1),"!")===false) 
+                {
+                // If we have the exclamation mark configured as a config separator but we are doing a special search we don't want to remove it
+                $separators=array_diff($separators,array("!")); 
+                }
+        
         if ($preserve_separators)
                 {
                 return mb_strtolower(trim_spaces(str_replace($separators," ",$string)),'UTF-8');
