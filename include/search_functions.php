@@ -894,52 +894,65 @@ function do_search($search,$restypes="",$order_by="relevance",$archive=0,$fetchr
         }
     
     # View Collection
-    if (substr($search,0,11)=="!collection")
+    if (substr($search, 0, 11) == '!collection')
         {
-        if ($orig_order=="relevance") {$order_by="c.sortorder asc,c.date_added desc,r.ref desc";}
-        $colcustperm=$sql_join;
-        $colcustfilter=$sql_filter; // to avoid allowing this sql_filter to be modified by the $access_override search in the smart collection update below!!!
-        
-        if (getval("k","")!="") {$sql_filter="r.ref>0";} # Special case if a key has been provided.
-        
+        if($orig_order == 'relevance')
+            {
+            $order_by = 'c.sortorder ASC, c.date_added DESC, r.ref DESC';
+            }
+
+        $colcustperm   = $sql_join;
+        $colcustfilter = $sql_filter; // to avoid allowing this sql_filter to be modified by the $access_override search in the smart collection update below!!!
+
+        # Special case if a key has been provided.
+        if(getval('k', '') != '')
+            {
+            $sql_filter = 'r.ref > 0';
+            }
+
         # Extract the collection number
-        $collection=explode(" ",$search);$collection=str_replace("!collection","",$collection[0]);
-        $collection=explode(",",$collection);// just get the number
-        $collection=escape_check($collection[0]);
+        $collection = explode(' ', $search);
+        $collection = str_replace('!collection', '', $collection[0]);
+        $collection = explode(',', $collection); // just get the number
+        $collection = escape_check($collection[0]);
 
         # Check access
-        if (!collection_readable($collection)) {return false;}
-        
-        # smart collections update
-        global $allow_smart_collections,$smart_collections_async;
-        if ($allow_smart_collections)
+        if(!collection_readable($collection))
+            {
+            return false;
+            }
+
+        # Smart collections update
+        global $allow_smart_collections, $smart_collections_async;
+        if($allow_smart_collections)
             {
             global $smartsearch_ref_cache;
-            if (isset($smartsearch_ref_cache[$collection]))
+            if(isset($smartsearch_ref_cache[$collection]))
                 {
-                $smartsearch_ref=$smartsearch_ref_cache[$collection]; // this value is pretty much constant
-                } 
-            else 
-                {
-                $smartsearch_ref=sql_value("select savedsearch value from collection where ref='$collection'","");
-                $smartsearch_ref_cache[$collection]=$smartsearch_ref;
+                $smartsearch_ref = $smartsearch_ref_cache[$collection]; // this value is pretty much constant
                 }
-            global $php_path;
-            if ($smartsearch_ref!="")
+            else
                 {
-                if ($smart_collections_async && isset($php_path) && file_exists($php_path . "/php"))
+                $smartsearch_ref = sql_value('SELECT savedsearch value FROM collection WHERE ref="' . $collection . '"', '');
+                $smartsearch_ref_cache[$collection] = $smartsearch_ref;
+                }
+
+            global $php_path;
+            if($smartsearch_ref != '' && !$return_disk_usage)
+                {
+                if($smart_collections_async && isset($php_path) && file_exists($php_path . '/php'))
                     {
-                    exec($php_path . "/php " . dirname(__FILE__)."/../pages/ajax/update_smart_collection.php " . escapeshellarg($collection) . " " . "> /dev/null 2>&1 &");
+                    exec($php_path . '/php ' . dirname(__FILE__) . '/../pages/ajax/update_smart_collection.php ' . escapeshellarg($collection) . ' ' . '> /dev/null 2>&1 &');
                     }
                 else 
                     {
-                    include (dirname(__FILE__)."/../pages/ajax/update_smart_collection.php");
+                    include (dirname(__FILE__) . '/../pages/ajax/update_smart_collection.php');
                     }
                 }   
             }   
-        
-        $result=sql_query($sql_prefix . "select distinct c.date_added,c.comment,c.purchase_size,c.purchase_complete,r.hit_count score,length(c.comment) commentset, $select from resource r  join collection_resource c on r.ref=c.resource $colcustperm  where c.collection='" . $collection . "' and $colcustfilter group by r.ref order by $order_by" . $sql_suffix,false,$fetchrows);
-        hook("beforereturnresults","",array($result, $archive)); 
+
+        $result = sql_query($sql_prefix . "select distinct c.date_added,c.comment,c.purchase_size,c.purchase_complete,r.hit_count score,length(c.comment) commentset, $select from resource r  join collection_resource c on r.ref=c.resource $colcustperm  where c.collection='" . $collection . "' and $colcustfilter group by r.ref order by $order_by" . $sql_suffix,false,$fetchrows);
+        hook('beforereturnresults', '', array($result, $archive)); 
         
         return $result;
         }
