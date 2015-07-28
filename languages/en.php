@@ -2160,6 +2160,7 @@ $lang["createdashtilemycollections"]="Create tile to link to my collections (use
 $lang["createdashtileadvancedsearch"]="Create tile to link to advanced search";
 $lang["createdashtilemycontributions"]="Create tile to link to my contributions (user specific)";
 $lang["createdashtilehelpandadvice"]="Create tile to link to help and advice";
+$lang["createdashtileuserupload"]="Create an upload tile";
 #Tile style strings
 $lang["tile_thmbs"]="Single";
 $lang["tile_multi"]="Multi";

@@ -801,7 +801,7 @@ function get_user_dash($user)
 				$newtab=false;
 				}
 			?>
-			href="<?php echo $link?>" <?php echo $newtab ? "target='_blank'" : "";?> 
+			href="<?php echo parse_dashtile_link($link)?>" <?php echo $newtab ? "target='_blank'" : "";?> 
 			onClick="if(dragging){dragging=false;e.defaultPrevented}<?php echo $newtab? "": "return CentralSpaceLoad(this,true);";?>" 
 			class="HomePanel DashTile DashTileDraggable <?php echo ($tile['all_users']==1)? 'allUsers':'';?>"
 			tile="<?php echo $tile['tile']; ?>"
@@ -949,6 +949,16 @@ function get_user_dash($user)
 	<?php
 	}
 
+/*
+ * Helper Functions
+ */
+function parse_dashtile_link($link)
+	{
+	global $userref;
+	$link = str_replace("[userref]",$userref,$link);
+
+	return $link;
+	}
 
 /*
  * Dash Admin Display Functions

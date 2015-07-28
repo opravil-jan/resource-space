@@ -6,7 +6,6 @@
  */
 
 
-
 /*
  * Tile serving
  *
@@ -14,7 +13,7 @@
 function tile_select($tile_type,$tile_style,$tile,$tile_id,$tile_width,$tile_height)
 	{
 	/*
-	 * Config & legacy tiles
+	 * Preconfigured and the legacy tiles controlled by config.
 	 */
 	if($tile_type=="conf")
 		{
@@ -64,7 +63,6 @@ function tile_select($tile_type,$tile_style,$tile,$tile_id,$tile_width,$tile_hei
 							exit;
 			}
 		}
-	
 	}
 
 /*

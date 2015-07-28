@@ -34,6 +34,11 @@ include "../../include/header.php";
 			<?php echo $lang["createdashtilefreetext"];?>
 		</a>
 	</li>
+	<li>
+		<a href="<?php echo $baseurl."/pages/dash_tile.php?create=true&&tltype=ftxt&freetext=true&title=Upload&nostyleoptions=true&all_users=1&link=pages/edit.php%3Fref=-[userref]&uploader=plupload";?>">
+			<?php echo $lang["createdashtileuserupload"];?>
+		</a>
+	</li>
 </ul>
 <h2><?php echo $lang["alluserprebuiltdashtiles"];?></h2>
 <p></p>
@@ -49,6 +54,7 @@ include "../../include/header.php";
 		</a>
 	</li>
 	<?php 
+	/* Old Configuration tiles */
 	if($enable_themes && !$home_themeheaders)
 		{ ?>
 		<li>
