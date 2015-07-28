@@ -132,7 +132,13 @@ function render_actions(array $collection_data, $top_actions = true, $two_line =
         return;
         }
 
-    global $baseurl, $lang, $pagename;
+    global $baseurl, $lang, $k, $pagename;
+
+    // No need for dropdown actions when sharing externally
+    if(trim($k) !== '')
+        {
+        return;
+        }
 
     // globals that could also be passed as a reference
     global $result /*search result*/;
