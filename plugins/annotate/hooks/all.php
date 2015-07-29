@@ -31,12 +31,12 @@ function HookAnnotateAllRemoveannotations(){
 	sql_query("delete from resource_keyword where resource='$ref' and annotation_ref>0");;
 }
 function HookAnnotateAllRender_actions_add_collection_option(){
-	global $lang,$pagename,$annotate_pdf_output,$annotate_pdf_output_only_annotated,$baseurl_short,$collection_data,$count_result;
+	global $lang,$pagename,$annotate_pdf_output,$annotate_pdf_output_only_annotated,$baseurl_short,$collection,$count_result;
 	$options = '';
 	if ($annotate_pdf_output || $count_result!=0){
 		$data_attribute['url'] = sprintf('%splugins/annotate/pages/annotate_pdf_config.php?col=%s',
             $baseurl_short,
-            urlencode($collection_data['ref'])
+            urlencode($collection)
         );
         $options.=render_dropdown_option('annotate', $lang['pdfwithnotes'],$data_attribute);
 	}
