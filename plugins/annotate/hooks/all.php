@@ -30,29 +30,19 @@ function HookAnnotateAllRemoveannotations(){
 	sql_query("update resource set annotation_count=0 where ref='$ref'");	
 	sql_query("delete from resource_keyword where resource='$ref' and annotation_ref>0");;
 }
-
-function HookAnnotateAllCollectiontoolcompact1($collection, $count_result,$cinfo,$colresult){
-	# Link in collections bar (minimised)
-	global $lang,$pagename,$annotate_pdf_output,$annotate_pdf_output_only_annotated,$baseurl_short;
-	if (!$annotate_pdf_output || $count_result==0){return false;}
-	
-	// check if this tool should be available based on annotation_counts. 
-	$annotations=true;
-	if ($annotate_pdf_output_only_annotated){
-		// check if there are annotations in this collection
-		$annotations=false;
-		for($n=0;$n<count($colresult);$n++){
-			if ($colresult[$n]['annotation_count']!=0){
-				$annotations=true;
-				break;
-			}
-		}
+function HookAnnotateAllRender_actions_add_collection_option(){
+	global $lang,$pagename,$annotate_pdf_output,$annotate_pdf_output_only_annotated,$baseurl_short,$collection_data,$count_result;
+	$options = '';
+	if ($annotate_pdf_output || $count_result!=0){
+		$data_attribute['url'] = sprintf('%splugins/annotate/pages/annotate_pdf_config.php?col=%s',
+            $baseurl_short,
+            urlencode($collection_data['ref'])
+        );
+        $options.=render_dropdown_option('annotate', $lang['pdfwithnotes'],$data_attribute);
 	}
-	if (!$annotations){return false;}?>
-    
-    <option value="<?php echo $collection?>|0|0|<?php echo $baseurl_short?>plugins/annotate/pages/annotate_pdf_config.php?col=<?php echo $collection ?>|main|false">&gt;&nbsp;<?php echo $lang['pdfwithnotes']?>...</option><?php
+	//echo "cropper option:$options";
+	return $options;
 }
-
 function HookAnnotateAllAdditionalheaderjs(){
 	global $baseurl,$k,$baseurl_short,$css_reload_key;
 ?>
