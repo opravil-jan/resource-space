@@ -2148,19 +2148,19 @@ $lang['confirmdeleteconfigtile']="This tile is controlled by configuration optio
 $lang["error-dashactionmissing"]="No action or invalid data was submitted to this page. No tile template available to build. <br />Please return to this page from a suitable creation / edit link";
 $lang["dasheditchangeall_users"]="Turning off this setting will not remove this tile from all dashes, you must do this from manage all user tiles. However, new users will no longer receive this tile on their dash.";
 $lang["dashtilevisitlink"]="Visit target link";
-$lang["alluserprebuiltdashtiles"]="Pre-constructed dash tiles (added for all users)";
+$lang["alluserprebuiltdashtiles"]="Create pre-constructed dash tiles (added for all users)";
 $lang["manageowndashinto"]="Manage dash tiles available for your dash. You can add / remove or edit tiles on your dash if you have the permissions to do so.";
 
 /* Create Config dash tile link descriptions (text) */
-$lang["createdashtilependingsubmission"]="Create tile for user contributions pending submission (hides if none in state)";
-$lang["createdashtilependingreview"]="Create tile for user contributions pending review (hides if none in state)";
-$lang["createdashtilethemeselector"]="Create tile to link to featured collections with a selector for a specific collection category";
-$lang["createdashtilethemes"]="Create tile to link to featured collections";
-$lang["createdashtilemycollections"]="Create tile to link to my collections (user specific)";
-$lang["createdashtileadvancedsearch"]="Create tile to link to advanced search";
-$lang["createdashtilemycontributions"]="Create tile to link to my contributions (user specific)";
-$lang["createdashtilehelpandadvice"]="Create tile to link to help and advice";
-$lang["createdashtileuserupload"]="Create an upload tile";
+$lang["createdashtilependingsubmission"]="User contributions pending submission (hides if none in state)";
+$lang["createdashtilependingreview"]="User contributions pending review (hides if none in state)";
+$lang["createdashtilethemeselector"]="Featured collections with a selector for a specific collection category";
+$lang["createdashtilethemes"]="Featured collections";
+$lang["createdashtilemycollections"]="My collections (user specific)";
+$lang["createdashtileadvancedsearch"]="Advanced search link";
+$lang["createdashtilemycontributions"]="My contributions (user specific)";
+$lang["createdashtilehelpandadvice"]="Help and advice link";
+$lang["createdashtileuserupload"]="Upload tile (user specific)";
 #Tile style strings
 $lang["tile_thmbs"]="Single";
 $lang["tile_multi"]="Multi";
