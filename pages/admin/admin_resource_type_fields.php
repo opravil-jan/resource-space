@@ -220,7 +220,7 @@ for ($n=0;$n<count($fields);$n++)
 			<?php echo str_highlight($fields[$n]["name"],$find,STR_HIGHLIGHT_SIMPLE);?>
 		</td>	
 		<td>		
-			<?php echo $field_types[$fields[$n]["type"]];?>
+			<?php echo ($fields[$n]["type"]!="")?$field_types[$fields[$n]["type"]]:$field_types[0];  // if no value it is treated as type 0 (single line text) ?>
 		</td>
 		<td>		
 			<?php echo str_highlight(i18n_get_translated($fields[$n]["tab_name"]),$find,STR_HIGHLIGHT_SIMPLE);?>
