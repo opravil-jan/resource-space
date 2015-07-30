@@ -1541,9 +1541,9 @@ function write_metadata($path, $ref, $uniqid="")
                         # Do nothing, no point to try to write the filesize.
                         break;
                     case "keywords":                  
-                        
                         # Keywords shall be written one at a time and not all together.
-                        $keywords = explode(",", $writevalue); # "keyword1,keyword2, keyword3" (with or without spaces)
+			if(!isset($writtenfields["keywords"])){$writtenfields["keywords"]="";} 
+			$keywords = explode(",", $writevalue); # "keyword1,keyword2, keyword3" (with or without spaces)
                         if (implode("", $keywords) != "")
                         	{
                         	# Only write non-empty keywords/ may be more than one field mapped to keywords so we don't want to overwrite with blank
