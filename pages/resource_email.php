@@ -94,7 +94,7 @@ if (getval("save","")!="")
 			// Log this			
 			daily_stat("E-mailed resource",$ref);
 			if (!hook("replaceresourceemailredirect")){
-				redirect("pages/done.php?text=resource_email&resource=urlencode($ref)&search=".urlencode($search)."&offset=".urlencode($offset)."&order_by=".urlencode($order_by)."&sort=".urlencode($sort)."&archive=".urlencode($archive));
+				redirect("pages/done.php?text=resource_email&resource=".urlencode($ref)."&search=".urlencode($search)."&offset=".urlencode($offset)."&order_by=".urlencode($order_by)."&sort=".urlencode($sort)."&archive=".urlencode($archive));
 			}
 			}
 		}
