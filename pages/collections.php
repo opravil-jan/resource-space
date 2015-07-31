@@ -140,6 +140,7 @@ if ($allow_reorder)
 			if(jQuery(window).width()<600 && jQuery(window).height()<600 && is_touch_device()) {
 					return false;
 				}
+
 			jQuery('#CollectionSpace').sortable({
 				connectWith: '#CentralSpaceResources',
 				appendTo: 'body',
