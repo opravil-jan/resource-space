@@ -11,8 +11,15 @@ include "../../include/authenticate.php"; if (!checkperm("m")) {exit ("Permissio
 
 if (getval("send","")!="")
 	{
-	$result=bulk_mail(getvalescaped("users",""),getvalescaped("subject",""),getvalescaped("text",""),getval("html","")=="yes");
-	if ($result=="") {$error=$lang["emailsent"];} else {$error="!! " . $result . " !!";}
+	$result = bulk_mail(getvalescaped('users', ''), getvalescaped('subject', ''), getvalescaped('text', ''), getval('html', '') == 'yes');
+	if($result == '')
+		{
+		$error = $lang['emailsent'];
+		}
+	else
+		{
+		$error = '!! ' . $result . ' !!';
+		}
 	}
 $headerinsert.="
 <script src=\"$baseurl/lib/js/jquery.validate.min.js\" type=\"text/javascript\"></script><script type=\"text/javascript\">
