@@ -23,12 +23,6 @@ function create_resource($resource_type,$archive=999,$user=-1)
 	
 	$insert=sql_insert_id();
 	
-	# Copying a resource of the 'pending review' state? Notify, if configured.
-	if ($archive==-1)
-		{
-		notify_user_contributed_submitted(array($insert));
-		}
-
 	# set defaults for resource here (in case there are edit filters that depend on them)
 	set_resource_defaults($insert);	
 	
@@ -49,6 +43,12 @@ function create_resource($resource_type,$archive=999,$user=-1)
 		$resource=get_resource_data($insert);
 		$userinfo=get_user($resource["created_by"]);
 		add_keyword_mappings($insert,$userinfo["username"] . " " . $userinfo["fullname"],-1);
+		}
+
+	# Copying a resource of the 'pending review' state? Notify, if configured.
+	if ($archive==-1)
+		{
+		notify_user_contributed_submitted(array($insert));
 		}
 
 	return $insert;
@@ -1253,15 +1253,6 @@ function copy_resource($from,$resource_type=-1)
 		add_keyword_mappings($to,$username . " " . $userfullname,-1);
 		}
 
-	# Copying a resource of the 'pending review' state? Notify, if configured.
-	global $send_collection_to_admin;
-	if ($archive==-1 && !$send_collection_to_admin)
-		{
-		notify_user_contributed_submitted(array($to));
-		}
-	
-	
-	
 	# Now copy all data
 	sql_query("insert into resource_data(resource,resource_type_field,value) select '$to',rd.resource_type_field,rd.value from resource_data rd join resource r on rd.resource=r.ref join resource_type_field rtf on rd.resource_type_field=rtf.ref and (rtf.resource_type=r.resource_type or rtf.resource_type=999 or rtf.resource_type=0) where rd.resource='$from'");
 	
@@ -1279,6 +1270,13 @@ function copy_resource($from,$resource_type=-1)
 
 	# Reindex the resource so the resource_keyword entries are created
 	reindex_resource($to);
+	
+	# Copying a resource of the 'pending review' state? Notify, if configured.
+	global $send_collection_to_admin;
+	if ($archive==-1 && !$send_collection_to_admin)
+		{
+		notify_user_contributed_submitted(array($to));
+		}
 	
 	# Log this			
 	daily_stat("Create resource",$to);
