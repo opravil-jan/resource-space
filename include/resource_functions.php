@@ -2049,6 +2049,7 @@ function save_field_options($field)
 
 	for ($n=0;$n<count($options);$n++)
 		{
+		hook("before_save_field_options","",array($field,$options,$n));
 		if (getval("submit_field_" . $n,"")!="")
 			{
 			# This option/language combination is being renamed.
