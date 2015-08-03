@@ -554,7 +554,9 @@ if ($header=="" && !isset($themes[0]))
 			?>
 			</h1>
 			</div>
-
+			
+			<?php hook("aftersmartthemetitle");?>
+			
 			<div class="Listview" style="margin-top:10px;margin-bottom:10px;clear:left;">
 			<table border="0" cellspacing="0" cellpadding="0" class="ListviewStyle">
 			<tr class="ListviewBoxedTitleStyle">
