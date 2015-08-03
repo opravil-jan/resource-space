@@ -2766,4 +2766,8 @@ $resource_view_modal=true;
 # Show an edit icon/link in the search results.
 $search_results_edit_icon=true;
 
+# Option to show a popup to users that upload resources to pending submission status. Prompts user to either submit for review or continue editing.
+$pending_submission_prompt_review=true;
+
+
 

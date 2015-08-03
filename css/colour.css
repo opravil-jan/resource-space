@@ -280,16 +280,17 @@ li.plupload_droptext {color:#999;}
 .HomePanelDynamicDash p.tile_corner_box {background: rgba(19, 19, 19, 0.67);border-top-left-radius: 5px;color:#fff;}
 
 /* Delete Dialog */
-.delete-dialog .ui-dialog-titlebar {
+.delete-dialog .ui-dialog-titlebar,  .ui-dialog-titlebar{
 	background-color: #d7d7d7;
   	background: linear-gradient(#d3d3d3,#dfdfdf);
   	border: #878787;
   	color: #3A3A3A;
 }
-.delete-dialog .ui-state-default .ui-button-text {color: #000000;background-color: #FFF;}
-.delete-dialog .ui-state-default.ui-state-hover .ui-button-text {color: #FFF;background-color: #3A3A3A;}
-.delete-dialog .ui-state-default.ui-state-focus {border:solid 1px #878787;}
-.delete-dialog .ui-state-default.ui-state-hover {border:solid 1px #878787;}
+.delete-dialog .ui-state-default .ui-button-text, .ui-state-default .ui-button-text{color: #000000;background-color: #FFF;}
+.delete-dialog .ui-state-default.ui-state-hover .ui-button-text, .ui-state-default.ui-state-hover .ui-button-text {color: #FFF;background-color: #3A3A3A;}
+.delete-dialog .ui-state-default.ui-state-focus, .ui-state-default.ui-state-focus {border:solid 1px #878787;}
+.delete-dialog .ui-state-default.ui-state-hover, .ui-state-default.ui-state-hover {border:solid 1px #878787;}
+
 /* Trash Bin */
 #trash_bin.ui-state-hover {
 	border: #2f2f2f 1px solid;
@@ -297,7 +298,7 @@ li.plupload_droptext {color:#999;}
 	background: rgba(0, 0, 0, 0.55);
 	color: #d7d7d7;
 }
-#trash_bin.ui-state-active {border: 1px solid #d0d0d0;background: rgba(114, 22, 37, 0.51);}
+#trash_bin.ui-state-active, .ui-state-active {border: 1px solid #d0d0d0;background: rgba(114, 22, 37, 0.51);}
 #trash_bin {border-top-right-radius: 100% 150px;border-bottom-right-radius: 100% 150px;}
 .trash_bin_text {color: #fff;}
 .ui-draggable-dragging {border: 2px solid;}

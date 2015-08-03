@@ -415,6 +415,7 @@ else {?><div class="ui-layout-south" ></div><script>myLayout=jQuery('body').layo
 <div id="modal_overlay" onClick="ModalClose();"></div>
 <div id="modal_outer">
 <div id="modal">
+<div id="modal_dialog" style="display:none;"></div>
 </div>
 </div>
 <script type="text/javascript">

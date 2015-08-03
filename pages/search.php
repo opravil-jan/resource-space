@@ -565,6 +565,39 @@ if(substr($search, 0, 11) !== '!collection')
 	</script>
 	<?php }
 
+if(getval("promptsubmit","")!= "" && getval("archive","")=="-2" && checkperm("e-1"))
+	{
+	// User has come here from upload. Show a prompt to submit the resources in current collection for review
+	?>
+	<script>	
+	jQuery(document).ready(function() {
+		jQuery("#modal_dialog").dialog({
+							    	title:'<?php echo $lang["submit_dialog_text"]; ?>',
+							    	modal: true,
+									resizable: false,
+									dialogClass: 'no-close',
+							        buttons: {
+							            "<?php echo $lang['action_submit_review'] ?>": function() {
+							            		jQuery(this).dialog("close");
+												window.location.href='<?php echo $baseurl_short?>pages/edit.php?submitted=true&editthis_status=true&collection=<?php echo $usercollection ?>&status=-1';
+							            	},    
+							            "<?php echo $lang['action_continue_editing'] ?>": function() { 
+							            		jQuery(this).dialog('close');
+												<?php 
+												$collection_add=getvalescaped("collection_add","");
+												if ($collection_add!="")
+													{?>
+													window.location.href='<?php echo $baseurl_short?>pages/search.php?search=!collection<?php echo $collection_add ?>';
+													<?php
+													}?>
+												}
+							            	}							        
+							    });
+	});
+	</script>
+	<?php
+	}
+
 # Hook to replace all search results (used by ResourceConnect plugin, allows search mechanism to be entirely replaced)
 if (!hook("replacesearchresults")) { 
 
