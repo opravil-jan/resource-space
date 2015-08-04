@@ -125,6 +125,7 @@ function render_dropdown_option($value, $label, array $data_attr = array(), $ext
 * Renders search actions functionality as a dropdown box
 * 
 */
+if(!function_exists("render_actions")){
 function render_actions(array $collection_data, $top_actions = true, $two_line = true, $id = '')
     {
     if(hook('prevent_running_render_actions'))
@@ -332,7 +333,7 @@ function render_actions(array $collection_data, $top_actions = true, $two_line =
     <?php
     return;
     }
-
+}
 
 function render_collection_actions(array $collection_data, $top_actions)
     {
