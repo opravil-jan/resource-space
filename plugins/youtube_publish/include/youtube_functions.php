@@ -232,6 +232,7 @@ function upload_video()
             
             return array(true,$youtube_new_url);
           }
+    $htmlBody='';
     catch (Google_ServiceException $e)
         {
         $htmlBody = sprintf('<p>A service error occurred: <code>%s</code></p>',
