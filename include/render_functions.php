@@ -565,7 +565,7 @@ function render_collection_actions(array $collection_data, $top_actions)
 
     // Delete all
     // Note: functionality moved from edit collection page
-    if(!$top_actions && !checkperm('D') && (count($result) != 0 || $count_result != 0)) 
+    if(!$top_actions && !checkperm('D') && collection_writeable($collection_data['ref']) && (count($result) != 0 || $count_result != 0)) 
         {
         $options .= render_dropdown_option('delete_all_in_collection', $lang['deleteallresourcesfromcollection']);
         }
