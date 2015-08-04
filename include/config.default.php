@@ -1572,8 +1572,8 @@ $allow_resource_deletion = true;
 $resource_deletion_state=3;
 
 # Does deleting resources require password entry? (single resource delete)
-$delete_requires_password=true;
-
+# Off by default as resources are no longer really deleted by default, they are simply moved to a deleted state which is less dangerous - see $resource_deletion_state above.
+$delete_requires_password=false;
 
 # Offline processes (e.g. staticsync and create_previews.php) - for process locking, how old does a lock have to be before it is ignored?
 $process_locks_max_seconds=60*60*4; # 4 hours default.
@@ -2769,5 +2769,5 @@ $search_results_edit_icon=true;
 # Option to show a popup to users that upload resources to pending submission status. Prompts user to either submit for review or continue editing.
 $pending_submission_prompt_review=true;
 
-
-
+# Experimental. Always use 'download.php' to send thumbs and previews. Improved security as 'filestore' web access can be disabled in theory.
+$thumbs_previews_via_download=false;
