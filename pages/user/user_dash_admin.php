@@ -6,8 +6,10 @@ include "../../include/authenticate.php";
 include "../../include/dash_functions.php";
 
 #If can't manage own dash return to user home.
-if(!($home_dash && checkPermission_dashmanage()))
-	{header("location: ".$baseurl_short."pages/user/user_home.php");exit;}
+if(!hook("replace_dash_admin_permission_relocate")){
+	if(!($home_dash && checkPermission_dashmanage()))
+		{header("location: ".$baseurl_short."pages/user/user_home.php");exit;}
+	}
 if(getvalescaped("quicksave",FALSE))
 	{
 	$tile = getvalescaped("tile","");
@@ -137,7 +139,9 @@ include "../../include/header.php";
 				<a href="<?php echo $baseurl."/pages/dash_tile.php?create=true&tltype=ftxt&modifylink=true&freetext=Helpful%20tips%20here&nostyleoptions=true&all_users=0&link=http://resourcespace.org/knowledge-base/&title=Knowledge%20Base";?>">&gt;&nbsp; <?php echo $lang["createdashtilefreetext"]?></a>
 			</p>
 			<?php
-			} ?>
+			} 
+		hook('after_dash_admin_create_new_tile');
+		?>
 	</div>
 </div>
 
