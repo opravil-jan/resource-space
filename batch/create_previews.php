@@ -7,6 +7,7 @@ include(dirname(__FILE__) . "/../include/resource_functions.php");
 
 
 $ignoremaxsize=false;
+$noimage=false;
 if ($argc >= 2)
 	{
 	$validargs=false;
@@ -21,6 +22,11 @@ if ($argc >= 2)
 	if (in_array('-ignoremaxsize',$argv) )
 		{
 		$ignoremaxsize=true;
+		$validargs=true;
+		}
+	if (in_array('-noimage',$argv) )
+		{
+		$noimage=true; # 
 		$validargs=true;
 		}
 	if (in_array('-clearlock',$argv))
@@ -132,7 +138,9 @@ if ($multiprocess)
 // We fetch the list of resources to process.
 global  $no_preview_extensions;
 $exclude="'" . implode("','",$no_preview_extensions) . "'";
-$resources=sql_query("SELECT resource.ref, resource.file_extension, resource.preview_attempts, creation_date FROM resource WHERE resource.has_image = 0 and resource.ref>0 and (resource.preview_attempts<5 or resource.preview_attempts is NULL) and lower(file_extension) not in (" . $exclude  . ")");
+$condition="resource.has_image=0 and";
+if ($noimage) {$condition="";}
+$resources=sql_query("SELECT resource.ref, resource.file_extension, resource.preview_attempts, creation_date FROM resource WHERE $condition resource.ref>0 and (resource.preview_attempts<5 or resource.preview_attempts is NULL) and lower(file_extension) not in (" . $exclude  . ")");
 
 foreach($resources as $resource) // For each resources
   {
