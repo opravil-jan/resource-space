@@ -1330,8 +1330,9 @@ if ($multilingual_text_fields)
         {?>
         display:none;
         <?php }
+        ?>"<?php
      }
-     ?>">
+     ?>>
      <?php 
      $labelname = $name;
 
