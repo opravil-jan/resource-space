@@ -2222,3 +2222,4 @@ $lang["submit_review_prompt"]="Submit for review?";
 $lang["submit_dialog_text"]="The uploaded resources are now in the pending submission state. Submit the collection for review or continue editing?";
 $lang["action_submit_review"]="Submit for review";
 $lang["action_continue_editing"]="Continue editing";
+$lang['action-addrow']="Add row";
