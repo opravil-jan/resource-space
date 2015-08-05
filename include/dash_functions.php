@@ -1000,7 +1000,16 @@ function build_dash_tile_list($dtiles_available)
   				if(isset($buildstring["tltype"]) && $buildstring["tltype"]=="conf" && $buildstring["tlstyle"]!="custm" && $buildstring["tlstyle"]!="pend")
   					{$tile["txt"] = text($tile["title"]);}
   				else if(isset($buildstring["tltype"]) && $buildstring["tltype"]=="conf" && $buildstring["tlstyle"]=="pend")
-  					{$tile["txt"] = $lang[$tile["txt"]];}
+  					{
+					if(isset($lang[strtolower($tile['txt'])]))
+						{
+						$tile['txt'] = $lang[strtolower($tile["txt"])];
+						}
+					else
+						{
+						$tile['txt'] = htmlspecialchars($tile['txt']);
+						}
+					}
   				
   				if(strlen($tile["txt"])>75)
   					{

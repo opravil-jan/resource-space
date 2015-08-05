@@ -503,6 +503,13 @@ if(!$validpage)
 		else
 			{$previewurl=$baseurl_short.$url;}
 		?>
+
+		// Some tile types don't have style
+		if(typeof prevstyle === 'undefined')
+			{
+			prevstyle = '<?php echo isset($tile_style) ? $tile_style : ""; ?>';
+			}
+
 		jQuery("#previewdashtile").load("<?php echo $previewurl; ?>?tltype=<?php echo urlencode($tile_type)?>&tlstyle="+prevstyle+"&tlwidth="+width+"&tlheight="+height+tile);
 	}
 	updateDashTilePreview();

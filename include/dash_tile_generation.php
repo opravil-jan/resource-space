@@ -197,7 +197,43 @@ function tile_config_pending($tile,$tile_id,$tile_width,$tile_height)
 		}
 	?>
 	<span class='collection-icon'></span>
-	<h2 class="title notitle"> <?php echo $lang[$tile["txt"]]; ?></h2>
+	<?php
+	if(!empty($tile['title']))
+		{
+		?>
+		<h2 class="title"><?php echo htmlspecialchars($tile['title']); ?></h2>
+		<?php
+		}
+	else if(!empty($tile['txt']) && isset($lang[strtolower($tile['txt'])]))
+		{
+		?>
+		<h2 class="title notitle"><?php echo htmlspecialchars($lang[strtolower($tile['txt'])]); ?></h2>
+		<?php
+		}
+	else if(!empty($tile['txt']) && !isset($lang[strtolower($tile['txt'])]))
+		{
+		?>
+		<h2 class="title notitle"><?php echo htmlspecialchars($tile['txt']); ?></h2>
+		<?php
+		}
+		
+	if(!empty($tile['title']) && !empty($tile['txt']))
+		{
+		if(isset($lang[strtolower($tile['txt'])]))
+			{
+		?>
+		<p><?php echo htmlspecialchars($lang[strtolower($tile['txt'])]); ?></p>
+		<?php
+			}
+		else
+			{
+			?>
+		<p><?php echo htmlspecialchars($tile['txt']); ?></p>
+			<?php
+			}
+		}
+	?>
+	<!-- <h2 class="title notitle"> <?php echo $lang[strtolower($tile["txt"])]; ?></h2> -->
 	<p class="tile_corner_box">
 		<span class="count-icon"></span>
 		<?php echo $count; ?>
