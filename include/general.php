@@ -4168,3 +4168,8 @@ function get_rs_session_id($create=false)
         }
     return false;
     }
+	
+function metadata_field_edit_access($field)
+	{
+	return (!checkperm("F*") || checkperm("F-" . $field))&& !checkperm("F" . $field);
+	}
