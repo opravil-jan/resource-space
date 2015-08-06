@@ -616,7 +616,7 @@ function render_collection_actions(array $collection_data, $top_actions)
         }
 
     // Add extra collection actions through plugins
-    $extra_options = hook('render_actions_add_collection_option');
+    $extra_options = hook('render_actions_add_collection_option', '', array($top_actions));
     if(trim($extra_options) !== '')
         {
         $options .= $extra_options;
