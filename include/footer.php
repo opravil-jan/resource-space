@@ -308,7 +308,7 @@ if (getval("ajax","")=="") {
 <!--CollectionDiv-->
 <?php 
 $omit_collectiondiv_load_pages=array("login","user_request","user_password","index","preview_all");
-// need to add for cpi
+
 $more_omit_collectiondiv_load_pages=hook("more_omit_collectiondiv_load_pages");
 if(is_array($more_omit_collectiondiv_load_pages)){
 	$omit_collectiondiv_load_pages=array_merge($omit_collectiondiv_load_pages,$more_omit_collectiondiv_load_pages);
