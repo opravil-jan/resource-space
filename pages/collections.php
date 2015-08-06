@@ -267,7 +267,15 @@ else { ?>
 					// Only show confirmation dialog when resource is being dragged from top (ie. CentralSpace)
 					if(ui.draggable.attr('class') === 'CollectionPanelShell')
 						{
-						RemoveResourceFromCollection(event, resource_id, '<?php echo $pagename; ?>');
+						// Handle different cases such as Saved searches
+						if(ui.draggable.data('savedSearch') === 'yes')
+							{
+							CollectionDivLoad('<?php echo $baseurl; ?>/pages/collections.php?removesearch=' + resource_id + '&nc=<?php echo time(); ?>');
+							}
+						else
+							{
+							RemoveResourceFromCollection(event, resource_id, '<?php echo $pagename; ?>');
+							}
 						}
 					else
 						{
@@ -730,7 +738,7 @@ if (isset($cinfo['savedsearch'])&&$cinfo['savedsearch']==null  && $k=='')
 		$url=$baseurl_short."pages/search.php?search=" . urlencode($searches[$n]["search"]) . "&restypes=" . urlencode($searches[$n]["restypes"]) . "&archive=" . urlencode($searches[$n]["archive"]);
 		?>
 		<!--Resource Panel-->
-		<div class="CollectionPanelShell">
+		<div id="ResourceShell<?php echo $searches[$n]['ref']; ?>" class="CollectionPanelShell" data-saved-search="yes">
 		<table border="0" class="CollectionResourceAlign"><tr><td>
 		<a onclick="return CentralSpaceLoad(this,true);" href="<?php echo $url?>"><img border=0 width=56 height=75 src="<?php echo $iconurl?>"/></a></td>
 		</tr></table>
