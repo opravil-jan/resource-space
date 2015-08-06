@@ -279,7 +279,7 @@ include "../../include/header.php";
 
 		<div class="Question">
 			<label for="config_options"><?php echo $lang["property-override_config_options"]; ?></label>
-			<textarea name="config_options" id="configOptionsBox" class="stdwidth" rows="3" cols="50"><?php echo $record['config_options']; ?></textarea>
+			<textarea name="config_options" id="configOptionsBox" class="stdwidth" rows="12" cols="50"><?php echo $record['config_options']; ?></textarea>
 			<div class="clearerleft"></div>
 <?php
 	if (
