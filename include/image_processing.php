@@ -401,7 +401,7 @@ function extract_exif_comment($ref,$extension="")
 		# run exiftool to get all the valid fields. Use -s -s option so that
 		# the command result isn't printed in columns, which will help in parsing
 		# We then split the lines in the result into an array
-		$command = $exiftool_fullpath . " -s -s -f -m -d \"%Y-%m-%d %H:%M:%S\" -G " . escapeshellarg($image);
+		$command = $exiftool_fullpath . " -ee -s -s -f -m -d \"%Y-%m-%d %H:%M:%S\" -G " . escapeshellarg($image);
 		$metalines = explode("\n", run_command($command));
 
 		$metadata = array(); # an associative array to hold metadata field/value pairs
