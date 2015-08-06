@@ -351,6 +351,7 @@ function render_collection_actions(array $collection_data, $top_actions)
         return $options;
         }
 
+    $multi_edit = allow_multi_edit($collection_data['ref']);
 
     if(!collection_is_research_request($collection_data['ref']) || !checkperm('r'))
         {
@@ -566,7 +567,12 @@ function render_collection_actions(array $collection_data, $top_actions)
 
     // Delete all
     // Note: functionality moved from edit collection page
-    if(!$top_actions && !checkperm('D') && collection_writeable($collection_data['ref']) && (count($result) != 0 || $count_result != 0)) 
+    if(!$top_actions
+        && (count($result) != 0 || $count_result != 0)
+        && !(isset($allow_resource_deletion) && !$allow_resource_deletion)
+        && collection_writeable($collection_data['ref'])
+        && $multi_edit
+        && !checkperm('D'))
         {
         $options .= render_dropdown_option('delete_all_in_collection', $lang['deleteallresourcesfromcollection']);
         }
