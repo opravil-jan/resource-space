@@ -200,10 +200,11 @@ function DisplayTheme($themes=array())
 			<td class="created"><?php echo nicedate($getthemes[$m]["created"],true)?></td>
 			<?php } ?>
 			<td class="count" width="5%"><?php echo $getthemes[$m]["c"]?></td>
-			<?php hook("beforecollectiontoolscolumn");?>
+			<?php hook('beforecollectiontoolscolumn'); ?>
 			<td class="tools" nowrap>
 				<div class="ListTools">
 				<?php
+				hook('render_themes_list_tools', '', array($getthemes[$m]));
 				render_actions($getthemes[$m], false, false);
 				?>
 				</div>
