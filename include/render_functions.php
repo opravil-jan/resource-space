@@ -16,7 +16,7 @@ TO DO: add here other functions used for rendering such as:
 */
 function render_sort_order(array $order_fields)
     {
-    global $order_by, $baseurl_short, $search, $archive, $restypes, $k, $sort;
+    global $order_by, $baseurl_short, $lang, $search, $archive, $restypes, $k, $sort;
     ?>
 
     <select id="sort_order_selection">
@@ -61,8 +61,8 @@ function render_sort_order(array $order_fields)
     
     </select>
     <select id="sort_selection">
-        <option value="ASC" <?php if($sort == 'ASC') { echo 'selected';} ?>>ASC</option>
-        <option value="DESC" <?php if($sort == 'DESC') { echo 'selected';} ?>>DESC</option>
+        <option value="ASC" <?php if($sort == 'ASC') {echo 'selected';} ?>><?php echo $lang['sortorder-asc']; ?></option>
+        <option value="DESC" <?php if($sort == 'DESC') {echo 'selected';} ?>><?php echo $lang['sortorder-desc']; ?></option>
     </select>
     
     <script>
@@ -181,6 +181,12 @@ function render_actions(array $collection_data, $top_actions = true, $two_line =
 
             // Usual search actions    
             $options .= render_search_actions($top_actions);
+
+            $modify_options = hook('modify_unified_dropdown_actions_options', '', array($options));
+            if(!empty(trim($modify_options)))
+                {
+                $options = $modify_options;
+                }
 
             echo $options;
             ?>
