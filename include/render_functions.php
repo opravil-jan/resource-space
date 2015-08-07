@@ -183,7 +183,7 @@ function render_actions(array $collection_data, $top_actions = true, $two_line =
             $options .= render_search_actions($top_actions);
 
             $modify_options = hook('modify_unified_dropdown_actions_options', '', array($options));
-            if(!empty(trim($modify_options)))
+            if(!empty($modify_options))
                 {
                 $options = $modify_options;
                 }
