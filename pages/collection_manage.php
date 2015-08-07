@@ -353,16 +353,14 @@ if (!hook('collectionaccessmode')) {
 
 <td class="collectionin"><input type="checkbox" onClick="UpdateHiddenCollections(this, '<?php echo $collections[$n]['ref'] ?>');" <?php if(!in_array($collections[$n]['ref'],$hidden_collections)){echo "checked";}?>></td>
 
-
-<?php hook("beforecollectiontoolscolumn");?>
+<?php hook('beforecollectiontoolscolumn'); ?>
 	<td class="tools">	
         <div class="ListTools">
         <?php
-	
-	render_actions($collections[$n],true,false);
-
-	?>
-	</div>
+		hook('legacy_list_tools', '', array($collections[$n]));
+		render_actions($collections[$n], true, false);
+		?>
+		</div>
 	</td>
 	</tr>
 	<input type=hidden name="deleteempty" id="collectiondeleteempty" value="">
