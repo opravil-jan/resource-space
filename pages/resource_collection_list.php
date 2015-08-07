@@ -65,14 +65,19 @@ else
 ?></td><?php
 }
 ?>
-<?php hook("beforecollectiontoolscolumn");?>
-	<td><div class="ListTools">
-       			        <?php
-	
-				render_actions($collections[$n],true,false);
-			
-				?></div></td></tr>
-<?php } ?>
+<?php hook('beforecollectiontoolscolumn'); ?>
+	<td>
+		<div class="ListTools">
+		<?php
+		hook('render_resource_collection_list_list_tools', '', array($collections[$n]));
+		render_actions($collections[$n],true,false);
+		?>
+		</div>
+	</td>
+</tr>
+<?php
+}
+?>
 </table></div>
         </div>
         </div>
