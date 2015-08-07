@@ -209,11 +209,10 @@ for ($n=$offset;(($n<count($collections)) && ($n<($offset+$per_page)));$n++)
 		hook("beforecollectiontoolscolumn");?>
 		<td class="tools">
 			<div class="ListTools">
-   			        <?php
-	
-				render_actions($collections[$n],true,false);
-			
-				?>
+			<?php
+			hook('render_collections_public_list_tools', '', array($collections[$n]));
+			render_actions($collections[$n], true, false);
+			?>
 			</div>
 		</td>
       </tr>
