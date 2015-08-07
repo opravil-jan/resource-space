@@ -208,13 +208,21 @@ hook("searchstringprocessing");
 //setcookie("search",$search); # store the search in a cookie if not a special search
 $offset=getvalescaped("offset",0);if (strpos($search,"!")===false) {setcookie("saved_offset",$offset, 0, '', '', false, true);}
 if ((!is_numeric($offset)) || ($offset<0)) {$offset=0;}
+
+// Is this a collection search?
+$collectionsearch = substr($search,0,11)=="!collection"; // We want the default collection order to be applied
+
 $order_by=getvalescaped("order_by","");if (strpos($search,"!")===false) {setcookie("saved_order_by",$order_by, 0, '', '', false, true);}
 if ($order_by=="")
 	{
-	if (substr($search,0,11)=="!collection") // We want the default collection order to be applied
-		{$order_by="relevance";}
+	if ($collectionsearch) // We want the default collection order to be applied
+		{
+		$order_by="relevance";
+		}
 	else
-		{$order_by=$default_sort;}
+		{
+		$order_by=$default_sort;
+		}
 	}
 $per_page=getvalescaped("per_page",$default_perpage);setcookie("per_page",$per_page, 0, '', '', false, true);
 $archive=getvalescaped("archive",0);if (strpos($search,"!")===false) {setcookie("saved_archive",$archive, 0, '', '', false, true);}
@@ -321,7 +329,7 @@ if($k=="" && strpos($search,"!")===false && $archive==0){$collections=do_collect
 $hook_result=hook("process_search_results","search",array("result"=>$result,"search"=>$search));
 if ($hook_result!==false) {$result=$hook_result;}
 
-if (substr($search,0,11)=="!collection")
+if ($collectionsearch)
 	{
 	$collection=substr($search,11);
 	$collection=explode(",",$collection);
@@ -385,7 +393,7 @@ if ($display_user_rating_stars && $k=="")
 	}
 
 // Allow Drag & Drop from collection bar to CentralSpace only when special search is "!collection"
-if(substr($search, 0, 11) === '!collection' && collection_writeable(substr($search, 11)))
+if($collectionsearch && collection_writeable(substr($search, 11)))
 	{
 	?>
 	<script>
@@ -423,7 +431,7 @@ if(substr($search, 0, 11) === '!collection' && collection_writeable(substr($sear
 	<?php
 	}
 
-if(substr($search, 0, 11) !== '!collection')
+if(!$collectionsearch)
 	{
 	?>
 	<!-- Search items should only be draggable if results are not a collection -->
@@ -929,9 +937,9 @@ if (true) # Always show search header now.
 	<div class="clearerleft"></div>
 	<div id="CentralSpaceResources">
 	<?php
-
-		
-	if (!is_array($result) && empty($collections))
+	
+	//exit("HERE" . print_r($result));
+	if ((!is_array($result) || count($result)<1) && empty($collections))
 		{
 			// No matches found? Log this in
 			$key_id = resolve_keyword($search);
@@ -946,21 +954,25 @@ if (true) # Always show search header now.
 		<div class="BasicsBox"> 
 		  <div class="NoFind">
 			<p><?php echo $lang["searchnomatches"]?></p>
-			<?php if ($result!="")
-			{
-			?>
-			<p><?php echo $lang["try"]?>: <a onClick="return CentralSpaceLoad(this,true);" href="<?php echo $baseurl_short?>pages/search.php?search=<?php echo urlencode(strip_tags($result))?>"><?php echo stripslashes($result)?></a></p>
-			<?php $result=array();
-			}
-			else
-			{
-			?>
-			<p><?php if (strpos($search,"country:")!==false) { ?><p><?php echo $lang["tryselectingallcountries"]?> <?php } 
-			elseif (strpos($search,"year:")!==false) { ?><p><?php echo $lang["tryselectinganyyear"]?> <?php } 
-			elseif (strpos($search,"month:")!==false) { ?><p><?php echo $lang["tryselectinganymonth"]?> <?php } 
-			else 		{?><?php echo $lang["trybeinglessspecific"]?><?php } ?> <?php echo $lang["enteringfewerkeywords"]?></p>
 			<?php
-			}
+			if(!$collectionsearch) // Don't show hints if a collection search is empty 
+				{
+				if ($result!="")
+					{
+					?>
+					<p><?php echo $lang["try"]?>: <a onClick="return CentralSpaceLoad(this,true);" href="<?php echo $baseurl_short?>pages/search.php?search=<?php echo urlencode(strip_tags($result))?>"><?php echo stripslashes($result)?></a></p>
+					<?php $result=array();
+					}
+				else
+					{
+					?>
+					<p><?php if (strpos($search,"country:")!==false) { ?><p><?php echo $lang["tryselectingallcountries"]?> <?php } 
+					elseif (strpos($search,"year:")!==false) { ?><p><?php echo $lang["tryselectinganyyear"]?> <?php } 
+					elseif (strpos($search,"month:")!==false) { ?><p><?php echo $lang["tryselectinganymonth"]?> <?php } 
+					else 		{?><?php echo $lang["trybeinglessspecific"]?><?php } ?> <?php echo $lang["enteringfewerkeywords"]?></p>
+					<?php
+					}
+				}
 		  ?>
 		  </div>
 		</div>
