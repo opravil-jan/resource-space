@@ -156,8 +156,14 @@ function render_actions(array $collection_data, $top_actions = true, $two_line =
         ?>
 
     <div class="ActionsContainer  <?php if($top_actions) { echo 'InpageNavLeftBlock'; } ?>">
-        <div class="DropdownActionsLabel"><?php echo $lang['actions']; ?>:</div>
-    <?php
+		<?php
+		if (!hook("modifyactionslabel"))
+			{
+			?>
+			<div class="DropdownActionsLabel"><?php echo $lang['actions']; ?>:</div>
+			<?php
+			}
+
     if($two_line)
         {
         ?>
