@@ -82,8 +82,9 @@ function HookGrant_editEditeditbeforeheader()
 function HookGrant_editEditEditstatushide()
 	{
 	// Needed to prevent user changing the archive state, otherwise a user with temporary edit access to an active resource could change it from active to pending submission
-	global $status;
-	if(!checkperm("e" . $status)){return true;}
+	global $status, $resource;
+	if(!checkperm("e" . $resource["archive"]))
+		{return true;}
 	return false;
 	}
 	
