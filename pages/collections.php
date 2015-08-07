@@ -691,7 +691,9 @@ elseif ($k!="")
 
 	<?php
 	// Render dropdown actions
+	hook("beforecollectiontoolscolumn");
 	render_actions($cinfo, false);
+	hook("aftercollectionsrenderactions");
 	?>
  	<ul>
 	<?php
