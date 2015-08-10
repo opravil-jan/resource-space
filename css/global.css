@@ -1024,9 +1024,17 @@ div#MessageContainer {
 }
 div.MessageBox {
     border-radius: 5px;
-    padding: 2px;
+    padding: 5px;
     text-align: left;
     margin-bottom: 5px;
     min-height: 50px;
     cursor: pointer;
+    line-height: 120%;
 }
+div.MessageBox a {
+    margin-top: 1vh;
+    max-width: 90% !important;
+    word-wrap: break-word;
+    text-decoration: underline !important;
+}
+

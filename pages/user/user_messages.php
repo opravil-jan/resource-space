@@ -52,16 +52,17 @@ include "../../include/header.php";
 <?php
 for ($n=0;$n<count($messages);$n++)
 	{
-	$ref=$messages[$n]['ref'];
-	$message=stripslashes($messages[$n]["message"]);
-	$url=stripslashes($messages[$n]["url"]);
+	$message=escape_check($messages[$n]["message"]);
+	$message=htmlspecialchars($message,ENT_QUOTES);
+	$url_encoded=urlencode($messages[$n]["url"]);
 	?>
 		<tr>
 			<td><?php echo nicedate($messages[$n]["created"],true); ?></td>
 			<td><?php echo $messages[$n]["owner"]; ?></td>
 			<td><a href="#Header" onclick="message_display('<?php echo $message; ?>','<?php
-				echo $url; ?>',<?php echo $messages[$n]['ref']; ?>);"><?php echo $message; ?></a></td>
-			<td><a href="<?php echo $url; ?>"><?php echo $url; ?></a></td>
+				echo $url_encoded; ?>',<?php echo $messages[$n]["ref"]; ?>);"><?php echo htmlentities($messages[$n]["message"]); ?></a></td>
+
+			<td><a href="<?php echo $messages[$n]["url"]; ?>"><?php echo htmlentities($messages[$n]["url"]);  ?></a></td>
 			<td><?php echo nicedate($messages[$n]["expires"]); ?></td>
 			<td><?php echo ($messages[$n]["seen"]==0 ? $lang['no'] : $lang['yes']); ?></td>
 			<td>

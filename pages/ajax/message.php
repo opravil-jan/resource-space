@@ -139,14 +139,15 @@
 		}
 		if (url!="")
 		{
-			url="<a href='" + url + "'>link</a>";
+			url=decodeURIComponent(url);
+			url="<a href='" + url + "'>" + url + "</a>";
 		}
 		var id='message' + ref;
 		if (jQuery("#" + id).length)		// already being displayed
 		{
 			return;
 		}
-		jQuery('div#MessageContainer').append("<div class='MessageBox' style='display: none;' id='" + id + "'>" + message + url + "</div>").after(function()
+		jQuery('div#MessageContainer').append("<div class='MessageBox' style='display: none;' id='" + id + "'>" + message + "<br />" + url + "</div>").after(function()
 		{
 			jQuery("div#" + id).show().bind("click",function() {
 				jQuery("div#" + id).fadeOut("fast").remove();
@@ -154,7 +155,9 @@
 				{
 					callback(ref);
 				}
-			}).delay(<?php echo MESSAGE_FADEOUT_SECONDS; ?>*1000).fadeOut(<?php echo MESSAGE_FADEOUT_SECONDS; ?>*1000);
+			}).delay(<?php echo MESSAGE_FADEOUT_SECONDS; ?>*1000).fadeOut(<?php echo MESSAGE_FADEOUT_SECONDS; ?>*1000, function() {
+				jQuery("div#" + id).remove();
+			});
 		});
 	}
 
