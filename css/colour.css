@@ -338,3 +338,15 @@ li.plupload_droptext {color:#999;}
   color:#fff;
   border:none; 
   }
+
+/* Messaging */
+span.MessageCountPill {
+    color: white;
+    background: red;
+}
+div#MessageContainer { }
+div.MessageBox {
+    border: 1px solid darkgray;
+    background: rgba(255,255,255,0.8);
+    color: inherit;
+}

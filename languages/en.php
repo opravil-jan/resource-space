@@ -2225,3 +2225,16 @@ $lang["submit_dialog_text"]="The uploaded resources are now in the pending submi
 $lang["action_submit_review"]="Submit for review";
 $lang["action_continue_editing"]="Continue editing";
 $lang['action-addrow']="Add row";
+
+/* Messaging */
+$lang["seen"]="Seen";
+$lang["from"]="From";
+$lang["mymessages"]="My messages";
+$lang["mymessages_markread"]="Mark read";
+$lang["mymessages_markallread"]="Mark all read";
+$lang["mymessages_youhavenomessages"]="You have no messages to show";
+$lang["screen"]="Screen";
+$lang["message_type"]="Message type";
+$lang["message_url"]="Message URL";
+$lang["sendbulkmessage"]="Send bulk message";
+$lang["message_sent"]="Message sent";

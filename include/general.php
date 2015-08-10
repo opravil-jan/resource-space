@@ -2,6 +2,7 @@
 # General functions, useful across the whole solution
 
 include_once ("language_functions.php");
+include_once "message_functions.php";
 
 $GLOBALS['get_resource_path_fpcache'] = array();
 function get_resource_path($ref,$getfilepath,$size,$generate=true,$extension="jpg",$scramble=-1,$page=1,$watermarked=false,$file_modified="",$alternative=-1,$includemodified=true)
@@ -1655,8 +1656,7 @@ function make_password()
     return $password;
 	}
 
-
-function bulk_mail($userlist,$subject,$text,$html=false)
+function bulk_mail($userlist,$subject,$text,$html=false,$message_type=MESSAGE_ENUM_NOTIFICATION_TYPE_EMAIL,$url="")
     {
     global $email_from,$lang,$applicationname;
     
@@ -1664,21 +1664,38 @@ function bulk_mail($userlist,$subject,$text,$html=false)
     if (trim($userlist)=="") {return ($lang["mustspecifyoneuser"]);}
     $userlist=resolve_userlist_groups($userlist);
     $ulist=trim_array(explode(",",$userlist));
-    
-    $emails=resolve_user_emails($ulist);
-    $emails=$emails['emails'];
-    
-    $templatevars['text']=stripslashes(str_replace("\\r\\n","\n",$text));
-    $body=$templatevars['text'];
 
-    # Send an e-mail to each resolved user
-    for ($n=0;$n<count($emails);$n++)
-        {
-        if ($emails[$n]!=""){
-            send_mail($emails[$n],$subject,$body,$applicationname,$email_from,"emailbulk",$templatevars,$applicationname,"",$html);
-            }
-        }
-        
+	$templatevars['text']=stripslashes(str_replace("\\r\\n","\n",$text));
+	$body=$templatevars['text'];
+
+	if ($message_type==MESSAGE_ENUM_NOTIFICATION_TYPE_EMAIL)
+		{
+		$emails=resolve_user_emails($ulist);
+		$emails=$emails['emails'];
+
+		# Send an e-mail to each resolved user
+		for ($n=0;$n<count($emails);$n++)
+			{
+			if ($emails[$n]!="")
+				{
+				send_mail($emails[$n],$subject,$body,$applicationname,$email_from,"emailbulk",$templatevars,$applicationname,"",$html);
+				}
+			}
+		}
+	elseif ($message_type==MESSAGE_ENUM_NOTIFICATION_TYPE_SCREEN)
+		{
+		$user_refs = array();
+		foreach ($ulist as $user)
+			{
+			$user_ref = sql_value("SELECT ref AS value FROM user WHERE username='" . escape_check($user) . "'", false);
+			if ($user_ref !== false)
+				{
+				array_push($user_refs,$user_ref);
+				}
+			}
+		message_add($user_refs,$body,$url);
+		}
+
     # Return an empty string (all OK).
     return "";
     }

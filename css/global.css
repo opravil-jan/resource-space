@@ -1010,3 +1010,23 @@ div.video-js {margin:auto;}
 	color: initial;
 }
 .DropdownActionsLabel {display:inline-block;}
+
+/* Messaging */
+span.MessageCountPill {
+    margin-left: 5px;
+    border-radius: 5px;
+    padding: 2px 5px 2px 5px;
+    cursor: pointer;
+}
+div#MessageContainer {
+    width: 200px;
+    z-index: 90;
+}
+div.MessageBox {
+    border-radius: 5px;
+    padding: 2px;
+    text-align: left;
+    margin-bottom: 5px;
+    min-height: 50px;
+    cursor: pointer;
+}
