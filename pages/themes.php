@@ -476,16 +476,15 @@ else
 				<label for="theme<?php echo $x+2?>"><?php echo $lang["themecategory"] . " ".($x+2) ?></label>
 
 				<select class="stdwidth" name="theme<?php echo $x+2?>" id="theme<?php echo $x+2?>" onchange="document.getElementById('lastlevelchange').value='<?php echo $x+2?>';document.getElementById('themeform').submit();">
+					<option value=""><?php echo $lang['select']; ?></option>
 				<?php
-				//if (!isset($themes[$x+1])||$themes[$x+1]=="")
-					//{
-					?><option value=""><?php echo $lang["select"]?></option><?php
-					//}
-				for ($n=0;$n<count($headers);$n++)
+				for($n = 0; $n < count($headers); $n++)
 					{
-					?><option value="<?php echo htmlspecialchars($headers[$n])?>" <?php if (isset($themes[$x+1])&&stripslashes($themes[$x+1])==stripslashes($headers[$n]))  { ?>selected<?php } ?> ><?php echo str_replace("*","",$headers[$n])?></option><?php
+					?>
+					<option value="<?php echo htmlspecialchars($headers[$n]); ?>" <?php if(isset($themes[$x + 1]) && stripslashes($themes[$x + 1]) == stripslashes($headers[$n])) { ?>selected<?php } ?>><?php echo str_replace("*", "", $headers[$n]); ?></option>
+					<?php
 					}
-				?>
+					?>
 				</select>
 				<div class="clearerleft"> </div>
 				</div>
