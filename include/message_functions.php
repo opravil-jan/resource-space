@@ -7,18 +7,22 @@ DEFINE ("MESSAGE_ENUM_NOTIFICATION_TYPE_RESERVED_1",4);
 DEFINE ("MESSAGE_ENUM_NOTIFICATION_TYPE_RESERVED_2",8);
 DEFINE ("MESSAGE_ENUM_NOTIFICATION_TYPE_RESERVED_3",16);
 
-DEFINE ("MESSAGE_DEFAULT_TTL_SECONDS",60 * 60 * 24 * 3);		// 3 days
+DEFINE ("MESSAGE_DEFAULT_TTL_SECONDS",60 * 60 * 24 * 7);		// 7 days
 
 // ------------------------------------------------------------------------------------------------------------------------
 
-function message_get(&$messages,$user,$show_all=false,$sort_desc=false)
+// gets messages for a given user (return true if there are messages, if not false)
+// note that messages are passed by reference.
+function message_get(&$messages,$user,$get_all=false,$sort_desc=false)
 	{
 	$messages=sql_query("SELECT user_message.ref, user.username AS owner, user_message.seen, message.created, message.expires, message.message, message.url " .
 		"FROM `user_message`
 		INNER JOIN `message` ON user_message.message=message.ref " .
 		"LEFT OUTER JOIN `user` ON message.owner=user.ref " .
-		"WHERE user_message.user='{$user}' " . ($show_all ? "" : "AND user_message.seen='0' ") .
-		"ORDER BY user_message.ref " . ($sort_desc ? "DESC" : "ASC"));
+		"WHERE user_message.user='{$user}'" .
+		($get_all ? " " : " AND message.expires > NOW()") .
+		($get_all ? " " : " AND user_message.seen='0'") .
+		" ORDER BY user_message.ref " . ($sort_desc ? "DESC" : "ASC"));
 	return(count($messages) > 0);
 	}
 
@@ -54,16 +58,18 @@ function message_add($users,$text,$url="",$owner=null,$notification_type=MESSAGE
 
 // ------------------------------------------------------------------------------------------------------------------------
 
-function message_remove($message,$user=null,$type=0)
+// remove a message from message table and associated user_messages
+function message_remove($message)
 	{
-
+	sql_query("DELETE FROM user_message WHERE message='{$message}'");
+	sql_query("DELETE FROM message WHERE ref='{$message}'");	
 	}
 
 // ------------------------------------------------------------------------------------------------------------------------
 
 function message_seen($message,$seen_type=MESSAGE_ENUM_NOTIFICATION_TYPE_SCREEN)
 	{
-	sql_query("UPDATE `user_message` SET seen='{$seen_type}' WHERE `ref`='{$message}'");
+	sql_query("UPDATE `user_message` SET seen=seen | {$seen_type} WHERE `ref`='{$message}'");
 	}
 
 // ------------------------------------------------------------------------------------------------------------------------
@@ -83,11 +89,12 @@ function message_seen_all($user,$seen_type=MESSAGE_ENUM_NOTIFICATION_TYPE_SCREEN
 
 // ------------------------------------------------------------------------------------------------------------------------
 
+// remove all messages from message and user_message tables that have expired (regardless of read).  This will be called
+// from a cron job.
 function message_purge()
 	{
-	//  ******************************** DEBUG **********************
-
-	file_put_contents('c:/purged',time());
+	sql_query("DELETE FROM user_message WHERE message IN (SELECT ref FROM message where expires < NOW())");
+	sql_query("DELETE FROM message where expires < NOW()");
 	}
 
 // ------------------------------------------------------------------------------------------------------------------------
