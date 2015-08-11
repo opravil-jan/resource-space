@@ -220,8 +220,8 @@ if (array_key_exists("user",$_COOKIE) || array_key_exists("user",$_GET) || isset
         $hidden_collections=explode(",",$userdata[0]["hidden_collections"]);
         $userresourcedefaults=$userdata[0]["resource_defaults"];
         $userrequestmode=trim($userdata[0]["request_mode"]);
-    	
-    	$userpreferences = ($user_preferences)? sql_query("SELECT user,colour_theme FROM user_preferences WHERE user=".$userref): FALSE;
+
+    	$userpreferences = ($user_preferences) ? sql_query("SELECT user, `value` AS colour_theme FROM user_preferences WHERE user = " . $userref . " AND parameter = 'colour_theme';") : FALSE;
     	$userpreferences = ($userpreferences && isset($userpreferences[0])) ? $userpreferences[0]: FALSE;
 
         # Some alternative language choices for basket mode / e-commerce

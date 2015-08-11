@@ -29,13 +29,13 @@ if(getvalescaped("quicksave",FALSE))
 		if(empty($userpreferences))
 			{
 			// create a record
-			sql_query("INSERT into user_preferences (user,colour_theme) VALUES (".$userref.",null)");
+			sql_query("INSERT INTO user_preferences (user, parameter, `value`) VALUES (" . $userref . ", 'colour_theme', NULL);");
 			rs_setcookie("colour_theme", "",100, "/", "", substr($baseurl,0,5)=="https", true);
 			exit("1");
 			}
 		else
 			{
-			sql_query("UPDATE user_preferences SET colour_theme=null WHERE user=".$userref);
+			sql_query("UPDATE user_preferences SET `value` = NULL WHERE user = " . $userref . " AND parameter = 'colour_theme';");
 			rs_setcookie("colour_theme", "",100, "/", "", substr($baseurl,0,5)=="https", true);
 			exit("1");
 			}
@@ -46,13 +46,13 @@ if(getvalescaped("quicksave",FALSE))
 		if(empty($userpreferences))
 			{
 			// create a record
-			sql_query("INSERT into user_preferences (user,colour_theme) VALUES (".$userref.",'".escape_check(preg_replace("/^col-/","",$ctheme))."')");
+			sql_query("INSERT into user_preferences (user, parameter, `value`) VALUES (" . $userref . ", 'colour_theme', '" . escape_check(preg_replace('/^col-/', '', $ctheme)) . "');");
 			rs_setcookie("colour_theme", escape_check(preg_replace("/^col-/","",$ctheme)),100, "/", "", substr($baseurl,0,5)=="https", true);
 			exit("1");
 			}
 		else
 			{
-			sql_query("UPDATE user_preferences SET colour_theme='".escape_check(preg_replace("/^col-/","",$ctheme))."' WHERE user=".$userref);
+			sql_query("UPDATE user_preferences SET `value` = '" . escape_check(preg_replace('/^col-/', '', $ctheme)) . "' WHERE user = " . $userref . " AND parameter = 'colour_theme';");
 			rs_setcookie("colour_theme", escape_check(preg_replace("/^col-/","",$ctheme)),100, "/", "", substr($baseurl,0,5)=="https", true);
 			exit("1");
 			}

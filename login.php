@@ -67,7 +67,7 @@ elseif (array_key_exists("username",$_POST) && getval("langupdate","")=="")
         # Set default resource types
         setcookie("restypes",$default_res_types, 0, '', '', false, true);
 
-        $userpreferences = ($user_preferences)? sql_query("SELECT user,colour_theme FROM user_preferences WHERE user=".$result["ref"]): FALSE;
+        $userpreferences = ($user_preferences) ? sql_query("SELECT user, `value` AS colour_theme FROM user_preferences WHERE user = " . $result['ref'] . " AND parameter = 'colour_theme';") : FALSE;
         $userpreferences = ($userpreferences && isset($userpreferences[0])) ? $userpreferences[0]: FALSE;
         if($userpreferences && isset($userpreferences["colour_theme"]) && $userpreferences["colour_theme"]!="" && (!isset($_COOKIE["colour_theme"]) || $userpreferences["colour_theme"]!=$_COOKIE["colour_theme"]))
             {
