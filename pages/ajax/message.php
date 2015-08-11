@@ -1,6 +1,6 @@
  <?php
 
- 	DEFINE ("MESSAGE_POLLING_INTERVAL_SECONDS",5);					// we could move these to a config variable at some point
+ 	//DEFINE ("MESSAGE_POLLING_INTERVAL_SECONDS",5);					// we could move these to a config variable at some point
  	DEFINE ("MESSAGE_POLLING_ABSENT_USER_TIMEOUT_SECONDS",30);
  	DEFINE ("MESSAGE_FADEOUT_SECONDS",5);
 
@@ -71,7 +71,7 @@
 			clearTimeout(message_timer);
 			message_timer = null;
 		}
-		activeSeconds-=<?php echo MESSAGE_POLLING_INTERVAL_SECONDS; ?>;
+		activeSeconds-=<?php echo $message_polling_interval_seconds; ?>;
 		jQuery.ajax({
 			url: '<?php echo $baseurl; ?>/pages/ajax/message.php',
 			type: 'GET',
@@ -82,7 +82,7 @@
 					jQuery('span.MessageCountPill').html(messages.length).click(function() {
 						document.location.href='<?php echo $baseurl; ?>/pages/user/user_messages.php';
 					}).fadeIn();
-					if (activeSeconds > 0)
+					if (activeSeconds > 0 || message_poll_first_run)
 					{
 						for(var i=0; i < messages.length; i++)
 						{
@@ -113,7 +113,12 @@
 				}
 			}
 		}).done(function() {
-			message_timer = window.setTimeout(message_poll,<?php echo MESSAGE_POLLING_INTERVAL_SECONDS; ?> * 1000);
+			<?php if ($message_polling_interval_seconds > 0)
+			{
+				?>message_timer = window.setTimeout(message_poll,<?php echo $message_polling_interval_seconds; ?> * 1000);
+				<?php
+			}
+			?>
 			message_poll_first_run = false;
 		});
 	}
