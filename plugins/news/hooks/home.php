@@ -7,25 +7,30 @@ function HookNewsHomeSearchbarbottomtoolbar()
 	$findtext = "";
 	$news = get_news_headlines("",$recent,"");
 	$results=count($news);
-	?>
-	<div id="NewsBox" class="HomePanelIN">
-	<div class="NewsHeader"></div>	
+   	?>
+	<div id="ssearchbox" class="HomePanelIN">
+		<h1 style="color:#FFF;"><?php echo $lang['title']; ?></h1>
 		<div id="NewsBodyDisplay">
-		<?php
-		if ($results>0)
+         <?php
+		if($results > 0)
 			{
-			 for ($n=0;($n<$results);$n++)
+			for($n = 0; ($n < $results); $n++)
 				{
-				echo "<p><a href=\"" . $baseurl . "/plugins/news/pages/news.php?ref=" . $news[$n]["ref"] . "\">" . $news[$n]["title"] ."</a></p>";
+				?>
+				<p>&gt;<a href="<?php echo $baseurl; ?>/plugins/news/pages/news.php?ref=<?php echo $news[$n]['ref']; ?>"><?php echo $news[$n]['title']; ?></a></p>
+				<?php
 				}
 			}
-		else {echo $lang["news_nonewmessages"];}
-		?>
+		else
+			{
+			echo $lang['news_nonewmessages'];
+			}
+			?>
 		</div>
 	</div>
-		
-	<?php  
+	<?php
 	}
+
 function HookNewsHomeHomebeforepanels() 
 	{
 	if (getvalescaped("ajax",false))
