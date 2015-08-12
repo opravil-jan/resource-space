@@ -1867,5 +1867,387 @@ function update_collection_user($collection,$newuser)
 	return true;	
 	}
 	
+function compile_collection_actions(array $collection_data, $top_actions)
+    {
+    global $baseurl_short, $lang, $k, $userrequestmode, $zipcommand, $collection_download, $contact_sheet,
+           $manage_collections_contact_sheet_link, $manage_collections_share_link, $allow_share,
+           $manage_collections_remove_link, $userref, $collection_purge, $show_edit_all_link, $result,
+           $edit_all_checkperms, $preview_all, $order_by, $sort, $archive, $contact_sheet_link_on_collection_bar,
+           $show_searchitemsdiskusage, $emptycollection, $remove_resources_link_on_collection_bar, $count_result,
+           $download_usage, $home_dash, $top_nav_upload_type, $pagename, $offset, $col_order_by, $find;
 
-	
+    $options = array();
+	$o=0;
+
+    if(empty($collection_data))
+        {
+        return $options;
+        }
+
+    $multi_edit = allow_multi_edit($collection_data['ref']);
+
+    if(!collection_is_research_request($collection_data['ref']) || !checkperm('r'))
+        {
+        if(!$top_actions && checkperm('s'))
+            {
+            // Manage My Collections
+            $data_attribute['url'] = $baseurl_short . 'pages/collection_manage.php';
+            $options[$o]['value']='manage_collections';
+            $options[$o]['label']=$lang['managemycollections'];
+            $options[$o]['data_attr']=$data_attribute;
+            $o++;
+
+            // Collection feedback
+            if(isset($collection_data['request_feedback']) && $collection_data['request_feedback'])
+                {
+                $data_attribute['url'] = sprintf('%spages/collection_feedback.php?collection=%s&k=%s',
+                    $baseurl_short,
+                    urlencode($collection_data['ref']),
+                    urlencode($k)
+                );
+                $options[$o]['value']='collection_feedback';
+				$options[$o]['label']=$lang['sendfeedback'];
+				$options[$o]['data_attr']=$data_attribute;
+				$o++;
+                }
+            }
+        }
+    else
+        {
+        $research = sql_value('SELECT ref value FROM research_request WHERE collection="' . $collection_data['ref'] . '";', 0);
+
+        // Manage research requests
+        $data_attribute['url'] = sprintf('%spages/team/team_research.php', $baseurl_short);
+        $options[$o]['value']='manage_research_requests';
+		$options[$o]['label']=$lang['manageresearchrequests'];
+		$options[$o]['data_attr']=$data_attribute;
+		$o++;
+
+        // Edit research requests
+        $data_attribute['url'] = sprintf('%spages/team/team_research_edit.php?ref=%s',
+            $baseurl_short,
+            urlencode($research)
+        );
+        $options[$o]['value']='edit_research_requests';
+		$options[$o]['label']=$lang['editresearchrequests'];
+		$options[$o]['data_attr']=$data_attribute;
+		$o++;
+        }
+
+    // Select collection option - not for collection bar
+    if($pagename!="collections" && $k == '' && !checkperm('b') && ($pagename=="themes" || $top_actions))
+        {
+        $options[$o]['value']='select_collection';
+		$options[$o]['label']=$lang['selectcollection'];
+		$o++;
+        }
+
+    // Edit Collection
+    if(($userref == $collection_data['user']) || (checkperm('h'))) 
+        {
+        $extra_tag_attributes = sprintf('
+                data-url="%spages/collection_edit.php?ref=%s"
+            ',
+            $baseurl_short,
+            urlencode($collection_data['ref'])
+        );
+
+        $options[$o]['value']='edit_collection';
+		$options[$o]['label']=$lang['action-edit'];
+		$options[$o]['data_attr']=array();
+		$options[$o]['extra_tag_attributes']=$extra_tag_attributes;
+		$o++;
+        }
+
+    // Upload to collection
+    if((checkperm('c') || checkperm('d')) && $collection_data['savedsearch'] == 0 && ($userref == $collection_data['user'] || $collection_data['allow_changes'] == 1 || checkperm('h')))
+        {
+        $data_attribute['url'] = sprintf('%spages/edit.php?uploader=%s&ref=-%s&collection_add=%s',
+            $baseurl_short,
+            urlencode($top_nav_upload_type),
+            urlencode($userref),
+            urlencode($collection_data['ref'])
+        );
+
+        $options[$o]['value']='upload_collection';
+		$options[$o]['label']=$lang['action-upload-to-collection'];
+		$options[$o]['data_attr']=$data_attribute;
+		$o++;
+        }
+
+    // Home_dash is on, AND NOT Anonymous use, AND (Dash tile user (NOT with a managed dash) || Dash Tile Admin)
+    if(!$top_actions && $home_dash && checkPermission_dashcreate())
+        {
+        $data_attribute['url'] = sprintf('
+            %spages/dash_tile.php?create=true&tltype=srch&promoted_resource=true&freetext=true&all_users=1&link=/pages/search.php?search=!collection%s&order_by=relevance&sort=DESC
+            ',
+            $baseurl_short,
+            $collection_data['ref']
+        );
+
+        $options[$o]['value']='save_collection_to_dash';
+		$options[$o]['label']=$lang['createnewdashtile'];
+		$options[$o]['data_attr']=$data_attribute;
+		$o++;
+        }
+
+    // Request all
+    if($count_result > 0)
+        {
+        # Ability to request a whole collection (only if user has restricted access to any of these resources)
+        $min_access = collection_min_access($result);
+        if($min_access != 0)
+            {
+            $data_attribute['url'] = sprintf('%spages/collection_request.php?ref=%s&k=%s',
+                $baseurl_short,
+                urlencode($collection_data['ref']),
+                urlencode($k)
+            );
+            $options[$o]['value']='request_all';
+            $options[$o]['label']=$lang['requestall'];
+            $options[$o]['data_attr']=$data_attribute;
+            $o++;
+            }
+        }
+
+    // Download option
+    if($download_usage && ((isset($zipcommand) || $collection_download) && $count_result > 0))
+        {
+        $data_attribute['url'] = sprintf('%spages/terms.php?k=%s&url=pages/download_usage.php?collection=%s&k=%s',
+            $baseurl_short,
+            urlencode($k),
+            urlencode($collection_data['ref']),
+            urlencode($k)
+        );
+        $options[$o]['value']='download_collection';
+		$options[$o]['label']=$lang['action-download'];
+		$options[$o]['data_attr']=$data_attribute;
+		$o++;
+        }
+    else if((isset($zipcommand) || $collection_download) && $count_result > 0)
+        {
+        $data_attribute['url'] = sprintf('%spages/terms.php?k=%s&url=pages/collection_download.php?collection=%s&k=%s',
+            $baseurl_short,
+            urlencode($k),
+            urlencode($collection_data['ref']),
+            urlencode($k)
+        );
+        $options[$o]['value']='download_collection';
+		$options[$o]['label']=$lang['action-download'];
+		$options[$o]['data_attr']=$data_attribute;
+		$o++;
+        }
+    else if(isset($zipcommand) || $collection_download) 
+        {
+        $data_attribute['url'] = sprintf('%spages/terms.php?url=pages/collection_download.php?collection=%s',
+            $baseurl_short,
+            urlencode($collection_data['ref'])
+        );
+        $options[$o]['value']='download_collection';
+		$options[$o]['label']=$lang['action-download'];
+		$options[$o]['data_attr']=$data_attribute;
+		$o++;
+        }
+
+    // Contact Sheet
+    if($contact_sheet == true && ($manage_collections_contact_sheet_link || $contact_sheet_link_on_collection_bar))
+        {
+        $data_attribute = array(
+            'url' => sprintf('%spages/contactsheet_settings.php?ref=%s',
+                $baseurl_short,
+                urlencode($collection_data['ref'])
+            )
+        );
+
+        $options[$o]['value']='contact_sheet';
+		$options[$o]['label']=$lang['contactsheet'];
+		$options[$o]['data_attr']=$data_attribute;
+		$o++;
+        }
+
+    // Share
+    if($manage_collections_share_link && $allow_share && (checkperm('v') || checkperm ('g'))) 
+        {
+        $extra_tag_attributes = sprintf('
+                data-url="%spages/collection_share.php?ref=%s"
+            ',
+            $baseurl_short,
+            urlencode($collection_data['ref'])
+        );
+
+        $options[$o]['value']='share_collection';
+		$options[$o]['label']=$lang['share'];
+		$options[$o]['data_attr']=array();
+		$options[$o]['extra_tag_attributes']=$extra_tag_attributes;
+		$o++;
+        }
+
+    // Remove
+    if($manage_collections_remove_link && $userref != $collection_data['user'])
+        {
+        $options[$o]['value']='remove_collection';
+		$options[$o]['label']=$lang['action-remove'];
+		$o++;
+        }
+
+    // Delete
+    if((($userref == $collection_data['user']) || checkperm('h')) && ($collection_data['cant_delete'] == 0)) 
+        {
+        $options[$o]['value']='delete_collection';
+		$options[$o]['label']=$lang['action-delete'];
+		$o++;
+        }
+
+    // Collection Purge
+    if($collection_purge && isset($collections) && checkperm('e0') && $collection_data['cant_delete'] == 0)
+        {
+        $options[$o]['value']='purge_collection';
+		$options[$o]['label']=$lang['purgeanddelete'];
+		$o++;
+        }
+
+    // Collection log
+    if(($userref== $collection_data['user']) || (checkperm('h')))
+        {
+        $extra_tag_attributes = sprintf('
+                data-url="%spages/collection_log.php?ref=%s"
+            ',
+            $baseurl_short,
+            urlencode($collection_data['ref'])
+        );
+
+        $options[$o]['value']='collection_log';
+		$options[$o]['label']=$lang['action-log'];
+		$options[$o]['data_attr']=array();
+		$options[$o]['extra_tag_attributes']=$extra_tag_attributes;
+		$o++;
+        }
+        
+    // View all
+    if((isset($collection_data["c"]) && $collection_data["c"]>0) || count($result) > 0)
+        {
+        $data_attribute['url'] = sprintf('%spages/search.php?search=!collection%s',
+            $baseurl_short,
+            urlencode($collection_data['ref'])
+        );
+
+        $options[$o]['value']='view_all_resources_in_collection';
+		$options[$o]['label']=$lang['view_all_resources'];
+		$options[$o]['data_attr']=$data_attribute;
+		$o++;
+        }
+
+    // Edit all
+    # If this collection is (fully) editable, then display an edit all link
+    if($show_edit_all_link && (count($result) > 0))
+        {
+        if(!$edit_all_checkperms || allow_multi_edit($collection_data['ref'])) 
+            {
+            $extra_tag_attributes = sprintf('
+                    data-url="%spages/edit.php?collection=%s"
+                ',
+                $baseurl_short,
+                urlencode($collection_data['ref'])
+            );
+
+            $options[$o]['value']='edit_all_in_collection';
+            $options[$o]['label']=$lang['edit_all_resources'];
+            $options[$o]['data_attr']=array();
+            $options[$o]['extra_tag_attributes']=$extra_tag_attributes;
+            $o++;
+            }
+        }
+
+    // Delete all
+    // Note: functionality moved from edit collection page
+    if(!$top_actions
+        && (count($result) != 0 || $count_result != 0)
+        && !(isset($allow_resource_deletion) && !$allow_resource_deletion)
+        && collection_writeable($collection_data['ref'])
+        && $multi_edit
+        && !checkperm('D'))
+        {
+        $options[$o]['value']='delete_all_in_collection';
+		$options[$o]['label']=$lang['deleteallresourcesfromcollection'];
+		$o++;
+        }
+
+    // Preview all
+    if(count($result) != 0 && $k == '' && $preview_all)
+        {
+        $extra_tag_attributes = sprintf('
+                data-url="%spages/preview_all.php?ref=%s"
+            ',
+            $baseurl_short,
+            urlencode($collection_data['ref'])
+        );
+
+        $options[$o]['value']='preview_all';
+		$options[$o]['label']=$lang['preview_all'];
+		$options[$o]['data_attr']=array();
+		$options[$o]['extra_tag_attributes']=$extra_tag_attributes;
+		$o++;
+        }
+
+    // Remove all
+    if(isset($emptycollection) && $remove_resources_link_on_collection_bar && collection_writeable($collection_data['ref']))
+        {
+        $data_attribute['url'] = sprintf('%spages/collections.php?emptycollection=%s&removeall=true&submitted=removeall&ajax=true',
+            $baseurl_short,
+            urlencode($collection_data['ref'])
+        );
+
+        $options[$o]['value']='empty_collection';
+		$options[$o]['label']=$lang['emptycollection'];
+		$options[$o]['data_attr']=$data_attribute;
+		$o++;
+        }
+    
+    // Edit Previews
+	if ($count_result>0 && ($userref == $collection_data['user'] || $collection_data['allow_changes'] == 1 || checkperm('h')))
+		{
+		$main_pages=array("search","collection_manage","collection_public","themes");
+		$back_to_page=(in_array($pagename,$main_pages)?htmlspecialchars($pagename):"");
+		 $data_attribute['url'] = sprintf('%spages/collection_edit_previews.php?ref=%s&offset=%s&order_by=%s&col_order_by=<%s&sort=%s&find=%s&backto=%s',
+            $baseurl_short,
+            urlencode($collection_data['ref']),
+            urlencode($offset),
+            urlencode($order_by),
+            urlencode($col_order_by),
+            urlencode($sort),
+            urlencode($find),
+            $back_to_page
+        );
+        $options[$o]['value']='edit_previews';
+		$options[$o]['label']=$lang['editcollectionresources'];
+		$options[$o]['data_attr']=$data_attribute;
+		$o++;
+		}
+
+    // Show disk usage
+    if(!$top_actions && $show_searchitemsdiskusage) 
+        {
+        $extra_tag_attributes = sprintf('
+                data-url="%spages/search_disk_usage.php?search=!collection%s&k=%s"
+            ',
+            $baseurl_short,
+            urlencode($collection_data['ref']),
+            urlencode($k)
+        );
+
+        $options[$o]['value']='search_items_disk_usage';
+		$options[$o]['label']=$lang['collection_disk_usage'];
+		$options[$o]['data_attr']=array();
+		$options[$o]['extra_tag_attributes']=$extra_tag_attributes;
+		$o++;
+        }
+
+    // Add extra collection actions and manipulate existing actions through plugins
+    $modified_options = hook('render_actions_add_collection_option', '', array($top_actions,$options));
+    if(is_array($modified_options) && !empty($modified_options))
+		{
+        $options=$modified_options;
+        }
+
+    return $options;
+    }

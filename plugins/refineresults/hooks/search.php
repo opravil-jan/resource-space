@@ -1,13 +1,13 @@
 <?php
 include_once __DIR__ . '/../../../include/render_functions.php';
 
-function HookRefineresultsSearchRender_search_actions_add_option()
+function HookRefineresultsSearchRender_search_actions_add_option($options)
     {
     global $baseurl_short, $lang, $k, $search, $parameters_string, $result, $collections;
-
-    $options = '';
+	
+	$c=count($options);
     $results = 0;
-
+	$return=false;
     if(is_array($result))
         {
         $results = count($result);
@@ -29,7 +29,11 @@ function HookRefineresultsSearchRender_search_actions_add_option()
     // Search within these results option
     if ($results > 1)
         {
-        $options .= render_dropdown_option('search_within_results', $lang['refineresults']);
+        $options[$c]['value']='search_within_results';
+		$options[$c]['label']=$lang['refineresults'];
+		$c++;
+		
+		$return=true;
         }
 
     // Clear search terms option
@@ -40,10 +44,18 @@ function HookRefineresultsSearchRender_search_actions_add_option()
             $default_search,
             $parameters_string
         );
-        $options .= render_dropdown_option('clear_search_terms', $lang['clearsearch'], $data_attribute);
+        $options[$c]['value']='clear_search_terms';
+		$options[$c]['label']=$lang['clearsearch'];
+		$options[$c]['data_attr']=$data_attribute;
+		$c++;
+		
+		$return=true;
         }
-
-    return $options;
+	
+	if($return)
+		{
+		return $options;
+		}
     }
 
 

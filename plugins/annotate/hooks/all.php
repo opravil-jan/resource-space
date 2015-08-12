@@ -30,18 +30,22 @@ function HookAnnotateAllRemoveannotations(){
 	sql_query("update resource set annotation_count=0 where ref='$ref'");	
 	sql_query("delete from resource_keyword where resource='$ref' and annotation_ref>0");;
 }
-function HookAnnotateAllRender_actions_add_collection_option(){
+function HookAnnotateAllRender_actions_add_collection_option($top_actions,$options){
 	global $lang,$pagename,$annotate_pdf_output,$annotate_pdf_output_only_annotated,$baseurl_short,$collection,$count_result;
-	$options = '';
+	
+	$c=count($options);
+	
 	if ($annotate_pdf_output || $count_result!=0){
 		$data_attribute['url'] = sprintf('%splugins/annotate/pages/annotate_pdf_config.php?col=%s',
             $baseurl_short,
             urlencode($collection)
         );
-        $options.=render_dropdown_option('annotate', $lang['pdfwithnotes'],$data_attribute);
+        $options[$c]['value']='annotate';
+		$options[$c]['label']=$lang['pdfwithnotes'];
+		$options[$c]['data_attr']=$data_attribute;
+		
+		return $options;
 	}
-	//echo "cropper option:$options";
-	return $options;
 }
 function HookAnnotateAllAdditionalheaderjs(){
 	global $baseurl,$k,$baseurl_short,$css_reload_key;

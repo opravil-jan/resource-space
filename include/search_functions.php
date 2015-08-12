@@ -2245,3 +2245,182 @@ function refine_searchstring($search){
     return $search;
 }
 }
+
+function compile_search_actions($top_actions)
+    {
+    $options = array();
+	$o=0;
+
+    global $baseurl_short, $lang, $k, $search, $restypes, $order_by, $archive, $sort, $daylimit, $home_dash, $url,
+           $allow_smart_collections, $resources_count, $show_searchitemsdiskusage, $offset, $allow_save_search;
+
+    // globals that could also be passed as a reference
+    global $starsearch;
+
+    if(!checkperm('b') && $k == '') 
+        {
+        if($top_actions && $allow_save_search)
+            {
+            $extra_tag_attributes = sprintf('
+                    data-url="%spages/collections.php?addsearch=%s&restypes=%s&archive=%s&daylimit=%s"
+                ',
+                $baseurl_short,
+                urlencode($search),
+                urlencode($restypes),
+                urlencode($archive),
+                urlencode($daylimit)
+            );
+
+            $options[$o]['value']='save_search_to_collection';
+			$options[$o]['label']=$lang['savethissearchtocollection'];
+			$options[$o]['data_attr']=array();
+			$options[$o]['extra_tag_attributes']=$extra_tag_attributes;
+			$o++;
+            }
+
+        #Home_dash is on, AND NOT Anonymous use, AND (Dash tile user (NOT with a managed dash) || Dash Tile Admin)
+        if($top_actions && $home_dash && checkPermission_dashcreate())
+            {
+            $option_name = 'save_search_to_dash';
+            $data_attribute = array(
+                'url'  => $baseurl_short . 'pages/dash_tile.php?create=true&tltype=srch&freetext=true"',
+                'link' => $url
+            );
+
+            if(substr($search, 0, 11) == '!collection')
+                {
+                $option_name = 'save_collection_to_dash';
+                $data_attribute['url'] = sprintf('
+                    %spages/dash_tile.php?create=true&tltype=srch&promoted_resource=true&freetext=true&all_users=1&link=/pages/search.php?search=%s&order_by=relevance&sort=DESC
+                    ',
+                    $baseurl_short,
+                    $search
+                );
+                }
+
+            $options[$o]['value']=$option_name;
+			$options[$o]['label']=$lang['savethissearchtodash'];
+			$options[$o]['data_attr']=$data_attribute;
+			$o++;
+            }
+
+        // Save search as Smart Collections
+        if($allow_smart_collections && substr($search, 0, 11) != '!collection')
+            {
+            $extra_tag_attributes = sprintf('
+                    data-url="%spages/collections.php?addsmartcollection=%s&restypes=%s&archive=%s&starsearch=%s"
+                ',
+                $baseurl_short,
+                urlencode($search),
+                urlencode($restypes),
+                urlencode($archive),
+                urlencode($starsearch)
+            );
+
+            $options[$o]['value']='save_search_smart_collection';
+			$options[$o]['label']=$lang['savesearchassmartcollection'];
+			$options[$o]['data_attr']=array();
+			$options[$o]['extra_tag_attributes']=$extra_tag_attributes;
+			$o++;
+            }
+
+        /*// Wasn't able to see this working even in the old code
+        // so I left it here for reference. Just uncomment it and it should work
+        global $smartsearch;
+        if($allow_smart_collections && substr($search, 0, 11) == '!collection' && (is_array($smartsearch[0]) && !empty($smartsearch[0])))
+            {
+            $smartsearch = $smartsearch[0];
+
+            $extra_tag_attributes = sprintf('
+                    data-url="%spages/search.php?search=%s&restypes=%s&archive=%s&starsearch=%s&daylimit=%s"
+                ',
+                $baseurl_short,
+                urlencode($smartsearch['search']),
+                urlencode($smartsearch['restypes']),
+                urlencode($smartsearch['archive']),
+                urlencode($smartsearch['starsearch']),
+                urlencode($daylimit)
+            );
+
+            $options[$o]['value']='do_saved_search';
+			$options[$o]['label']=$lang['dosavedsearch'];
+			$options[$o]['data_attr']=array();
+			$options[$o]['extra_tag_attributes']=$extra_tag_attributes;
+			$o++;
+            }*/
+
+        if($resources_count != 0)
+            {
+            $extra_tag_attributes = sprintf('
+                    data-url="%spages/collections.php?addsearch=%s&restypes=%s&archive=%s&mode=resources&daylimit=%s"
+                ',
+                $baseurl_short,
+                urlencode($search),
+                urlencode($restypes),
+                urlencode($archive),
+                urlencode($daylimit)
+            );
+
+            $options[$o]['value']='save_search_items_to_collection';
+			$options[$o]['label']=$lang['savesearchitemstocollection'];
+			$options[$o]['data_attr']=array();
+			$options[$o]['extra_tag_attributes']=$extra_tag_attributes;
+			$o++;
+
+            if($show_searchitemsdiskusage) 
+                {
+                $extra_tag_attributes = sprintf('
+                        data-url="%spages/search_disk_usage.php?search=%s&restypes=%s&offset=%s&order_by=%s&sort=%s&archive=%s&daylimit=%s&k=%s"
+                    ',
+                    $baseurl_short,
+                    urlencode($search),
+                    urlencode($restypes),
+                    urlencode($offset),
+                    urlencode($order_by),
+                    urlencode($sort),
+                    urlencode($archive),
+                    urlencode($daylimit),
+                    urlencode($k)
+                );
+
+                $options[$o]['value']='search_items_disk_usage';
+				$options[$o]['label']=$lang['searchitemsdiskusage'];
+				$options[$o]['data_attr']=array();
+				$options[$o]['extra_tag_attributes']=$extra_tag_attributes;
+				$o++;
+                }
+            }
+        }
+
+    if($top_actions && $k == '')
+        {
+        $extra_tag_attributes = sprintf('
+                data-url="%spages/csv_export_results_metadata.php?search=%s&restype=%s&order_by=%s&archive=%s&sort=%s&starsearch=%s"
+            ',
+            $baseurl_short,
+            urlencode($search),
+            urlencode($restypes),
+            urlencode($order_by),
+            urlencode($archive),
+            urlencode($sort),
+            urlencode($starsearch)
+
+        );
+
+        $options[$o]['value']='csv_export_results_metadata';
+		$options[$o]['label']=$lang['csvExportResultsMetadata'];
+		$options[$o]['data_attr']=array();
+		$options[$o]['extra_tag_attributes']=$extra_tag_attributes;
+		$o++;
+        }
+
+    // Add extra search actions or modify existing options through plugins
+    $modified_options = hook('render_search_actions_add_option','',array($options));
+	if($top_actions && !empty($modified_options))
+		{
+        $options=$modified_options;
+		}
+
+    return $options;
+    }
+

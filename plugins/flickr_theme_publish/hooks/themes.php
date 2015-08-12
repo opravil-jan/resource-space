@@ -13,13 +13,16 @@ function HookFlickr_theme_publishThemesAddcustomtool($theme)
 	<?php
 	}
 
-function HookFlickr_theme_publishThemesRender_actions_add_collection_option(){
+function HookFlickr_theme_publishThemesRender_actions_add_collection_option($top_actions,$options){
 	global $getthemes, $m, $lang, $baseurl_short;
+    
     $theme = $getthemes[$m];
-	$options = '';
+    
 	// these aren't really set on themes.php
 	$result=get_collection_resources($theme['ref']);
 	$count_result=count($result);
+	
+	$c=count($options);
 	
 	if ($count_result>0) # Don't show the option if the theme is empty.
         {
@@ -32,8 +35,11 @@ function HookFlickr_theme_publishThemesRender_actions_add_collection_option(){
             $baseurl_short,
             urlencode($theme["ref"])
         );
-        $options.=render_dropdown_option('flickr_publish', $lang_string,$data_attribute);
+        $options[$c]['value']='flickr_publish';
+		$options[$c]['label']=$lang_string;
+		$options[$c]['data_attr']=$data_attribute;
+		
+		return $options;
 	}
-	return $options;
 }
 ?>
