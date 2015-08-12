@@ -426,7 +426,7 @@ else {?><div class="ui-layout-south" ></div><script>myLayout=jQuery('body').layo
 <script type="text/javascript">
 jQuery(window).bind('resize.modal', ModalCentre);
 </script>
-<!-- End of modal support ->
+<!-- End of modal support -->
 
 <script type="text/javascript">
 
