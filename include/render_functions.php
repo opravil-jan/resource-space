@@ -201,7 +201,11 @@ function render_actions(array $collection_data, $top_actions = true, $two_line =
 					$actions_array[$a]['extra_tag_attributes']='';
 					}
 				$options.=render_dropdown_option($actions_array[$a]['value'],$actions_array[$a]['label'],$actions_array[$a]['data_attr'],$actions_array[$a]['extra_tag_attributes']);
-				hook("after_render_dropdown_option","",array($actions_array,$a));
+				$add_to_options=hook("after_render_dropdown_option","",array($actions_array,$a));
+				if($add_to_options!='')
+					{
+					$options.=$add_to_options;
+					}
 				}
 				echo $options;
             ?>
