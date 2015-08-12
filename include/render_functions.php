@@ -169,45 +169,43 @@ function render_actions(array $collection_data, $top_actions = true, $two_line =
         <br />
         <?php
         }
-            ?>
+        ?>
         <select id="<?php echo $action_selection_id; ?>" <?php if(!$top_actions) { echo 'class="SearchWidth"'; } ?>>
             <option class="SelectAction" value=""></option>
             <?php
 
             // Collection Actions
-            $collection_actions_array=compile_collection_actions($collection_data,$top_actions);
+            $collection_actions_array = compile_collection_actions($collection_data, $top_actions);
 
-            // Usual search actions    
-            $search_actions_array=compile_search_actions($top_actions);
+            // Usual search actions
+            $search_actions_array = compile_search_actions($top_actions);
             
-            $actions_array=array_merge($collection_actions_array,$search_actions_array);
-			
-            $modify_actions_array = hook('modify_unified_dropdown_actions_options', '', array($actions_array,$top_actions));
-            if(!empty($modify_actions_array))
-                {
-                $actions_array = $modify_actions_array;
-                }
-			
+            $actions_array = array_merge($collection_actions_array, $search_actions_array);
+
             // loop and display
 			$options='';
-			for($a=0;$a<count($actions_array);$a++)
+			for($a = 0; $a < count($actions_array); $a++)
 				{
 				if(!isset($actions_array[$a]['data_attr']))
 					{
-					$actions_array[$a]['data_attr']=array();
+					$actions_array[$a]['data_attr'] = array();
 					}
+
 				if(!isset($actions_array[$a]['extra_tag_attributes']))
 					{
-					$actions_array[$a]['extra_tag_attributes']='';
+					$actions_array[$a]['extra_tag_attributes'] = '';
 					}
-				$options.=render_dropdown_option($actions_array[$a]['value'],$actions_array[$a]['label'],$actions_array[$a]['data_attr'],$actions_array[$a]['extra_tag_attributes']);
-				$add_to_options=hook("after_render_dropdown_option","",array($actions_array,$a));
-				if($add_to_options!='')
+
+				$options .= render_dropdown_option($actions_array[$a]['value'], $actions_array[$a]['label'], $actions_array[$a]['data_attr'], $actions_array[$a]['extra_tag_attributes']);
+
+				$add_to_options = hook('after_render_dropdown_option', '', array($actions_array, $a));
+				if($add_to_options != '')
 					{
-					$options.=$add_to_options;
+					$options .= $add_to_options;
 					}
 				}
-				echo $options;
+
+			echo $options;
             ?>
         </select>
         <script>
