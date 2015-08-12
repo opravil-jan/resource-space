@@ -349,7 +349,7 @@ function render_actions(array $collection_data, $top_actions = true, $two_line =
 
 function render_collection_actions(array $collection_data, $top_actions)
     {
-    global $baseurl_short, $lang, $k, $userrequestmode, $collection_download, $contact_sheet,
+    global $baseurl_short, $lang, $k, $userrequestmode, $zipcommand, $collection_download, $contact_sheet,
            $manage_collections_contact_sheet_link, $manage_collections_share_link, $allow_share,
            $manage_collections_remove_link, $userref, $collection_purge, $show_edit_all_link, $result,
            $edit_all_checkperms, $preview_all, $order_by, $sort, $archive, $contact_sheet_link_on_collection_bar,
