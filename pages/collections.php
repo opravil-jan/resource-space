@@ -903,7 +903,7 @@ hook("thumblistextra");
 
 		</div>
 		<?php	
-		}
+		} // end of Basket Mode
 	elseif ($k!="")
 		{
 		# Anonymous access, slightly different display
@@ -934,34 +934,55 @@ hook("thumblistextra");
 	  <?php } # end hook("replaceanoncollectiontools") ?>
 	</div>
 	<?php 
-	} else { 
-	?>
+		}
+	else
+		{
+		?>
+		<div id="CollectionMinTitle" class="ExternalShare">
+		<?php
+		if(!hook('replacecollectiontitle') && !hook('replacecollectiontitlemin'))
+			{
+			?>
+			<h2><a onclick="return CentralSpaceLoad(this, true);" href="<?php echo $baseurl_short; ?>pages/collection_manage.php"><?php echo $lang['mycollections']; ?></a></h2>
+			<?php
+			}
+			?>
+		</div>
 
-	<div id="CollectionMinTitle" class="ExternalShare"><?php if (!hook("replacecollectiontitle") && !hook("replacecollectiontitlemin")) { ?><h2><a onclick="return CentralSpaceLoad(this,true);" href="<?php echo $baseurl_short?>pages/collection_manage.php"><?php echo $lang["mycollections"]?></a></h2><?php } ?></div>
+		<!--Menu-->	
+		<div id="CollectionMinRightNav">
+        	<a id="toggleThumbsLink" href="#" onClick="ToggleThumbs();return false;"><?php echo $lang['showthumbnails']; ?></a>
+    	<?php
+    	hook('aftertogglethumbs');
 
-	<!--Menu-->	
-	<div id="CollectionMinRightNav">
-        <a id="toggleThumbsLink" href="#" onClick="ToggleThumbs();return false;"><?php echo $lang["showthumbnails"]?></a>
-        <?php hook("aftertogglethumbs"); ?>
-	<?php
-        // Render dropdown actions
-	render_actions($cinfo, false, false, "min");
+	    // Render dropdown actions
+		render_actions($cinfo, false, false, "min");
+		?>
+		</div>
+
+		<!--Collection Dropdown-->
+		<?php
+		if(!hook('replace_collectionmindroptitle'))
+			{
+			?>
+		<div id="CollectionMinDropTitle"><?php echo $lang['currentcollection']; ?>:&nbsp;</div>
+    		<?php
+    		} # end hook replace_collectionmindroptitle
+    		?>
+		<div id="CollectionMinDrop">
+	 		<form method="get"
+	 			  id="colselect2" 
+	 			  onsubmit="newcolname=encodeURIComponent(jQuery('#entername2').val());CollectionDivLoad('<?php echo $baseurl_short; ?>pages/collections.php?thumbs=hide&collection=-1&k=<?php echo urlencode($k); ?>&entername='+newcolname);return false;">
+				<div class="MinSearchItem" id="MinColDrop">
+					<input type=text id="entername2" name="entername" placeholder="<?php echo $lang['entercollectionname']; ?>" style="display:inline;display:none;" class="SearchWidthExp">
+				</div>
+				<script>jQuery('#collection').clone().attr('id','collection2').attr('onChange',"if(document.getElementById('collection2').value==-1){document.getElementById('entername2').style.display='inline';document.getElementById('entername2').focus();return false;}<?php if (!checkperm("b")){ ?>ChangeCollection(jQuery(this).val(),'<?php echo urlencode($k) ?>');<?php } else { ?>document.getElementById('colselect2').submit();<?php } ?>").prependTo('#MinColDrop');</script>
+	  		</form>
+		</div>
+		<?php
+		}
+	}
 	?>
-	</div>
-	<!--Collection Dropdown-->
-	<?php if(!hook("replace_collectionmindroptitle")){?>
-	<div id="CollectionMinDropTitle"><?php echo $lang["currentcollection"]?>:&nbsp;</div>
-    <?php } # end hook replace_collectionmindroptitle ?>				
-	<div id="CollectionMinDrop">
-	 <form method="get" id="colselect2" onsubmit="newcolname=encodeURIComponent(jQuery('#entername2').val());CollectionDivLoad('<?php echo $baseurl_short?>pages/collections.php?thumbs=hide&collection=-1&k=<?php echo urlencode($k) ?>&entername='+newcolname);return false;">
-			<div class="MinSearchItem" id="MinColDrop">
-			
-			<input type=text id="entername2" name="entername" placeholder="<?php echo $lang['entercollectionname']?>" style="display:inline;display:none;" class="SearchWidthExp">
-			</div><script>jQuery('#collection').clone().attr('id','collection2').attr('onChange',"if(document.getElementById('collection2').value==-1){document.getElementById('entername2').style.display='inline';document.getElementById('entername2').focus();return false;}<?php if (!checkperm("b")){ ?>ChangeCollection(jQuery(this).val(),'<?php echo urlencode($k) ?>');<?php } else { ?>document.getElementById('colselect2').submit();<?php } ?>").prependTo('#MinColDrop');</script>		
-	  </form>
-	</div>
-	<?php } ?>
-	<?php } ?>
 	<!--Collection Count-->	
 	<?php if(!hook("replace_collectionminitems")){?>
 	<div id="CollectionMinitems"><strong><?php echo $count_result?></strong>&nbsp;<?php if ($count_result==1){echo $lang["item"];} else {echo $lang["items"];}?></div>
