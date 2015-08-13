@@ -7,7 +7,7 @@ if (array_key_exists("user",$_COOKIE))
    	{
 	# Check to see if this user is logged in.
 	$session_hash=$_COOKIE["user"];
-	$loggedin=sql_value("select count(*) value from user where session='$session_hash' and approved=1 and timestampdiff(second,last_active,now())<(30*60)",0);
+	$loggedin=sql_value("select count(*) value from user where session='" . escape_check($session_hash) . "' and approved=1 and timestampdiff(second,last_active,now())<(30*60)",0);
 	if ($loggedin>0 || $session_hash=="|") // Also checks for dummy cookie used in external authentication
         	{
 	        # User is logged in. Proceed to full authentication.
