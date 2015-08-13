@@ -57,7 +57,7 @@ include "../../../include/header.php";
 <input type="submit" name="add" value="<?php echo $lang["add_code"] ?>">   
 </form>
 
-
+</div>	
 </div>	
 <?php
 include "../../../include/footer.php";
