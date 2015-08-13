@@ -70,7 +70,7 @@ else
 		<div class="ListTools">
 		<?php
 		hook('render_resource_collection_list_list_tools', '', array($collections[$n]));
-		render_actions($collections[$n],true,false);
+		render_actions($collections[$n], false, false);
 		?>
 		</div>
 	</td>

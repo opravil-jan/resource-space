@@ -358,7 +358,7 @@ if (!hook('collectionaccessmode')) {
         <div class="ListTools">
         <?php
 		hook('legacy_list_tools', '', array($collections[$n]));
-		render_actions($collections[$n], true, false);
+		render_actions($collections[$n], false, false);
 		?>
 		</div>
 	</td>

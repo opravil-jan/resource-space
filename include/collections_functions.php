@@ -1874,7 +1874,8 @@ function compile_collection_actions(array $collection_data, $top_actions)
            $manage_collections_remove_link, $userref, $collection_purge, $show_edit_all_link, $result,
            $edit_all_checkperms, $preview_all, $order_by, $sort, $archive, $contact_sheet_link_on_collection_bar,
            $show_searchitemsdiskusage, $emptycollection, $remove_resources_link_on_collection_bar, $count_result,
-           $download_usage, $home_dash, $top_nav_upload_type, $pagename, $offset, $col_order_by, $find;
+           $download_usage, $home_dash, $top_nav_upload_type, $pagename, $offset, $col_order_by, $find, $default_sort,
+           $starsearch;
 
     $options = array();
 	$o=0;
@@ -1888,7 +1889,7 @@ function compile_collection_actions(array $collection_data, $top_actions)
 
     if(!collection_is_research_request($collection_data['ref']) || !checkperm('r'))
         {
-        if(!$top_actions && checkperm('s'))
+        if(!$top_actions && checkperm('s') && $pagename === 'collections')
             {
             // Manage My Collections
             $data_attribute['url'] = $baseurl_short . 'pages/collection_manage.php';
@@ -1935,10 +1936,11 @@ function compile_collection_actions(array $collection_data, $top_actions)
         }
 
     // Select collection option - not for collection bar
-    if($pagename!="collections" && $k == '' && !checkperm('b') && ($pagename=="themes" || $top_actions))
+    if($pagename != 'collections' && $k == '' && !checkperm('b')
+    	&& ($pagename == 'themes' || $pagename === 'collection_manage' || $pagename === 'resource_collection_list' || $top_actions))
         {
-        $options[$o]['value']='select_collection';
-		$options[$o]['label']=$lang['selectcollection'];
+        $options[$o]['value'] = 'select_collection';
+		$options[$o]['label'] = $lang['selectcollection'];
 		$o++;
         }
 
@@ -2239,6 +2241,28 @@ function compile_collection_actions(array $collection_data, $top_actions)
 		$options[$o]['label']=$lang['collection_disk_usage'];
 		$options[$o]['data_attr']=array();
 		$options[$o]['extra_tag_attributes']=$extra_tag_attributes;
+		$o++;
+        }
+
+    // CSV export of collection metadata
+    if(!$top_actions && $k == '')
+        {
+    	if(empty($order_by))
+    		{
+			$order_by = $default_sort;
+    		}
+
+        $options[$o]['value']            = 'csv_export_results_metadata';
+		$options[$o]['label']            = $lang['csvExportResultsMetadata'];
+		$options[$o]['data_attr']['url'] = sprintf('%spages/csv_export_results_metadata.php?search=!collection%s&restype=%s&order_by=%s&archive=0&sort=%s&starsearch=%s',
+            $baseurl_short,
+            urlencode($collection_data['ref']),
+            urlencode($_COOKIE['restypes']),
+            urlencode($order_by),
+            urlencode($sort),
+            urlencode($starsearch)
+        );
+
 		$o++;
         }
 
