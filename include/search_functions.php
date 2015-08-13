@@ -2394,9 +2394,9 @@ function compile_search_actions($top_actions)
 
     if($top_actions && $k == '')
         {
-        $extra_tag_attributes = sprintf('
-                data-url="%spages/csv_export_results_metadata.php?search=%s&restype=%s&order_by=%s&archive=%s&sort=%s&starsearch=%s"
-            ',
+        $options[$o]['value']            = 'csv_export_results_metadata';
+		$options[$o]['label']            = $lang['csvExportResultsMetadata'];
+		$options[$o]['data_attr']['url'] = sprintf('%spages/csv_export_results_metadata.php?search=%s&restype=%s&order_by=%s&archive=%s&sort=%s&starsearch=%s',
             $baseurl_short,
             urlencode($search),
             urlencode($restypes),
@@ -2404,13 +2404,8 @@ function compile_search_actions($top_actions)
             urlencode($archive),
             urlencode($sort),
             urlencode($starsearch)
-
         );
 
-        $options[$o]['value']='csv_export_results_metadata';
-		$options[$o]['label']=$lang['csvExportResultsMetadata'];
-		$options[$o]['data_attr']=array();
-		$options[$o]['extra_tag_attributes']=$extra_tag_attributes;
 		$o++;
         }
 
