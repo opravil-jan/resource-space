@@ -56,7 +56,7 @@ if (getval("submitted","")!="")
 			}
 		else
 			{
-			redirect ($baseurl_short."pages/collection_manage.php?offset=".$offset."&col_order_by=".$col_order_by."&sort=".$sort."&find=".urlencode($find)."&reload=true");
+			redirect($baseurl_short . 'pages/collection_manage.php?offset=' . $offset . '&col_order_by=' . $col_order_by . '&sort=' . $sort . '&find=' . urlencode($find) . '&reload=true');
 			}
 		}
 	else
@@ -72,7 +72,7 @@ include "../include/header.php";
 <div class="BasicsBox">
 <h1><?php echo $lang["editcollection"]?></h1>
 <p><?php echo text("introtext")?></p>
-<form method=post id="collectionform" action="<?php echo $baseurl_short?>pages/collection_edit.php" onSubmit="if (jQuery('#usercollection').html()!='<?php echo htmlspecialchars($ref) ?>'){return CentralSpacePost(this,true);}">
+<form method=post id="collectionform" action="<?php echo $baseurl_short?>pages/collection_edit.php">
 	<input type="hidden" name="redirect" id="redirect" value="yes" >
 	<input type=hidden name=ref value="<?php echo htmlspecialchars($ref) ?>">
 	<input type=hidden name="submitted" value="true">
