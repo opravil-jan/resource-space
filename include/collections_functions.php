@@ -2257,7 +2257,7 @@ function compile_collection_actions(array $collection_data, $top_actions)
 		$options[$o]['data_attr']['url'] = sprintf('%spages/csv_export_results_metadata.php?search=!collection%s&restype=%s&order_by=%s&archive=0&sort=%s&starsearch=%s',
             $baseurl_short,
             urlencode($collection_data['ref']),
-            urlencode($_COOKIE['restypes']),
+            isset($_COOKIE['restypes']) ? urlencode($_COOKIE['restypes']) : '',
             urlencode($order_by),
             urlencode($sort),
             urlencode($starsearch)
