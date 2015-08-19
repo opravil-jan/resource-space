@@ -957,7 +957,7 @@ if (true) # Always show search header now.
 			<?php
 			if(!$collectionsearch) // Don't show hints if a collection search is empty 
 				{
-				if ($result!="")
+				if ($result!="" && !is_array($result))
 					{
 					?>
 					<p><?php echo $lang["try"]?>: <a onClick="return CentralSpaceLoad(this,true);" href="<?php echo $baseurl_short?>pages/search.php?search=<?php echo urlencode(strip_tags($result))?>"><?php echo stripslashes($result)?></a></p>
