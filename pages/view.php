@@ -525,14 +525,25 @@ if (!hook("viewallresults"))
 	} ?>
 <a class="nextLink" href="<?php echo $baseurl_short?>pages/view.php?ref=<?php echo urlencode($ref)?>&amp;search=<?php echo urlencode($search)?>&amp;offset=<?php echo urlencode($offset)?>&amp;order_by=<?php echo urlencode($order_by)?>&amp;sort=<?php echo urlencode($sort)?>&amp;archive=<?php echo urlencode($archive)?>&amp;k=<?php echo urlencode($k)?>&amp;go=next&amp;curpos=<?php echo urlencode($curpos) ?>&amp;restypes=<?php echo $restypes; ?>&amp;<?php echo hook("nextpreviousextraurl") ?>" onClick="return <?php echo ($modal?"Modal":"CentralSpace") ?>Load(this);"><?php echo $lang["nextresult"]?></a>
 
-<?php if ($modal) { ?>
-&nbsp;&nbsp;&nbsp;&nbsp;<a href="<?php echo $baseurl_short?>pages/view.php?ref=<?php echo urlencode($ref)?>&amp;search=<?php echo urlencode($search)?>&amp;offset=<?php echo urlencode($offset)?>&amp;order_by=<?php echo urlencode($order_by)?>&amp;sort=<?php echo urlencode($sort)?>&amp;archive=<?php echo urlencode($archive)?>&amp;k=<?php echo urlencode($k)?>&amp;restypes=<?php echo $restypes; ?>" onClick="return CentralSpaceLoad(this);"><?php echo $lang["maximise"]?></a>
-&nbsp;&nbsp;&nbsp;&nbsp;<a href="#" onClick="ModalClose();"><?php echo $lang["close"] ?></a>
-<?php } ?>
+<?php
+	if($modal)
+		{
+		?>
+		&nbsp;&nbsp;&nbsp;&nbsp;<a href="<?php echo $baseurl_short?>pages/view.php?ref=<?php echo urlencode($ref)?>&amp;search=<?php echo urlencode($search)?>&amp;offset=<?php echo urlencode($offset)?>&amp;order_by=<?php echo urlencode($order_by)?>&amp;sort=<?php echo urlencode($sort)?>&amp;archive=<?php echo urlencode($archive)?>&amp;k=<?php echo urlencode($k)?>&amp;restypes=<?php echo $restypes; ?>" onClick="return CentralSpaceLoad(this);"><?php echo $lang["maximise"]?></a>
+		&nbsp;&nbsp;&nbsp;&nbsp;<a href="#" onClick="ModalClose();"><?php echo $lang["close"] ?></a>
+		<?php
+		}
+}
+else if($modal)
+	{
+	?>
+	<div class="backtoresults">
+		&nbsp;&nbsp;&nbsp;&nbsp;<a href="<?php echo $baseurl_short?>pages/view.php?ref=<?php echo urlencode($ref)?>&amp;search=<?php echo urlencode($search)?>&amp;offset=<?php echo urlencode($offset)?>&amp;order_by=<?php echo urlencode($order_by)?>&amp;sort=<?php echo urlencode($sort)?>&amp;archive=<?php echo urlencode($archive)?>&amp;k=<?php echo urlencode($k)?>&amp;restypes=<?php echo $restypes; ?>" onClick="return CentralSpaceLoad(this);"><?php echo $lang["maximise"]?></a>
+		&nbsp;&nbsp;&nbsp;&nbsp;<a href="#" onClick="ModalClose();"><?php echo $lang["close"] ?></a>
+	<?php
+	}
+	?>
 </div>
-<?php } ?>
-
-
 <h1><?php hook("beforeviewtitle");?><?php
 # Display title prefix based on workflow state.
 if (!hook("replacetitleprefix","",array($resource["archive"]))) { switch ($resource["archive"])
