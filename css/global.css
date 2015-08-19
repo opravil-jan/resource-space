@@ -63,6 +63,8 @@ input.defaultbutton {position: absolute; left: -100%; width: 0; height: 0;}
 #custom_access .radiooptions{margin: 5px;}
 
 /*General layout*/
+#UICenter {height:100%;}
+
 #Header {padding:10px 25px;margin:0; margin-bottom:10px;text-align:left;}
 #TextHeader{font-size:25px;float:left;}
 #TextHeader a {text-decoration:none;}

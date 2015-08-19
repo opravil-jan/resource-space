@@ -289,7 +289,7 @@ if($slimheader)
 ?>
 
 <!--Global Header-->
-<div id="UICenter" class="ui-layout-center" style="height:100%">
+<div id="UICenter" class="ui-layout-center">
 <?php
 if (($pagename=="terms") && (getval("url","")=="index.php")) {$loginterms=true;} else {$loginterms=false;}
 if ($pagename!="preview" && $pagename!="preview_all") { ?>
