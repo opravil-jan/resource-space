@@ -1,6 +1,5 @@
  <?php
 
- 	//DEFINE ("MESSAGE_POLLING_INTERVAL_SECONDS",5);					// we could move these to a config variable at some point
  	DEFINE ("MESSAGE_POLLING_ABSENT_USER_TIMEOUT_SECONDS",30);
  	DEFINE ("MESSAGE_FADEOUT_SECONDS",5);
 
@@ -72,6 +71,17 @@
 			message_timer = null;
 		}
 		activeSeconds-=<?php echo $message_polling_interval_seconds; ?>;
+		<?php
+		if ($message_polling_interval_seconds > 0)
+			{
+			?>if(activeSeconds < 0)
+			{
+				message_timer = window.setTimeout(message_poll,<?php echo $message_polling_interval_seconds; ?> * 1000);
+				return;
+			}
+			<?php
+			}
+		?>
 		jQuery.ajax({
 			url: '<?php echo $baseurl; ?>/pages/ajax/message.php',
 			type: 'GET',
@@ -123,7 +133,7 @@
 		});
 	}
 
-	jQuery("#CentralSpaceContainer").bind("blur focus focusin focusout load resize scroll unload click dblclick mousedown mouseup mousemove mouseover mouseout mouseenter mouseleave change select submit keydown keypress keyup error",
+	jQuery(document).bind("blur focus focusin focusout load resize scroll unload click dblclick mousedown mouseup mousemove mouseover mouseout mouseenter mouseleave change select submit keydown keypress keyup error",
 		function() {
 			activeSeconds=<?php echo MESSAGE_POLLING_ABSENT_USER_TIMEOUT_SECONDS; ?>;
 		});
