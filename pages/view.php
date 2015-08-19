@@ -869,7 +869,7 @@ function add_download_column($ref, $size_info, $downloadthissize)
 			?><td class="DownloadButton"><?php
 			if ($request_adds_to_collection)
 				{
-				echo add_to_collection_link($ref,$search,"alert('" . $lang["requestaddedtocollection"] . "');",$size_info["id"]);
+				echo add_to_collection_link($ref,$search,"alert('" . addslashes($lang["requestaddedtocollection"]) . "');",$size_info["id"]);
 				}
 			else
 				{
