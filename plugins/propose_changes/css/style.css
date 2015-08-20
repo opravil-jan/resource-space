@@ -47,7 +47,7 @@
 .ProposeChangesProposed {
 	width:40%;
 	max-width:40%;
-	overflow-x:scroll;
+	overflow-x: auto;
 }
 .ProposeChangesAcceptDeleteColumn {
 	width:20%;
