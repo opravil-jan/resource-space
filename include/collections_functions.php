@@ -1765,8 +1765,16 @@ function remove_all_resources_from_collection($ref){
 		# Remove all resources?
 	if (getval("removeall","")!="")
 		{
-		sql_query("delete from collection_resource where collection='$ref'");
-		collection_log($ref,"R",0);
+		$removed_resources = sql_array('SELECT resource AS value FROM collection_resource WHERE collection = ' . $ref . ';');
+
+		// First log this for each resource (in case it was done by mistake)
+		foreach($removed_resources as $removed_resource_id)
+			{
+			collection_log($ref, 'r', $removed_resource_id, ' - Removed all resources from collection ID ' . $ref);
+			}
+
+		sql_query('DELETE FROM collection_resource WHERE collection = ' . $ref);
+		collection_log($ref, 'R', 0);
 		}
 	}	
 
