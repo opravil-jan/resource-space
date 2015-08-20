@@ -182,7 +182,7 @@ if (array_key_exists("user",$_COOKIE) || array_key_exists("user",$_GET) || isset
 		else
 			{
 			// Unlikely scenario, but maybe we do allow anonymous users to change the selected collection for all other anonymous users
-			$usercollection==$userdata[0]["current_collection"];
+			$usercollection=$userdata[0]["current_collection"];
 			}		
 		}
 	else
