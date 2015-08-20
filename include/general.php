@@ -823,7 +823,7 @@ function get_users($group=0,$find="",$order_by="u.username",$usepermissions=fals
     if (strlen($find)>1)
       {
       if ($sql=="") {$sql = "where ";} else {$sql.= " and ";}
-      $sql .= "(LOWER(username) like '%$find%' or LOWER(fullname) like '%$find%' or LOWER(email) like '%$find%')";
+      $sql .= "(LOWER(username) like '%$find%' or LOWER(fullname) like '%$find%' or LOWER(email) like '%$find%' or LOWER(comments) like '%$find%')";
       }
     if (strlen($find)==1)
       {
