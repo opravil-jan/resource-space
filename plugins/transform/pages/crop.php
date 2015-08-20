@@ -480,7 +480,7 @@ else
 	unlink(get_temp_dir() . "/transform_plugin/pre_$ref.jpg");
 	exit();
 }
-
+hook("aftercropfinish");
 
 // send user back to view page
 header("Location:../../../pages/view.php?ref=$ref\n\n");
@@ -682,7 +682,8 @@ if(!$cropperestricted)
 	<input type='hidden' name='lastHeightSetting' id='lastHeightSetting' value='' />
 	<input type='hidden' name='origwidth' id='origwidth'  value='<?php echo $origwidth ?>' />
 	<input type='hidden' name='origheight' id='origheight'  value='<?php echo $origheight ?>' />
-	<?php 
+	<?php
+	hook("cropafterhiddeninputs");
 	if(substr(sprintf('%o', fileperms(dirname(__FILE__)."/../../../".$homeanim_folder)), -4)!="0777"){echo "<!-- File Permissions Error-->";} //Notify of file permissions error
 	if ($original && !$cropperestricted){ ?> <input type='hidden' name='mode' id='mode'  value='original' /> <?php }
 	if ($cropper_enable_replace_slideshow && !$cropperestricted && checkperm('t')  
