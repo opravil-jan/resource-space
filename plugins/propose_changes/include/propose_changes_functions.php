@@ -123,6 +123,26 @@ function save_proposed_changes($ref)
 function get_proposed_changes($ref, $userid)
 	{
         //Get all the changes proposed by a user
-        $changes=sql_query("select d.value,d.resource_type_field,f.*,f.required frequired,f.ref fref from resource_type_field f left join (select * from propose_changes_data where resource='$ref' and user='$userid') d on d.resource_type_field=f.ref and d.resource='$ref' group by f.ref order by f.resource_type,f.order_by,f.ref");
+        $query = sprintf('
+                    SELECT d.value,
+                           d.resource_type_field,
+                           f.*,
+                           f.required AS frequired,
+                           f.ref AS fref
+                      FROM resource_type_field AS f
+                 LEFT JOIN (
+                                SELECT *
+                                  FROM propose_changes_data
+                                 WHERE resource = "%1$s"
+                                   AND user = "%2$s"
+                           ) AS d ON d.resource_type_field = f.ref AND d.resource = "%1$s"
+                 GROUP BY f.ref
+                 ORDER BY f.resource_type, f.order_by, f.ref;
+            ',
+            $ref,
+            $userid
+        );
+        $changes = sql_query($query);
+
         return $changes;  
         }

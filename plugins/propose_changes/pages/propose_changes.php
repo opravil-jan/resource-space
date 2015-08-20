@@ -457,10 +457,26 @@ if (isset($resulttext))
 <p><a href="<?php echo $baseurl_short?>pages/view.php?ref=<?php echo urlencode($ref) ?>&search=<?php echo urlencode($search)?>&offset=<?php echo urlencode($offset) ?>&order_by=<?php echo urlencode($order_by) ?>&sort=<?php echo urlencode($sort) ?>&archive=<?php echo urlencode($archive) ?>" onClick="return CentralSpaceLoad(this,true);">&lt;&nbsp;<?php echo $lang["backtoresourceview"]?></a></p>
 
 <div class="BasicsBox" id="propose_changes_box">
-<h1 id="editresource"><?php echo $lang["propose_changes_short"]?></h1>
-
-<p><?php echo $lang["propose_changes_text"]?></p>
-    
+<h1 id="editresource">
+<?php
+if(!$editaccess)
+	{ 
+	echo $lang['propose_changes_short'];
+	}
+else
+	{
+	echo $lang['propose_changes_review_proposed_changes'];
+	}
+?>
+</h1>
+<p>
+<?php
+if(!$editaccess)
+	{
+	echo $lang['propose_changes_text'];
+	}
+?>
+</p>    
     <?php
 	if ($resource["has_image"]==1)
 		{
@@ -565,6 +581,30 @@ if (isset($resulttext))
 			}
 		}	
 
+	// Let admin know there are no proposed changes anymore for this reosurces
+	// Can happen when another admin already reviewed the changes.
+	$changes_to_review_counter = 0;
+	foreach($proposefields as $propose_field)
+		{
+
+		foreach($proposed_changes as $proposed_change)
+			{
+			if($proposed_change['resource_type_field'] == $propose_field['ref'])
+				{
+				$changes_to_review_counter++;
+				}
+			}
+
+		}
+
+	if($editaccess && empty($propose_changes) && $changes_to_review_counter == 0)
+		{
+		?>
+		<div id="message" class="Question ProposeChangesQuestion">
+			<?php echo $lang['propose_changes_no_changes_to_review']; ?>
+		</div>
+		<?php
+		}
 	?>
 
 	<div class="QuestionSubmit">
