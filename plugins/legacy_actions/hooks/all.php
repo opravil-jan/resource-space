@@ -8,7 +8,7 @@ function HookLegacy_actionsAllCollectiontool()
     {
     global $baseurl_short, $lang, $usercollection, $contact_sheet, $contact_sheet_link_on_collection_bar, $allow_share,
            $cinfo, $userref, $preview_all, $feedback, $result, $show_edit_all_link, $edit_all_checkperms, $count_result,
-           $download_usage, $collection_download, $k;
+           $download_usage, $collection_download, $k, $emptycollection, $remove_resources_link_on_collection_bar;
 
     if((!collection_is_research_request($usercollection)) || (!checkperm('r')))
         { 
