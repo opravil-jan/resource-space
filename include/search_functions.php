@@ -10,7 +10,7 @@ function do_search($search,$restypes="",$order_by="relevance",$archive=0,$fetchr
     debug("search=$search $go $fetchrows restypes=$restypes archive=$archive daylimit=$recent_search_daylimit");
     
     # globals needed for hooks   
-    global $sql,$order,$select,$sql_join,$sql_filter,$orig_order,$checkbox_and,$collections_omit_archived,$search_sql_double_pass_mode,$usergroup,$search_filter_strict,$default_sort;
+    global $sql,$order,$select,$sql_join,$sql_filter,$orig_order,$checkbox_and,$collections_omit_archived,$search_sql_double_pass_mode,$usergroup,$search_filter_strict,$default_sort,$search_sql_optimization;
 
     $alternativeresults = hook("alternativeresults", "", array($go));
     if ($alternativeresults) {return $alternativeresults; }
@@ -85,6 +85,7 @@ function do_search($search,$restypes="",$order_by="relevance",$archive=0,$fetchr
     $sql_keyword_union             = array();
     $sql_keyword_union_aggregation = array();
     $sql_keyword_union_criteria    = array();
+	$sql_keyword_union_sub_query   = array();
         
     # append resource type filtering
 
@@ -308,6 +309,18 @@ function do_search($search,$restypes="",$order_by="relevance",$archive=0,$fetchr
     
     # Fetch a list of fields that are not available to the user - these must be omitted from the search.
     $hidden_indexed_fields=get_hidden_indexed_fields();
+
+	# This is a performance enhancement that will discard any keyword matches for fields that are not supposed to be indexed.
+	$sql_restrict_by_field_types="";
+	global $search_sql_force_field_index_check;
+	if (isset($search_sql_force_field_index_check) && $search_sql_force_field_index_check && $restypes!="")
+		{
+		$sql_restrict_by_field_types = sql_value("select group_concat(ref) as value from resource_type_field where keywords_index=1 and resource_type in ({$restypes})","");
+		if ($sql_restrict_by_field_types != "")
+			{
+			$sql_restrict_by_field_types = "-1," . $sql_restrict_by_field_types;  // -1 needed for global search
+			}
+		}
     
     if ($keysearch)
         {
@@ -653,24 +666,22 @@ function do_search($search,$restypes="",$order_by="relevance",$archive=0,$fetchr
                                     } 
                                 else  // we are dealing with a standard keyword match
                                     {
-                                    
-                                    # This is a performance enhancement that will discard any keyword matches for fields that are not supposed to be indexed.
-                                    $filter_by_resource_field_type = "";
-                                    if (isset($search_sql_force_field_index_check) && $search_sql_force_field_index_check && count($restypes)>0)
-                                        {
-                                        $field_types = sql_value("select group_concat(ref) as value from resource_type_field where keywords_index=1 and resource_type in ({$restypes})",null);
-                                        if ($field_types != null)
-                                            {
-                                            $filter_by_resource_field_type = "and k{$c}.resource_type_field in (-1,{$field_types})";  // -1 needed for global search
-                                            }
-                                        }
-
-									$union="SELECT resource, {$bit_or_condition} SUM(hit_count) AS score FROM resource_keyword k{$c}
+									if ($search_sql_optimization)
+										{
+										$sql_keyword_union_sub_query[$c] = $keyref;
+										}
+									else
+										{
+										$filter_by_resource_field_type="";
+										if ($sql_restrict_by_field_types!="")
+											{
+											$filter_by_resource_field_type = "and k{$c}.resource_type_field in ({$sql_restrict_by_field_types})";  // -1 needed for global search
+											}
+										$union="SELECT resource, {$bit_or_condition} SUM(hit_count) AS score FROM resource_keyword k{$c}
 										WHERE (k{$c}.keyword={$keyref} {$filter_by_resource_field_type} {$relatedsql} {$union_restriction_clause})
 										GROUP BY resource";
-
-									$sql_keyword_union[]=$union;
-
+										$sql_keyword_union[]=$union;
+										}
 									}
 
 								$sql_keyword_union_aggregation[]="bit_or(keyword_" . $c . "_found) as keyword_" . $c . "_found";
@@ -824,21 +835,66 @@ function do_search($search,$restypes="",$order_by="relevance",$archive=0,$fetchr
         $order_by="(r.ref='" . $search . "') desc," . $order_by;
         }
 
+	# ---------------------------------------------------------------
+	# union with inner join
+	#
+	# Populating the following array:
+	#
+	# $sql_keyword_union_sub_query[<keyword number>]=<keyword ref>
+	#
+	# will combine keyword searches in join within BIT_OR union
+	# This saves on data copying to temporary MySQL tables
+	# ---------------------------------------------------------------
+
+	if($search_sql_optimization && count($sql_keyword_union_sub_query)>0)
+		{
+		$sql_keyword_union_sub_query_keys = array_keys($sql_keyword_union_sub_query);
+		$union="SELECT keyword" . $sql_keyword_union_sub_query[$sql_keyword_union_sub_query_keys[0]] . ".resource";
+		for ($p=1;$p<=count($keywords);$p++)
+			{
+			$union .= "," . (isset($sql_keyword_union_sub_query[$p]) ? "TRUE" : "FALSE") . " as keyword_{$p}_found";
+			}
+		$union.=",SUM(keyword" . $sql_keyword_union_sub_query[$sql_keyword_union_sub_query_keys[0]] . ".hit_count) AS score";
+		$union.=" FROM resource_keyword keyword" .  $sql_keyword_union_sub_query[$sql_keyword_union_sub_query_keys[0]];
+		for($i=1; $i<count($sql_keyword_union_sub_query_keys); $i++)
+			{
+			$union .= " JOIN resource_keyword keyword" .$sql_keyword_union_sub_query[$sql_keyword_union_sub_query_keys[$i]];
+			$union .= " ON keyword" . $sql_keyword_union_sub_query[$sql_keyword_union_sub_query_keys[$i-1]];
+			$union .= ".resource=keyword" . $sql_keyword_union_sub_query[$sql_keyword_union_sub_query_keys[$i]] . ".resource";
+			if ($sql_restrict_by_field_types!="")
+				{
+				$union .= " AND keyword" . $sql_keyword_union_sub_query[$sql_keyword_union_sub_query_keys[$i]] . ".resource_type_field IN ({$sql_restrict_by_field_types})";
+				}
+			}
+		$union .= " WHERE";
+		for($i=0; $i<count($sql_keyword_union_sub_query_keys); $i++)
+			{
+			if ($i>0)
+				{
+				$union .= " AND";
+				}
+			$union .= " keyword" . $sql_keyword_union_sub_query[$sql_keyword_union_sub_query_keys[$i]] . ".keyword=" . $sql_keyword_union_sub_query[$sql_keyword_union_sub_query_keys[$i]];
+			}
+		$union .= " GROUP BY keyword" .  $sql_keyword_union_sub_query[$sql_keyword_union_sub_query_keys[0]] . ".resource";
+		$sql_keyword_union[]=$union;		// add to normal union array
+		}
+
     # ---------------------------------------------------------------
     # Keyword union assembly.
     # Use UNIONs for keyword matching instead of the older JOIN technique - much faster
     # Assemble the new join from the stored unions
     # ---------------------------------------------------------------
-    if (count($sql_keyword_union)>0)
+
+	if (count($sql_keyword_union)>0)
         {
-        $sql_join.=" join (
-            select resource,sum(score) as score,
-            " . join(", ",$sql_keyword_union_aggregation) . " from
-            (" . join(" union ",$sql_keyword_union) . ") as hits group by resource) as h on h.resource=r.ref ";
-        
+		$sql_join .= " join (
+		select resource,sum(score) as score,
+		" . join(", ", $sql_keyword_union_aggregation) . " from
+		(" . join(" union ", $sql_keyword_union) . ") as hits group by resource) as h on h.resource=r.ref ";
+
         if ($sql_filter!="") {$sql_filter.=" and ";}
-        $sql_filter.=join(" and ",$sql_keyword_union_criteria);
-        
+		$sql_filter .= join(" and ", $sql_keyword_union_criteria);
+
         # Use amalgamated resource_keyword hitcounts for scoring (relevance matching based on previous user activity)
         $score="h.score";
         }
