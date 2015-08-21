@@ -596,18 +596,37 @@ function do_search($search,$restypes="",$order_by="relevance",$archive=0,$fetchr
                             if (!$omit)
                                 {
                                 # Include in query
-                                
-                                $union="select resource,";
-                                if ($empty){$union="select ref as resource,";}
+
+								// --------------------------------------------------------------------------------
+								// Start of normal union for resource keywords
+								// --------------------------------------------------------------------------------
+
+								// add false for keyword matches other than the current one
+								$bit_or_condition = "";
                                 for ($p=1;$p<=count($keywords);$p++)
                                     {
-                                    if ($p==$c) {$union.="true";} else {$union.="false";}
-                                    $union.=" as keyword_" . $p . "_found,";
+                                    if ($p==$c) {
+										$bit_or_condition.="true";
+									} else
+										{
+										$bit_or_condition.="false";
+										}
+									$bit_or_condition.=" as keyword_" . $p . "_found,";
                                     }
-                                if ($empty)
+
+								// these restrictions apply to both !empty searches as well as normal keyword searches (i.e. both branches of next if statement)
+								$union_restriction_clause="";
+								if (!empty($sql_exclude_fields))
+									{
+									$union_restriction_clause.=" and k" . $c . ".resource_type_field not in (". $sql_exclude_fields .")";
+									}
+								if (count($hidden_indexed_fields)>0)
+									{
+									$union_restriction_clause.=" and k" . $c . ".resource_type_field not in ('". join("','",$hidden_indexed_fields) ."')";
+									}
+								if ($empty)  // we are dealing with a special search checking if a field is empty
                                     {
                                     $rtype=sql_value("select resource_type value from resource_type_field where ref='$nodatafield'",0);
-
                                     if ($rtype!=0)
                                         {
                                         if ($rtype==999)
@@ -625,9 +644,14 @@ function do_search($search,$restypes="",$order_by="relevance",$archive=0,$fetchr
                                         {
                                         $restypesql="";
                                         }
-                                    $union.=" 1 as score from resource r" . $c . " left outer join resource_data rd" . $c . " on r" . $c . ".ref=rd" . $c . ".resource and rd" . $c . ".resource_type_field='$nodatafield' where  (rd" . $c . ".value ='' or rd" . $c . ".value is null or rd" . $c . ".value=',') $restypesql  and r" . $c . ".ref>0 group by r" . $c . ".ref ";
+                                    $union="select ref as resource, {$bit_or_condition} 1 as score from resource r" . $c . " left outer join resource_data rd" . $c . " on r" . $c . ".ref=rd" . $c .
+										".resource and rd" . $c . ".resource_type_field='$nodatafield' where  (rd" . $c . ".value ='' or rd" . $c .
+										".value is null or rd" . $c . ".value=',') $restypesql  and r" . $c . ".ref>0 group by r" . $c . ".ref ";
+									$union.=$union_restriction_clause;
+
+									$sql_keyword_union[]=$union;
                                     } 
-                                else 
+                                else  // we are dealing with a standard keyword match
                                     {
                                     
                                     # This is a performance enhancement that will discard any keyword matches for fields that are not supposed to be indexed.
@@ -640,26 +664,20 @@ function do_search($search,$restypes="",$order_by="relevance",$archive=0,$fetchr
                                             $filter_by_resource_field_type = "and k{$c}.resource_type_field in (-1,{$field_types})";  // -1 needed for global search
                                             }
                                         }
-                                    $union.="hit_count as score from resource_keyword k{$c} where (k{$c}.keyword={$keyref} {$filter_by_resource_field_type} {$relatedsql})";
 
-                                    }
+									$union="SELECT resource, {$bit_or_condition} SUM(hit_count) AS score FROM resource_keyword k{$c}
+										WHERE (k{$c}.keyword={$keyref} {$filter_by_resource_field_type} {$relatedsql} {$union_restriction_clause})
+										GROUP BY resource";
 
-                                if (!empty($sql_exclude_fields)) 
-                                    {
-                                    $union.=" and k" . $c . ".resource_type_field not in (". $sql_exclude_fields .")";
-                                    }
+									$sql_keyword_union[]=$union;
 
-                                if (count($hidden_indexed_fields)>0)
-                                    {
-                                    $union.=" and k" . $c . ".resource_type_field not in ('". join("','",$hidden_indexed_fields) ."')";
-                                    }
-                                $sql_keyword_union_aggregation[]="bit_or(keyword_" . $c . "_found) as keyword_" . $c . "_found";
-                                
+									}
+
+								$sql_keyword_union_aggregation[]="bit_or(keyword_" . $c . "_found) as keyword_" . $c . "_found";
                                 $sql_keyword_union_criteria[]="h.keyword_" . $c . "_found";
-                                
-                                $sql_keyword_union[]=$union;
-                                
-                                
+
+								// --------------------------------------------------------------------------------
+
                                 # Quoted search? Also add a specific join to check that the positions add up.
                                 # The UNION / bit_or() approach doesn't support position checking hence the need for additional joins to do this.
                                 if ($quoted_string)
