@@ -2200,16 +2200,16 @@ function compile_collection_actions(array $collection_data, $top_actions)
         }
 
     // Remove all
-    if(isset($emptycollection) && $remove_resources_link_on_collection_bar && collection_writeable($collection_data['ref']))
+    if(isset($emptycollection) && !$remove_resources_link_on_collection_bar && collection_writeable($collection_data['ref']))
         {
         $data_attribute['url'] = sprintf('%spages/collections.php?emptycollection=%s&removeall=true&submitted=removeall&ajax=true',
             $baseurl_short,
             urlencode($collection_data['ref'])
         );
 
-        $options[$o]['value']='empty_collection';
-		$options[$o]['label']=$lang['emptycollection'];
-		$options[$o]['data_attr']=$data_attribute;
+        $options[$o]['value']     = 'empty_collection';
+		$options[$o]['label']     = $lang['emptycollection'];
+		$options[$o]['data_attr'] = $data_attribute;
 		$o++;
         }
     
