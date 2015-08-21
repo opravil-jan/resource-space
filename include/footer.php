@@ -29,8 +29,15 @@ if (getval("ajax","")=="" && !hook("replace_footer"))
 <div class="clearer"></div>
 
 <?php hook("footertop"); ?>
+<?php
+$omit_footer_pages=array("login","user_request","user_password","preview_all","done","preview","change_language");
+$modify_omit_footer_pages=hook("modify_omit_footer_pages","",array($omit_footer_pages));
+if(!empty($modify_omit_footer_pages))
+	{
+	$omit_footer_pages=$modify_omit_footer_pages;
+	}
 
-<?php if (($pagename!="login") && ($pagename!="user_request") && ($pagename!="user_password") && ($pagename!="preview_all")&& ($pagename!="done") && ($pagename!="preview") && ($pagename!="change_language") && ($loginterms==false)) 
+if(!in_array($pagename,$omit_footer_pages) && ($loginterms==false)) 
 { ?>
 
 <!--Global Footer-->
@@ -68,10 +75,15 @@ if (getval("ajax","")=="" && !hook("replace_footer"))
 			<?php 
 			}
 		} /* end hook replacefooternavright */
-	} ?>
+	} 
 
-<div id="FooterNavRightBottom" class="OxColourPale"><?php echo text("footer")?></div>
-
+if(!hook("replace_footernavrightbottom"))
+	{
+	?>
+	<div id="FooterNavRightBottom" class="OxColourPale"><?php echo text("footer")?></div>
+	<?php
+	}
+?>
 <div class="clearer"></div>
 </div>
 <?php 
