@@ -258,15 +258,19 @@ $groups=get_registration_selectable_usergroups();
 <br />
 
 <?php
-$code=rand(1000,9999);
+if(!hook("replaceantispam"))
+	{
+	$code=rand(1000,9999);
+	?>
+	<input type="hidden" name="antispamcode" value="<?php echo md5($code)?>">
+	<div class="Question">
+	<label for="antispam"><?php echo $lang["enterantispamcode"] . " " . $code ?></label>
+	<input type=text name="antispam" id="antispam" class="stdwidth" value="">
+	<div class="clearerleft"> </div>
+	</div>
+	<?php
+	}
 ?>
-<input type="hidden" name="antispamcode" value="<?php echo md5($code)?>">
-<div class="Question">
-<label for="antispam"><?php echo $lang["enterantispamcode"] . " " . $code ?></label>
-<input type=text name="antispam" id="antispam" class="stdwidth" value="">
-<div class="clearerleft"> </div>
-</div>
-
 
 <div class="QuestionSubmit">
 <?php if ($error) { ?><div class="FormError">!! <?php echo $error ?> !!<?php echo $error_extra?></div><br /><?php } ?>
@@ -275,9 +279,14 @@ $code=rand(1000,9999);
 </div>
 </form>
 
-<p><sup>*</sup> <?php echo $lang["requiredfield"] ?></p>	
-
 <?php
+if(!hook("replace_user_request_required_key"))
+	{
+	?>
+	<p><sup>*</sup> <?php echo $lang["requiredfield"] ?></p>
+	<?php
+	}
+
 include "../include/footer.php";
 ?>
 
