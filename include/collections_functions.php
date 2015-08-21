@@ -2200,7 +2200,7 @@ function compile_collection_actions(array $collection_data, $top_actions)
         }
 
     // Remove all
-    if(isset($emptycollection) && !$remove_resources_link_on_collection_bar && collection_writeable($collection_data['ref']))
+    if(isset($emptycollection) && $remove_resources_link_on_collection_bar && collection_writeable($collection_data['ref']))
         {
         $data_attribute['url'] = sprintf('%spages/collections.php?emptycollection=%s&removeall=true&submitted=removeall&ajax=true',
             $baseurl_short,
