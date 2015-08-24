@@ -1893,8 +1893,6 @@ function compile_collection_actions(array $collection_data, $top_actions)
         return $options;
         }
 
-    $multi_edit = allow_multi_edit($collection_data['ref']);
-
     if(!collection_is_research_request($collection_data['ref']) || !checkperm('r'))
         {
         if(!$top_actions && checkperm('s') && $pagename === 'collections')
@@ -2174,7 +2172,7 @@ function compile_collection_actions(array $collection_data, $top_actions)
         && (count($result) != 0 || $count_result != 0)
         && !(isset($allow_resource_deletion) && !$allow_resource_deletion)
         && collection_writeable($collection_data['ref'])
-        && $multi_edit
+        && allow_multi_edit($collection_data['ref'])
         && !checkperm('D'))
         {
         $options[$o]['value']='delete_all_in_collection';
