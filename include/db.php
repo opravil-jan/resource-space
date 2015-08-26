@@ -387,7 +387,7 @@ function hook($name,$pagename="",$params=array())
 function db_begin_transaction()
 	{
 	global $db,$use_mysqli;
-	if ($use_mysqli)
+	if ($use_mysqli && function_exists('mysqli_begin_transaction'))
 		{
 		mysqli_begin_transaction($db);
 		}
@@ -397,7 +397,7 @@ function db_begin_transaction()
 function db_end_transaction()
 	{
 	global $db,$use_mysqli;
-	if ($use_mysqli)
+	if ($use_mysqli && function_exists('mysqli_commit'))
 		{
 		mysqli_commit($db);
 		}
