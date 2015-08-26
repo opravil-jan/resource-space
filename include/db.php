@@ -383,6 +383,26 @@ function hook($name,$pagename="",$params=array())
 	return hook($name,$pagename,$params);	
 	}
 
+# Indicate that from now on we want to group together DML statements into one transaction (faster as only one commit at end).
+function db_begin_transaction()
+	{
+	global $db,$use_mysqli;
+	if ($use_mysqli)
+		{
+		mysqli_begin_transaction($db);
+		}
+	}
+
+# Tell the database to commit the current transaction.
+function db_end_transaction()
+	{
+	global $db,$use_mysqli;
+	if ($use_mysqli)
+		{
+		mysqli_commit($db);
+		}
+	}
+
 function sql_query($sql,$cache=false,$fetchrows=-1,$dbstruct=true, $logthis=2)
     {
     # sql_query(sql) - execute a query and return the results as an array.
