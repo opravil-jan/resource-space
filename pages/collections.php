@@ -142,6 +142,7 @@ if ($allow_reorder)
 				}
 
 			jQuery('#CollectionSpace').sortable({
+				distance: 50,
 				connectWith: '#CentralSpaceResources',
 				appendTo: 'body',
 				zIndex: 99000,

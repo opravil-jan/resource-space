@@ -439,6 +439,7 @@ if(!$collectionsearch)
 	jQuery(document).ready(function() {
 		if(jQuery(window).width()<600 && jQuery(window).height()<600 && is_touch_device()) {return false;}
 		jQuery('#CentralSpaceResources .ResourcePanelShell, .ResourcePanelShellLarge, .ResourcePanelShellSmall').draggable({
+			distance: 50,
 			connectWith: '#CollectionSpace',
 			appendTo: 'body',
 			zIndex: 99000,
