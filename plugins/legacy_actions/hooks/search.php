@@ -99,7 +99,6 @@ function HookLegacy_actionsSearchAdd_search_title_links()
             $search_title_links.='<a href="' . $baseurl_short.'pages/preview_all.php?ref=' . $collectiondata["ref"] . '&amp;order_by=' . urlencode($order_by) . '&amp;sort=' . urlencode($sort) . '&amp;archive=' . urlencode($archive) . '&amp;k=' . urlencode($k) . '">&gt;&nbsp;'.$lang['preview_all'].'</a>';
             }
 
-        $search_title .= '</div>';
         if($display != "list")
             {
             $search_title_links .= '<br />';
