@@ -1219,7 +1219,7 @@ $user_rating=false;
 $enable_public_collections=true;
 
 # Hide owner in list of public collections
-$collection_public_hide_owner=false;
+$collection_public_hide_owner=true;
 
 # Custom User Registration Fields
 # -------------------------------
