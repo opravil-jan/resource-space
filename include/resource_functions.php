@@ -280,9 +280,6 @@ function save_resource_data($ref,$multi,$autosave_field="")
                     add_keyword_mappings($ref,$restypename,-2);
                     }
             
-            # Autocomplete any blank fields.
-            autocomplete_blank_fields($ref);
-            
             # Also save related resources field
             sql_query("delete from resource_related where resource='$ref' or related='$ref'"); # remove existing related items
             $related=explode(",",getvalescaped("related",""));
@@ -290,6 +287,9 @@ function save_resource_data($ref,$multi,$autosave_field="")
             $ok=array();for ($n=0;$n<count($related);$n++) {if (is_numeric(trim($related[$n]))) {$ok[]=trim($related[$n]);}}
             if (count($ok)>0) {sql_query("insert into resource_related(resource,related) values ($ref," . join("),(" . $ref . ",",$ok) . ")");}
             }
+
+	# Autocomplete any blank fields.
+	autocomplete_blank_fields($ref);
             
 	# Expiry field(s) edited? Reset the notification flag so that warnings are sent again when the date is reached.
 	$expirysql="";
