@@ -184,7 +184,7 @@ for ($n=$offset;(($n<count($users)) && ($n<($offset+$per_page)));$n++)
 	{
 	?>
 	<tr>
-	<td><div class="ListTitle"><a href="<?php echo $baseurl ?>/pages/team/team_user_edit.php?ref=<?php echo $users[$n]["ref"]?>&backurl=<?php echo urlencode($url . "&offset=" . $offset)?>" onClick="return CentralSpaceLoad(this,true);"><?php echo $users[$n]["username"]?></div></td>
+	<td><div class="ListTitle"><a href="<?php echo $baseurl ?>/pages/team/team_user_edit.php?ref=<?php echo $users[$n]["ref"]?>&backurl=<?php echo urlencode($url . "&offset=" . $offset)?>" onClick="return CentralSpaceLoad(this,true);"><?php echo $users[$n]["username"]?></a></div></td>
 	<?php if (!hook("replacefullnamerow")){?>
 	<td><?php echo htmlspecialchars($users[$n]["fullname"])?></td>
 	<?php } ?>
