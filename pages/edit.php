@@ -735,7 +735,8 @@ function SaveAndClearButtons($extraclass="")
 
 <?php hook("editbefresmetadata"); ?>
 <?php if (!hook("replaceedittype")) { ?>
-<?php 
+<?php
+if (!checkperm("F*")) {
 if(!$multiple)
     {
     ?>
@@ -783,6 +784,7 @@ else
     </div>
     <?php
     }
+}
 } # end hook("replaceedittype")
 
 $lastrt=-1;
@@ -1642,7 +1644,7 @@ else # Edit Resource(s).
    }
 
 # Status / Access / Related Resources
-if ($show_status_and_access_on_upload_perm &&!hook("editstatushide")) # Only display Status / Access / Related Resources if permissions match.
+if (!checkperm("F*") && !hook("editstatushide")) # Only display Status / Access / Related Resources if permissions match.
 {
   if(!hook("replacestatusandrelationshipsheader"))
   {
@@ -1705,7 +1707,7 @@ if (!hook("replaceaccessselector"))
    $resource["access"]=$override_access_default;
 }
 
-if ($ref<0 && (($show_status_and_access_on_upload== false && $show_access_on_upload == false) || ($show_access_on_upload == false || ($show_access_on_upload == true && !$show_access_on_upload_perm))))
+if ($ref<0 && (($show_status_and_access_on_upload== false && $show_access_on_upload == false) || ($show_access_on_upload == false || ($show_access_on_upload == true))))
 { 
             # Upload template and the status and access fields are configured to be hidden on uploads.
    ?>
