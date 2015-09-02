@@ -1,4 +1,4 @@
- <?php
+<?php
 
  	DEFINE ("MESSAGE_POLLING_ABSENT_USER_TIMEOUT_SECONDS",30);
  	DEFINE ("MESSAGE_FADEOUT_SECONDS",5);
@@ -43,15 +43,9 @@
 
 		// Check if there are messages
 		$messages = array();
-		if (message_get($messages,$user))
-			{
-			echo json_encode($messages);		// note: messages are passed by reference
-			}
-		else
-			{
-			http_response_code(204);		// 204 No Content - i.e. no messages to display
-			}
-
+		message_get($messages,$user);	// note: messages are passed by reference
+		ob_clean();	// just in case we have any stray whitespace at the start of this file
+		echo json_encode($messages);
 		return;
 		}
 
@@ -86,9 +80,8 @@
 			url: '<?php echo $baseurl; ?>/pages/ajax/message.php',
 			type: 'GET',
 			success: function(messages, textStatus, xhr) {
-				if(xhr.status==200)
+				if(xhr.status==200 && (messages=jQuery.parseJSON(messages)) && messages.length>0)
 				{
-					messages = jQuery.parseJSON(messages);
 					jQuery('span.MessageCountPill').html(messages.length).click(function() {
 						document.location.href='<?php echo $baseurl; ?>/pages/user/user_messages.php';
 					}).fadeIn();
