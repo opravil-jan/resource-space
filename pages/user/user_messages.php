@@ -2,7 +2,7 @@
 
 include "../../include/db.php";
 include "../../include/general.php";
-include "../../include/authenticate.php";if (!checkperm("k")) {exit ("Permission denied.");}
+include "../../include/authenticate.php";
 include "../../include/header.php";
 
 ?>
