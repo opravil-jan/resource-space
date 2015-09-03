@@ -1219,7 +1219,7 @@ function get_search_title($searchstring){
 function add_saved_search_items($collection)
 	{
 	# Adds resources from a search to the collection.
-	$results=do_search(getvalescaped("addsearch",""), getvalescaped("restypes",""), "relevance", getvalescaped("archive","",true),-1,'',false,'',false,false,getvalescaped("daylimit",""));
+	$results=do_search(getvalescaped("addsearch",""), getvalescaped("restypes",""), "relevance", getvalescaped("archive","",true),-1,'',false,getvalescaped("starsearch",""),false,false,getvalescaped("daylimit",""));
 
 	# Check if this collection has already been shared externally. If it has, we must add a further entry
 	# for this specific resource, and warn the user that this has happened.
