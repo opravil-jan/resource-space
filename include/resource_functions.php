@@ -2461,12 +2461,9 @@ function get_edit_access($resource,$status=-999,$metadata=false,&$resourcedata="
 		{$status=$resourcedata["archive"];}
 		
 	if ($resource==0-$userref) {return true;} # Can always edit their own user template.
-        
+
         # If $edit_access_for_contributor is true in config then users can always edit their own resources.
         if ($edit_access_for_contributor && $userref==$resourcedata["created_by"]) {return true;}
-
-        # Can only edit when 'open' access, not restricted/confidential
-        if (get_resource_access($resource)!=0) {return false;} 
         
 	if (!checkperm("e" . $status)) {return false;} # Must have edit permission to this resource first and foremost, before checking the filter.
 	
