@@ -1644,7 +1644,8 @@ else # Edit Resource(s).
    }
 
 # Status / Access / Related Resources
-if (!checkperm("F*") && !hook("editstatushide")) # Only display Status / Access / Related Resources if permissions match.
+
+if (eval($show_status_and_access_on_upload_perm) && !hook("editstatushide")) # Only display Status / Access / Related Resources if permissions match.
 {
   if(!hook("replacestatusandrelationshipsheader"))
   {
@@ -1707,10 +1708,8 @@ if (!hook("replaceaccessselector"))
    $resource["access"]=$override_access_default;
 }
 
-if ($ref<0 && (($show_status_and_access_on_upload== false && $show_access_on_upload == false) || ($show_access_on_upload == false || ($show_access_on_upload == true))))
-{ 
-            # Upload template and the status and access fields are configured to be hidden on uploads.
-   ?>
+if ($ref<0 && (($show_status_and_access_on_upload== false && $show_access_on_upload == false) || ($show_access_on_upload == false || ($show_access_on_upload == true && !eval($show_access_on_upload_perm)))))            # Upload template and the status and access fields are configured to be hidden on uploads.
+   {?>
    <input type=hidden name="access" value="<?php echo htmlspecialchars($resource["access"])?>"><?php
 }
 else
