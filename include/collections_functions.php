@@ -243,31 +243,48 @@ function collection_writeable($collection)
 	
 function collection_readable($collection)
 	{
-	global $ignore_collection_access, $collection_commenting;
 	# Returns true if the current user has read access to the given collection.
 
 	# Fetch collection details.
 	if (!is_numeric($collection)) {return false;}
 	$collectiondata=get_collection($collection);
-	
-	# Load a list of attached users
-	$attached=sql_array("select user value from user_collection where collection='$collection'");
-	global $userref;
 
-	if($collection_commenting && $collectiondata['request_feedback'] == 1) {
+	global $ignore_collection_access, $collection_commenting;
+	# Access if collection_commenting is enabled and request feedback checked
+	# Access if it's a public collection (or theme)
+	# Access if k is not empty or option to ignore collection access is enabled and k is empty
+	if ($collection_commenting && $collectiondata['request_feedback'] == 1 || $collectiondata["public"]==1 || getval("k","")!="" || getval("k","")=="" && $ignore_collection_access)
+		{
 		return true;
-	}
-	
-	//$request=sql_value("select 1 value from request where collection=$collection and assigned_to=$userref", 0);
+		}
 
+	# Perform these checks only if a user is logged in
+	global $userref;
+	if (is_numeric($userref))
+		{
+		# Access if it's their collection
+		# Access if they have the "Can publish collections as themes" permission
+		if ($userref==$collectiondata["user"] || checkperm("h"))
+			{
+			return true;
+			}
 
-	# Access if:
-	#	- It's their collection
-	# 	- It's a public collection (or theme)
-	#	- They have the 'access and edit all collections' admin permission
-	# 	- They are attached to this collection
-	#   - Option to ignore collection access is enabled and k is empty
-	return $userref==$collectiondata["user"] || $collectiondata["public"]==1 || checkperm("h") || in_array($userref,$attached) || /*(checkperm("R") && $request) ||*/ getval("k","")!="" || (getval("k","")=="" && $ignore_collection_access);
+		# Access if they are attached to this collection
+		$attached=sql_value("select 1 value from user_collection where collection=$collection and user=$userref",0);
+		if ($attached)
+			{
+			return true;
+			}
+
+		# Is this collection a request and are they attached to it?
+		$request=sql_value("select 1 value from request where collection=$collection and assigned_to=$userref", 0);
+		if ($request)
+			{
+			return true;
+			}
+		}
+
+	return false;
 	}
 	
 function set_user_collection($user,$collection)
@@ -847,7 +864,7 @@ function get_smart_themes($field,$node=0,$themebar=false)
 			{
 			# Prepare a 'tidied' local language version of the name to use for the comparison
 			# Only return items that are in use.
-			$tidy=escape_check(cleanse_string(trim(strtolower(str_replace("-"," ",htmlspecialchars_decode(i18n_get_collection_name($return[$n]))))),false));
+			$tidy=escape_check(cleanse_string(trim(mb_strtolower(str_replace("-"," ",htmlspecialchars_decode(i18n_get_collection_name($return[$n]))))),false));
 			if (in_array($tidy,$inuse))
 				{
 				$c=count($out);
@@ -869,7 +886,7 @@ function get_smart_themes($field,$node=0,$themebar=false)
 		# Tidy list so it matches the storage format used for keywords.
 		# The translated version is fetched as each option will be indexed in the local language version of each option.
 		$options_base=array();
-		for ($n=0;$n<count($options);$n++) {$options_base[$n]=escape_check(trim(strtolower(i18n_get_translated($options[$n]))));}
+		for ($n=0;$n<count($options);$n++) {$options_base[$n]=escape_check(trim(mb_strtolower(i18n_get_translated($options[$n]))));}
 		
 		# For each option, if it is in use, add it to the return list.
 		$return=array();
