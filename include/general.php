@@ -1176,7 +1176,7 @@ function auto_create_user_account()
 		}
 
 	# Create the user
-	sql_query("insert into user (username,password,fullname,email,usergroup,comments,approved) values ('" . $newusername . "','" . $password . "','" . getvalescaped("name","") . "','" . $email . "','" . $usergroup . "','" . escape_check($customContents) . "'," . (($approve)?1:0) . ")");
+	sql_query("insert into user (username,password,fullname,email,usergroup,comments,approved,lang) values ('" . $newusername . "','" . $password . "','" . getvalescaped("name","") . "','" . $email . "','" . $usergroup . "','" . escape_check($customContents) . "'," . (($approve)?1:0) . ",'$language')");
 	$new=sql_insert_id();
     hook("afteruserautocreated", "all",array("new"=>$new));
 	if ($approve)
@@ -1225,9 +1225,16 @@ function auto_create_user_account()
 		# Not auto approving.
 		# Build a message to send to an admin notifying of unapproved user (same as email_user_request(),
 		# but also adds the new user name to the mail)
-		$message=$lang["userrequestnotification1"] . "\n\n" . $lang["name"] . ": " . getval("name","") . "\n\n" . $lang["email"] . ": " . getval("email","") . "\n\n" . $lang["comment"] . ": " . getval("userrequestcomment","") . "\n\n" . $lang["ipaddress"] . ": '" . $_SERVER["REMOTE_ADDR"] . "'\n\n" . $customContents . "\n\n" . $lang["userrequestnotification3"] . "\n$baseurl?u=" . $new;
+		
+		$templatevars['name']=getval("name","");
+		$templatevars['email']=getval("email","");
+		$templatevars['userrequestcomment']=getval("userrequestcomment","");
+		$templatevars['userrequestcustom']=$customContents;
+		$templatevars['linktouser']="$baseurl?u=$new";
 
-		send_mail($email_notify,$applicationname . ": " . $lang["requestuserlogin"] . " - " . getval("name",""),$message,"",$user_email,"","",getval("name",""));
+		$message=$lang["userrequestnotification1"] . "\n\n" . $lang["name"] . ": " . $templatevars['name'] . "\n\n" . $lang["email"] . ": " . $templatevars['email'] . "\n\n" . $lang["comment"] . ": " . $templatevars['userrequestcomment'] . "\n\n" . $lang["ipaddress"] . ": '" . $_SERVER["REMOTE_ADDR"] . "'\n\n" . $customContents . "\n\n" . $lang["userrequestnotification3"] . "\n$baseurl?u=$new";
+
+		send_mail($email_notify,$applicationname . ": " . $lang["requestuserlogin"] . " - " . getval("name",""),$message,"",$user_email,"emailuserrequest",$templatevars,getval("name",""));
 		}
 
 	return true;
