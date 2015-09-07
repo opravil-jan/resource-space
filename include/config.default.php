@@ -2713,7 +2713,7 @@ $send_collection_to_admin = FALSE;
 $ignore_collection_access = FALSE;
 
 # Show/ hide "Remove resources" link from collection bar:
-$remove_resources_link_on_collection_bar = FALSE;
+$remove_resources_link_on_collection_bar = TRUE;
 
 # Show group filter and user search at top of team_user.php
 $team_user_filter_top=false;
