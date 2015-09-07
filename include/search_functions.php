@@ -2326,14 +2326,15 @@ function compile_search_actions($top_actions)
 	$o=0;
 
     global $baseurl_short, $lang, $k, $search, $restypes, $order_by, $archive, $sort, $daylimit, $home_dash, $url,
-           $allow_smart_collections, $resources_count, $show_searchitemsdiskusage, $offset, $allow_save_search;
+           $allow_smart_collections, $resources_count, $show_searchitemsdiskusage, $offset, $allow_save_search,
+           $collection, $usercollection;
 
     // globals that could also be passed as a reference
     global $starsearch;
 
     if(!checkperm('b') && $k == '') 
         {
-        if($top_actions && $allow_save_search)
+        if($top_actions && $allow_save_search && $usercollection != $collection)
             {
             $extra_tag_attributes = sprintf('
                     data-url="%spages/collections.php?addsearch=%s&restypes=%s&archive=%s&daylimit=%s"
@@ -2425,21 +2426,24 @@ function compile_search_actions($top_actions)
 
         if($resources_count != 0)
             {
-            $extra_tag_attributes = sprintf('
-                    data-url="%spages/collections.php?addsearch=%s&restypes=%s&archive=%s&mode=resources&daylimit=%s"
-                ',
-                $baseurl_short,
-                urlencode($search),
-                urlencode($restypes),
-                urlencode($archive),
-                urlencode($daylimit)
-            );
+            if($usercollection != $collection)
+                {
+                $extra_tag_attributes = sprintf('
+                        data-url="%spages/collections.php?addsearch=%s&restypes=%s&archive=%s&mode=resources&daylimit=%s"
+                    ',
+                    $baseurl_short,
+                    urlencode($search),
+                    urlencode($restypes),
+                    urlencode($archive),
+                    urlencode($daylimit)
+                );
 
-            $options[$o]['value']='save_search_items_to_collection';
-			$options[$o]['label']=$lang['savesearchitemstocollection'];
-			$options[$o]['data_attr']=array();
-			$options[$o]['extra_tag_attributes']=$extra_tag_attributes;
-			$o++;
+                $options[$o]['value']='save_search_items_to_collection';
+    			$options[$o]['label']=$lang['savesearchitemstocollection'];
+    			$options[$o]['data_attr']=array();
+    			$options[$o]['extra_tag_attributes']=$extra_tag_attributes;
+    			$o++;
+                }
 
             if($show_searchitemsdiskusage) 
                 {
