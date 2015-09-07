@@ -116,10 +116,15 @@ if ($use_mp3_player){
 $access=get_resource_access($ref);
 hook("beforepermissionscheck");
 # check permissions (error message is not pretty but they shouldn't ever arrive at this page unless entering a URL manually)
-if ($access==2) 
+if($access == 2) 
+	{
+	if(isset($anonymous_login))
 		{
-		exit("This is a confidential resource.");
+		redirect('login.php');
 		}
+
+	exit('This is a confidential resource.');
+	}
 		
 hook("afterpermissionscheck");
 		
