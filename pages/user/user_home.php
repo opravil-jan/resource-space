@@ -42,6 +42,11 @@ include "../../include/header.php";
 			</li>
 			<?php
 			} ?>
+
+		<?php
+			hook('user_home_additional_links');
+		?>
+
 	</ul>
 	</div>
 
