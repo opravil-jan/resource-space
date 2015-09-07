@@ -312,41 +312,57 @@ else { ?>
 $add=getvalescaped("add","");
 if ($add!="")
 	{
+	$allowadd=true;
 	// If we provide a collection ID use that one instead
 	$to_collection = getvalescaped('toCollection', '');
 
-	if(strpos($add,",")>0)
+	if(checkperm("noex"))
 		{
-		$addarray=explode(",",$add);
+		// If collection has been shared externally users with this permission can't add resources
+		$externalkeys=get_collection_external_access(($to_collection === '') ? $usercollection : $to_collection);
+		if(count($externalkeys)>0)
+				{
+				$allowadd=false;				
+				?>
+				<script language="Javascript">alert("<?php echo $lang["sharedcollectionaddblocked"]?>");</script>
+				<?php
+				}
 		}
-	else
+	if($allowadd)
 		{
-		$addarray[0]=$add;
-		unset($add);
-		}	
-	foreach ($addarray as $add)
-		{
-		hook("preaddtocollection");
-		#add to current collection
-		if (add_resource_to_collection($add,($to_collection === '') ? $usercollection : $to_collection,false,getvalescaped("size",""))==false)
-			{ ?>
-			<script language="Javascript">alert("<?php echo $lang["cantmodifycollection"]?>");</script><?php
+		if(strpos($add,",")>0)
+			{
+			$addarray=explode(",",$add);
 			}
 		else
 			{
-			# Log this	
-			daily_stat("Add resource to collection",$add);
-		
-			# Update resource/keyword kit count
-			$search=getvalescaped("search","");
-			if ((strpos($search,"!")===false) && ($search!="")) {update_resource_keyword_hitcount($add,$search);}
-			hook("postaddtocollection");
+			$addarray[0]=$add;
+			unset($add);
+			}	
+		foreach ($addarray as $add)
+			{
+			hook("preaddtocollection");
+			#add to current collection		
+			if (add_resource_to_collection($add,($to_collection === '') ? $usercollection : $to_collection,false,getvalescaped("size",""))==false)
+				{ ?>
+				<script language="Javascript">alert("<?php echo $lang["cantmodifycollection"]?>");</script><?php
+				}
+			else
+				{
+				# Log this	
+				daily_stat("Add resource to collection",$add);
+			
+				# Update resource/keyword kit count
+				$search=getvalescaped("search","");
+				if ((strpos($search,"!")===false) && ($search!="")) {update_resource_keyword_hitcount($add,$search);}
+				hook("postaddtocollection");
+				}
 			}
-		}	
-	# Show warning?
-	if (isset($collection_share_warning) && $collection_share_warning)
-		{
-		?><script language="Javascript">alert("<?php echo $lang["sharedcollectionaddwarning"]?>");</script><?php
+		# Show warning?
+		if (isset($collection_share_warning) && $collection_share_warning)
+			{
+			?><script language="Javascript">alert("<?php echo $lang["sharedcollectionaddwarning"]?>");</script><?php
+			}
 		}
 	}
 
@@ -392,6 +408,12 @@ if ($addsearch!=-1)
     else
         {
         hook("preaddsearch");
+		if(checkperm("noex"))
+				{
+				// If collection has been shared externally user can't add resources
+				?>
+				<script language="Javascript">alert("<?php echo $lang["sharedcollectionaddblocked"]?>");</script><?php
+				}
         if (getval("mode","")=="")
             {
             #add saved search

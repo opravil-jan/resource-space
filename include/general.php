@@ -3844,7 +3844,7 @@ function get_executable_path($path, $executable, &$checked_path, $check_exe = fa
 
 if (!function_exists("resolve_user_emails")){
 function resolve_user_emails($ulist){
-	global $lang;
+	global $lang, $user_select_internal;
 	// return an array of emails from a list of usernames and email addresses. 
 	// with 'key_required' sibling array preserving the intent of internal/external sharing.
 	$emails_key_required=array();
@@ -3855,7 +3855,7 @@ function resolve_user_emails($ulist){
 		if ($email=='')
 			{
 			# Not a recognised user, if @ sign present, assume e-mail address specified
-			if (strpos($uname,"@")===false) {
+			if (strpos($uname,"@")===false || (isset($user_select_internal) && $user_select_internal)) {
 				error_alert($lang["couldnotmatchallusernames"] . ": " . escape_check($uname));die();
 			}
 			$emails_key_required['unames'][$n]=$uname;

@@ -139,7 +139,7 @@ function add_resource_to_collection($resource,$collection,$smartadd=false,$size=
 			$archivestatus=sql_value("select archive as value from resource where ref='$resource'","");
 			if ($archivestatus<0 && !$collection_allow_not_approved_share) {global $lang; $lang["cantmodifycollection"]=$lang["notapprovedresources"] . $resource;return false;}
 			
-			// Check if user has open access, we shouldn't add this if they have restrictd access or only been granted access
+			// Check if user can share externally and has open access. We shouldn't add this if they can't share externally, have restricted access or only been granted access
 			if (!can_share_resource($resource)){return false;}
 			
 			# Set the flag so a warning appears.

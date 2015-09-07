@@ -27,6 +27,8 @@ $useraccess=get_resource_access($ref);
 // Check if sharing permitted
 if (!can_share_resource($ref,$useraccess)) {exit($lang["error-permissiondenied"]);}
 
+$user_select_internal=checkperm("noex");
+
 $errors="";
 if (getval("save","")!="")
 	{
@@ -237,7 +239,13 @@ if ($share_resource_include_related && $enable_related_resources && checkperm("s
 
 <?php if(!hook("replaceemailtousers")){?>
 <div class="Question">
-<label for="users"><?php echo $lang["emailtousers"]?></label><?php include "../include/user_select.php"; ?>
+	<label for="users">
+	<?php echo ($user_select_internal)?$lang["emailtousers_internal"]:$lang["emailtousers"]; ?>
+	</label>
+
+	<?php
+
+include "../include/user_select.php"; ?>
 <div class="clearerleft"> </div>
 <?php if ($errors!="") { ?><div class="FormError">!! <?php echo $errors?> !!</div><?php } ?>
 </div>
@@ -265,65 +273,72 @@ if ($share_resource_include_related && $enable_related_resources && checkperm("s
 	}?>
 
 
-<?php if(!hook("replaceemailaccessselector")){?>
-<div class="Question" id="question_access">
-<label for="access"><?php echo $lang["externalselectresourceaccess"]?></label>
-<select class="stdwidth" name="access" id="access">
-<?php
-// List available access levels. The highest level must be the minimum user access level.
-for ($n=$useraccess;$n<=1;$n++)  { ?>
-<option value="<?php echo $n?>"><?php echo $lang["access" . $n]?></option>
-<?php } ?>
-</select>
-<div class="clearerleft"> </div>
-</div>
-<?php } ?>
+<?php 
 
-
-
-<?php if(!hook("replaceemailexpiryselector")){?>
-<div class="Question">
-<label><?php echo $lang["externalselectresourceexpires"]?></label>
-<select name="expires" class="stdwidth">
-<?php if($resource_share_expire_never) { ?><option value=""><?php echo $lang["never"]?></option><?php }
-				
-for ($n=1;$n<=150;$n++)
+if(!$user_select_internal)
 	{
-	$date = time()+(60*60*24*$n);
-	$d    = date("D",$date);
-	$option_class = '';
-	if (($d == "Sun") || ($d == "Sat"))
+
+	if(!hook("replaceemailaccessselector")){?>
+	<div class="Question" id="question_access">
+	<label for="access"><?php echo $lang["externalselectresourceaccess"]?></label>
+	<select class="stdwidth" name="access" id="access">
+	<?php
+	// List available access levels. The highest level must be the minimum user access level.
+	for ($n=$useraccess;$n<=1;$n++)  { ?>
+	<option value="<?php echo $n?>"><?php echo $lang["access" . $n]?></option>
+	<?php } ?>
+	</select>
+	<div class="clearerleft"> </div>
+	</div>
+	<?php } ?>
+
+
+
+	<?php if(!hook("replaceemailexpiryselector")){?>
+	<div class="Question">
+	<label><?php echo $lang["externalselectresourceexpires"]?></label>
+	<select name="expires" class="stdwidth">
+	<?php if($resource_share_expire_never) { ?><option value=""><?php echo $lang["never"]?></option><?php }
+					
+	for ($n=1;$n<=150;$n++)
 		{
-		$option_class = 'optionWeekend';
-		} ?>
-	<option class="<?php echo $option_class ?>" value="<?php echo date("Y-m-d",$date)?>"><?php echo nicedate(date("Y-m-d",$date),false,true)?></option>
-	<?php
-	}
-?>
-</select>
-<div class="clearerleft"> </div>
-</div>
-<?php } ?>
-
-
-<?php if (checkperm("x")) {
-# Allow the selection of a user group to inherit permissions from for this share (the default is to use the current user's user group).
-?>
-<div class="Question">
-<label for="groupselect"><?php echo $lang["externalshare_using_permissions_from_user_group"] ?></label>
-<select id="groupselect" name="usergroup" class="stdwidth">
-<?php $grouplist=get_usergroups(true);
-foreach ($grouplist as $group)
-	{
+		$date = time()+(60*60*24*$n);
+		$d    = date("D",$date);
+		$option_class = '';
+		if (($d == "Sun") || ($d == "Sat"))
+			{
+			$option_class = 'optionWeekend';
+			} ?>
+		<option class="<?php echo $option_class ?>" value="<?php echo date("Y-m-d",$date)?>"><?php echo nicedate(date("Y-m-d",$date),false,true)?></option>
+		<?php
+		}
 	?>
-	<option value="<?php echo $group["ref"] ?>" <?php if ($usergroup==$group["ref"]) { ?>selected<?php } ?>><?php echo $group["name"] ?></option>
-	<?php
+	</select>
+	<div class="clearerleft"> </div>
+	</div>
+	<?php } ?>
+
+
+	<?php if (checkperm("x")) {
+	# Allow the selection of a user group to inherit permissions from for this share (the default is to use the current user's user group).
+	?>
+	<div class="Question">
+	<label for="groupselect"><?php echo $lang["externalshare_using_permissions_from_user_group"] ?></label>
+	<select id="groupselect" name="usergroup" class="stdwidth">
+	<?php $grouplist=get_usergroups(true);
+	foreach ($grouplist as $group)
+		{
+		?>
+		<option value="<?php echo $group["ref"] ?>" <?php if ($usergroup==$group["ref"]) { ?>selected<?php } ?>><?php echo $group["name"] ?></option>
+		<?php
+		}
+	?>
+	</select>
+	<div class="clearerleft"> </div>
+	</div>
+	<?php } 
 	}
-?>
-</select>
-<div class="clearerleft"> </div>
-</div>
-<?php } ?>
+	?>
 
 <?php hook("resourceemailafterexternal");?>
 

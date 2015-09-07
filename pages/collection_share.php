@@ -25,6 +25,8 @@ if (checkperm("b") || !$allow_share) {
         $error=$lang["error-permissiondenied"];
         }
 
+$internal_share_only=checkperm("noex");
+
 # Check if editing existing external share
 $editaccess=getvalescaped("editaccess","");
 ($editaccess=="")?$editing=false:$editing=true;
@@ -125,11 +127,21 @@ include "../include/header.php";
 		}
 		?>
 		
-		<?php if($hide_collection_share_generate_url==false){ ?> <li><a onClick="return CentralSpaceLoad(this,true);" href="<?php echo $baseurl_short?>pages/collection_share.php?ref=<?php echo urlencode($ref) ?>&generateurl=true"><?php echo $lang["generateurl"]?></a></li> <?php } ?>
+		<?php 
+		if(!$internal_share_only && $hide_collection_share_generate_url==false)
+			{ ?>
+			<li><a onClick="return CentralSpaceLoad(this,true);" href="<?php echo $baseurl_short?>pages/collection_share.php?ref=<?php echo urlencode($ref) ?>&generateurl=true"><?php echo $lang["generateurl"]?></a></li> <?php 
+			} 
+		else // Just show the internal share URL straight away as there is no generate link
+			{ ?>
+			<h2><?php echo $lang["generateurlinternal"]; ?></h2><br />
+			<p><input class="URLDisplay" type="text" value="<?php echo $baseurl?>/?c=<?php echo urlencode($ref) ?>">
+			<?php
+			}?>
 
 		<?php hook("extra_share_options");
 		}
-	if ($editing || getval("generateurl","")!="")
+	if (!$internal_share_only && ($editing || getval("generateurl","")!=""))
 		{
 			global $ignore_collection_access;
 		if (!($hide_internal_sharing_url) && (!$editing || $editexternalurl) && $collection["public"]==1 || $ignore_collection_access)
@@ -267,63 +279,65 @@ include "../include/header.php";
 		<p>&nbsp;</p>
 		<?php
 		}
-		?>
-	<h2><?php echo $lang["externalusersharing"]?></h2>
-	<div class="Question">
+	if(!$internal_share_only)
+		{?>
+		<h2><?php echo $lang["externalusersharing"]?></h2>
+		<div class="Question">
 
-	<?php
-	$keys=get_collection_external_access($ref);
-	if (count($keys)==0)
-		{
-		?>
-		<p><?php echo $lang["noexternalsharing"] ?></p>
 		<?php
-		}
-	else
-		{
-		?>
-		<div class="Listview">
-		<table border="0" cellspacing="0" cellpadding="0" class="ListviewStyle">
-		<tr class="ListviewTitleStyle">
-		<td><?php echo $lang["accesskey"];?></td>
-		<td><?php echo $lang["sharedby"];?></td>
-		<td><?php echo $lang["sharedwith"];?></td>
-		<td><?php echo $lang["lastupdated"];?></td>
-		<td><?php echo $lang["lastused"];?></td>
-		<td><?php echo $lang["expires"];?></td>
-		<td><?php echo $lang["access"];?></td>
-		<?php hook("additionalcolexternalshareheader");?>
-		<td><div class="ListTools"><?php echo $lang["tools"]?></div></td>
-		</tr>
-		<?php
-		for ($n=0;$n<count($keys);$n++)
+		$keys=get_collection_external_access($ref);
+		if (count($keys)==0)
 			{
 			?>
-			<tr>
-			<td><div class="ListTitle"><a target="_blank" href="<?php echo $baseurl . "?c=" . urlencode($ref) . "&k=" . urlencode($keys[$n]["access_key"]) ?>"><?php echo htmlspecialchars($keys[$n]["access_key"]) ?></a></div></td>
-			<td><?php echo htmlspecialchars(resolve_users($keys[$n]["users"]))?></td>
-			<td><?php echo htmlspecialchars($keys[$n]["emails"]) ?></td>
-			<td><?php echo htmlspecialchars(nicedate($keys[$n]["maxdate"],true));	?></td>
-			<td><?php echo htmlspecialchars(nicedate($keys[$n]["lastused"],true)); ?></td>
-			<td><?php echo htmlspecialchars(($keys[$n]["expires"]=="")?$lang["never"]:nicedate($keys[$n]["expires"],false)) ?></td>
-			<td><?php echo htmlspecialchars(($keys[$n]["access"]==-1)?"":$lang["access" . $keys[$n]["access"]]); ?></td>
-			<?php hook("additionalcolexternalsharerecord");?>
-			<td><div class="ListTools">
-			<a href="#" onClick="if (confirm('<?php echo $lang["confirmdeleteaccess"]?>')) {document.getElementById('deleteaccess').value='<?php echo htmlspecialchars($keys[$n]["access_key"]) ?>';document.getElementById('collectionform').submit(); return false;}">&gt;&nbsp;<?php echo $lang["action-delete"]?></a>
-			<a href="#" onClick="document.getElementById('editaccess').value='<?php echo htmlspecialchars($keys[$n]["access_key"]) ?>';document.getElementById('editexpiration').value='<?php echo htmlspecialchars($keys[$n]["expires"]) ?>';document.getElementById('editaccesslevel').value='<?php echo htmlspecialchars($keys[$n]["access"]) ?>';document.getElementById('editgroup').value='<?php echo htmlspecialchars($keys[$n]["usergroup"]) ?>';CentralSpacePost(document.getElementById('collectionform'),true);return false;">&gt;&nbsp;<?php echo $lang["action-edit"]?></a>
-			</div></td>
+			<p><?php echo $lang["noexternalsharing"] ?></p>
+			<?php
+			}
+		else
+			{
+			?>
+			<div class="Listview">
+			<table border="0" cellspacing="0" cellpadding="0" class="ListviewStyle">
+			<tr class="ListviewTitleStyle">
+			<td><?php echo $lang["accesskey"];?></td>
+			<td><?php echo $lang["sharedby"];?></td>
+			<td><?php echo $lang["sharedwith"];?></td>
+			<td><?php echo $lang["lastupdated"];?></td>
+			<td><?php echo $lang["lastused"];?></td>
+			<td><?php echo $lang["expires"];?></td>
+			<td><?php echo $lang["access"];?></td>
+			<?php hook("additionalcolexternalshareheader");?>
+			<td><div class="ListTools"><?php echo $lang["tools"]?></div></td>
 			</tr>
+			<?php
+			for ($n=0;$n<count($keys);$n++)
+				{
+				?>
+				<tr>
+				<td><div class="ListTitle"><a target="_blank" href="<?php echo $baseurl . "?c=" . urlencode($ref) . "&k=" . urlencode($keys[$n]["access_key"]) ?>"><?php echo htmlspecialchars($keys[$n]["access_key"]) ?></a></div></td>
+				<td><?php echo htmlspecialchars(resolve_users($keys[$n]["users"]))?></td>
+				<td><?php echo htmlspecialchars($keys[$n]["emails"]) ?></td>
+				<td><?php echo htmlspecialchars(nicedate($keys[$n]["maxdate"],true));	?></td>
+				<td><?php echo htmlspecialchars(nicedate($keys[$n]["lastused"],true)); ?></td>
+				<td><?php echo htmlspecialchars(($keys[$n]["expires"]=="")?$lang["never"]:nicedate($keys[$n]["expires"],false)) ?></td>
+				<td><?php echo htmlspecialchars(($keys[$n]["access"]==-1)?"":$lang["access" . $keys[$n]["access"]]); ?></td>
+				<?php hook("additionalcolexternalsharerecord");?>
+				<td><div class="ListTools">
+				<a href="#" onClick="if (confirm('<?php echo $lang["confirmdeleteaccess"]?>')) {document.getElementById('deleteaccess').value='<?php echo htmlspecialchars($keys[$n]["access_key"]) ?>';document.getElementById('collectionform').submit(); return false;}">&gt;&nbsp;<?php echo $lang["action-delete"]?></a>
+				<a href="#" onClick="document.getElementById('editaccess').value='<?php echo htmlspecialchars($keys[$n]["access_key"]) ?>';document.getElementById('editexpiration').value='<?php echo htmlspecialchars($keys[$n]["expires"]) ?>';document.getElementById('editaccesslevel').value='<?php echo htmlspecialchars($keys[$n]["access"]) ?>';document.getElementById('editgroup').value='<?php echo htmlspecialchars($keys[$n]["usergroup"]) ?>';CentralSpacePost(document.getElementById('collectionform'),true);return false;">&gt;&nbsp;<?php echo $lang["action-edit"]?></a>
+				</div></td>
+				</tr>
+				<?php
+				}
+			?>
+			</table>
+			</div>
 			<?php
 			}
 		?>
-		</table>
-		</div>
+		</div>	
+		
 		<?php
 		}
-	?>
-	</div>	
-	
-	<?php
 	}
 ?>
 

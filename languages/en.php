@@ -346,6 +346,7 @@ $lang["collectionid"]="Collection ID";
 $lang["collectionidprefix"]="Col_ID";
 $lang["_dupe"]="_dupe";
 $lang["emailtousers"]="E-mail to users<br><br><b>For existing users</b> start typing the user's name to search, click the user when found and then click plus<br><br><b>For non-registered users</b> type the e-mail address then click plus";
+$lang["emailtousers_internal"]="E-mail to users<br><br>Start typing the user's name to search, then click the required user when found";
 $lang["removecollectionareyousure"]="Are you sure you wish to remove this collection from your list?";
 $lang["managemycollections"]="Manage my collections";
 $lang["createnewcollection"]="Create new collection";
@@ -826,6 +827,7 @@ $lang["noexternalsharing"]="No external sharing.";
 $lang["sharedcollectionaddwarning"]="Warning: This collection has been shared with external users. The resource you have added has now been made available to these users. Click 'share' to manage the external access for this collection.";
 $lang["sharedcollectionaddwarningupload"]="Warning: The selected collection has been shared with external users. The resources you upload will be made available to these users. Click 'share' in the bottom bar to manage the external access for this collection.";
 
+$lang["sharedcollectionaddblocked"]="You are not permitted to add resources to a collection that has been shared with external users.";
 $lang["restrictedsharecollection"]="You have restricted access to one or more of the resources in this collection and therefore sharing is prohibited.";
 $lang["selectgenerateurlexternal"]="To create a URL that will work for external users (people that do not have a login) please choose the access level you wish to grant to the resources.";
 $lang["selectgenerateurlexternalthemecat"]="To create URLs that will allow access to external users (people that do not have a login) please choose the access level you wish to grant to the resources.";
@@ -2098,6 +2100,7 @@ $lang["ticktoemaillink"]="E-mail user a link so that they can reset their passwo
 $lang["resetpassword"]="Reset password";
 $lang["customaccesspreventshare"]="You do not have permission to share one or more resources in this collection";
 
+$lang["prevent_user_group_sharing_externally"]="Prevent users from sharing resources with external users";
 
 $lang["allow_user_group_selection_for_access_when_sharing_externally"]="Allow user group select for determining access level when sharing externally";
 $lang["share_using_permissions_from_user_group"]="Share using permissions from user group";

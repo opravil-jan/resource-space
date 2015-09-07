@@ -54,11 +54,13 @@ h	Can publish themes, and edit all collections
 j*	Can see all theme categories
 j?	Can see theme in category ? (e.g. jCars,jAnimals)
 J	Can only search for resources that belong to themes (not advisable!)
+X	Allows selection of a user group to determine access level when sharing externally so that when accessed options, fields etc. will be viewed as if by a member of that group
 
 Restrictive permissions
 -----------------------
 p	Can not change own password. Useful for shared user accounts.
 D	Can not delete resources.
+noex	Cannot share resources externally (internal sharing is still possible, provided $allow_share=true;)
 
 Administration
 --------------

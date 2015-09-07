@@ -10,14 +10,30 @@ if ($userstring=="") {$userstring=$default_user_select;}
 <table cellpadding="0" cellspacing="0" width="300">
 
 <!-- autocomplete -->
-<tr>
-	<td>
-		<input type="text" class="medwidth" value="<?php echo $lang["starttypingusername"]?>" id="autocomplete" name="autocomplete_parameter" onFocus="if(this.value == '<?php echo $lang['starttypingusername']; ?>') {this.value = ''}" onBlur="if(this.value == '') {this.value = '<?php echo $lang['starttypingusername']; ?>';}" />
-	</td>
-	<td>
-		<input type=button value="+" class="medcomplementwidth" onClick="addUser();" />
-	</td>
-</tr>
+
+<?php
+if(isset($user_select_internal) && $user_select_internal)
+	{?>
+	<tr>
+		<td>
+			<input type="text" class="stdwidth" value="<?php echo $lang["starttypingusername"]?>" id="autocomplete" name="autocomplete_parameter" onFocus="if(this.value == '<?php echo $lang['starttypingusername']; ?>') {this.value = ''}" onBlur="if(this.value == '') {this.value = '<?php echo $lang['starttypingusername']; ?>';}" />
+		</td>			
+	</tr>
+	<?php
+	}
+else
+	{?>
+	<tr>
+		<td>
+			<input type="text" class="medwidth" value="<?php echo $lang["starttypingusername"]?>" id="autocomplete" name="autocomplete_parameter" onFocus="if(this.value == '<?php echo $lang['starttypingusername']; ?>') {this.value = ''}" onBlur="if(this.value == '') {this.value = '<?php echo $lang['starttypingusername']; ?>';}" />
+		</td>
+		<td>
+			<input type=button value="+" class="medcomplementwidth" onClick="addUser();" />
+		</td>
+	</tr>
+	<?php
+	}?>
+
 <!-- -->
 
 <!-- user string -->

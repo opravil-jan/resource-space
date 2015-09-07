@@ -35,6 +35,8 @@ if (!can_share_resource($ref,$minaccess))
     $show_error = true;
     $error      = $lang["error-permissiondenied"];
     }
+	
+$internal_share_only=checkperm("noex");
         
 # Process deletion of access keys
 if (getval("deleteaccess","") != "")
@@ -88,13 +90,19 @@ if($editing && !$editexternalurl)
                         <li><a href="<?php echo $baseurl_short . 'pages/resource_email.php?' . $query_string ?>" onClick="return CentralSpaceLoad(this,true);"><?php echo $lang["emailresourcetitle"]?></a></li> 
                         <?php 
                         }
-                    if(!$hide_resource_share_generate_url)
-                        { ?>
+                    if(!$internal_share_only && !$hide_resource_share_generate_url) 
+						{ ?>
                         <li><a href="<?php echo $baseurl_short . 'pages/resource_share.php?' . $query_string . '&generateurl=true' ?>" onClick="return CentralSpaceLoad(this,true);" ><?php echo $lang["generateurl"]?></a></li> 
                         <?php 
                         }
+					else // Just show the internal share URL straight away as there is no generate link
+						{ ?>
+                        <h2><?php echo $lang["generateurl"]; ?></h2><br /><p><?php echo $lang["generateurlinternal"];?></p>
+                        <p><input class="URLDisplay" type="text" value="<?php echo $baseurl?>/?r=<?php echo $ref?>"></p>
+                        <?php
+                        }
                     }
-                if ($editing || getval("generateurl","") != "" && getval("deleteaccess","") == "")
+                if (!$internal_share_only && ($editing || getval("generateurl","") != "" && getval("deleteaccess","") == ""))
                     {
                     if(!$editing)
                         { ?>
@@ -220,7 +228,7 @@ if($editing && !$editexternalurl)
             </div>
         <?php 
         # Do not allow access to the existing shares if the user has restricted access to this resource.
-        if ($minaccess==0)
+        if (!$internal_share_only && $minaccess==0)
             {
             ?>
             <h2><?php echo $lang["externalusersharing"]?></h2>

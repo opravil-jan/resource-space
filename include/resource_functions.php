@@ -3255,6 +3255,12 @@ function get_original_imagesize($ref="",$path="", $extension="jpg")
         
 function generate_resource_access_key($resource,$userref,$access,$expires,$email,$group="")
         {
+        if(checkperm("noex"))
+            {
+            // Shouldn't ever happen, but catch in case not already checked
+            return false;
+            }
+                
         global $userref,$usergroup;
 	if ($group=="" || !checkperm("x")) {$group=$usergroup;} # Default to sharing with the permission of the current usergroup if not specified OR no access to alternative group selection.
         $k=substr(md5(time()),0,10);
