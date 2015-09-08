@@ -1436,7 +1436,16 @@ function update_resource_type($ref,$type)
 	# Clear data that is no longer needed (data/keywords set for other types).
 	sql_query("delete from resource_data where resource='$ref' and resource_type_field not in (select ref from resource_type_field where resource_type='$type' or resource_type=999 or resource_type=0)");
 	sql_query("delete from resource_keyword where resource='$ref' and resource_type_field>0 and resource_type_field not in (select ref from resource_type_field where resource_type='$type' or resource_type=999 or resource_type=0)");	
-		
+	
+        # Also index the resource type name, unless disabled
+        global $index_resource_type;
+        if ($index_resource_type)
+                {
+                $restypename=sql_value("select name value from resource_type where ref='" . escape_check($type) . "'","");
+                remove_all_keyword_mappings_for_field($ref,-2);
+                add_keyword_mappings($ref,$restypename,-2);
+                }
+        	
 	}
 	
 function relate_to_array($ref,$array)	
