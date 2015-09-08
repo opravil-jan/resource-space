@@ -56,7 +56,7 @@ if (!checkperm("b"))
 <td><?php echo $lang["user"]?></td>
 <td><?php echo $lang["action"]?></td>
 <td><?php echo $lang["resourceid"]?></td>
-<td><?php $field=get_fields(array($view_title_field)); echo lang_or_i18n_get_translated($field[0]["title"], "fieldtitle-");?></td>
+<td><?php $field=get_fields(array($view_title_field));echo lang_or_i18n_get_translated($field[0]["title"], "fieldtitle-");?></td>
 </tr>
 
 <?php
