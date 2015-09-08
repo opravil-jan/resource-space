@@ -321,7 +321,9 @@ function do_search($search,$restypes="",$order_by="relevance",$archive=0,$fetchr
 			$sql_restrict_by_field_types = "-1," . $sql_restrict_by_field_types;  // -1 needed for global search
 			}
 		}
-    
+
+	$checkbox_and_found = false;
+
     if ($keysearch)
         {
         for ($n=0;$n<count($keywords);$n++)
@@ -446,6 +448,9 @@ function do_search($search,$restypes="",$order_by="relevance",$archive=0,$fetchr
                             ($fieldinfo[0]["type"] == 2 && $checkbox_and)
                             ) 
                             {
+
+							$checkbox_and_found = true;
+
                             for ($m=0;$m<count($ckeywords);$m++) {
                                 $keyref=resolve_keyword($ckeywords[$m]);
                                 if (!($keyref===false)) 
@@ -511,9 +516,12 @@ function do_search($search,$restypes="",$order_by="relevance",$archive=0,$fetchr
                                 {
                                 $union.=" and k" . $c . ".resource_type_field not in ('". join("','",$hidden_indexed_fields) ."')";                         
                                 }
-                            $sql_keyword_union_aggregation[]="bit_or(keyword_" . $c . "_found) as keyword_" . $c . "_found";
-                            $sql_keyword_union_criteria[]="h.keyword_" . $c . "_found";                                                    
-                            $sql_keyword_union[]=$union;
+							if (!$checkbox_and_found)
+								{
+								$sql_keyword_union_aggregation[] = "bit_or(keyword_" . $c . "_found) as keyword_" . $c . "_found";
+								$sql_keyword_union_criteria[] = "h.keyword_" . $c . "_found";
+								$sql_keyword_union[] = $union;
+								}
                             }
                         }
                     }
