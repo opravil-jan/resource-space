@@ -10,7 +10,7 @@ function do_search($search,$restypes="",$order_by="relevance",$archive=0,$fetchr
     debug("search=$search $go $fetchrows restypes=$restypes archive=$archive daylimit=$recent_search_daylimit");
     
     # globals needed for hooks   
-    global $sql,$order,$select,$sql_join,$sql_filter,$orig_order,$checkbox_and,$collections_omit_archived,$search_sql_double_pass_mode,$usergroup,$search_filter_strict,$default_sort,$search_sql_optimization;
+    global $sql,$order,$select,$sql_join,$sql_filter,$orig_order,$collections_omit_archived,$search_sql_double_pass_mode,$usergroup,$search_filter_strict,$default_sort,$search_sql_optimization;
 
     $alternativeresults = hook("alternativeresults", "", array($go));
     if ($alternativeresults) {return $alternativeresults; }
@@ -322,8 +322,6 @@ function do_search($search,$restypes="",$order_by="relevance",$archive=0,$fetchr
 			}
 		}
 
-	$checkbox_and_found = false;
-
     if ($keysearch)
         {
         for ($n=0;$n<count($keywords);$n++)
@@ -442,15 +440,8 @@ function do_search($search,$restypes="",$order_by="relevance",$archive=0,$fetchr
                             }
 
                         #special SQL generation for category trees to use AND instead of OR
-                        if (
-                            ($fieldinfo[0]["type"] == 7 && $category_tree_search_use_and)
-                            ||
-                            ($fieldinfo[0]["type"] == 2 && $checkbox_and)
-                            ) 
+                        if ($fieldinfo[0]["type"] == 7 && $category_tree_search_use_and)
                             {
-
-							$checkbox_and_found = true;
-
                             for ($m=0;$m<count($ckeywords);$m++) {
                                 $keyref=resolve_keyword($ckeywords[$m]);
                                 if (!($keyref===false)) 
@@ -516,12 +507,10 @@ function do_search($search,$restypes="",$order_by="relevance",$archive=0,$fetchr
                                 {
                                 $union.=" and k" . $c . ".resource_type_field not in ('". join("','",$hidden_indexed_fields) ."')";                         
                                 }
-							if (!$checkbox_and_found)
-								{
-								$sql_keyword_union_aggregation[] = "bit_or(keyword_" . $c . "_found) as keyword_" . $c . "_found";
-								$sql_keyword_union_criteria[] = "h.keyword_" . $c . "_found";
-								$sql_keyword_union[] = $union;
-								}
+
+							$sql_keyword_union_aggregation[] = "bit_or(keyword_" . $c . "_found) as keyword_" . $c . "_found";
+							$sql_keyword_union_criteria[] = "h.keyword_" . $c . "_found";
+							$sql_keyword_union[] = $union;
                             }
                         }
                     }
@@ -2087,6 +2076,10 @@ function search_form_to_search_query($fields,$fromsearchbar=false)
                 if ($p!="")
                     {
                     if ($search!="") {$search.=", ";}
+					if($checkbox_and)
+						{
+						$p=str_replace(";",", {$fields[$n]["name"]}:",$p);	// this will force each and condition into a separate union in do_search (which will AND)
+						}
                     $search.=$fields[$n]["name"] . ":" . $p;
                     }
                 }
@@ -2254,6 +2247,10 @@ function search_form_to_search_query($fields,$fromsearchbar=false)
                         if($search != '') {
                             $search .= ', ';
                         }
+						if($checkbox_and)
+							{
+							$p=str_replace(";",", {$fields[$n]["name"]}:",$p);	// this will force each and condition into a separate union in do_search (which will AND)
+							}
                         $search .= $fields[$n]['name'] . ':' . $p;
                     }
 
