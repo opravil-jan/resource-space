@@ -167,7 +167,7 @@ if ($submitted != "")
 	# Define the archive file.
 	if ($use_zip_extension){
 		$progress_file=$usertempdir . "/progress_file.txt";
-		$zipfile = get_temp_dir(false,$id)."/zip.zip";
+		$zipfile = $usertempdir . "/zip.zip";
 		$zip = new ZipArchive();
 		$zip->open($zipfile, ZIPARCHIVE::CREATE);
 	}
