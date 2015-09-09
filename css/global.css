@@ -1040,3 +1040,42 @@ div.MessageBox a {
     text-decoration: underline !important;
 }
 
+
+
+
+.FeaturedSimpleLinks {
+	display: table;
+	width:100%;
+}
+
+.FeaturedSimpleLink {
+	margin-left: 100px;
+	margin-right: 100px;
+	margin-top: 25px;
+	height: 150px;
+	overflow-y: hidden; 
+	overflow-x: hidden;
+}
+a.FeaturedSimpleLink:hover { 
+	border-radius:5px;  
+}
+
+.FeaturedSimpleTile {
+	display: table;
+	height: 150px;
+	width:250px;
+}
+
+.FeaturedSimpleTileContents {
+	display: table-cell; 
+	vertical-align: middle;
+}
+
+.FeaturedSimpleTile .FeaturedSimpleTileContents h2{
+  background: transparent;
+  text-align: center;
+  padding-left: 0px;   
+	max-height: 100px;
+	max-width: 215px;
+	overflow-wrap: break-word;
+}

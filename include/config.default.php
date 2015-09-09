@@ -1693,6 +1693,10 @@ $public_collections_confine_group=false;
 # Show public collections in the top nav?
 $public_collections_top_nav=false;
 
+# Themes simple view - option to show featured collection categories and featured collections (themes) as basic tiles wih no images.
+# Can be tested or used for custom link by adding querystring parameter simpleview=true to themes.php e.g. pages/themes.php?simpleview=true
+# NOTE: only works with $themes_category_split_pages=true;
+$themes_simple_view=false;
 # Display theme categories as links, and themes on separate pages?
 $themes_category_split_pages=false;
 # Display breadcrumb-style theme parent links instead of "Subcategories"
