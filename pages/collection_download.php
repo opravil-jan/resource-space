@@ -163,10 +163,10 @@ if ($submitted != "")
 					    
 		rmdir($foldertodelete);
 		}
+	$progress_file=$usertempdir . "/progress_file.txt";
 	
 	# Define the archive file.
 	if ($use_zip_extension){
-		$progress_file=$usertempdir . "/progress_file.txt";
 		$zipfile = $usertempdir . "/zip.zip";
 		$zip = new ZipArchive();
 		$zip->open($zipfile, ZIPARCHIVE::CREATE);
@@ -376,7 +376,7 @@ if ($submitted != "")
 				if ($use_zip_extension){
 					$zip->addFile($p,$filename);
 					update_zip_progress_file("file ".$zip->numFiles);
-				}
+				} else {update_zip_progress_file("file ".$n);}
 				# build an array of paths so we can clean up any exiftool-modified files.
 				
 				if($tmpfile!==false && file_exists($tmpfile)){$deletion_array[]=$tmpfile;}
@@ -491,20 +491,24 @@ if ($submitted != "")
 	}
     else if ($archiver)
         {
-        run_command($archiver_fullpath . " " . $collection_download_settings[$settings_id]["arguments"] . " " . escapeshellarg($zipfile) . " " . $archiver_listfile_argument . escapeshellarg($cmdfile));
+		update_zip_progress_file("zipping");
+        $wait=run_command($archiver_fullpath . " " . $collection_download_settings[$settings_id]["arguments"] . " " . escapeshellarg($zipfile) . " " . $archiver_listfile_argument . escapeshellarg($cmdfile));
+        update_zip_progress_file("complete");
         }
     else if (!$use_zip_extension)
         {
+		update_zip_progress_file("zipping");	
         if ($config_windows)
             # Add the command file, containing the filenames, as an argument.
             {
-            exec("$zipcommand " . escapeshellarg($zipfile) . " @" . escapeshellarg($cmdfile));
+            $wait=exec("$zipcommand " . escapeshellarg($zipfile) . " @" . escapeshellarg($cmdfile));
             }
         else
             {
             # Pipe the command file, containing the filenames, to the executable.
-            exec("$zipcommand " . escapeshellarg($zipfile) . " -@ < " . escapeshellarg($cmdfile));
+            $wait=exec("$zipcommand " . escapeshellarg($zipfile) . " -@ < " . escapeshellarg($cmdfile));
             }
+            update_zip_progress_file("complete");
         }
 
     # Archive created, schedule the command file for deletion.
@@ -568,10 +572,9 @@ if ($submitted != "")
 		
 	# Remove archive.
 	unlink($zipfile);
-
+	unlink($progress_file);
 	if ($use_zip_extension)
 		{
-		unlink($progress_file);
 		rmdir(get_temp_dir(false,$id));
 		collection_log($collection,"Z","","-".$size);
 		}
@@ -587,7 +590,7 @@ include "../include/header.php";
 }?>
 
 <h1><?php echo $lang["downloadzip"]?></h1>
-<?php if ($use_zip_extension){?>
+
 <script>
 function ajax_download()
 	{	
@@ -645,23 +648,19 @@ function ajax_download()
 
 
 </script>
-<?php } ?>
 
-<?php if (!$use_zip_extension){?>
 	<form id='myform' action="<?php echo $baseurl_short?>pages/collection_download.php?id=<?php echo urlencode($uniqid) ?>&submitted=true" method=post>
-<?php } else { ?>
-	<form id='myform'>
-<?php } ?>
+
 
 <input type=hidden name="collection" value="<?php echo htmlspecialchars($collection) ?>">
 <input type=hidden name="usage" value="<?php echo htmlspecialchars($usage); ?>">
 <input type=hidden name="usagecomment" value="<?php echo htmlspecialchars($usagecomment); ?>">
 <input type=hidden name="k" value="<?php echo htmlspecialchars($k) ?>">
 
-<?php if ($use_zip_extension){?>
+
 	<input type=hidden name="id" value="<?php echo htmlspecialchars($uniqid) ?>">
 	<iframe id="downloadiframe" <?php if (!$debug_direct_download){?>style="display:none;"<?php } ?>></iframe>
-<?php } ?>
+
 
 <?php 
 hook("collectiondownloadmessage");
@@ -798,17 +797,15 @@ if ($archiver)
 
 <div class="QuestionSubmit" id="downloadbuttondiv"> 
 <label for="download"> </label>
-<?php if (!$use_zip_extension) { ?>
-<input type="button" onclick="if (confirm('<?php echo $lang['confirmcollectiondownload'] ?>')) {jQuery('#progress').html('<strong><br /><br /><?php echo $lang['pleasewait'];?></strong>');jQuery('#myform').submit();}" value="&nbsp;&nbsp;<?php echo $lang["action-download"]?>&nbsp;&nbsp;" />
-<?php } else { ?>
+
 <input type="button" onclick="ajax_download();" value="&nbsp;&nbsp;<?php echo $lang["action-download"]?>&nbsp;&nbsp;" />
-<?php } ?>
+
 <div class="clearerleft"> </div>
 </div>
 
 <div id="progress"></div>
 
-<?php if ($use_zip_extension){?>
+
 <div class="Question" id="progressdiv" style="display:none;border-top:none;"> 
 <label><?php echo $lang['progress']?></label>
 <div class="Fixed" id="progress3" ></div>
@@ -816,7 +813,7 @@ if ($archiver)
 
 
 <div class="clearerleft"></div></div>
-<?php } ?>
+
 </form>
 
 

@@ -19,12 +19,13 @@ if ($content==""){echo $lang['preparingzip'];}
 
 else if ($content=="zipping"){
 	$files=scandir($usertempdir);
+	echo "zipping";
 		foreach ($files as $file){
 			//echo $file;
-			if (strpos($file,"zip.zip")!==false){
-				echo "zipping ".formatfilesize(filesize($usertempdir."/".$file));
-			}
-		}
+			if (strpos($file,".zip")!==false){
+				echo formatfilesize(filesize($usertempdir."/".$file));
+			} 
+		} 
 	}
 
 else {
