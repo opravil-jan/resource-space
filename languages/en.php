@@ -1425,6 +1425,17 @@ $lang["report-resource_downloads_by_group"]="Resource downloads by group";
 $lang["report-resource_download_detail"]="Resource download detail";
 $lang["report-user_details_including_group_allocation"]="User details including group allocation";
 $lang["report-expired_resources"]="Expired resources";
+$lang['report_delete_periodic_email_link'] = 'To delete this report, click the link below:';
+$lang['report_periodic_email_delete_title'] = 'Delete periodic email';
+$lang['report_periodic_email_delete_confirmation'] = 'Please confirm you want to delete it';
+$lang['deleted'] = 'Deleted';
+$lang['report_periodic_email_deletion_confirmed'] = 'Periodic report has been deleted';
+$lang['report_periodic_email_option_me'] = 'me';
+$lang['report_periodic_email_option_all_users'] = 'all users';
+$lang['report_periodic_email_option_selected_user_groups'] = 'selected user group(s)';
+$lang['report_periodic_email_unsubscribe_title'] = 'Unsubscribe from periodic emails';
+$lang['report_periodic_email_unsubscribe_confirmation'] = 'Please confirm you would like to unsubscribe';
+
 
 #Column headers (for the default reports)
 $lang["columnheader-keyword"]="Keyword";
@@ -1451,7 +1462,7 @@ $lang["specificdaterange"]="Specific date range";
 $lang["to"]="to";
 
 $lang["emailperiodically"]="Create new periodic e-mail";
-$lang["emaileveryndays"]="E-mail me this report every ? days";
+$lang["emaileveryndays"]="E-mail this report every ? days to:";
 $lang["newemailreportcreated"]="A new periodic e-mail has been created. You can cancel this using the link at the bottom of the e-mail.";
 $lang["unsubscribereport"]="To unsubscribe from this report, click the link below:";
 $lang["unsubscribed"]="Unsubscribed";

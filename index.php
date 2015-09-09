@@ -72,11 +72,20 @@ if (getval("q","")!="")
 	$topurl="pages/team/team_request_edit.php?ref=" . $q;
 	}
 
-if (getval("ur","")!="")
+if (getval('ur', '') != '')
 	{
 	# quick redirect to periodic report unsubscriptions.
-	$ur=getvalescaped("ur","");
-	$topurl="pages/team/team_report.php?unsubscribe=" . $ur;
+	$ur = getvalescaped('ur', '');
+
+	$topurl = 'pages/team/team_report.php?unsubscribe=' . $ur;
+	}
+
+if(getval('dr', '') != '')
+	{
+	# quick redirect to periodic report deletion.
+	$dr = getvalescaped('dr', '');
+
+	$topurl = 'pages/team/team_report.php?delete=' . $dr;
 	}
 
 

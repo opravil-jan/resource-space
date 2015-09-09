@@ -362,3 +362,24 @@ function render_actions(array $collection_data, $top_actions = true, $two_line =
     <?php
     return;
     }
+
+/**
+* @param string $name
+* @param array  $current  Current selected values (eg. array(1, 3) for Admins and Super admins user groups selected)
+* @param int    $size     How many options to show before user has to scroll
+*/
+function render_user_group_multi_select($name, array $current = array(), $size = 10, $style = '')
+    {
+    ?>
+    <select id="<?php echo $name; ?>" name="<?php echo $name; ?>[]" multiple="multiple" size="<?php echo $size; ?>" style="<?php echo $style; ?>">
+    <?php
+    foreach(get_usergroups() as $usergroup)
+        {
+        ?>
+        <option value="<?php echo $usergroup['ref']; ?>"<?php echo (in_array($usergroup['ref'], $current) ? ' selected' : ''); ?>><?php echo $usergroup['name']; ?></option>
+        <?php
+        }
+        ?>
+    </select>
+    <?php
+    }
