@@ -103,11 +103,8 @@ function contact_sheet_add_fields($resourcedata)
 		else if ($sheetstyle=="list")
 			{
 			
-			$pdf->Text($pdf->GetX()+$imagesize+0.1,$pdf->GetY()+(0.2*($ff+$deltay)),$value);
-			//$pdf->Text($pdf->GetX()+$imagesize+0.1,$pdf->GetY()+(0.2*($ff+2)),$value);	
-			
-			//$pdf->Text($pdf->GetX()+$imagesize+0.1,$pdf->GetY()+(0.2*($ff+2)+ 0.15),$value);					
-			$pdf->SetXY($currentx,$currenty);
+			$pdf->SetXY($pdf->GetX()+$imagesize+0.1,$pdf->GetY());
+			$pdf->MultiCell($pagewidth-3,0.15,$value,0,"L");
 			}
 		else if ($sheetstyle=="single")
 			{
@@ -157,8 +154,9 @@ function contact_sheet_add_image()
 		}
 	elseif ($sheetstyle=="list")
 		{
+		global $currenty;
 		$posx=$pdf->GetX();
-		$posy=$pdf->GetY()+0.025;
+		$posy=$currenty;
 		$align="";
 		}
 	elseif ($sheetstyle=="thumbnails")
@@ -189,7 +187,7 @@ function contact_sheet_add_image()
 	# Add spacing cell
 	if ($sheetstyle=="list")
 		{		
-		$pdf->Cell($cellsize[0],$cellsize[1],'',0,0);		
+		$pdf->Cell($cellsize[0],0.5,'',0,0);		
 		}
 	/*else if ($sheetstyle=="single")
 		{		
