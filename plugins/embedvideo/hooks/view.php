@@ -21,7 +21,6 @@ else
 	
 
 $thumb=get_resource_path($ref,false,"pre",false,"jpg"); 
-$thumb=urlencode($thumb);
 
 # Choose a colour based on the theme.
 # This is quite hacky, and ideally of course this would be CSS based, but the FLV player requires that the colour
