@@ -168,11 +168,13 @@ function do_search($search,$restypes="",$order_by="relevance",$archive=0,$fetchr
         $sql_filter.="resource_type not in (" . join(",",$rtfilter) . ")";
         }
     
-    # append "use" access rights, do not show restricted resources unless admin
+    # append "use" access rights, do not show confidential resources unless admin
     if (!checkperm("v")&&!$access_override)
         {
+	global $userref;
         if ($sql_filter!="") {$sql_filter.=" and ";}
-        $sql_filter.="r.access<>'2'";
+	# Check both the resource access, but if confidential is returned, also look at the joined user-specific or group-specific custom access for rows.
+	$sql_filter.="(r.access<>'2' or (r.access=2 and ((rca.access is not null and rca.access<>2) or (rca2.access is not null and rca2.access<>2))))";
         }
         
     # append archive searching (don't do this for collections or !listall, archived resources can still appear in these searches)
