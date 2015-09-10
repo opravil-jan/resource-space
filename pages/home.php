@@ -309,7 +309,7 @@ if (checkperm("s"))
 		}
 	
 	if ($home_mycollections && !checkperm("b") && $userrequestmode!=2 && $userrequestmode!=3) 
-		{ 
+		{
 		if($home_dash)
 			{
 			# Check Tile tile exists in dash already
@@ -606,7 +606,7 @@ if (checkperm("s"))
 	
 	<div class="clearerleft"></div>
 	<?php
-	if($small_slideshow && (!$home_dash || !$welcometext)){loadWelcomeText();}
+	if($small_slideshow && !$home_dash && !$welcometext){loadWelcomeText();}
 	} // end of checkperm("s") 
 else 
 	{ ?>
