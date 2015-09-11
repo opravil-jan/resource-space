@@ -592,96 +592,171 @@ elseif (($theme_category_levels==1 && $smart_theme=="") || $theme_direct_jump)
 if ($header=="" && !isset($themes[0]))
 	{
 	$headers=get_smart_theme_headers();
-
 	for ($n=0;$n<count($headers);$n++)
 		{
 		$node=getval("node",0);
 
 		if ((checkperm("f*") || checkperm("f" . $headers[$n]["ref"]))
 		&& !checkperm("f-" . $headers[$n]["ref"]) && ($smart_theme=="" || $smart_theme==$headers[$n]["ref"]))
-			{
-			?>
-			<div class="RecordBox">
-			<div class="RecordPanel">
-
-			<div class="RecordHeader">
-			<h1 style="margin-top:5px;">
-			<?php if ($node==0)
+			{				
+			if($simpleview)
 				{
-				# Top level node. Just display smart theme name.
-				echo str_replace("*","",i18n_get_translated($headers[$n]["smart_theme_name"]));
-				}
-			else
-				{
-				# Sub node, display node name and make it a link to the previous level.
-				?>
-				<a href="<?php echo $baseurl_short?>pages/themes.php?smart_theme=<?php echo $headers[$n]["ref"] ?>&node=<?php echo urlencode(getval("parentnode",0)) ?>&nodename=<?php echo urlencode(getval("parentnodename","")) ?>" onClick="return CentralSpaceLoad(this,true);"><?php echo getval("nodename","???") ?></a>
-				<?php
-				}
-			?>
-			</h1>
-			</div>
-			
-			<?php hook("aftersmartthemetitle");?>
-			
-			<div class="Listview" style="margin-top:10px;margin-bottom:10px;clear:left;">
-			<table border="0" cellspacing="0" cellpadding="0" class="ListviewStyle">
-			<tr class="ListviewBoxedTitleStyle">
-			<td><?php echo $lang["name"]?></td>
-			<?php hook("beforecollectiontoolscolumnheader");?>
-			<td><div class="ListTools"><?php echo $lang["tools"]?></div></td>
-			</tr>
-
-			<?php
-			$themes=get_smart_themes($headers[$n]["ref"],$node);
-			for ($m=0;$m<count($themes);$m++)
-				{
-				$s=$headers[$n]["name"] . ":" . $themes[$m]["name"];
-
-				# Indent this item?
-				$indent=str_pad("",$themes[$m]["indent"]*5," ") . ($themes[$m]["indent"]==0?"":"&#746;") . "&nbsp;";
-				$indent=str_replace(" ","&nbsp;",$indent);
-
-				?>
-				<tr>
-				<td><div class="ListTitle"><?php echo $indent?>
-				<?php if ($themes[$m]["children"]>0 && $themes_category_navigate_levels)
+				if (getval("smart_theme","")=="")
 					{
-					# Has children. Default action is to navigate to a deeper level.
+					// Main featured collections page. Show smart theme name wth link to first level.
 					?>
-					<a href="<?php echo $baseurl_short?>pages/themes.php?smart_theme=<?php echo $headers[$n]["ref"] ?>&node=<?php echo $themes[$m]["node"] ?>&parentnode=<?php echo urlencode($node) ?>&parentnodename=<?php echo urlencode(getval("nodename","")) ?>&nodename=<?php echo urlencode($themes[$m]["name"]) ?>" onClick="return CentralSpaceLoad(this,true);">
+					
+					<a href="<?php echo $baseurl_short?>pages/themes.php?smart_theme=<?php echo $headers[$n]["ref"] ?>&node=<?php echo urlencode(getval("parentnode",0)) ?>&nodename=<?php echo urlencode(getval("parentnodename","")) ?>" onclick="return CentralSpaceLoad(this,true);" class="FeaturedSimplePanel HomePanel DashTile FeaturedSimpleLink" id="advertising_tile_smart<?php echo $n ;?>">
+					<div class="FeaturedSimpleTile">										
+					<div id="FeaturedSimpleTileContents_smart<?php echo $n ; ?>"  class="HomePanelIN FeaturedSimpleTileContents" >	
+								<h2><?php echo str_replace("*","",i18n_get_translated($headers[$n]["smart_theme_name"])); ?></h2>
+							</div>			
+						</div>			
+					</a>
 					<?php
+					}
+				elseif($node!=0)
+					{				
+					# Sub node, display node name and make it a link to the previous level.
+					?>
+					<p><a href="<?php echo $baseurl_short?>pages/themes.php?smart_theme=<?php echo $headers[$n]["ref"] ?>&node=<?php echo urlencode(getval("parentnode",0)) ?>&nodename=<?php echo urlencode(getval("parentnodename","")) ?>" onClick="return CentralSpaceLoad(this,true);">&lt;&nbsp;<?php echo $lang["back"]?></a></p>
+					<?php						
 					}
 				else
 					{
-					# Has no children. Default action is to show matching resources.
+					# First smart theme node, display link to main themes page
 					?>
-					<a href="<?php echo $baseurl_short?>pages/search.php?search=<?php echo urlencode($s)?>&resetrestypes=true" onClick="return CentralSpaceLoad(this,true);">
+					<p><a href="<?php echo $baseurl_short?>pages/themes.php" onClick="return CentralSpaceLoad(this,true);">&lt;&nbsp;<?php echo $lang["back"]?></a></p>
+					<?php
+					}
+				}
+			else
+				{
+				
+				?>
+				<div class="RecordBox">
+				<div class="RecordPanel">
+	
+				<div class="RecordHeader">
+				<h1 style="margin-top:5px;">
+				<?php if ($node==0)
+					{
+					# Top level node. Just display smart theme name.
+					echo str_replace("*","",i18n_get_translated($headers[$n]["smart_theme_name"]));
+					}
+				else
+					{
+					# Sub node, display node name and make it a link to the previous level.
+					?>
+					<a href="<?php echo $baseurl_short?>pages/themes.php?smart_theme=<?php echo $headers[$n]["ref"] ?>&node=<?php echo urlencode(getval("parentnode",0)) ?>&nodename=<?php echo urlencode(getval("parentnodename","")) ?>" onClick="return CentralSpaceLoad(this,true);"><?php echo getval("nodename","???") ?></a>
+					<?php
+					}
+				
+				}
+				
+			if($simpleview)
+				{
+				if (getval("smart_theme","")!="") // We are in the smart theme already
+					{
+					$themes=get_smart_themes($headers[$n]["ref"],$node);
+					for ($m=0;$m<count($themes);$m++)
+						{
+						$s=$headers[$n]["name"] . ":" . $themes[$m]["name"];
+						if ($themes[$m]["children"]>0)
+							{
+							?>
+							<a href="<?php echo $baseurl_short?>pages/themes.php?smart_theme=<?php echo $headers[$n]["ref"] ?>&node=<?php echo $themes[$m]["node"] ?>&parentnode=<?php echo urlencode($node) ?>&parentnodename=<?php echo urlencode(getval("nodename","")) ?>&nodename=<?php echo urlencode($themes[$m]["name"]) ?>" onclick="return CentralSpaceLoad(this,true);" class="FeaturedSimplePanel HomePanel DashTile FeaturedSimpleLink" id="advertising_tile_smart<?php echo $n ;?>">
+							<div class="FeaturedSimpleTile">
+								<div id="FeaturedSimpleTileContents_smart<?php echo $n ; ?>"  class="HomePanelIN FeaturedSimpleTileContents" >	
+									<h2><?php echo i18n_get_collection_name($themes[$m])?>	</h2>									
+								</div>
+							</div>			
+							</a>
+							<?php
+							}
+						else
+							{
+							# Has no children. Default action is to show matching resources.
+							?>
+							<a href="<?php echo $baseurl_short?>pages/search.php?search=<?php echo urlencode($s)?>&resetrestypes=true" onclick="return CentralSpaceLoad(this,true);" class="FeaturedSimplePanel HomePanel DashTile FeaturedSimpleLink" id="advertising_tile_smart<?php echo $n ;?>">
+							<div class="FeaturedSimpleTile">
+								<div id="FeaturedSimpleTileContents_smart<?php echo $n ; ?>"  class="HomePanelIN FeaturedSimpleTileContents" >	
+									<h2><?php echo i18n_get_collection_name($themes[$m])?></h2>
+								</div>			
+							</div>			
+							</a>
+							<?php
+							}					
+						}
+					}
+				}
+			else
+				{				
+				?>
+				</h1>
+				</div>
+				
+				<?php hook("aftersmartthemetitle");?>
+				
+				<div class="Listview" style="margin-top:10px;margin-bottom:10px;clear:left;">
+				<table border="0" cellspacing="0" cellpadding="0" class="ListviewStyle">
+				<tr class="ListviewBoxedTitleStyle">
+				<td><?php echo $lang["name"]?></td>
+				<?php hook("beforecollectiontoolscolumnheader");?>
+				<td><div class="ListTools"><?php echo $lang["tools"]?></div></td>
+				</tr>
+	
+				<?php
+				$themes=get_smart_themes($headers[$n]["ref"],$node);
+				for ($m=0;$m<count($themes);$m++)
+					{
+					$s=$headers[$n]["name"] . ":" . $themes[$m]["name"];
+	
+					# Indent this item?
+					$indent=str_pad("",$themes[$m]["indent"]*5," ") . ($themes[$m]["indent"]==0?"":"&#746;") . "&nbsp;";
+					$indent=str_replace(" ","&nbsp;",$indent);
+	
+					?>
+					<tr>
+					<td><div class="ListTitle"><?php echo $indent?>
+					<?php if ($themes[$m]["children"]>0 && $themes_category_navigate_levels)
+						{
+						# Has children. Default action is to navigate to a deeper level.
+						?>
+						<a href="<?php echo $baseurl_short?>pages/themes.php?smart_theme=<?php echo $headers[$n]["ref"] ?>&node=<?php echo $themes[$m]["node"] ?>&parentnode=<?php echo urlencode($node) ?>&parentnodename=<?php echo urlencode(getval("nodename","")) ?>&nodename=<?php echo urlencode($themes[$m]["name"]) ?>" onClick="return CentralSpaceLoad(this,true);">
+						<?php
+						}
+					else
+						{
+						# Has no children. Default action is to show matching resources.
+						?>
+						<a href="<?php echo $baseurl_short?>pages/search.php?search=<?php echo urlencode($s)?>&resetrestypes=true" onClick="return CentralSpaceLoad(this,true);">
+						<?php
+						}
+					?>
+	
+					<?php echo i18n_get_collection_name($themes[$m])?></a>
+					</div></td>
+					<?php hook("beforecollectiontoolscolumn");?>
+					<td><div class="ListTools">
+					<a href="<?php echo $baseurl_short?>pages/search.php?search=<?php echo urlencode($s)?>&resetrestypes=true" onClick="return CentralSpaceLoad(this,true);">&gt;&nbsp;<?php echo $themes_category_split_pages?$lang["action-viewmatchingresources"]:$lang["viewall"]?></a>
+					<?php if ($themes_category_split_pages && $headers[$n]['type']==7) { ?>
+					<a href="<?php echo $baseurl_short?>pages/themes.php?smart_theme=<?php echo $headers[$n]["ref"] ?>&node=<?php echo $themes[$m]["node"] ?>&parentnode=<?php echo urlencode($node) ?>&parentnodename=<?php echo urlencode(getval("nodename","")) ?>&nodename=<?php echo urlencode($themes[$m]["name"]) ?>" onClick="return CentralSpaceLoad(this,true);">&gt;&nbsp;<?php echo $lang["action-expand"]?></a>
+					<?php }
+					hook("additionalsmartthemetool");?>
+					</div></td>
+					</tr>
 					<?php
 					}
 				?>
-
-				<?php echo i18n_get_collection_name($themes[$m])?></a>
-				</div></td>
-				<?php hook("beforecollectiontoolscolumn");?>
-				<td><div class="ListTools">
-				<a href="<?php echo $baseurl_short?>pages/search.php?search=<?php echo urlencode($s)?>&resetrestypes=true" onClick="return CentralSpaceLoad(this,true);">&gt;&nbsp;<?php echo $themes_category_split_pages?$lang["action-viewmatchingresources"]:$lang["viewall"]?></a>
-				<?php if ($themes_category_split_pages && $headers[$n]['type']==7) { ?>
-				<a href="<?php echo $baseurl_short?>pages/themes.php?smart_theme=<?php echo $headers[$n]["ref"] ?>&node=<?php echo $themes[$m]["node"] ?>&parentnode=<?php echo urlencode($node) ?>&parentnodename=<?php echo urlencode(getval("nodename","")) ?>&nodename=<?php echo urlencode($themes[$m]["name"]) ?>" onClick="return CentralSpaceLoad(this,true);">&gt;&nbsp;<?php echo $lang["action-expand"]?></a>
-				<?php }
-                hook("additionalsmartthemetool");?>
-				</div></td>
-				</tr>
+				</table>
+				</div>
+	
+				</div>
+				<div class="PanelShadow"> </div>
+				</div>
 				<?php
 				}
-			?>
-			</table>
-			</div>
-
-			</div>
-			<div class="PanelShadow"> </div>
-			</div>
-			<?php
 			}
 		}
 	}
