@@ -1508,6 +1508,11 @@ function config_custom_select($name, $label, $available, $value)
 
 function get_plugin_css($theme){
 	global $plugins,$baseurl,$language,$css_reload_key;
+	// remove "col-" from $theme
+	if (stripos($theme,'col-') !== false)
+		{
+		$theme = substr($theme,4);
+		}
 	$plugincss="";
 	for ($n=count($plugins)-1;$n>=0;$n--)
 	{
