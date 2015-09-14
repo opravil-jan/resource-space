@@ -176,11 +176,17 @@ function render_actions(array $collection_data, $top_actions = true, $two_line =
 
             // Collection Actions
             $collection_actions_array = compile_collection_actions($collection_data, $top_actions);
-
+			
             // Usual search actions
             $search_actions_array = compile_search_actions($top_actions);
             
             $actions_array = array_merge($collection_actions_array, $search_actions_array);
+            
+            $modify_actions_array = hook('modify_unified_dropdown_actions_options', '', array($actions_array,$top_actions));
+            if(!empty($modify_actions_array))
+                {
+                $actions_array = $modify_actions_array;
+                }
 
             // loop and display
 			$options='';
