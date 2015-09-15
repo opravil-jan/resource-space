@@ -2232,7 +2232,7 @@ $lang['error_check_html_first'] = 'Please Check HTML! The text used does not con
 
 $lang["maximise"]="Maximise";
 
-$lang["actions-select"]="Actions...";
+$lang["actions-select"]="";
 $lang['actions'] = 'Actions';
 $lang["submit_review_prompt"]="Submit for review?";
 $lang["submit_dialog_text"]="The uploaded resources are now in the pending submission state. Submit the collection for review or continue editing?";

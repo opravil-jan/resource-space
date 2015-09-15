@@ -171,7 +171,7 @@ function render_actions(array $collection_data, $top_actions = true, $two_line =
         }
         ?>
         <select id="<?php echo $action_selection_id; ?>" <?php if(!$top_actions) { echo 'class="SearchWidth"'; } ?>>
-            <option class="SelectAction" value=""></option>
+            <option class="SelectAction" value=""><?php echo $lang["actions-select"]?></option>
             <?php
 
             // Collection Actions
