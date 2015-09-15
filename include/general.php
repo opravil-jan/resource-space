@@ -1116,7 +1116,7 @@ if (!function_exists("auto_create_user_account")){
 function auto_create_user_account()
 	{
 	# Automatically creates a user account (which requires approval unless $auto_approve_accounts is true).
-	global $applicationname,$user_email,$baseurl,$email_notify,$lang,$user_account_auto_creation_usergroup,$registration_group_select,$auto_approve_accounts,$auto_approve_domains,$customContents;
+	global $applicationname,$user_email,$baseurl,$email_notify,$lang,$user_account_auto_creation_usergroup,$registration_group_select,$auto_approve_accounts,$auto_approve_domains,$customContents,$language;
 
 	# Work out which user group to set. Allow a hook to change this, if necessary.
 	$altgroup=hook("auto_approve_account_switch_group");
