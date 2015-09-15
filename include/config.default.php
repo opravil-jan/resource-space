@@ -2780,3 +2780,9 @@ $thumbs_previews_via_download=false;
 
 # Frequency at which the page header will poll for new messages for the user.  Set to 0 (zero) to disable.
 $message_polling_interval_seconds = 5;
+
+# How many times must a keyword be used before it is considered eligable for suggesting, when a matching keyword is not found?
+# Set to zero to suggest any known keyword regardless of usage.
+# Set to a higher value to ensure only popular keywords are suggested.
+$soundex_suggest_limit=10;
+
