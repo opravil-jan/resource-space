@@ -32,7 +32,7 @@ if (count($collections)!=0){
 <td><?php echo $lang["itemstitle"]?></td>
 <?php if (! $hide_access_column){ ?><td><?php echo $lang["access"]?></td><?php } ?>
 	<?php hook("beforecollectiontoolscolumnheader");?>
-<td><div class="ListTools"><?php echo $lang["tools"]?></div></td>
+<td><div class="ListTools"><?php echo $lang["actions"]?></div></td>
 </tr>
 <?php
 
