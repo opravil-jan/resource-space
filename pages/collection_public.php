@@ -178,7 +178,7 @@ echo "<br />";
 <?php if (!$hide_access_column_public){ ?><td class="access"><?php if ($col_order_by=="public") {?><span class="Selected"><?php } ?><a href="<?php echo $baseurl_short?>pages/collection_public.php?offset=0&col_order_by=public&sort=<?php echo urlencode($revsort)?>&find=<?php echo urlencode($find)?>" onClick="return CentralSpaceLoad(this);"><?php echo $lang["access"]?></a><?php if ($col_order_by=="public") {?><div class="<?php echo urlencode($sort)?>">&nbsp;</div><?php } ?></td><?php } ?>
 <?php hook("beforecollectiontoolscolumnheader");?>
 
-<td class="tools"><div class="ListTools"><?php echo $lang["tools"]?></div></td>
+<td class="tools"><div class="ListTools"><?php echo $lang['actions']?></div></td>
 </tr>
 <?php
 

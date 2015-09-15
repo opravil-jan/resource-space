@@ -317,7 +317,7 @@ echo " " . ($mycollcount==1 ? $lang["owned_by_you-1"] : str_replace("%mynumber",
 <td class="collectionin"><?php echo $lang["showcollectionindropdown"] ?></td>
 
 <?php hook("beforecollectiontoolscolumnheader");?>
-<td class="tools"><div class="ListTools"><?php echo $lang["tools"]?></div></td>
+<td class="tools"><div class="ListTools"><?php echo $lang['actions']?></div></td>
 </tr>
 <form method="get" name="colactions" id="colactions" action="<?php echo $baseurl_short?>pages/collection_manage.php">
 <?php
