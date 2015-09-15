@@ -44,7 +44,6 @@ include "../../include/header.php";
 			<td><?php echo $lang["created"]; ?></td>
 			<td><?php echo $lang["from"]; ?></td>
 			<td><?php echo $lang["message"]; ?></td>
-			<td><?php echo $lang["link"]; ?></td>
 			<td><?php echo $lang["expires"]; ?></td>
 			<td><?php echo $lang["seen"]; ?></td>
 			<td><div class="ListTools"><?php echo $lang["tools"]?></div></td>
@@ -60,13 +59,14 @@ for ($n=0;$n<count($messages);$n++)
 			<td><?php echo nicedate($messages[$n]["created"],true); ?></td>
 			<td><?php echo $messages[$n]["owner"]; ?></td>
 			<td><a href="#Header" onclick="message_display('<?php echo $message; ?>','<?php
-				echo $url_encoded; ?>',<?php echo $messages[$n]["ref"]; ?>);"><?php echo htmlentities($messages[$n]["message"]); ?></a></td>
-
-			<td><a href="<?php echo $messages[$n]["url"]; ?>"><?php echo htmlentities($messages[$n]["url"]);  ?></a></td>
+				echo $url_encoded; ?>',<?php echo $messages[$n]["ref"]; ?>);"><?php
+					echo htmlentities(strip_tags($messages[$n]["message"]));
+					?></a></td>
 			<td><?php echo nicedate($messages[$n]["expires"]); ?></td>
 			<td><?php echo ($messages[$n]["seen"]==0 ? $lang['no'] : $lang['yes']); ?></td>
 			<td>
 				<div class="ListTools">
+					<a href="<?php echo $messages[$n]["url"]; ?>">&gt;&nbsp;<?php echo $lang["link"]; ?></a>
 					<?php
 					if ($messages[$n]["seen"]==0)
 						{

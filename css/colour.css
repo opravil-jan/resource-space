@@ -347,7 +347,7 @@ span.MessageCountPill {
 div#MessageContainer { }
 div.MessageBox {
     border: 1px solid darkgray;
-    background: rgba(255,250,205,0.95);
+    background: rgba(128,128,128,0.95);
 }
 div.MessageBox a {
     color: inherit !important;

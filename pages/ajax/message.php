@@ -148,7 +148,7 @@
 		if (url!="")
 		{
 			url=decodeURIComponent(url);
-			url="<a href='" + url + "'>" + url + "</a>";
+			url="<a href='" + url + "'><?php echo $lang['link']; ?></a>";
 		}
 		var id='message' + ref;
 		if (jQuery("#" + id).length)		// already being displayed
