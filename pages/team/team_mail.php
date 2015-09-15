@@ -51,12 +51,12 @@ include "../../include/header.php";
 	<input type="radio" id="message_type_<?php echo MESSAGE_ENUM_NOTIFICATION_TYPE_EMAIL; ?>" name="message_type" value="<?php
 		echo MESSAGE_ENUM_NOTIFICATION_TYPE_EMAIL; ?>" onclick="jQuery('h1').closest('h1').html('<?php echo $lang["sendbulkmail"]; ?>');
 		jQuery('#message_email').slideDown(); jQuery('#message_screen').slideUp();" <?php
-			if($message_type==MESSAGE_ENUM_NOTIFICATION_TYPE_EMAIL) { ?> checked='checked'<? }?>><?php echo $lang['email']; ?>
+			if($message_type==MESSAGE_ENUM_NOTIFICATION_TYPE_EMAIL) { ?> checked='checked'<?php }?>><?php echo $lang['email']; ?>
 
 	<input type="radio" id="message_type_<?php echo MESSAGE_ENUM_NOTIFICATION_TYPE_SCREEN; ?>" name="message_type" value="<?php
 		echo MESSAGE_ENUM_NOTIFICATION_TYPE_SCREEN; ?>" onclick="jQuery('h1').closest('h1').html('<?php echo $lang["sendbulkmessage"]; ?>');
 		jQuery('#message_email').slideUp(); jQuery('#message_screen').slideDown();"<?php
-			if($message_type==MESSAGE_ENUM_NOTIFICATION_TYPE_SCREEN) { ?> checked='checked'<? }?>><?php echo $lang['screen']; ?>
+			if($message_type==MESSAGE_ENUM_NOTIFICATION_TYPE_SCREEN) { ?> checked='checked'<?php }?>><?php echo $lang['screen']; ?>
 
 	<div class="clearerleft"></div>
 </div>
