@@ -169,12 +169,7 @@ include "../../include/header.php";
         }
     /* End User Colour Theme Selection */
 
-    /* Default display if there are no options available */
-    if($options_available == 0)
-        { ?>
-        <div class="FormError"><?php echo $lang["no-options-available"];?></div>
-        <?php
-        }
+
     ?>
 
 <div class="CollapsibleSections">
