@@ -169,3 +169,371 @@ function render_text_option($fieldname, $value, $size=20, $units=''){
     $output .= "</td></tr>";
     return $output;
 }
+
+
+/**
+* Save config option
+*
+* @param  integer  $user_id      Current user ID
+* @param  string   $param_name   Parameter name
+* @param  string   $param_value  Parameter value
+* @return boolean
+*/
+function set_config_option($user_id, $param_name, $param_value)
+    {
+    // We do allow for param values to be empty strings or 0 (zero)
+    if(empty($user_id) || empty($param_name) || is_null($param_value))
+        {
+        return false;
+        }
+
+    // Prepare the value before inserting it
+    $param_value = config_clean($param_value);
+    $param_value = escape_check($param_value);
+
+    $query = sprintf('
+            INSERT INTO user_preferences (
+                                             user,
+                                             parameter,
+                                             `value`
+                                         )
+                 VALUES (
+                            \'%s\', # user
+                            \'%s\', # parameter
+                            \'%s\' # value
+                        );
+        ',
+        $user_id,
+        $param_name,
+        $param_value
+    );
+
+    $current_param_value = null;
+    if(get_config_option($user_id, $param_name, $current_param_value))
+        {
+        if($current_param_value == $param_value)
+            {
+            return true;
+            }
+
+        $query = sprintf('
+                UPDATE user_preferences
+                   SET `value` = \'%s\'
+                 WHERE user = \'%s\'
+                   AND parameter = \'%s\';
+            ',
+            $param_value,
+            $user_id,
+            $param_name
+        );
+        }
+
+    sql_query($query);
+
+    return true;
+    }
+
+
+/**
+* Get config option from database
+* 
+* @param  integer  $user_id         Current user ID
+* @param  string   $name            Parameter name
+* @param  string   $returned_value  If a value does exist it will be returned through
+*                                   this parameter which is passed by reference
+* @return boolean
+*/
+function get_config_option($user_id, $name, &$returned_value)
+    {
+    if(trim($user_id) === '' || trim($name) === '')
+        {
+        return false;
+        }
+
+    $query = sprintf('
+            SELECT `value`
+              FROM user_preferences
+             WHERE user = "%s"
+               AND parameter = "%s";
+        ',
+        $user_id,
+        $name
+    );
+    $config_option = sql_value($query, null);
+
+    if(is_null($config_option))
+        {
+        return false;
+        }
+
+    $returned_value = unescape($config_option);
+
+    return true;
+    }
+
+
+/**
+* Get config option from database for a specific user
+* 
+* @param  integer  $user_id           Current user ID
+* @param  array    $returned_options  If a value does exist it will be returned through
+*                                     this parameter which is passed by reference
+* @return boolean
+*/
+function get_config_options_by_user($user_id, array &$returned_options)
+    {
+    if(empty($user_id))
+        {
+        return false;
+        }
+
+    $query = sprintf('
+            SELECT parameter,
+                   `value`
+              FROM user_preferences
+             WHERE user = \'%s\';
+        ',
+        $user_id
+    );
+    $config_options = sql_query($query);
+
+    if(empty($config_options))
+        {
+        return false;
+        }
+
+    $returned_options = $config_options;
+
+    return true;
+    }
+
+
+/**
+ * Utility function to "clean" the passed $config. Cleaning consists of two parts:
+ *  *    Suppressing really simple XSS attacks by refusing to allow strings
+ *       containing the characters "<script" in upper, lower or mixed case.
+ *  *    Unescaping instances of "'" and '"' that have been escaped by the
+ *       lovely magic_quotes_gpc facility, if it's on.
+ *
+ * @param $config mixed thing to be cleaned.
+ * @return a cleaned version of $config.
+ */
+function config_clean($config)
+    {
+    if (is_array($config))
+        {
+        foreach ($config as &$item)
+            {
+            $item = config_clean($item);
+            }
+        }
+    elseif (is_string($config))
+        {
+        if (strpos(strtolower($config),"<script") !== false)
+            {
+            $config = '';
+            }
+        if (get_magic_quotes_gpc())
+            {
+            $config = stripslashes($config);
+            }
+        }
+    return $config;
+    }
+
+
+/**
+ * Generate arbitrary html
+ *
+ * @param string $content arbitrary HTML 
+ */
+function config_html($content)
+    {
+    echo $content;
+    }
+
+
+/**
+ * Return a data structure that will instruct the configuration page generator functions to add
+ * arbitrary HTML
+ *
+ * @param string $content
+ */
+function config_add_html($content)
+    {
+    return array('html',$content);
+    }
+
+
+/**
+ * Generate an html single-select + options block
+ *
+ * @param string        $name      The name of the select block. Usually the name of the config variable being set.
+ * @param string        $label     The user text displayed to label the select block. Usually a $lang string.
+ * @param string        $current   The current value of the config variable being set.
+ * @param string array  $choices   The array of the alternatives -- the options in the select block. The keys
+ *                                 are used as the values of the options, and the values are the alternatives the user sees. (But
+ *                                 see $usekeys, below.) Usually a $lang entry whose value is an array of strings.
+ * @param boolean       $usekeys   Tells whether to use the keys from $choices as the values of the options. If set
+ *                                 to false the values from $choices will be used for both the values of the options and the text
+ *                                 the user sees. Defaulted to true.
+ * @param integer       $width     The width of the input field in pixels. Default: 300.
+ * @param string        $title     Title to be used for the label title. Default: null
+ * @param boolean       $autosave  Flag to say whether the there should be an auto save message feedback through JS. Default: false
+ *                                 Note: onChange event will call AutoSaveConfigOption([option name])
+ */
+function config_single_select($name, $label, $current, $choices, $usekeys = true, $width = 300, $title = null, $autosave = false)
+    {
+    global $lang;
+    
+    if(is_null($title))
+        {
+        // This is how it was used on plugins setup page. Makes sense for developers when trying to debug and not much for non-technical users
+        $title = str_replace('%cvn', $name, $lang['plugins-configvar']);
+        }
+    ?>
+    <div class="Question">
+        <label for="<?php echo $name; ?>" title="<?php echo $title; ?>"><?php echo $label; ?></label>
+        <?php
+        if($autosave)
+            {
+            ?>
+            <div class="AutoSaveStatus">
+                <span id="AutoSaveStatus-<?php echo $name; ?>" style="display:none;"></span>
+            </div>
+            <?php
+            }
+        ?>
+        <select id="<?php echo $name; ?>"
+                name="<?php echo $name; ?>"
+                <?php if($autosave) { ?> onChange="AutoSaveConfigOption('<?php echo $name; ?>');"<?php } ?>
+                style="width:<?php echo $width; ?>px">
+        <?php
+        foreach($choices as $key => $choice)
+            {
+            $value = $usekeys ? $key : $choice;
+            echo '<option value="' . $value . '"' . (($current == $value) ? ' selected' : '') . ">$choice</option>";
+            }
+        ?>
+        </select>
+    </div>
+    <div class="clearerleft"></div>
+    <?php
+    }
+
+
+/**
+ * Return a data structure that will instruct the configuration page generator functions to
+ * add a single select configuration variable to the setup page.
+ *
+ * @param string $config_var the name of the configuration variable to be added.
+ * @param string $label the user text displayed to label the select block. Usually a $lang string.
+ * @param string array $choices the array of the alternatives -- the options in the select block. The keys
+ *          are used as the values of the options, and the values are the alternatives the user sees. (But
+ *          see $usekeys, below.) Usually a $lang entry whose value is an array of strings.
+ * @param boolean $usekeys tells whether to use the keys from $choices as the values of the options. If set
+ *          to false the values from $choices will be used for both the values of the options and the text
+ *          the user sees. Defaulted to true.
+ * @param integer $width the width of the input field in pixels. Default: 300.
+ */
+function config_add_single_select($config_var, $label, $choices = '', $usekeys = true, $width = 300, $title = null, $autosave = false)
+    {
+    return array('single_select', $config_var, $label, $choices, $usekeys, $width, $title, $autosave);
+    }
+
+
+/**
+ * Generate an html boolean select block
+ *
+ * @param string        $name      The name of the select block. Usually the name of the config variable being set.
+ * @param string        $label     The user text displayed to label the select block. Usually a $lang string.
+ * @param boolean       $current   The current value (true or false) of the config variable being set.
+ * @param string array  $choices   Array of the text to display for the two choices: False and True. Defaults
+ *                                 to array('False', 'True') in the local language.
+ * @param integer       $width     The width of the input field in pixels. Default: 300.
+ * @param string        $title     Title to be used for the label title. Default: null
+ * @param boolean       $autosave  Flag to say whether the there should be an auto save message feedback through JS. Default: false
+ *                                 Note: onChange event will call AutoSaveConfigOption([option name])
+ */
+function config_boolean_select($name, $label, $current, $choices = '', $width = 300, $title = null, $autosave = false)
+    {
+    global $lang;
+
+    if($choices == '')
+        {
+        $choices = $lang['false-true'];
+        }
+
+    if(is_null($title))
+        {
+        // This is how it was used on plugins setup page. Makes sense for developers when trying to debug and not much for non-technical users
+        $title = str_replace('%cvn', $name, $lang['plugins-configvar']);
+        }
+    ?>
+    <div class="Question">
+        <label for="<?php echo $name; ?>" title="<?php echo $title; ?>"><?php echo $label; ?></label>
+
+        <?php
+        if($autosave)
+            {
+            ?>
+            <div class="AutoSaveStatus">
+                <span id="AutoSaveStatus-<?php echo $name; ?>" style="display:none;"></span>
+            </div>
+            <?php
+            }
+            ?>
+        <select id="<?php echo $name; ?>"
+                name="<?php echo $name; ?>"
+                <?php if($autosave) { ?> onChange="AutoSaveConfigOption('<?php echo $name; ?>');"<?php } ?>
+                style="width:<?php echo $width; ?>px">
+            <option value="1"<?php if($current == '1') { ?> selected<?php } ?>><?php echo $choices[1]; ?></option>
+            <option value="0"<?php if($current == '0') { ?> selected<?php } ?>><?php echo $choices[0]; ?></option>
+        </select>
+    </div>
+    <div class="clearerleft"></div>
+    <?php
+    }
+
+
+/**
+ * Return a data structure that will instruct the configuration page generator functions to
+ * add a boolean configuration variable to the setup page.
+ *
+ * @param string $config_var the name of the configuration variable to be added.
+ * @param string $label the user text displayed to label the select block. Usually a $lang string.
+ * @param string array $choices array of the text to display for the two choices: False and True. Defaults
+ *          to array('False', 'True') in the local language.
+ * @param integer $width the width of the input field in pixels. Default: 300.
+ */
+function config_add_boolean_select($config_var, $label, $choices = '', $width = 300, $title = null, $autosave = false)
+    {
+    return array('boolean_select', $config_var, $label, $choices, $width, $title, $autosave);
+    }
+
+
+/**
+* Generates HTML foreach element found in the page definition
+* 
+* @param array $page_def Array of all elements for which we need to generate HTML
+*/
+function config_generate_html(array $page_def)
+    {
+    global $lang;
+
+    foreach($page_def as $def)
+        {
+        switch($def[0])
+            {
+            case 'html':
+                config_html($def[1]);
+                break;
+            case 'boolean_select':
+                config_boolean_select($def[1], $def[2], $GLOBALS[$def[1]], $def[3], $def[4], $def[5], $def[6]);
+                break;
+            case 'single_select':
+                config_single_select($def[1], $def[2], $GLOBALS[$def[1]], $def[3], $def[4], $def[5], $def[6], $def[7]);
+                break;
+            }
+        }
+    }

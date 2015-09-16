@@ -2224,7 +2224,19 @@ $lang["userpreferences"]="User preferences";
 $lang["modifyuserpreferencesintro"]="Options on this page allow you to make changes to some of the functionality  and interface that are available to you.";
 
 /* User preferences*/
+$lang['userpreference_colourtheme'] = 'Colour theme';
 $lang["userpreferencecolourtheme"]="Interface colour theme";
+$lang['userpreference_user_interface'] = 'User interface';
+$lang['userpreference_enable_option'] = 'Enable';
+$lang['userpreference_disable_option'] = 'Disable';
+$lang['userpreference_default_sort_label'] = 'Default sort';
+$lang['userpreference_default_perpage_label'] = 'Default per page';
+$lang['userpreference_default_display_label'] = 'Default display';
+$lang['userpreference_use_checkboxes_for_selection_label'] = 'Use checkboxes to add to collection';
+$lang['userpreference_resource_view_modal_label'] = 'Resource view modal';
+$lang['userpreference_thumbs_default_label'] = 'Default collection bar display';
+$lang['userpreference_basic_simple_search_label'] = 'Basic simple search';
+$lang['userpreference_cc_me_label'] = 'CC me when sending resources and collections';
 
 /* Error Messages */
 $lang['error_check_html_first'] = 'Please Check HTML! The text used does not contain valid HTML.';

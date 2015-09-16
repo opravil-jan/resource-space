@@ -248,40 +248,7 @@ function config_encode($input)
         $output .= $char;
         }
     return $output;
-    }
-
-/**
- * Utility function to "clean" the passed $config. Cleaning consists of two parts:
- *  *  	 Suppressing really simple XSS attacks by refusing to allow strings
- *  	 containing the characters "<script" in upper, lower or mixed case.
- *  *    Unescaping instances of "'" and '"' that have been escaped by the
- *    	 lovely magic_quotes_gpc facility, if it's on.
- *
- * @param $config mixed thing to be cleaned.
- * @return a cleaned version of $config.
- */
-function config_clean($config)
-    {
-    if (is_array($config))
-        {
-        foreach ($config as &$item)
-            {
-            $item = config_clean($item);
-            }
-        }
-    elseif (is_string($config))
-        {
-        if (strpos(strtolower($config),"<script")!==false)
-            {
-            $config = '';
-            }
-        if (get_magic_quotes_gpc())
-            {
-            $config = stripslashes($config);
-            }
-        }
-    return $config;
-    }
+    }   
 
 /**
  * Return plugin config stored in plugins table for a given plugin name.
@@ -700,17 +667,6 @@ function config_section_header($title, $description)
     }
 
 /**
- * Generate arbitrary html
- *
- * @param string $content arbitrary HTML 
- */
-function config_html($content)
-    {
-	echo $content;
-    }
-
-
-/**
  * Return a data structure that will instruct the configuration page generator functions to add
  * a section header.
  *
@@ -721,17 +677,7 @@ function config_add_section_header($title, $description='')
     {
     return array('section_header',$title,$description);
     }
-    
-/**
- * Return a data structure that will instruct the configuration page generator functions to add
- * arbitrary HTML
- *
- * @param string $content
- */
-function config_add_html($content)
-    {
-    return array('html',$content);
-    }    
+
 
  /**
  * Generate an html text entry or password block
@@ -794,100 +740,6 @@ function config_add_text_input($config_var, $label, $password=false, $width=300,
 function config_add_text_list_input($config_var, $label, $password=false, $width=300)
     {
     return array('text_list', $config_var, $label, $password, $width);
-    }
-
-/**
- * Generate an html boolean select block
- *
- * @param string $name the name of the select block. Usually the name of the config variable being set.
- * @param string $label the user text displayed to label the select block. Usually a $lang string.
- * @param boolean $current the current value (true or false) of the config variable being set.
- * @param string array $choices array of the text to display for the two choices: False and True. Defaults
- *          to array('False', 'True') in the local language.
- * @param integer $width the width of the input field in pixels. Default: 300.
- */
-function config_boolean_select($name, $label, $current, $choices='', $width=300)
-    {
-    global $lang;
-    if ($choices=='') $choices=$lang['false-true'];
-?>
-  <div class="Question">
-    <label for="<?php echo $name?>" title="<?php echo str_replace('%cvn', $name, $lang['plugins-configvar'])?>"><?php echo $label?></label>
-    <select name="<?php echo $name?>" id="<?php echo $name?>" style="width:<?php echo $width ?>px">
-    <option value="1" <?php if ($current=='1') { ?>selected<?php } ?>><?php echo $choices[1] ?></option>
-    <option value="0" <?php if ($current=='0') { ?>selected<?php } ?>><?php echo $choices[0] ?></option>
-    </select>
-  </div>
-  <div class="clearerleft"></div>
-<?php
-    }
-
-/**
- * Return a data structure that will instruct the configuration page generator functions to
- * add a boolean configuration variable to the setup page.
- *
- * @param string $config_var the name of the configuration variable to be added.
- * @param string $label the user text displayed to label the select block. Usually a $lang string.
- * @param string array $choices array of the text to display for the two choices: False and True. Defaults
- *          to array('False', 'True') in the local language.
- * @param integer $width the width of the input field in pixels. Default: 300.
- */
-function config_add_boolean_select($config_var, $label, $choices='', $width=300)
-    {
-    return array('boolean_select', $config_var, $label, $choices, $width);
-    }
-
-/**
- * Generate an html single-select + options block
- *
- * @param string $name the name of the select block. Usually the name of the config variable being set.
- * @param string $label the user text displayed to label the select block. Usually a $lang string.
- * @param string $current the current value of the config variable being set.
- * @param string array $choices the array of the alternatives -- the options in the select block. The keys
- *          are used as the values of the options, and the values are the alternatives the user sees. (But
- *          see $usekeys, below.) Usually a $lang entry whose value is an array of strings.
- * @param boolean $usekeys tells whether to use the keys from $choices as the values of the options. If set
- *          to false the values from $choices will be used for both the values of the options and the text
- *          the user sees. Defaulted to true.
- * @param integer $width the width of the input field in pixels. Default: 300.
- */
-function config_single_select($name, $label, $current, $choices, $usekeys=true, $width=300)
-    {
-    global $lang;
-?>
-  <div class="Question">
-    <label for="<?php echo $name?>" title="<?php echo str_replace('%cvn', $name, $lang['plugins-configvar'])?>"><?php echo $label?></label>
-    <select name="<?php echo $name?>" id="<?php echo $name?>" style="width:<?php echo $width ?>px">
-<?php
-    foreach($choices as $key => $choice)
-        {
-        $value=$usekeys?$key:$choice;
-        echo '    <option value="' . $value . '"' . (($current==$value)?' selected':'') . ">$choice</option>";
-        }
-?>
-    </select>
-  </div>
-  <div class="clearerleft"></div>
-<?php
-    }
-
-/**
- * Return a data structure that will instruct the configuration page generator functions to
- * add a single select configuration variable to the setup page.
- *
- * @param string $config_var the name of the configuration variable to be added.
- * @param string $label the user text displayed to label the select block. Usually a $lang string.
- * @param string array $choices the array of the alternatives -- the options in the select block. The keys
- *          are used as the values of the options, and the values are the alternatives the user sees. (But
- *          see $usekeys, below.) Usually a $lang entry whose value is an array of strings.
- * @param boolean $usekeys tells whether to use the keys from $choices as the values of the options. If set
- *          to false the values from $choices will be used for both the values of the options and the text
- *          the user sees. Defaulted to true.
- * @param integer $width the width of the input field in pixels. Default: 300.
- */
-function config_add_single_select($config_var, $label, $choices='', $usekeys=true, $width=300)
-    {
-    return array('single_select', $config_var, $label, $choices, $usekeys, $width);
     }
 
 /**

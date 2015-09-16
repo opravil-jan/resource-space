@@ -493,7 +493,38 @@ foreach($active_plugins as $plugin)
 foreach($plugins as $plugin)
 	{
 	hook("afterregisterplugin","",array($plugin));
-	}	
+	}
+
+// Load user config options
+$user_config_options = array();
+if(get_config_options_by_user($userref, $user_config_options))
+    {
+    foreach($user_config_options as $user_config_option)
+        {
+        $param_value = $user_config_option['value'];
+
+        // Prepare the value since everything is stored as a string
+        switch($param_value)
+            {
+            case '1':
+            case '0':
+                $param_value = (bool) $param_value;
+                break;
+
+            case is_numeric($param_value):
+                $param_value = (int) $param_value;
+                break;
+            
+            default:
+                // we assume it is a string and just wrap it around single quotes
+                $param_value = '\'' . $param_value . '\'';
+                break;
+            }
+
+        eval('$' . $user_config_option['parameter'] . ' = ' . $param_value . ';');
+        }
+    }
+// end of loading user config
 
 hook('handleuserref','',array($userref));
 if (($userpassword=="b58d18f375f68d13587ce8a520a87919" || $userpassword== "b975fc60c53ab4780623e0cd813095e328ddf8ff5a3d01d134f6df7391c42ff5" ) && $pagename!="user_change_password"  && $pagename!="collections"){?>
