@@ -7,11 +7,16 @@ include dirname(__FILE__) . "/../../include/image_processing.php";
 $sapi_type = php_sapi_name();
 if (substr($sapi_type, 0, 3) != 'cli')
     {
-    exit;
+    exit("Command line execution only.");
     }
 
-
-if(isset($staticsync_userref)){$userref=$staticsync_userref;}
+if(isset($staticsync_userref))
+    {
+    # If a user is specified, log them in.
+    $userref=$staticsync_userref;
+    $userdata=get_user($userref);
+    setup_user($userdata);
+    }
 
 ob_end_clean();
 set_time_limit(60*60*40);

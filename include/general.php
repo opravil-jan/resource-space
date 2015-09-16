@@ -966,7 +966,7 @@ function get_user($ref)
         if (isset($udata_cache[$ref])){
           $return=$udata_cache[$ref];
         } else {
-	$udata_cache[$ref]=sql_query("select * from user where ref='$ref'");
+	$udata_cache[$ref]=sql_query("select u.*, g.permissions, g.fixed_theme, g.parent, g.search_filter, g.edit_filter, g.ip_restrict ip_restrict_group, g.name groupname, u.ip_restrict ip_restrict_user, resource_defaults,g.config_options,g.request_mode, g.derestrict_filter from user u join usergroup g on u.usergroup=g.ref where u.ref='$ref'");
 	}
 	# Return a user's credentials.
 	if (count($udata_cache[$ref])>0) {return $udata_cache[$ref][0];} else {return false;}
@@ -4207,25 +4207,25 @@ function setup_user($userdata)
 	global $userpermissions,$usergroup,$usergroupname,$usergroupparent,$useremail,$userpassword,$userfullname,$userfixedtheme,$ip_restrict_group,$ip_restrict_user,$rs_session,$global_permissions,$userref,$username,$anonymous_user_session_collection,$global_permissions_mask,$user_preferences,$userrequestmode,$usersearchfilter,$usereditfilter,$userderestrictfilter,$hidden_collections,$userresourcedefaults,$userrequestmode,$request_adds_to_collection,$usercollection,$lang,$validcollection;
 		
 	# Hook to modify user permissions
-	if (hook("userpermissions")){$userdata[0]["permissions"]=hook("userpermissions");} 
+	if (hook("userpermissions")){$userdata["permissions"]=hook("userpermissions");} 
 	
-	$userref=$userdata[0]["ref"];
-        $username=$userdata[0]["username"];
+	$userref=$userdata["ref"];
+        $username=$userdata["username"];
 	
 	# Create userpermissions array for checkperm() function
-	$userpermissions=array_diff(array_merge(explode(",",trim($global_permissions)),explode(",",trim($userdata[0]["permissions"]))),explode(",",trim($global_permissions_mask))); 
+	$userpermissions=array_diff(array_merge(explode(",",trim($global_permissions)),explode(",",trim($userdata["permissions"]))),explode(",",trim($global_permissions_mask))); 
 	$userpermissions=array_values($userpermissions);# Resquence array as the above array_diff() causes out of step keys.
 	
-	$usergroup=$userdata[0]["usergroup"];
-	$usergroupname=$userdata[0]["groupname"];
-        $usergroupparent=$userdata[0]["parent"];
-        $useremail=$userdata[0]["email"];
-        $userpassword=$userdata[0]["password"];
-        $userfullname=$userdata[0]["fullname"];
-	if (!isset($userfixedtheme)) {$userfixedtheme=$userdata[0]["fixed_theme"];} # only set if not set in config.php
+	$usergroup=$userdata["usergroup"];
+	$usergroupname=$userdata["groupname"];
+        $usergroupparent=$userdata["parent"];
+        $useremail=$userdata["email"];
+        $userpassword=$userdata["password"];
+        $userfullname=$userdata["fullname"];
+	if (!isset($userfixedtheme)) {$userfixedtheme=$userdata["fixed_theme"];} # only set if not set in config.php
 
-        $ip_restrict_group=trim($userdata[0]["ip_restrict_group"]);
-        $ip_restrict_user=trim($userdata[0]["ip_restrict_user"]);
+        $ip_restrict_group=trim($userdata["ip_restrict_group"]);
+        $ip_restrict_user=trim($userdata["ip_restrict_user"]);
         
         if(isset($rs_session))
 		{
@@ -4244,12 +4244,12 @@ function setup_user($userdata)
 		else
 			{
 			// Unlikely scenario, but maybe we do allow anonymous users to change the selected collection for all other anonymous users
-			$usercollection=$userdata[0]["current_collection"];
+			$usercollection=$userdata["current_collection"];
 			}		
 		}
 	else
 		{	
-		$usercollection=$userdata[0]["current_collection"];
+		$usercollection=$userdata["current_collection"];
 		// Check collection actually exists
 		$validcollection=sql_value("select ref value from collection where ref='$usercollection'",0);
 		if($validcollection==0)
@@ -4276,12 +4276,12 @@ function setup_user($userdata)
 		}
 	
         
-        $usersearchfilter=$userdata[0]["search_filter"];
-        $usereditfilter=$userdata[0]["edit_filter"];
-        $userderestrictfilter=$userdata[0]["derestrict_filter"];
-        $hidden_collections=explode(",",$userdata[0]["hidden_collections"]);
-        $userresourcedefaults=$userdata[0]["resource_defaults"];
-        $userrequestmode=trim($userdata[0]["request_mode"]);
+        $usersearchfilter=$userdata["search_filter"];
+        $usereditfilter=$userdata["edit_filter"];
+        $userderestrictfilter=$userdata["derestrict_filter"];
+        $hidden_collections=explode(",",$userdata["hidden_collections"]);
+        $userresourcedefaults=$userdata["resource_defaults"];
+        $userrequestmode=trim($userdata["request_mode"]);
 
     	$userpreferences = ($user_preferences) ? sql_query("SELECT user, `value` AS colour_theme FROM user_preferences WHERE user = " . $userref . " AND parameter = 'colour_theme';") : FALSE;
     	$userpreferences = ($userpreferences && isset($userpreferences[0])) ? $userpreferences[0]: FALSE;
@@ -4307,7 +4307,7 @@ function setup_user($userdata)
     
 	
         # Apply config override options
-        $config_options=trim($userdata[0]["config_options"]);
+        $config_options=trim($userdata["config_options"]);
         if ($config_options!="") {eval($config_options);}
         
 	}

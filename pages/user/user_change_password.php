@@ -45,7 +45,7 @@ if($resetvalues!="")
 include "../../include/general.php";
 if(!$password_reset_mode)
     {
-    include "../../include/authenticate.php"; if (checkperm("p")) {exit("Not allowed.");}
+    include "../../include/authenticate.php"; if (checkperm("p") || (isset($anonymous_login) && $anonymous_login==$username)) {exit("Not allowed.");}
     }
    
 hook("preuserpreferencesform");
