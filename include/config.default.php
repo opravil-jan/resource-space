@@ -756,7 +756,7 @@ $defaulttheme="";
 /** END OF DEPRECATED **/
 
 /** USER PREFERENCES **/
-$user_preferences = false;
+$user_preferences = true;
 
 
 # List of active plugins.
