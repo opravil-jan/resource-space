@@ -265,7 +265,15 @@ function render_actions(array $collection_data, $top_actions = true, $two_line =
                             if(response.success === 'Yes')
                                 {
                                 CollectionDivLoad('<?php echo $baseurl; ?>/pages/collections.php?collection=' + response.redirect_to_collection + '&k=' + response.k + '&nc=' + response.nc);
-                                CentralSpaceLoad('<?php echo $baseurl; ?>/pages/search.php?search=!collection' + response.redirect_to_collection, true);
+
+                                if(basename(document.URL).substr(0, 17) === 'collection_manage')
+                                    {
+                                    CentralSpaceLoad('<?php echo $baseurl; ?>/pages/collection_manage.php');
+                                    }
+                                else
+                                    {
+                                    CentralSpaceLoad('<?php echo $baseurl; ?>/pages/search.php?search=!collection' + response.redirect_to_collection, true);
+                                    }
                                 }
                         }, 'json');    
                     }
