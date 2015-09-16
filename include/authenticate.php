@@ -526,8 +526,7 @@ if(get_config_options_by_user($userref, $user_config_options))
                 break;
             
             default:
-                // we assume it is a string and just wrap it around single quotes
-                $param_value = '\'' . $param_value . '\'';
+                // we assume it is a string and set as-is
                 break;
             }
 
