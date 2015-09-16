@@ -531,7 +531,7 @@ if(get_config_options_by_user($userref, $user_config_options))
                 break;
             }
 
-        eval('$' . $user_config_option['parameter'] . ' = ' . $param_value . ';');
+        $$user_config_option['parameter'] = $param_value;
         }
     }
 // end of loading user config
