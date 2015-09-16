@@ -3148,7 +3148,8 @@ function set_process_lock($name)
 function clear_process_lock($name)
 	{
 	# Clear a process lock
-	unlink(get_temp_dir() . "/process_locks/" . $name);
+	if (!file_exists(get_temp_dir() . "/process_locks/" . $name)) {return false;}
+        unlink(get_temp_dir() . "/process_locks/" . $name);
 	return true;
 	}
 	
