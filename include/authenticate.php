@@ -5,6 +5,117 @@ $valid=true;
 $autologgedout=false;
 $nocookies=false;
 
+function setup_user($userdata)
+	{
+	global $userpermissions,$usergroup,$usergroupname,$usergroupparent,$useremail,$userpassword,$userfullname,$userfixedtheme,$ip_restrict_group,$ip_restrict_user,$rs_session,$global_permissions,$userref,$username,$anonymous_user_session_collection,$global_permissions_mask,$user_preferences,$userrequestmode,$usersearchfilter,$usereditfilter,$userderestrictfilter,$hidden_collections,$userresourcedefaults,$userrequestmode,$request_adds_to_collection,$usercollection,$lang,$validcollection;
+		
+	# Hook to modify user permissions
+	if (hook("userpermissions")){$userdata[0]["permissions"]=hook("userpermissions");} 
+	
+	$userref=$userdata[0]["ref"];
+        $username=$userdata[0]["username"];
+	
+	# Create userpermissions array for checkperm() function
+	$userpermissions=array_diff(array_merge(explode(",",trim($global_permissions)),explode(",",trim($userdata[0]["permissions"]))),explode(",",trim($global_permissions_mask))); 
+	$userpermissions=array_values($userpermissions);# Resquence array as the above array_diff() causes out of step keys.
+	
+	$usergroup=$userdata[0]["usergroup"];
+	$usergroupname=$userdata[0]["groupname"];
+        $usergroupparent=$userdata[0]["parent"];
+        $useremail=$userdata[0]["email"];
+        $userpassword=$userdata[0]["password"];
+        $userfullname=$userdata[0]["fullname"];
+	if (!isset($userfixedtheme)) {$userfixedtheme=$userdata[0]["fixed_theme"];} # only set if not set in config.php
+
+        $ip_restrict_group=trim($userdata[0]["ip_restrict_group"]);
+        $ip_restrict_user=trim($userdata[0]["ip_restrict_user"]);
+        
+        if(isset($rs_session))
+		{
+		if (!function_exists("get_user_collections"))
+			{
+			include_once "collections_functions.php";
+			}
+		// Get all the collections that relate to this session
+		$sessioncollections=get_session_collections($rs_session,$userref,true); 
+		if($anonymous_user_session_collection)
+			{
+			// Just get the first one if more
+			$usercollection=$sessioncollections[0];
+			$collection_allow_creation=false; // Hide all links that allow creation of new collections
+			}
+		else
+			{
+			// Unlikely scenario, but maybe we do allow anonymous users to change the selected collection for all other anonymous users
+			$usercollection=$userdata[0]["current_collection"];
+			}		
+		}
+	else
+		{	
+		$usercollection=$userdata[0]["current_collection"];
+		// Check collection actually exists
+		$validcollection=sql_value("select ref value from collection where ref='$usercollection'",0);
+		if($validcollection==0)
+			{
+			// Not a valid collection - switch to user's primary collection if there is one
+			$usercollection=sql_value("select ref value from collection where user='$userref' and name like 'My Collection%' order by created asc limit 1",0);
+			if ($usercollection!=0)
+				{
+				# set this to be the user's current collection
+				sql_query("update user set current_collection='$usercollection' where ref='$userref'");
+				}
+			}
+		
+		if ($usercollection==0 || !is_numeric($usercollection))
+			{
+			# Create a collection for this user
+			global $lang;
+			include_once "collections_functions.php"; # Make sure collections functions are included before create_collection
+			# The collection name is translated when displayed!
+			$usercollection=create_collection($userref,"My Collection",0,1); # Do not translate this string!
+			# set this to be the user's current collection
+			sql_query("update user set current_collection='$usercollection' where ref='$userref'");
+			}
+		}
+	
+        
+        $usersearchfilter=$userdata[0]["search_filter"];
+        $usereditfilter=$userdata[0]["edit_filter"];
+        $userderestrictfilter=$userdata[0]["derestrict_filter"];
+        $hidden_collections=explode(",",$userdata[0]["hidden_collections"]);
+        $userresourcedefaults=$userdata[0]["resource_defaults"];
+        $userrequestmode=trim($userdata[0]["request_mode"]);
+
+    	$userpreferences = ($user_preferences) ? sql_query("SELECT user, `value` AS colour_theme FROM user_preferences WHERE user = " . $userref . " AND parameter = 'colour_theme';") : FALSE;
+    	$userpreferences = ($userpreferences && isset($userpreferences[0])) ? $userpreferences[0]: FALSE;
+
+        # Some alternative language choices for basket mode / e-commerce
+        if ($userrequestmode==2 || $userrequestmode==3)
+			{
+			$lang["addtocollection"]=$lang["addtobasket"];
+			$lang["action-addtocollection"]=$lang["addtobasket"];
+			$lang["addtocurrentcollection"]=$lang["addtobasket"];
+			$lang["requestaddedtocollection"]=$lang["buyitemaddedtocollection"];
+			$lang["action-request"]=$lang["addtobasket"];
+			$lang["managemycollections"]=$lang["viewpurchases"];
+			$lang["mycollection"]=$lang["yourbasket"];
+			$lang["action-removefromcollection"]=$lang["removefrombasket"];
+			$lang["total-collections-0"] = $lang["total-orders-0"];
+			$lang["total-collections-1"] = $lang["total-orders-1"];
+			$lang["total-collections-2"] = $lang["total-orders-2"];
+			
+			# The request button (renamed "Buy" by the line above) should always add the item to the current collection.
+			$request_adds_to_collection=true;
+			}        
+    
+	
+        # Apply config override options
+        $config_options=trim($userdata[0]["config_options"]);
+        if ($config_options!="") {eval($config_options);}
+        
+	}
+
+
 if (!function_exists("ip_matches")){
 function ip_matches($ip, $ip_restrict)
 	{
@@ -144,110 +255,9 @@ if (array_key_exists("user",$_COOKIE) || array_key_exists("user",$_GET) || isset
     if (count($userdata)>0)
         {
         $valid=true;
-        $userref=$userdata[0]["ref"];
-        $username=$userdata[0]["username"];
-		
-		# Hook to modify user permissions
-		if (hook("userpermissions")){$userdata[0]["permissions"]=hook("userpermissions");} 
-		
-		# Create userpermissions array for checkperm() function
-		$userpermissions=array_diff(array_merge(explode(",",trim($global_permissions)),explode(",",trim($userdata[0]["permissions"]))),explode(",",trim($global_permissions_mask))); 
-		$userpermissions=array_values($userpermissions);# Resquence array as the above array_diff() causes out of step keys.
-		
-		$usergroup=$userdata[0]["usergroup"];
-		$usergroupname=$userdata[0]["groupname"];
-        $usergroupparent=$userdata[0]["parent"];
-        $useremail=$userdata[0]["email"];
-        $userpassword=$userdata[0]["password"];
-        $userfullname=$userdata[0]["fullname"];
-		if (!isset($userfixedtheme)) {$userfixedtheme=$userdata[0]["fixed_theme"];} # only set if not set in config.php
 
-        $ip_restrict_group=trim($userdata[0]["ip_restrict_group"]);
-        $ip_restrict_user=trim($userdata[0]["ip_restrict_user"]);
-        
-        if(isset($rs_session))
-		{
-		if (!function_exists("get_user_collections"))
-			{
-			include_once "collections_functions.php";
-			}
-		// Get all the collections that relate to this session
-		$sessioncollections=get_session_collections($rs_session,$userref,true); 
-		if($anonymous_user_session_collection)
-			{
-			// Just get the first one if more
-			$usercollection=$sessioncollections[0];
-			$collection_allow_creation=false; // Hide all links that allow creation of new collections
-			}
-		else
-			{
-			// Unlikely scenario, but maybe we do allow anonymous users to change the selected collection for all other anonymous users
-			$usercollection=$userdata[0]["current_collection"];
-			}		
-		}
-	else
-		{	
-		$usercollection=$userdata[0]["current_collection"];
-		// Check collection actually exists
-		$validcollection=sql_value("select ref value from collection where ref='$usercollection'",0);
-		if($validcollection==0)
-			{
-			// Not a valid collection - switch to user's primary collection if there is one
-			$usercollection=sql_value("select ref value from collection where user='$userref' and name like 'My Collection%' order by created asc limit 1",0);
-			if ($usercollection!=0)
-				{
-				# set this to be the user's current collection
-				sql_query("update user set current_collection='$usercollection' where ref='$userref'");
-				}
-			}
 		
-		if ($usercollection==0 || !is_numeric($usercollection))
-			{
-			# Create a collection for this user
-			global $lang;
-			include_once "collections_functions.php"; # Make sure collections functions are included before create_collection
-			# The collection name is translated when displayed!
-			$usercollection=create_collection($userref,"My Collection",0,1); # Do not translate this string!
-			# set this to be the user's current collection
-			sql_query("update user set current_collection='$usercollection' where ref='$userref'");
-			}
-		}
-	
-        
-        $usersearchfilter=$userdata[0]["search_filter"];
-        $usereditfilter=$userdata[0]["edit_filter"];
-        $userderestrictfilter=$userdata[0]["derestrict_filter"];
-        $hidden_collections=explode(",",$userdata[0]["hidden_collections"]);
-        $userresourcedefaults=$userdata[0]["resource_defaults"];
-        $userrequestmode=trim($userdata[0]["request_mode"]);
-
-    	$userpreferences = ($user_preferences) ? sql_query("SELECT user, `value` AS colour_theme FROM user_preferences WHERE user = " . $userref . " AND parameter = 'colour_theme';") : FALSE;
-    	$userpreferences = ($userpreferences && isset($userpreferences[0])) ? $userpreferences[0]: FALSE;
-
-        # Some alternative language choices for basket mode / e-commerce
-        if ($userrequestmode==2 || $userrequestmode==3)
-			{
-			$lang["addtocollection"]=$lang["addtobasket"];
-			$lang["action-addtocollection"]=$lang["addtobasket"];
-			$lang["addtocurrentcollection"]=$lang["addtobasket"];
-			$lang["requestaddedtocollection"]=$lang["buyitemaddedtocollection"];
-			$lang["action-request"]=$lang["addtobasket"];
-			$lang["managemycollections"]=$lang["viewpurchases"];
-			$lang["mycollection"]=$lang["yourbasket"];
-			$lang["action-removefromcollection"]=$lang["removefrombasket"];
-			$lang["total-collections-0"] = $lang["total-orders-0"];
-			$lang["total-collections-1"] = $lang["total-orders-1"];
-			$lang["total-collections-2"] = $lang["total-orders-2"];
-			
-			# The request button (renamed "Buy" by the line above) should always add the item to the current collection.
-			$request_adds_to_collection=true;
-			}        
-    
-	
-        # Apply config override options
-        $config_options=trim($userdata[0]["config_options"]);
-        if ($config_options!="") {eval($config_options);}
-        
+	setup_user($userdata);
 
         if ($password_expiry>0 && !checkperm("p") && $allow_password_change && $pagename!="user_change_password" && $pagename!="index" && $pagename!="collections" && strlen(trim($userdata[0]["password_last_change"]))>0)
         	{
