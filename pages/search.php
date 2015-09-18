@@ -1174,9 +1174,11 @@ if($search_anchors){ ?>
 			if(place){
 				ele_id='ResourceShell'+place;
 				elementScroll = document.getElementById(ele_id);
-				elementScroll.scrollIntoView();
-				if(highlight){
-					jQuery(elementScroll).addClass("search-anchor");
+				if(jQuery(elementScroll).length){
+					elementScroll.scrollIntoView();
+					if(highlight){
+						jQuery(elementScroll).addClass("search-anchor");
+					}
 				}
 			}
 			
