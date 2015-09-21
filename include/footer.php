@@ -342,86 +342,89 @@ if (isset($k) && $k!="" && isset($search) && !isset($usercollection))
 	var collections_popout = <?php echo $collection_bar_popout? "true": "false"; ?>;
 <?php } ?>
 </script><?php 
+if (!hook("replacecdivrender"))
+	{
+	if ($collections_footer && !in_array($pagename,$omit_collectiondiv_load_pages) && !checkperm("b") && isset($usercollection)) 
+		{?>
+		<div id="CollectionDiv" class="CollectBack AjaxCollect ui-layout-south"></div>
 
-if ($collections_footer && !in_array($pagename,$omit_collectiondiv_load_pages) && !checkperm("b") && isset($usercollection)) 
-	{?>
-	<div id="CollectionDiv" class="CollectBack AjaxCollect ui-layout-south"></div>
-
-	<script type="text/javascript">
-		var collection_frame_height=<?php echo $collection_frame_height?>;
-		var thumbs="<?php echo htmlspecialchars($thumbs); ?>";
-		function ShowThumbs() {
-			myLayout.sizePane("south", collection_frame_height);
-			jQuery('.ui-layout-south').animate({scrollTop:0}, 'fast');
-			jQuery('#CollectionMinDiv').hide();
-			jQuery('#CollectionMaxDiv').show();
-			SetCookie('thumbs',"show",1000);
-			ModalCentre();
-		}
-		function HideThumbs() {
-			myLayout.sizePane("south", 40);
-			jQuery('.ui-layout-south').animate({scrollTop:0}, 'fast');			
-			jQuery('#CollectionMinDiv').show();
-			jQuery('#CollectionMaxDiv').hide();
-			SetCookie('thumbs',"hide",1000);
-			ModalCentre();
-		}
-		function ToggleThumbs() {
-			thumbs = getCookie("thumbs");
-			if (thumbs=="show"){
-				HideThumbs();
-			} else { 
-				ShowThumbs();
+		<script type="text/javascript">
+			var collection_frame_height=<?php echo $collection_frame_height?>;
+			var thumbs="<?php echo htmlspecialchars($thumbs); ?>";
+			function ShowThumbs() {
+				myLayout.sizePane("south", collection_frame_height);
+				jQuery('.ui-layout-south').animate({scrollTop:0}, 'fast');
+				jQuery('#CollectionMinDiv').hide();
+				jQuery('#CollectionMaxDiv').show();
+				SetCookie('thumbs',"show",1000);
+				ModalCentre();
 			}
-		}
-		function InitThumbs() {
-			if(thumbs!="hide") {
-				ShowThumbs();
-			} else if(thumbs=="hide") {
-				HideThumbs();
+			function HideThumbs() {
+				myLayout.sizePane("south", 40);
+				jQuery('.ui-layout-south').animate({scrollTop:0}, 'fast');			
+				jQuery('#CollectionMinDiv').show();
+				jQuery('#CollectionMaxDiv').hide();
+				SetCookie('thumbs',"hide",1000);
+				ModalCentre();
 			}
-		}
-		myLayout=jQuery('body').layout({
-			//closable:false,
-			resizable:true,
-			livePaneResizing:true,
-			triggerEventsDuringLiveResize: false,
-			minSize:40,
-			spacing_open:6,
-			spacing_closed:6,
-			togglerLength_open:"200",
-			togglerTip_open: '<?php echo $lang["toggle"]?>',
-			resizerTip: '<?php echo $lang["resize"]?>',
-			south__onclose_start: function(pane){
-				if (pane=="south"){
-					if(jQuery('.ui-layout-south').height()>40 && thumbs!="hide"){
-						HideThumbs();
-					} else if(jQuery('.ui-layout-south').height()<=40 && thumbs=="hide"){
-						ShowThumbs();
-					}
-					return false;
+			function ToggleThumbs() {
+				thumbs = getCookie("thumbs");
+				if (thumbs=="show"){
+					HideThumbs();
+				} else { 
+					ShowThumbs();
 				}
-			ModalCentre();
-			},
-			south__onresize: function(pane){
-				if (pane=="south"){
-					thumbs = getCookie("thumbs");
-					if(jQuery('.ui-layout-south').height() < collection_frame_height && thumbs!="hide"){
-						HideThumbs();
-					} else if(jQuery('.ui-layout-south').height()> 40 && thumbs=="hide"){
-						ShowThumbs();
-					}
-				}
-			ModalCentre();
 			}
-		});
-		window.onload = function() {
-		    CollectionDivLoad('<?php echo $baseurl_short?>pages/collections.php?thumbs=<?php echo urlencode($thumbs); ?>&collection='+usercollection+'<?php echo (isset($k) ? "&k=".urlencode($k) : ""); ?>');
-		    InitThumbs();
-		}
-</script>
-<?php } // end omit_collectiondiv_load_pages 
-else {?><div class="ui-layout-south" ></div><script>myLayout=jQuery('body').layout({south__initHidden: true });	</script><?php } ?>
+			function InitThumbs() {
+				if(thumbs!="hide") {
+					ShowThumbs();
+				} else if(thumbs=="hide") {
+					HideThumbs();
+				}
+			}
+			myLayout=jQuery('body').layout({
+				//closable:false,
+				resizable:true,
+				livePaneResizing:true,
+				triggerEventsDuringLiveResize: false,
+				minSize:40,
+				spacing_open:6,
+				spacing_closed:6,
+				togglerLength_open:"200",
+				togglerTip_open: '<?php echo $lang["toggle"]?>',
+				resizerTip: '<?php echo $lang["resize"]?>',
+				south__onclose_start: function(pane){
+					if (pane=="south"){
+						if(jQuery('.ui-layout-south').height()>40 && thumbs!="hide"){
+							HideThumbs();
+						} else if(jQuery('.ui-layout-south').height()<=40 && thumbs=="hide"){
+							ShowThumbs();
+						}
+						return false;
+					}
+				ModalCentre();
+				},
+				south__onresize: function(pane){
+					if (pane=="south"){
+						thumbs = getCookie("thumbs");
+						if(jQuery('.ui-layout-south').height() < collection_frame_height && thumbs!="hide"){
+							HideThumbs();
+						} else if(jQuery('.ui-layout-south').height()> 40 && thumbs=="hide"){
+							ShowThumbs();
+						}
+					}
+				ModalCentre();
+				}
+			});
+			window.onload = function() {
+				CollectionDivLoad('<?php echo $baseurl_short?>pages/collections.php?thumbs=<?php echo urlencode($thumbs); ?>&collection='+usercollection+'<?php echo (isset($k) ? "&k=".urlencode($k) : ""); ?>');
+				InitThumbs();
+			}
+	</script>
+	<?php } // end omit_collectiondiv_load_pages 
+	else {?><div class="ui-layout-south" ></div><script>myLayout=jQuery('body').layout({south__initHidden: true });	</script><?php }
+	}
+	?>
 
 
 <?php hook("afteruilayout");?>
