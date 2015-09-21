@@ -209,7 +209,7 @@ if ($contact_sheet)
 	<script type="text/javascript" src="<?php echo $baseurl_short;?>lib/plupload_2.1.2/jquery.plupload.queue/jquery.plupload.queue.min.js?<?php echo $css_reload_key;?>"></script>
 <?php } ?>
 <?php if($videojs && ($pagename=='search' && $keyboard_navigation_video_search) || ($pagename=='view' && $keyboard_navigation_video_view) || (($pagename=='preview' || $pagename=='preview_all') && $keyboard_navigation_video_preview)){ ?>
-	<script type="text/javascript" src="<?php echo $baseurl_short?>lib/js/videojs-extras.js?r=<?=$css_reload_key?>"></script>
+	<script type="text/javascript" src="<?php echo $baseurl_short?>lib/js/videojs-extras.js?<?php echo $css_reload_key?>"></script>
 <?php } ?>
 
 
