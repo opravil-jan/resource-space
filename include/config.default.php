@@ -778,6 +778,9 @@ $plugins=array();
 		"http://test.com" => "guest2"
 		); */
 
+# When anonymous access is on, show login in a modal.
+$anon_login_modal=false;
+
 $anonymous_user_session_collection=true;
 
 # Enable AJAX popup info box on search results.

@@ -393,7 +393,7 @@ if (isset($anonymous_login) && ($username==$anonymous_login))
         {
     	?>
     	<ul>
-    	<li><a href="<?php echo $baseurl?>/login.php"><?php echo $lang["login"]?></a></li>
+    	<li><a href="<?php echo $baseurl?>/login.php"<?php if($anon_login_modal){?> onClick="return ModalLoad(this,true);" <?php } ?>><?php echo $lang["login"]?></a></li>
     	<?php hook("addtoplinksanon");?>
     	<?php if ($contact_link) { ?><li><a href="<?php echo $baseurl?>/pages/contact.php" onClick="return CentralSpaceLoad(this,true);"><?php echo $lang["contactus"]?></a></li><?php } ?>
     	</ul>

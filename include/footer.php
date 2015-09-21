@@ -1,6 +1,18 @@
 <?php 
 hook("before_footer_always");
 
+if(getval("loginmodal",""))
+	{
+	$login_url=$baseurl."/login.php?url=".urlencode(getvalescaped("url",""))."&api=".urlencode(getval("api",""))."&error=".urlencode(getval("error",""))."&auto=".urlencode(getval("auto",""))."&nocookies=".urlencode(getval("nocookies",""))."&logout=".urlencode(getval("logout",""));
+	?><script>
+		console.log("got this far");
+		jQuery(document).ready(function(){
+			ModalLoad('<?php echo $login_url?>',true);
+		});
+	</script>
+	<?php
+	}
+	
 # Do not display header / footer when dynamically loading CentralSpace contents.
 if (getval("ajax","")=="" && !hook("replace_footer")) 
 	{ 

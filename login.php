@@ -12,6 +12,32 @@ if ($modifiedurl){$url=$modifiedurl;}
 
 $api=getval("api","");
 
+$modal=getval("modal","");
+
+if ($modal)
+	{
+	# add the capslock lib because there's no header
+	?>
+	<script type="text/javascript" src="<?php echo $baseurl?>/lib/js/jquery.capslockstate.js"></script>
+	<?php
+	}
+
+if (isset($anonymous_login) && $anon_login_modal && !$modal && getval("logout","")==false)
+	{
+	$anon_login_extras="loginmodal=true&url=".urlencode($url)."&api=".urlencode($api)."&error=".urlencode(getval("error",""))."&auto=".urlencode(getval("auto",""))."&nocookies=".urlencode(getval("nocookies",""));
+	
+	$anon_login_redirect="/pages/".$default_home_page."?".$anon_login_extras;
+	if ($use_theme_as_home)
+		{
+		$anon_login_redirect="/pages/themes.php?".$anon_login_extras;
+		}
+	if ($use_recent_as_home)
+		{
+		$anon_login_redirect="/pages/search.php?search=".urlencode('!last'.$recent_search_quantity)."&".$anon_login_extras;
+		}
+	# this shouldn't load as a unique page. go to the home page and display the login modal
+	redirect($baseurl.$anon_login_redirect);
+	}
         
 # process log in
 $error=getval("error","");
@@ -59,10 +85,10 @@ elseif (array_key_exists("username",$_POST) && getval("langupdate","")=="")
         rs_setcookie("language", $language, 1000, $baseurl_short . "pages/");
 
 		# Set the session cookie.
-        rs_setcookie("user", "", 0);
+        rs_setcookie("user", "/", 0);
 
 		# Set user cookie, setting secure only flag if a HTTPS site, and also setting the HTTPOnly flag so this cookie cannot be probed by scripts (mitigating potential XSS vuln.)
-        rs_setcookie("user", $result['session_hash'], $expires, "", "", substr($baseurl,0,5)=="https", true);
+        rs_setcookie("user", $result['session_hash'], $expires, "/", "", substr($baseurl,0,5)=="https", true);
 
         # Set default resource types
         setcookie("restypes",$default_res_types, 0, '', '', false, true);
@@ -142,9 +168,10 @@ if (!hook("replaceloginform")) {
   <?php hook("loginformlink") ?> 
   </p>
   <?php if ($error!="") { ?><div class="FormIncorrect"><?php echo $error?></div><?php } ?>
-  <form id="loginform" method="post" <?php if (!$login_autocomplete) { ?>AUTOCOMPLETE="OFF"<?php } ?>>
+  <form id="loginform" method="post" action="<?php echo $baseurl_short?>login.php" <?php if (!$login_autocomplete) { ?>AUTOCOMPLETE="OFF"<?php } ?><?php if($modal){?>onsubmit="return ModalPost(this,true,true);" <?php } ?>>
   <input type="hidden" name="langupdate" id="langupdate" value="">  
   <input type="hidden" name="url" value="<?php echo htmlspecialchars($url)?>">
+  <input type="hidden" name="modal" value="<?php echo $modal?>">
 
 <?php if ($disable_languages==false) { ?>	
 		<div class="Question">
