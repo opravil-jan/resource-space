@@ -85,7 +85,7 @@ elseif (array_key_exists("username",$_POST) && getval("langupdate","")=="")
         rs_setcookie("language", $language, 1000, $baseurl_short . "pages/");
 
 		# Set the session cookie.
-        rs_setcookie("user", "/", 0);
+        rs_setcookie("user", "", 0, "/");
 
 		# Set user cookie, setting secure only flag if a HTTPS site, and also setting the HTTPOnly flag so this cookie cannot be probed by scripts (mitigating potential XSS vuln.)
         rs_setcookie("user", $result['session_hash'], $expires, "/", "", substr($baseurl,0,5)=="https", true);
