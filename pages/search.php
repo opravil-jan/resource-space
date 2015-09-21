@@ -973,6 +973,7 @@ if (true) # Always show search header now.
 					else 		{?><?php echo $lang["trybeinglessspecific"]?><?php } ?> <?php echo $lang["enteringfewerkeywords"]?></p>
 					<?php
 					}
+				hook("afterresulthints");
 				}
 		  ?>
 		  </div>
