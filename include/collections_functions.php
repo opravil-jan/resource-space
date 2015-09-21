@@ -5,6 +5,7 @@
 if (!function_exists("get_user_collections")){
 function get_user_collections($user,$find="",$order_by="name",$sort="ASC",$fetchrows=-1,$auto_create=true)
 	{
+	global $usergroup;
 	# Returns a list of user collections.
 	$sql="";
 	$keysql="";
@@ -60,7 +61,9 @@ function get_user_collections($user,$find="",$order_by="name",$sort="ASC",$fetch
    
 	$return="select * from (select c.*,u.username,u.fullname,count(r.resource) count from user u join collection c on u.ref=c.user and c.user='$user' left outer join collection_resource r on c.ref=r.collection $sql $extrasql group by c.ref
 	union
-	select c.*,u.username,u.fullname,count(r.resource) count from user_collection uc join collection c on uc.collection=c.ref and uc.user='$user' and c.user<>'$user' left outer join collection_resource r on c.ref=r.collection left join user u on c.user=u.ref $sql group by c.ref) clist $keysql group by ref $order_sort";
+	select c.*,u.username,u.fullname,count(r.resource) count from user_collection uc join collection c on uc.collection=c.ref and uc.user='$user' and c.user<>'$user' left outer join collection_resource r on c.ref=r.collection left join user u on c.user=u.ref $sql group by c.ref
+	union
+	select c.*,u.username,u.fullname,count(r.resource) count from usergroup_collection gc join collection c on gc.collection=c.ref and gc.usergroup='$usergroup' and c.user<>'$user' left outer join collection_resource r on c.ref=r.collection left join user u on c.user=u.ref $sql group by c.ref) clist $keysql group by ref $order_sort";
 
 	$return=sql_query($return);
 	
@@ -101,13 +104,24 @@ function get_collection($ref)
 		{
 		$return=$return[0];
 		$return["users"]=join(", ",sql_array("select u.username value from user u,user_collection c where u.ref=c.user and c.collection='$ref' order by u.username"));
+		global $attach_user_smart_groups,$lang;
+		if($attach_user_smart_groups)
+			{
+			$return["groups"]=join(", ",sql_array("select concat('{$lang["groupsmart"]}: ',u.name) value from usergroup u,usergroup_collection c where u.ref=c.usergroup and c.collection='$ref' order by u.name"));
+			}
 			
-		global $userref,$k;
+		global $userref,$k,$attach_user_smart_groups;
 		$request_feedback=0;
 		if ($return["user"]!=$userref)
 			{
 			# If this is not the user's own collection, fetch the user_collection row so that the 'request_feedback' property can be returned.
 			$request_feedback=sql_value("select request_feedback value from user_collection where collection='$ref' and user='$userref'",0);
+			if(!$request_feedback && $attach_user_smart_groups)
+				{
+				# try to set via usergroup_collection
+				global $usergroup;
+				$request_feedback=sql_value("select request_feedback value from usergroup_collection where collection='$ref' and usergroup=$usergroup",0);
+				}
 			}
 		if ($k!="")
 			{
@@ -206,7 +220,7 @@ function collection_writeable($collection)
 	{
 	# Returns true if the current user has write access to the given collection.
 	$collectiondata=get_collection($collection);
-	global $userref;
+	global $userref,$usergroup;
 	global $allow_smart_collections;
 	if ($allow_smart_collections && !isset($userref)){ 
 		if (isset($collectiondata['savedsearch'])&&$collectiondata['savedsearch']!=null){
@@ -216,6 +230,7 @@ function collection_writeable($collection)
 	
 	# Load a list of attached users
 	$attached=sql_array("select user value from user_collection where collection='$collection'");
+	$attached_groups=sql_array("select usergroup value from usergroup_collection where collection='$collection'");
 	
 	// Can edit if 
 	// - The user owns the collection (if we are anonymous user and are using session collections then this must also have the same session id )
@@ -235,7 +250,7 @@ function collection_writeable($collection)
 		
 	$writable=($userref==$collectiondata["user"] && (!isset($anonymous_login) || $username!=$anonymous_login || !$anonymous_user_session_collection || $collectiondata["session_id"]==$rs_session))
 		|| 
-		(($collectiondata["allow_changes"]==1 || checkperm("h")) && (in_array($userref,$attached) || $collectiondata["public"]==1))
+		(($collectiondata["allow_changes"]==1 || checkperm("h")) && ((in_array($userref,$attached) || in_array($usergroup,$attached_groups)) || $collectiondata["public"]==1))
 		|| checkperm("a");
 	return $writable;
 	
@@ -248,6 +263,11 @@ function collection_readable($collection)
 	# Fetch collection details.
 	if (!is_numeric($collection)) {return false;}
 	$collectiondata=get_collection($collection);
+	
+	# Load a list of attached users
+	$attached=sql_array("select user value from user_collection where collection='$collection'");
+	$attached_groups=sql_array("select usergroup value from usergroup_collection where collection='$collection'");
+	global $userref,$usergroup;
 
 	global $ignore_collection_access, $collection_commenting;
 	# Access if collection_commenting is enabled and request feedback checked
@@ -262,26 +282,17 @@ function collection_readable($collection)
 	global $userref;
 	if (is_numeric($userref))
 		{
-		# Access if it's their collection
-		# Access if they have the "Can publish collections as themes" permission
-		if ($userref==$collectiondata["user"] || checkperm("h"))
+		# Access if:
+		#	- It's their collection
+		# 	- It's a public collection (or theme)
+		#	- They have the 'access and edit all collections' admin permission
+		# 	- They are attached to this collection
+		#   - Option to ignore collection access is enabled and k is empty
+		if($userref==$collectiondata["user"] || $collectiondata["public"]==1 || checkperm("h") || in_array($userref,$attached)  || in_array($usergroup,$attached_groups)|| /*(checkperm("R") && $request) ||*/ getval("k","")!="" || (getval("k","")=="" && $ignore_collection_access))
 			{
 			return true;
 			}
 
-		# Access if they are attached to this collection
-		$attached=sql_value("select 1 value from user_collection where collection=$collection and user=$userref",0);
-		if ($attached)
-			{
-			return true;
-			}
-
-		# Is this collection a request and are they attached to it?
-		$request=sql_value("select 1 value from request where collection=$collection and assigned_to=$userref", 0);
-		if ($request)
-			{
-			return true;
-			}
 		}
 
 	return false;
@@ -568,7 +579,7 @@ function index_collection($ref,$index_string='')
 
 function save_collection($ref)
 	{
-	global $theme_category_levels;
+	global $theme_category_levels,$attach_user_smart_groups;
 	
 	if (!collection_writeable($ref)) {return false;}
 	
@@ -623,6 +634,12 @@ function save_collection($ref)
 	if ($users!==false)
 		{
 		sql_query("delete from user_collection where collection='$ref'");
+		
+		if ($attach_user_smart_groups)
+			{
+			sql_query("delete from usergroup_collection where collection='$ref'");
+			}
+			
 		#log this
 		collection_log($ref,"T",0, '#all_users');
 
@@ -638,6 +655,32 @@ function save_collection($ref)
 				}
 			#log this
 			collection_log($ref,"S",0, join(", ",$ulist));
+			
+			if($attach_user_smart_groups)
+				{
+				$groups=resolve_userlist_groups_smart($users);
+				$groupnames='';
+				if($groups!='')
+					{
+					$groups=explode(",",$groups);
+					
+					if (count($groups)>0)
+						{ 
+						foreach ($groups as $group)
+							{
+							sql_query("insert into usergroup_collection(collection,usergroup) values ($ref,$group)");
+							// get the group name
+							if($groupnames!='')
+								{
+								$groupnames.=", ";
+								}
+								$groupnames.=sql_value("select name value from usergroup where ref={$group}","");
+							}
+						}
+					#log this
+					collection_log($ref,"S",0, $groupnames);
+					}
+				}
 			}
 		}
 		

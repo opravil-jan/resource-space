@@ -1010,6 +1010,12 @@ function email_resource($resource,$resourcename,$fromusername,$userlist,$message
 
 	if (trim($userlist)=="") {return ($lang["mustspecifyoneusername"]);}
 	$userlist=resolve_userlist_groups($userlist);
+	if($attach_user_smart_groups)
+		{
+		$group_userlist=resolve_userlist_groups_smart($userlist,true);
+		$userlist=array_merge($uerlist,$group_userlist);
+		}
+		
 	$ulist=trim_array(explode(",",$userlist));
 	$ulist=array_filter($ulist);
 	$ulist=array_values($ulist);

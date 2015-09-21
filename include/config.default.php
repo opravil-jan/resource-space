@@ -2338,6 +2338,7 @@ $smtp_password=''; # Password.
 
 $sharing_userlists=false; // enable users to save/select predefined lists of users/groups when sharing collections and resources.
 
+$attach_user_smart_groups=true; //enable user attach to include 'smart group option', different from the default "users in group" method (which will still be available)
 $public_collections_header_only=false; // show public collections page in header, omit from Themes and Manage Collections
 
 $ckeditor_toolbars="'Styles', 'Bold', 'Italic', 'Underline','FontSize', 'RemoveFormat', 'TextColor','BGColor'";

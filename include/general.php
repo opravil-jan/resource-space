@@ -2453,6 +2453,76 @@ function resolve_userlist_groups($userlist)
 		}
 	return $newlist;
 	}
+function resolve_userlist_groups_smart($userlist,$return_usernames=false)
+	{
+	# Given a comma separated user list (from the user select include file) turn all Group: entries into fully resolved list of usernames.
+	# Note that this function can't decode default groupnames containing special characters.
+
+	global $lang;
+	$ulist=explode(",",$userlist);
+	$newlist="";
+	for ($n=0;$n<count($ulist);$n++)
+		{
+		$u=trim($ulist[$n]);
+		if (strpos($u,$lang["groupsmart"] . ": ")===0)
+			{
+			# Group entry, resolve
+
+			# Find the translated groupname.
+			$translated_groupname = trim(substr($u,strlen($lang["groupsmart"] . ": ")));
+			# Search for corresponding $lang indices.
+			$default_group = false;
+			$langindices = array_keys($lang, $translated_groupname);
+			if (count($langindices)>0);
+				{ 
+				foreach ($langindices as $langindex)
+					{
+					# Check if it is a default group
+					if (strstr($langindex, "usergroup-")!==false)
+						{
+						# Decode the groupname by using the code from lang_or_i18n_get_translated the other way around (it could be possible that someone have renamed the English groupnames in the language file).
+						$untranslated_groupname = trim(substr($langindex,strlen("usergroup-")));
+						$untranslated_groupname = str_replace(array("_", "and"), array(" "), $untranslated_groupname);
+						$groupref = sql_value("select ref as value from usergroup where lower(name)='$untranslated_groupname'",false);
+						if ($groupref!==false)
+							{
+							$default_group = true;
+							break;
+							}
+						}
+					}
+				}
+			if ($default_group==false)
+				{ 
+				# Custom group
+				# Decode the groupname
+				$untranslated_groups = sql_query("select ref, name from usergroup");
+				
+				foreach ($untranslated_groups as $group)
+					{
+					if (i18n_get_translated($group['name'])==$translated_groupname)
+						{ 
+						$groupref = $group['ref'];
+						break;
+						}
+					}
+				}
+			if($return_usernames)
+				{
+				$users = sql_array("select username value from user where usergroup='$groupref'");
+				if ($newlist!="") {$newlist.=",";}
+				$newlist.=join(",",$users);
+				}
+			else
+				{
+				# Find and add the users.
+				if ($newlist!="") {$newlist.=",";}
+				$newlist.=$groupref;
+				}
+			}
+		}
+	return $newlist;
+	}
 	
 function get_suggested_keywords($search,$ref="")
 	{

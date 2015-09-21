@@ -71,12 +71,20 @@ function addUser(event,ui)
 	{
 	var username=document.getElementById("autocomplete").value;
 	var users=document.getElementById("users");
+	var attachUserSmartGroups='<?php echo $attach_user_smart_groups?>';
 
 	if (typeof ui!=='undefined') {username=ui.item.value;}
 	
-	if (username.indexOf("<?php echo $lang["group"]?>")!=-1)
+	if (username.indexOf("<?php echo $lang["group"]?>")!=-1 && (!attachUserSmartGroups || (attachUserSmartGroups && username.indexOf("<?php echo $lang["groupsmart"]?>")==-1)))
 		{
 		if ((confirm("<?php echo $lang["confirmaddgroup"]?>"))==false) {return false;}
+		}
+	if (attachUserSmartGroups)
+		{
+		if (username.indexOf("<?php echo $lang["groupsmart"]?>")!=-1)
+			{
+			if ((confirm("<?php echo $lang["confirmaddgroupsmart"]?>"))==false) {return false;}
+			}
 		}
 		
 	if (username!="") 
