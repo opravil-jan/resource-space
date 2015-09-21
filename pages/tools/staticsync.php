@@ -128,7 +128,8 @@ function ProcessFolder($folder)
     global $lang, $syncdir, $nogo, $staticsync_max_files, $count, $done, $modtimes, $lastsync, $ffmpeg_preview_extension, 
            $staticsync_autotheme, $staticsync_folder_structure, $staticsync_extension_mapping_default, 
            $staticsync_extension_mapping, $staticsync_mapped_category_tree, $staticsync_title_includes_path, 
-           $staticsync_ingest, $staticsync_mapfolders, $staticsync_alternatives_suffix, $theme_category_levels, $staticsync_defaultstate;
+           $staticsync_ingest, $staticsync_mapfolders, $staticsync_alternatives_suffix, $theme_category_levels, $staticsync_defaultstate,
+           $additional_archive_states,$staticsync_extension_mapping_append_values;
     
     $collection = 0;
     
@@ -323,12 +324,43 @@ function ProcessFolder($folder)
                                             }
 
                                         }
+                                    else if ($field == 'archive')
+										{
+										# archive level is a special case
+										# first determin if the value matches a defined archive level
+										
+										$value = $mapfolder["archive"];
+										$archive_array=array_merge(array(-2,-1,0,1,2,3),$additional_archive_states);
+										
+										if(in_array($value,$archive_array))
+											{
+											$archiveval = $value;
+											echo "Will set archive level to " . $lang['status' . $value] . " ($archiveval)". PHP_EOL;
+											}
+										
+										}
                                     else 
                                         {
                                         # Save the value
                                         print_r($path_parts);
                                         $value = $path_parts[$level-1];
+                                        
+                                        if($staticsync_extension_mapping_append_values){
+											$given_value=$value;
+											// append the values if possible...not used on dropdown, date, categroy tree, datetime, or radio buttons
+											$field_info=get_resource_type_field($field);
+											if(in_array($field['type'],array(0,1,2,4,5,6,7,8))){
+												$old_value=sql_value("select value value from resource_data where resource=$r and resource_type_field=$field","");
+												$value=append_field_value($field_info,$value,$old_value);
+											}
+										}
+                                        
                                         update_field ($r, $field, $value);
+                                        
+                                        if($staticsync_extension_mapping_append_values){
+											$value=$given_value;
+										}
+                                        
                                         echo " - Extracted metadata from path: $value" . PHP_EOL;
                                         }
                                     }

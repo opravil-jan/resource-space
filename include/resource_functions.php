@@ -484,16 +484,7 @@ function save_resource_data_multi($collection)
 				# Append text/option(s) mode?
 				if (getval("modeselect_" . $fields[$n]["ref"],"")=="AP")
 					{
-					if ($fields[$n]["type"]!=2 && $fields[$n]["type"]!=3 && substr($origval,0,1)!=",")
-						{
-						# Automatically append a space when appending text types.
-						$val=$existing . " " . $origval;
-						}
-					else
-						{
-						# Checkbox/dropdown types can just append immediately (a comma will already be present at the beginning of $origval).
-						$val=$existing . $origval;
-						}
+					$val=append_field_value($fields[$n],$origval,$existing);
 					}
 					
 				# Prepend text/option(s) mode?
@@ -737,6 +728,27 @@ function save_resource_data_multi($collection)
 	hook("aftersaveresourcedata");	
 	}
 }
+
+function append_field_value($field_data,$new_value,$exiting_value)
+	{
+	if ($field_data["type"]!=2 && $field_data["type"]!=3 && $field_data["type"]!=9 && substr($new_value,0,1)!=",")
+		{
+		# Automatically append a space when appending text types.
+		$val=$exiting_value . " " . $new_value;
+		}
+	else
+		{
+		# Verify a comma exists at the beginning of the value
+		if(substr($new_value,0,1)!=",")
+			{
+			$new_value=",".$new_value;
+		}
+		
+		$val=$exiting_value . $new_value;
+		
+		}
+	return $val;
+	}
 
 if (!function_exists("remove_keyword_mappings")){
 function remove_keyword_mappings($ref,$string,$resource_type_field,$partial_index=false,$is_date=false,$optional_column='',$optional_value='',$is_html=false)

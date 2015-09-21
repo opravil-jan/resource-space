@@ -1858,8 +1858,12 @@ $staticsync_folder_structure=false;
 $staticsync_extension_mapping_default=1;
 $staticsync_extension_mapping[3]=array("mov","3gp","avi","mpg","mp4","flv"); # Video
 $staticsync_extension_mapping[4]=array("flv");
-# Uncomment and set the next line to specify a category tree field to use to store the retieved path information for each file. The tree structure will be automatically modified as necessary to match the folder strucutre within the sync folder.
+# Uncomment and set the next line to specify a category tree field to use to store the retieved path information for each file. The tree structure will be automatically modified as necessary to match the folder strucutre within the sync folder (performance penalty).
 # $staticsync_mapped_category_tree=50;
+# Uncomment and set the next line to specify a text field to store the retrieved path information for each file. This is a time saving alternative to the option above.
+# $staticsync_filepath_to_field=100;
+# Append multiple mapped values instead of overwritting? This will use the same appending methods used when editing fields. Not used on dropdown, date, categroy tree, datetime, or radio buttons
+$staticsync_extension_mapping_append_values=true;
 # Should the generated resource title include the sync folder path?
 $staticsync_title_includes_path=true;
 # Should the sync'd resource files be 'ingested' i.e. moved into ResourceSpace's own filestore structure?
@@ -1898,6 +1902,15 @@ $staticsync_userref=-1;
 #		"match"=>"/projects/restricted",
 #		"field"=>"access",
 #		"level"=>2
+#		);
+#
+# You can enter "archive" in "field" to set the archive state for the resource. You must include "archive" to the array and its value must match either a default level or a custom archive level. The mapped folder level does not need to match the name of the archive level. Note that this will override $staticsync_defaultstate. For example, the mapping below would set anything in the restricted folder to have an "Archived" archive level.
+#   $staticsync_mapfolders[]=array
+#		(
+#		"match"=>"/projects/restricted",
+#		"field"=>"archive",
+#		"level"=>2,
+#		"archive"=>2
 #		);
 #
 # Suffix to use for alternative files folder
