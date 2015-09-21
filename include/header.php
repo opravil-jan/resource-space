@@ -469,8 +469,10 @@ if (($pagename=="login") || ($pagename=="user_password") || ($pagename=="user_re
 else {$div="CentralSpace";}
 ?>
 <!--Main Part of the page-->
-<?php if (($pagename!="login") && ($pagename!="user_password") && ($pagename!="user_request")) { ?><div id="CentralSpaceContainer"><?php } ?>
+<?php if (($pagename!="login") && ($pagename!="user_password") && ($pagename!="user_request")) { ?><div id="CentralSpaceContainer"><?php }
 
+hook("aftercentralspacecontainer");
+?>
 <div id="<?php echo $div?>">
 
 
