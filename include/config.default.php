@@ -2803,3 +2803,10 @@ $message_polling_interval_seconds = 5;
 # Set to a higher value to ensure only popular keywords are suggested.
 $soundex_suggest_limit=10;
 
+# Option for custom access to override search filters.
+# For this resource, if custom access has been granted for the user or group, nullify the filter for this particular 
+$custom_access_overrides_search_filter=false;
+
+
+
+
