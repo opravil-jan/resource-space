@@ -679,54 +679,6 @@ function config_add_section_header($title, $description='')
     }
 
 
- /**
- * Generate an html text entry or password block
- *
- * @param string $name the name of the text block. Usually the name of the config variable being set.
- * @param string $label the user text displayed to label the text block. Usually a $lang string.
- * @param string $current the current value of the config variable being set.
- * @param boolean $password whether this is a "normal" text-entry field or a password-style
- *          field. Defaulted to false.
- * @param integer $width the width of the input field in pixels. Default: 300.
- */
-function config_text_input($name, $label, $current, $password=false, $width=300, $textarea=false)
-    {
-    global $lang;
-?>
-  <div class="Question">
-    <label for="<?php echo $name?>" title="<?php echo str_replace('%cvn', $name, $lang['plugins-configvar'])?>"><?php echo $label?></label>
-    <?php
-    if($textarea==false)
-        {
-        ?>
-        <input name="<?php echo $name?>" id="<?php echo $name?>" type="<?php echo $password?'password':'text' ?>" value="<?php echo htmlspecialchars($current,ENT_QUOTES);?>" style="width:<?php echo $width; ?>px" />
-        <?php
-        }
-    else
-        {
-        ?>
-        <textarea name="<?php echo $name?>" id="<?php echo $name?>" style="width:<?php echo $width; ?>px"><?php echo htmlspecialchars($current,ENT_QUOTES);?></textarea>
-        <?php
-        }?>
-  </div>
-  <div class="clearerleft"></div>
-<?php
-    }
-
-/**
- * Return a data structure that will instruct the configuration page generator functions to
- * add a text entry configuration variable to the setup page.
- *
- * @param string $config_var the name of the configuration variable to be added.
- * @param string $label the user text displayed to label the text block. Usually a $lang string.
- * @param boolean $password whether this is a "normal" text-entry field or a password-style
- *          field. Defaulted to false.
- * @param integer $width the width of the input field in pixels. Default: 300.
- */
-function config_add_text_input($config_var, $label, $password=false, $width=300, $textarea=false)
-    {
-    return array('text_input', $config_var, $label, $password, $width, $textarea);
-    }
 /**
  * Return a data structure that will instruct the configuration page generator functions to
  * add a comma-separated list text entry configuration variable to the setup page.

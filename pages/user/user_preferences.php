@@ -235,59 +235,8 @@ include "../../include/header.php";
     config_generate_html($page_def);
     ?>
 </div>
-    <script>
-    registerCollapsibleSections();
-
-    function AutoSaveConfigOption(option_name)
-        {
-        jQuery('#AutoSaveStatus-' + option_name).html('<?php echo $lang["saving"]; ?>');
-        jQuery('#AutoSaveStatus-' + option_name).show();
-
-        var option_value = null;
-        var question_type = jQuery('#' + option_name).prop('nodeName');
-        /* possible types:
-        $('input') // selects all types of inputs
-        $('input:checkbox') // selects checkboxes
-        $('select') // selects select element
-        $('input:radio') // selects radio inputs
-        $('input[type="text"]') // selects text inputs
-        */
-
-        if(question_type.toLowerCase() === 'select')
-            {
-            option_value = jQuery('#' + option_name).val();
-            }
-
-        // save to user preferences table
-        var post_url  = '<?php echo $baseurl; ?>/pages/ajax/user_preferences.php';
-        var post_data = {
-            ajax: true,
-            autosave: true,
-            autosave_option_name: option_name,
-            autosave_option_value: option_value
-        };
-
-        jQuery.post(post_url, post_data, function(response) {
-
-            if(response.success === true)
-                {
-                jQuery('#AutoSaveStatus-' + option_name).html('<?php echo $lang["saved"]; ?>');
-                jQuery('#AutoSaveStatus-' + option_name).fadeOut('slow');
-                }
-            else if(response.success === false && response.message && response.message.length > 0)
-                {
-                jQuery('#AutoSaveStatus-' + option_name).html('<?php echo $lang["save-error"]; ?> ' + response.message);
-                }
-            else
-                {
-                jQuery('#AutoSaveStatus-' + option_name).html('<?php echo $lang["save-error"]; ?>');
-                }
-
-        }, 'json');
-
-        return true;
-        }
-    </script>
+    <script>registerCollapsibleSections();</script>
+    <?php config_generate_AutoSaveConfigOption_function($baseurl . '/pages/ajax/user_preferences.php'); ?>
 </div>
 
 <?php

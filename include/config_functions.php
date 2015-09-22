@@ -172,17 +172,18 @@ function render_text_option($fieldname, $value, $size=20, $units=''){
 
 
 /**
-* Save config option
+* Save/ Update config option
 *
 * @param  integer  $user_id      Current user ID
 * @param  string   $param_name   Parameter name
 * @param  string   $param_value  Parameter value
+*
 * @return boolean
 */
 function set_config_option($user_id, $param_name, $param_value)
     {
     // We do allow for param values to be empty strings or 0 (zero)
-    if(empty($user_id) || empty($param_name) || is_null($param_value))
+    if(empty($param_name) || is_null($param_value))
         {
         return false;
         }
@@ -198,12 +199,12 @@ function set_config_option($user_id, $param_name, $param_value)
                                              `value`
                                          )
                  VALUES (
-                            \'%s\', # user
+                            %s,     # user
                             \'%s\', # parameter
-                            \'%s\' # value
+                            \'%s\'  # value
                         );
         ',
-        $user_id,
+        is_null($user_id) ? 'NULL' : '\'' . $user_id . '\'',
         $param_name,
         $param_value
     );
@@ -219,11 +220,11 @@ function set_config_option($user_id, $param_name, $param_value)
         $query = sprintf('
                 UPDATE user_preferences
                    SET `value` = \'%s\'
-                 WHERE user = \'%s\'
+                 WHERE user %s
                    AND parameter = \'%s\';
             ',
             $param_value,
-            $user_id,
+            is_null($user_id) ? 'IS NULL' : '= \'' . $user_id . '\'',
             $param_name
         );
         }
@@ -245,7 +246,7 @@ function set_config_option($user_id, $param_name, $param_value)
 */
 function get_config_option($user_id, $name, &$returned_value)
     {
-    if(trim($user_id) === '' || trim($name) === '')
+    if(trim($name) === '')
         {
         return false;
         }
@@ -253,10 +254,10 @@ function get_config_option($user_id, $name, &$returned_value)
     $query = sprintf('
             SELECT `value`
               FROM user_preferences
-             WHERE user = "%s"
+             WHERE user %s
                AND parameter = "%s";
         ',
-        $user_id,
+        is_null($user_id) ? 'IS NULL' : '= \'' . escape_check($user_id) . '\'',
         $name
     );
     $config_option = sql_value($query, null);
@@ -273,27 +274,22 @@ function get_config_option($user_id, $name, &$returned_value)
 
 
 /**
-* Get config option from database for a specific user
+* Get config option from database for a specific user or system wide
 * 
-* @param  integer  $user_id           Current user ID
+* @param  integer  $user_id           Current user ID. Can also be null to retrieve system wide config options
 * @param  array    $returned_options  If a value does exist it will be returned through
 *                                     this parameter which is passed by reference
 * @return boolean
 */
-function get_config_options_by_user($user_id, array &$returned_options)
+function get_config_options($user_id, array &$returned_options)
     {
-    if(empty($user_id))
-        {
-        return false;
-        }
-
     $query = sprintf('
             SELECT parameter,
                    `value`
               FROM user_preferences
-             WHERE user = \'%s\';
+             WHERE %s;
         ',
-        $user_id
+        is_null($user_id) ? 'user IS NULL' : 'user = \'' . escape_check($user_id) . '\''
     );
     $config_options = sql_query($query);
 
@@ -303,6 +299,50 @@ function get_config_options_by_user($user_id, array &$returned_options)
         }
 
     $returned_options = $config_options;
+
+    return true;
+    }
+
+
+/**
+* Process configuration options from database
+* either system wide or user specific by setting
+* the global variable
+*
+* @param int $user_id
+*
+* @return bool true
+*/
+function process_config_options($user_id = null)
+    {
+    $config_options = array();
+
+    if(get_config_options($user_id, $config_options))
+        {
+        foreach($config_options as $config_option)
+            {
+            $param_value = $config_option['value'];
+
+            // Prepare the value since everything is stored as a string
+            switch($param_value)
+                {
+                case '1':
+                case '0':
+                    $param_value = (bool) $param_value;
+                    break;
+
+                case is_numeric($param_value):
+                    $param_value = (int) $param_value;
+                    break;
+                
+                default:
+                    // we assume it is a string and set as-is
+                    break;
+                }
+
+            $GLOBALS[$config_option['parameter']] = $param_value;
+            }
+        }
 
     return true;
     }
@@ -362,6 +402,78 @@ function config_html($content)
 function config_add_html($content)
     {
     return array('html',$content);
+    }
+
+
+ /**
+ * Generate an html text entry or password block
+ *
+ * @param string $name the name of the text block. Usually the name of the config variable being set.
+ * @param string $label the user text displayed to label the text block. Usually a $lang string.
+ * @param string $current the current value of the config variable being set.
+ * @param boolean $password whether this is a "normal" text-entry field or a password-style
+ *          field. Defaulted to false.
+ * @param integer $width the width of the input field in pixels. Default: 300.
+ */
+function config_text_input($name, $label, $current, $password = false, $width = 300, $textarea = false, $title = null, $autosave = false)
+    {
+    global $lang;
+
+    if(is_null($title))
+        {
+        // This is how it was used on plugins setup page. Makes sense for developers when trying to debug and not much for non-technical users
+        $title = str_replace('%cvn', $name, $lang['plugins-configvar']);
+        }
+    ?>
+
+    <div class="Question">
+        <label for="<?php echo $name; ?>" title="<?php echo $title; ?>"><?php echo $label; ?></label>
+    <?php
+    if($autosave)
+        {
+        ?>
+        <div class="AutoSaveStatus">
+            <span id="AutoSaveStatus-<?php echo $name; ?>" style="display:none;"></span>
+        </div>
+        <?php
+        }
+
+    if($textarea == false)
+        {
+        ?>
+        <input id="<?php echo $name; ?>"
+               name="<?php echo $name; ?>"
+               type="<?php echo $password ? 'password' : 'text'; ?>"
+               value="<?php echo htmlspecialchars($current, ENT_QUOTES); ?>"
+               <?php if($autosave) { ?>onFocusOut="AutoSaveConfigOption('<?php echo $name; ?>');"<?php } ?>
+               style="width:<?php echo $width; ?>px" />
+        <?php
+        }
+    else
+        {
+        ?>
+        <textarea id="<?php echo $name; ?>" name="<?php echo $name; ?>" style="width:<?php echo $width; ?>px"><?php echo htmlspecialchars($current, ENT_QUOTES); ?></textarea>
+        <?php
+        }
+        ?>
+    </div>
+    <div class="clearerleft"></div>
+    <?php
+    }
+
+/**
+ * Return a data structure that will instruct the configuration page generator functions to
+ * add a text entry configuration variable to the setup page.
+ *
+ * @param string $config_var the name of the configuration variable to be added.
+ * @param string $label the user text displayed to label the text block. Usually a $lang string.
+ * @param boolean $password whether this is a "normal" text-entry field or a password-style
+ *          field. Defaulted to false.
+ * @param integer $width the width of the input field in pixels. Default: 300.
+ */
+function config_add_text_input($config_var, $label, $password = false, $width = 300, $textarea = false, $title = null, $autosave = false)
+    {
+    return array('text_input', $config_var, $label, $password, $width, $textarea, $title, $autosave);
     }
 
 
@@ -513,6 +625,57 @@ function config_add_boolean_select($config_var, $label, $choices = '', $width = 
 
 
 /**
+* Generate Javascript function used for auto saving individual config options
+*
+* @param string $post_url URL to where the data will be posted
+*/
+function config_generate_AutoSaveConfigOption_function($post_url)
+    {
+    global $lang;
+    ?>
+    
+    <script>
+    function AutoSaveConfigOption(option_name)
+        {
+        jQuery('#AutoSaveStatus-' + option_name).html('<?php echo $lang["saving"]; ?>');
+        jQuery('#AutoSaveStatus-' + option_name).show();
+
+        var option_value = jQuery('#' + option_name).val();
+        var post_url  = '<?php echo $post_url; ?>';
+        var post_data = {
+            ajax: true,
+            autosave: true,
+            autosave_option_name: option_name,
+            autosave_option_value: option_value
+        };
+
+        jQuery.post(post_url, post_data, function(response) {
+
+            if(response.success === true)
+                {
+                jQuery('#AutoSaveStatus-' + option_name).html('<?php echo $lang["saved"]; ?>');
+                jQuery('#AutoSaveStatus-' + option_name).fadeOut('slow');
+                }
+            else if(response.success === false && response.message && response.message.length > 0)
+                {
+                jQuery('#AutoSaveStatus-' + option_name).html('<?php echo $lang["save-error"]; ?> ' + response.message);
+                }
+            else
+                {
+                jQuery('#AutoSaveStatus-' + option_name).html('<?php echo $lang["save-error"]; ?>');
+                }
+
+        }, 'json');
+
+        return true;
+        }
+    </script>
+    
+    <?php
+    }
+
+
+/**
 * Generates HTML foreach element found in the page definition
 * 
 * @param array $page_def Array of all elements for which we need to generate HTML
@@ -528,9 +691,15 @@ function config_generate_html(array $page_def)
             case 'html':
                 config_html($def[1]);
                 break;
+
+            case 'text_input':
+                config_text_input($def[1], $def[2], $GLOBALS[$def[1]], $def[3], $def[4], $def[5], $def[6], $def[7]);
+                break;
+
             case 'boolean_select':
                 config_boolean_select($def[1], $def[2], $GLOBALS[$def[1]], $def[3], $def[4], $def[5], $def[6]);
                 break;
+
             case 'single_select':
                 config_single_select($def[1], $def[2], $GLOBALS[$def[1]], $def[3], $def[4], $def[5], $def[6], $def[7]);
                 break;

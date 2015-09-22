@@ -222,6 +222,9 @@ else
 		}
 	}
 
+// Load system wide config options from database
+process_config_options();
+
 # Include the appropriate language file
 $pagename=safe_file_name(str_replace(".php","",pagename()));
 

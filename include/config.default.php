@@ -2160,9 +2160,9 @@ $disable_collection_toggle=false;
 # Display User Rating Stars in search views (a popularity column in list view)
 $display_user_rating_stars=false;
 # Allow each user only one rating per resource (can be edited). Note this will remove all accumlated ratings/weighting on newly rated items.
-$user_rating_only_once=false;
+$user_rating_only_once = true;
 # if user_rating_only_once, allow a log view of user's ratings (link is in the rating count on the View page):
-$user_rating_stats=false;
+$user_rating_stats = true;
 # Allow user to remove their rating.
 $user_rating_remove=true;
 
