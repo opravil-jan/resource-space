@@ -354,6 +354,7 @@ if($editing && !$editexternalurl)
                 {
                 ?>
                 <div class="Listview">
+		<div class="Question">
                     <table border="0" cellspacing="0" cellpadding="0" class="ListviewStyle">
                         <tr class="ListviewTitleStyle">
                             <td><?php echo $lang["user"];   ?></td>
@@ -386,7 +387,7 @@ if($editing && !$editexternalurl)
                     ?>
                     </table>
                 </div>
-                
+                </div>
 	    
 	    
         </form>
