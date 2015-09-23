@@ -146,6 +146,12 @@ sql_connect();
 
 #if (function_exists("set_magic_quotes_runtime")) {@set_magic_quotes_runtime(0);}
 
+# Automatically set a HTTPS URL if running on the SSL port.
+if(isset($_SERVER["SERVER_PORT"]) && $_SERVER["SERVER_PORT"]==443)
+    {
+    $baseurl=str_replace("http://","https://",$baseurl);
+    }
+
 # Set a base URL part consisting of the part after the server name, i.e. for absolute URLs and cookie paths.
 $baseurl=str_replace(" ","%20",$baseurl);
 $bs=explode("/",$baseurl);
