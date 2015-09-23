@@ -79,7 +79,9 @@ function do_search($search,$restypes="",$order_by="relevance",$archive=0,$fetchr
 
     # -- Build up filter SQL that will be used for all queries
     $sql_filter=search_filter($search,$archive,$restypes,$starsearch,$recent_search_daylimit,$access_override,$return_disk_usage);
-        
+
+    # Initialise variables.
+    $sql="";
     $sql_keyword_union_whichkeys   = array();
     $sql_keyword_union             = array();
     $sql_keyword_union_aggregation = array();
