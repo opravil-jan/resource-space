@@ -875,7 +875,7 @@ function add_download_column($ref, $size_info, $downloadthissize)
 		if (!hook("resourcerequest"))
 			{
 			?><td class="DownloadButton"><?php
-			if ($request_adds_to_collection)
+			if ($request_adds_to_collection && $k=="")
 				{
 				echo add_to_collection_link($ref,$search,"alert('" . addslashes($lang["requestaddedtocollection"]) . "');",$size_info["id"]);
 				}
