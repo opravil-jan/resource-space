@@ -341,7 +341,7 @@ if($editing && !$editexternalurl)
 	    
 	    
 	    <h2><?php echo $lang["custompermissions"]?></h2>
-
+	    <div class="Question">
             <?php
             $custom_access_rows = get_resource_custom_access_users_usergroups($ref);
             if (count($custom_access_rows) == 0)
@@ -354,7 +354,7 @@ if($editing && !$editexternalurl)
                 {
                 ?>
                 <div class="Listview">
-		<div class="Question">
+		
                     <table border="0" cellspacing="0" cellpadding="0" class="ListviewStyle">
                         <tr class="ListviewTitleStyle">
                             <td><?php echo $lang["user"];   ?></td>
