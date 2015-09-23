@@ -336,7 +336,59 @@ if($editing && !$editexternalurl)
 			</script>
             <?php
             }
-            ?>
+            
+	    ?>
+	    
+	    
+	    <h2><?php echo $lang["custompermissions"]?></h2>
+
+            <?php
+            $custom_access_rows = get_resource_custom_access_users_usergroups($ref);
+            if (count($custom_access_rows) == 0)
+                {
+                ?>
+                <p><?php echo $lang["remove_custom_access_no_users_found"] ?></p>
+                <?php
+                }
+            else
+                {
+                ?>
+                <div class="Listview">
+                    <table border="0" cellspacing="0" cellpadding="0" class="ListviewStyle">
+                        <tr class="ListviewTitleStyle">
+                            <td><?php echo $lang["user"];   ?></td>
+                            <td><?php echo $lang["property-user_group"];        ?></td>
+                            <td><?php echo $lang["expires"];  ?></td>
+                            <td><?php echo $lang["access"];    ?></td>
+                            <!-- Future support for tools (e.g. delete) <td><div class="ListTools"><?php echo $lang["tools"]?></div></td> -->
+                        </tr>
+                <?php
+                foreach ($custom_access_rows as $ca)
+                    {
+		    $expires = ($ca["expires"] == "") ? $lang["never"] : nicedate($ca["expires"],false);
+		    $access  = ($ca["access"] == -1)  ? "" : $lang["access" . $ca["access"]];
+                    ?>
+                        <tr>
+                            <td><?php echo htmlspecialchars($ca["user"])     ?></td>
+                            <td><?php echo htmlspecialchars($ca["usergroup"])                   ?></td>
+                            <td><?php echo htmlspecialchars($expires)                         ?></td>
+                            <td><?php echo htmlspecialchars($access);                         ?></td>
+                            <!--
+			    <td>
+                                <div class="ListTools">
+                                </div>
+                            </td>
+			    -->
+                        </tr>
+                        <?php
+                        }
+                    }
+                    ?>
+                    </table>
+                </div>
+                
+	    
+	    
         </form>
     </div>
 </div> <!-- BasicsBox -->

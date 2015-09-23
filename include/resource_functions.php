@@ -1391,6 +1391,16 @@ function get_resource_custom_access($resource)
     return $resource_custom_access;
 	}
 
+function get_resource_custom_access_users_usergroups($resource)
+    {
+    # Returns only matching custom_access rows, with users and groups expanded
+    return sql_query("select g.name usergroup,u.username user,c.access,c.user_expires expires from resource_custom_access c
+        left outer join usergroup g on g.ref=c.usergroup
+        left outer join user u on u.ref=c.user
+        where c.resource='$resource' order by g.name,u.username");
+    }
+    
+    
 function save_resource_custom_access($resource)
 	{
 	$groups=get_resource_custom_access($resource);
