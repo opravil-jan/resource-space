@@ -1416,7 +1416,7 @@ function get_resource_custom_access_users_usergroups($resource)
 function save_resource_custom_access($resource)
 	{
 	$groups=get_resource_custom_access($resource);
-	sql_query("delete from resource_custom_access where resource='$resource' where usergroup is not null");
+	sql_query("delete from resource_custom_access where resource='$resource' and usergroup is not null");
 	for ($n=0;$n<count($groups);$n++)
 		{
 		$usergroup=$groups[$n]["ref"];
