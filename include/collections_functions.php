@@ -116,7 +116,7 @@ function get_collection($ref)
 			{
 			# If this is not the user's own collection, fetch the user_collection row so that the 'request_feedback' property can be returned.
 			$request_feedback=sql_value("select request_feedback value from user_collection where collection='$ref' and user='$userref'",0);
-			if(!$request_feedback && $attach_user_smart_groups)
+			if(!$request_feedback && $attach_user_smart_groups && $k=="")
 				{
 				# try to set via usergroup_collection
 				global $usergroup;
