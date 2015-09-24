@@ -4379,6 +4379,11 @@ function setup_user($userdata)
 	
         # Apply config override options
         $config_options=trim($userdata["config_options"]);
-        if ($config_options!="") {eval($config_options);}
+        if ($config_options!="")
+            {
+            // We need to get all globals as we don't know what may be referenced here
+            extract($GLOBALS, EXTR_REFS | EXTR_SKIP);
+            eval($config_options);
+            }
         
 	}
