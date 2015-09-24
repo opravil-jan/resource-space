@@ -320,6 +320,13 @@ function save_resource_data($ref,$multi,$autosave_field="")
 			if ($access!=$oldaccess && $ref>0)
 				{
 				resource_log($ref,"a",0,"",$oldaccess,$access);
+                                
+                                if ($oldaccess==3 && $access!=3)
+                                    {
+                                    # Moving out of the custom state. Delete any usergroup specific access.
+                                    # This can delete any 'manual' usergroup grants also as the user will have seen this as part of the custom access.
+                                    delete_resource_custom_access_usergroups($ref);
+                                    }
 				}
 			
 			// Notify the resources team ($email_notify) if moving from pending submission -> review.
@@ -663,6 +670,11 @@ function save_resource_data_multi($collection)
 				{
 				sql_query("update resource set access='$access' where ref='$ref'");
 				
+                                if ($oldaccess==3)
+                                        {
+                                        # Moving out of custom access - delete custom usergroup access.
+                                        delete_resource_custom_access_usergroups($ref);
+                                        }
 				resource_log($ref,"a",0,"",$oldaccess,$access);
 				}
 			
@@ -3440,4 +3452,12 @@ function can_share_resource($ref, $access="")
 	// Must have open access and sharing is permitted
 	return true;	
 	}
+
+function delete_resource_custom_access_usergroups($ref)
+        {
+        # delete all usergroup specific access to resource $ref
+        sql_query("delete from resource_custom_access where resource='" . escape_check($ref) . "' and usergroup is not null");
+        }
+
+
 
