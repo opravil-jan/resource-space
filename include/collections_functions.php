@@ -870,7 +870,7 @@ function get_smart_themes($field,$node=0,$themebar=false)
 	# Fetch field info
 	$fielddata=sql_query("select * from resource_type_field where ref='$field'");
 	if (count($fielddata)>0) {$fielddata=$fielddata[0];} else {return false;}
-	
+					
 	# Return a list of keywords that are in use for this field
     global $smart_themes_omit_archived;
 	
@@ -880,7 +880,7 @@ function get_smart_themes($field,$node=0,$themebar=false)
 		(($smart_themes_omit_archived) ? "AND archive= 0 " : "") .
 		" GROUP BY MD5(k.keyword)"
 	);
-
+	
 	if ($fielddata["type"]==7)
 		{
 		# Category tree style view
@@ -929,7 +929,7 @@ function get_smart_themes($field,$node=0,$themebar=false)
 		# Tidy list so it matches the storage format used for keywords.
 		# The translated version is fetched as each option will be indexed in the local language version of each option.
 		$options_base=array();
-		for ($n=0;$n<count($options);$n++) {$options_base[$n]=escape_check(trim(mb_strtolower(i18n_get_translated($options[$n]))));}
+		for ($n=0;$n<count($options);$n++) {$options_base[$n]=escape_check(trim(mb_convert_case(i18n_get_translated($options[$n]), MB_CASE_LOWER, "UTF-8")));}
 		
 		# For each option, if it is in use, add it to the return list.
 		$return=array();
