@@ -327,6 +327,7 @@ hook("initialise");
 # Global hook cache and related hits counter
 $hook_cache = array();
 $hook_cache_hits = 0;
+$hook_cache_result = array();
 
 # Load the language specific stemming algorithm, if one exists
 $stemming_file=dirname(__FILE__) . "/../lib/stemming/" . safe_file_name($defaultlanguage) . ".php"; # Important - use the system default language NOT the user selected language, because the stemmer must use the system defaults when indexing for all users.
@@ -341,7 +342,7 @@ function hook($name,$pagename="",$params=array())
 	# Allow modifications to the hook itself:
 	if(function_exists("hook_modifier") && !hook_modifier($name, $pagename, $params)) return;
 
-	global $hook_cache;	
+	global $hook_cache, $hook_cache_result;	
 	if ($pagename=="") global $pagename;		
 	
 	# the index name for the $hook_cache
@@ -352,11 +353,34 @@ function hook($name,$pagename="",$params=array())
 		{
 		# increment stats
 		global $hook_cache_hits;
-		$hook_cache_hits++;						
-		$b_return=false;
+
+		$hook_cache_hits++;
+		$b_return = false;
+
 		foreach ($hook_cache[$hook_cache_index] as $function)
 			{
-			$b_return=call_user_func_array($function,$params);
+			$hook_function_return = call_user_func_array($function, $params);
+			if(is_array($hook_function_return) && isset($hook_cache_result[$hook_cache_index]))
+				{
+				// We merge the cached result with the new result from the plugin and remove any duplicates
+				$b_return = array_unique(array_merge_recursive($hook_cache_result[$hook_cache_index], $hook_function_return), SORT_REGULAR);
+				}
+			else if(is_string($hook_function_return) && isset($hook_cache_result[$hook_cache_index]))
+				{
+				$b_return .= $hook_function_return;
+				}
+			else
+				{
+				$hook_cache_result[$hook_cache_index] = $hook_function_return;
+				if(is_bool($hook_function_return))
+					{
+					$b_return = $b_return || $hook_function_return;
+					}
+				else
+					{
+					$b_return = $hook_function_return;	
+					} 
+				}
 			}
 		return $b_return;
 		}
