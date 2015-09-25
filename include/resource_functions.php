@@ -235,6 +235,11 @@ function save_resource_data($ref,$multi,$autosave_field="")
 					remove_keyword_mappings($ref, i18n_get_indexable($oldval), $fields[$n]["ref"], $fields[$n]["partial_index"],$is_date,'','',$is_html);
 					add_keyword_mappings($ref, i18n_get_indexable($val), $fields[$n]["ref"], $fields[$n]["partial_index"],$is_date,'','',$is_html);
 					}
+                else
+                    {
+                    // Remove all entries from resource_keyword for this field, useful if setting is changed and changed back leaving stale data
+                    remove_all_keyword_mappings_for_field($ref,$fields[$n]["ref"]);
+                    }
 				
 					# If this is a 'joined' field we need to add it to the resource column
 					$joins=get_resource_table_joins();
@@ -776,15 +781,19 @@ function remove_keyword_mappings($ref,$string,$resource_type_field,$partial_inde
 
 	for ($n=0;$n<count($keywords);$n++)
 		{
+        unset ($kwpos);
 		if (is_array($keywords[$n])){
-			$keywords[$n]=$keywords[$n]['keyword'];
-		}		
-		remove_keyword_from_resource($ref,$keywords[$n],$resource_type_field,$optional_column='',$optional_value='',false);
+			$keywords[$n]=$keywords[$n]['keyword'];            
+			$kwpos=$keywords[$n]['position'];
+		}        
+		$kw=$keywords[$n]; 
+        if (!isset($kwpos)){$kwpos=$n;}
+		remove_keyword_from_resource($ref,$keywords[$n],$resource_type_field,$optional_column='',$optional_value='',false, $kwpos);
 		}	
 	}
 }
 
-function remove_keyword_from_resource($ref,$keyword,$resource_type_field,$optional_column='',$optional_value='',$normalized=false)
+function remove_keyword_from_resource($ref,$keyword,$resource_type_field,$optional_column='',$optional_value='',$normalized=false, $position='')
     {
     if(!$normalized)
         {
@@ -800,10 +809,10 @@ function remove_keyword_from_resource($ref,$keyword,$resource_type_field,$option
 		
 	if ($optional_column<>'' && $optional_value<>'')	# Check if any optional column value passed and include this condition
 		{
-		sql_query("delete from resource_keyword where resource='$ref' and keyword= ANY (select ref from keyword where keyword='" . escape_check($keyword) . "') and resource_type_field='$resource_type_field' and $optional_column= $optional_value limit 1");
+		sql_query("delete from resource_keyword where resource='$ref' and keyword= ANY (select ref from keyword where keyword='" . escape_check($keyword) . "') and resource_type_field='$resource_type_field'" . (($position!="")?" and position='" . $position ."'":"") . " and $optional_column= $optional_value");
 		}
 	else{
-		sql_query("delete from resource_keyword where resource='$ref' and keyword= ANY (select ref from keyword where keyword='" . escape_check($keyword) . "') and resource_type_field='$resource_type_field' limit 1");
+		sql_query("delete from resource_keyword where resource='$ref' and keyword= ANY (select ref from keyword where keyword='" . escape_check($keyword) . "') and resource_type_field='$resource_type_field'" . (($position!="")?" and position='" . $position ."'":""));
 		}
 	sql_query("update keyword set hit_count=hit_count-1 where keyword='" . escape_check($keyword) . "' limit 1");
 			
