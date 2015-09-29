@@ -1635,7 +1635,7 @@ function setup_user($userdata)
         $userresourcedefaults=$userdata["resource_defaults"];
         $userrequestmode=trim($userdata["request_mode"]);
 
-    	$userpreferences = ($user_preferences) ? sql_query("SELECT user, `value` AS colour_theme FROM user_preferences WHERE user = " . $userref . " AND parameter = 'colour_theme';") : FALSE;
+    	$userpreferences = ($user_preferences) ? sql_query("SELECT user, `value` AS colour_theme FROM user_preferences WHERE user = '" . escape_check($userref) . "' AND parameter = 'colour_theme';") : FALSE;
     	$userpreferences = ($userpreferences && isset($userpreferences[0])) ? $userpreferences[0]: FALSE;
 
         # Some alternative language choices for basket mode / e-commerce
