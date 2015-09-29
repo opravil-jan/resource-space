@@ -13,8 +13,15 @@ if (getval("save","")!="")
 	{
 	if ($k!="" || $userrequestmode==0)
 		{
-		# Request mode 0 : Simply e-mail the request.
-		$result=email_collection_request($ref,getvalescaped("request",""));
+		if ($k!="" && (getval("fullname","")=="" || getvalescaped("email","")==""))
+			{
+			$result=false; # Required fields not completed.
+			}
+		else
+			{
+			# Request mode 0 : Simply e-mail the request.
+			$result=email_collection_request($ref,getvalescaped("request",""));
+			}
 		}
 	else
 		{
@@ -23,7 +30,7 @@ if (getval("save","")!="")
 		}
 	if ($result===false)
 		{
-		$error=$lang["requiredfields"];
+		$error=$lang["requiredfields-general"];
 		}
 	else
 		{

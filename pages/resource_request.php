@@ -42,7 +42,7 @@ if (getval("save","")!="")
 	
 	if ($result===false)
 		{
-		$error=$lang["requiredfields"];
+		$error=$lang["requiredfields-general"];
 		}
 	else
 		{
