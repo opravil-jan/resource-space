@@ -4031,7 +4031,7 @@ function rs_setcookie($name, $value, $daysexpire = 0, $path = "", $domain = "", 
     if ($daysexpire==0) {$expire = 0;}
     else {$expire = time() + (3600*24*$daysexpire);}
 
-    if((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] === getservbyname("https", "tcp"))
+    if((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || (isset($_SERVER['SERVER_PORT']) && $_SERVER['SERVER_PORT'] === getservbyname("https", "tcp")))
     	{
     	$secure=true;
     	}
