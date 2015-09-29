@@ -102,7 +102,7 @@ if ($noattach=="")
 			{
 			# Fetch from the resource_alt_files alternatives table (this is an alternative file)
 			$origfile=get_alternative_file($ref,$alternative);
-			$origfile=get_data_by_field($ref,$filename_field)."-".$origfile["file_name"];
+			$origfile=$origfile["file_name"];
 			}
 		else
 			{
