@@ -2796,7 +2796,7 @@ $pending_submission_prompt_review=true;
 $thumbs_previews_via_download=false;
 
 # Frequency at which the page header will poll for new messages for the user.  Set to 0 (zero) to disable.
-$message_polling_interval_seconds = 5;
+$message_polling_interval_seconds = 10;
 
 # How many times must a keyword be used before it is considered eligable for suggesting, when a matching keyword is not found?
 # Set to zero to suggest any known keyword regardless of usage.
@@ -2806,7 +2806,3 @@ $soundex_suggest_limit=10;
 # Option for custom access to override search filters.
 # For this resource, if custom access has been granted for the user or group, nullify the filter for this particular 
 $custom_access_overrides_search_filter=false;
-
-
-
-
