@@ -71,7 +71,7 @@ function addUser(event,ui)
 	{
 	var username=document.getElementById("autocomplete").value;
 	var users=document.getElementById("users");
-	var attachUserSmartGroups='<?php echo $attach_user_smart_groups?>';
+	var attachUserSmartGroups='<?php global $attach_user_smart_groups;echo $attach_user_smart_groups?>';
 
 	if (typeof ui!=='undefined') {username=ui.item.value;}
 	
