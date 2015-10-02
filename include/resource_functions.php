@@ -1605,6 +1605,12 @@ function write_metadata($path, $ref, $uniqid="")
                     case "filesize":
                         # Do nothing, no point to try to write the filesize.
                         break;
+                    case "filename":
+                        # Do nothing, no point to try to write the filename either as ResourceSpace controls this.
+                        break;
+                    case "directory":
+                        # Do nothing, we don't want metadata to control this
+                        break;
                     case "keywords":                  
                         # Keywords shall be written one at a time and not all together.
 			if(!isset($writtenfields["keywords"])){$writtenfields["keywords"]="";} 
