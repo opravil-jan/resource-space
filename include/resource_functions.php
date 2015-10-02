@@ -1021,7 +1021,7 @@ function email_resource($resource,$resourcename,$fromusername,$userlist,$message
 	{
 	# Attempt to resolve all users in the string $userlist to user references.
 
-	global $baseurl,$email_from,$applicationname,$lang,$userref,$usergroup;
+	global $baseurl,$email_from,$applicationname,$lang,$userref,$usergroup,$attach_user_smart_groups;
 	
 	if ($useremail==""){$useremail=$email_from;}
 	if ($group=="") {$group=$usergroup;}
