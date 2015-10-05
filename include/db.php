@@ -495,13 +495,13 @@ function sql_query($sql,$cache=false,$fetchrows=-1,$dbstruct=true, $logthis=2)
 				@fwrite($mlf,"USE " . $mysql_db . ";\r\n");
 				if(!file_exists($mysql_log_location))
 					{exit("ERROR: Invalid \$mysql_log_location specified in config file: " . $mysql_log_location);}
+				// Set the permissions if we can to prevent browser access (will not work on Windows)
+				chmod($mysql_log_location,0333);
 				}
 			
 			$mlf=@fopen($mysql_log_location,"ab");
 			fwrite($mlf,"/* " . date("Y-m-d H:i:s") . " */ " .  $sql . ";\n"); // Append the ';' so the file can be used to replay the changes
 			fclose ($mlf);
-			// Set the permissions if we can to prevent browser access (will not work on Windows)
-			chmod($mysql_log_location,0333);
 			}
 		
 		}
