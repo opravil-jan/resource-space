@@ -53,12 +53,7 @@ if (!hook("renderresultsmallthumb"))
 					style="position:relative" 
 					href="<?php echo $url?>"  
 					onClick="return <?php echo ($resource_view_modal?"Modal":"CentralSpace") ?>Load(this,true);" 
-					<?php 
-					if (!$infobox) 
-						{ ?>
-						title="<?php echo str_replace(array("\"","'"),"",htmlspecialchars(i18n_get_translated($result[$n]["field".$view_title_field])))?>"
-						<?php 
-						} ?>
+					title="<?php echo str_replace(array("\"","'"),"",htmlspecialchars(i18n_get_translated($result[$n]["field".$view_title_field])))?>"
 				>
 					<?php 
 					if ($result[$n]["has_image"]==1) 
@@ -67,13 +62,6 @@ if (!hook("renderresultsmallthumb"))
 							src="<?php echo $col_url ?>" 
 							class="ImageBorder"  
 							alt="<?php echo str_replace(array("\"","'"),"",htmlspecialchars(i18n_get_translated($result[$n]["field".$view_title_field]))); ?>"
-							<?php 
-							if ($infobox) 
-								{ ?>
-								onmouseover="InfoBoxSetResource(<?php echo htmlspecialchars($ref)?>);" 
-								onmouseout="InfoBoxSetResource(0);"
-								<?php 
-								} ?>
 					 	/><?php 
 					 	} 
 					else 
@@ -81,13 +69,6 @@ if (!hook("renderresultsmallthumb"))
 					 	<img 
 					 		border=0 
 					 		src="<?php echo $baseurl_short?>gfx/<?php echo get_nopreview_icon($result[$n]["resource_type"],$result[$n]["file_extension"],true) ?>" 
-							<?php 
-							if ($infobox) 
-								{ ?>
-								onmouseover="InfoBoxSetResource(<?php echo htmlspecialchars($ref)?>);" 
-								onmouseout="InfoBoxSetResource(0);"
-								<?php 
-								} ?>
 						/>
 						<?php 
 						}
@@ -160,14 +141,8 @@ if (!hook("renderresultsmallthumb"))
 								?>
 								<a 
 									href="<?php echo $url?>"  
-									onClick="return <?php echo ($resource_view_modal?"Modal":"CentralSpace") ?>Load(this,true);" 
-									<?php 
-									if (!$infobox) 
-										{ ?>
-										title="<?php echo str_replace(array("\"","'"),"",htmlspecialchars(i18n_get_translated($value)))?>"
-										<?php 
-										} //end if infobox 
-										?>
+									onClick="return <?php echo ($resource_view_modal?"Modal":"CentralSpace") ?>Load(this,true);"
+									title="<?php echo str_replace(array("\"","'"),"",htmlspecialchars(i18n_get_translated($value)))?>"	
 								>
 								<?php 
 								} //end link
@@ -200,12 +175,7 @@ if (!hook("renderresultsmallthumb"))
 								<a 
 									href="<?php echo $url?>"  
 									onClick="return <?php echo ($resource_view_modal?"Modal":"CentralSpace") ?>Load(this,true);" 
-									<?php 
-									if (!$infobox) 
-										{ ?>
-										title="<?php echo str_replace(array("\"","'"),"",htmlspecialchars(i18n_get_translated($value)))?>"
-										<?php 
-										} //end if infobox ?>
+									title="<?php echo str_replace(array("\"","'"),"",htmlspecialchars(i18n_get_translated($value)))?>"
 								> 
 								<?php 
 								} //end link  

@@ -348,7 +348,7 @@ function upload_file($ref,$no_exif=false,$revert=false,$autorotate=false)
 	
     return $status;
     }}
-	
+
 function extract_exif_comment($ref,$extension="")
 	{
 	# Extract the EXIF comment from either the ImageDescription field or the UserComment

@@ -58,15 +58,7 @@ if (!hook("replacelistitem"))
 						if ($x==0)
 							{ // add link to first item only ?>
 							<div class="ListTitle">
-								<a 
-									<?php 
-									if ($infobox) 
-										{ ?>
-										onmouseover="InfoBoxSetResource(<?php echo htmlspecialchars($ref)?>);" 
-										onmouseout="InfoBoxSetResource(0);"
-										<?php 
-										} ?> 
-									href="<?php echo $url?>" 
+								<a href="<?php echo $url?>" 
 									onClick="return <?php echo ($resource_view_modal?"Modal":"CentralSpace") ?>Load(this,true);"
 								>
 							<?php 
@@ -211,13 +203,6 @@ if (!hook("replacelistitem"))
 				?>
 				<a 
 					onClick="return <?php echo ($resource_view_modal?"Modal":"CentralSpace") ?>Load(this);" 
-					<?php 
-					if ($infobox) 
-						{ ?>
-						onmouseover="InfoBoxSetResource(<?php echo htmlspecialchars($ref)?>);" 
-						onmouseout="InfoBoxSetResource(0);"
-						<?php 
-						} ?> 
 					href="<?php echo $url?>"
 				>
 					&gt;&nbsp;

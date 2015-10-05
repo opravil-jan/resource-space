@@ -46,7 +46,7 @@ if ($order_by=="relevance" && $k=="" && (($userref==$cinfo["user"]) || ($cinfo["
 	{
 	$allow_reorder=true;
 	}
-if ($allow_reorder || $infobox)
+if ($allow_reorder)
 	{
 	
 	# Also check for the parameter and reorder as necessary.

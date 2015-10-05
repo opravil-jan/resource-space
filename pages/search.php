@@ -10,9 +10,8 @@ include_once '../include/render_functions.php';
 $s=explode(" ",getvalescaped("search",""));
 $k=getvalescaped("k","");if (($k=="") || (!check_access_key_collection(str_replace("!collection","",$s[0]),$k))) {include "../include/authenticate.php";}
 
- # Disable info box for external users.
-if ($k!="") {$infobox=false;}
-else {
+if ($k="")
+    {
     #note current user collection for add/remove links if we haven't got it set already
     if(!isset($usercollection))
 		{
@@ -624,25 +623,6 @@ if (isset($result_title_height))
 	<?php
 	}
 
-
-# Extra CSS if using Image Infoboxes ($infobox_image_mode)
-if ($infobox_image_mode)
-	{
-	?>
-	<style>
-	#InfoBox
-		{
-		width:400px;height:450px;
-		}
-	#InfoBoxInner
-		{
-		height:350px;
-		}
-	</style>
-	<?php
-	
-	}
-
 #if (is_array($result)||(isset($collections)&&(count($collections)>0)))
 if (true) # Always show search header now.
 	{
@@ -1189,9 +1169,5 @@ if($search_anchors){ ?>
 }
 
 
-# Add the infobox.
-?>
-<div id="InfoBox"><div id="InfoBoxInner"> </div></div>
-<?php
 include "../include/footer.php";
 

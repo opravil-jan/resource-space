@@ -783,20 +783,6 @@ $anon_login_modal=false;
 
 $anonymous_user_session_collection=true;
 
-# Enable AJAX popup info box on search results.
-$infobox=false;
-# A list of fields to display in the info box (using the field reference number)
-$infobox_fields=array(18,10,29,53);
-# Display the resource ID in the info box?
-$infobox_display_resource_id=true;
-# Display a small resource file type icon in the info box?
-$infobox_display_resource_icon=true;
-# Display resource type name under the title in the info box?
-$infobox_display_resource_type=false;
-
-# An alternative mode for the InfoBox, that displays the preview image instead of any metadata.
-$infobox_image_mode=false;
-
 # Enable captioning and ranking of collections (deprecated - use $collection_commenting instead)
 $collection_reorder_caption=false; 
 

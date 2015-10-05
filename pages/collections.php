@@ -32,8 +32,6 @@ if($emptycollection!='' && getvalescaped("submitted","")=='removeall' && getval(
     remove_all_resources_from_collection($emptycollection);
     }
     
-# Disable info box for external access.
-if ($k!="") {$infobox=false;} 
 # Disable checkboxes for external users.
 if ($k!="") {$use_checkboxes_for_selection=false;}
 
@@ -303,7 +301,7 @@ else { ?>
 
 	</head>
 
-	<body class="CollectBack" id="collectbody"<?php if ($infobox) { ?> OnMouseMove="InfoBoxMM(event);"<?php } ?>>
+	<body class="CollectBack" id="collectbody">
 <div style="display:none;" id="currentusercollection"><?php echo $usercollection?></div>
 
 <script>usercollection='<?php echo htmlspecialchars($collection) ?>';</script>
@@ -798,14 +796,10 @@ if ($count_result>0)
 		
 		$colimgpath=get_resource_path($ref,false,"col",false,$result[$n]["preview_extension"],-1,1,$use_watermark,$result[$n]["file_modified"])
 		?>
-		<img border=0 src="<?php echo $colimgpath?>" class="CollectImageBorder" <?php if (!$infobox) { ?>title="<?php echo htmlspecialchars(i18n_get_translated($result[$n]["field".$view_title_field]))?>" alt="<?php echo htmlspecialchars(i18n_get_translated($result[$n]["field".$view_title_field]))?>"<?php } ?> 
-		<?php if ($infobox) { ?>onMouseOver="InfoBoxSetResource(<?php echo $ref?>);" onMouseOut="InfoBoxSetResource(0);"<?php } ?>
-		/>
+		<img border=0 src="<?php echo $colimgpath?>" class="CollectImageBorder" title="<?php echo htmlspecialchars(i18n_get_translated($result[$n]["field".$view_title_field]))?>" alt="<?php echo htmlspecialchars(i18n_get_translated($result[$n]["field".$view_title_field]))?>" />
 			<?php
 		
-		} else { ?><img border=0 src="<?php echo $baseurl_short?>gfx/<?php echo get_nopreview_icon($result[$n]["resource_type"],$result[$n]["file_extension"],true) ?>"
-		<?php if ($infobox) { ?>onMouseOver="InfoBoxSetResource(<?php echo $ref?>);" onMouseOut="InfoBoxSetResource(0);"<?php } ?>
-		/><?php } ?><?php hook("aftersearchimg","",array($result[$n]))?></a></td>
+		} else { ?><img border=0 src="<?php echo $baseurl_short?>gfx/<?php echo get_nopreview_icon($result[$n]["resource_type"],$result[$n]["file_extension"],true) ?>" /><?php } ?><?php hook("aftersearchimg","",array($result[$n]))?></a></td>
 		</tr></table>
 		<?php } /* end hook rendercollectionthumb */?>
 		
@@ -828,7 +822,7 @@ if ($count_result>0)
 		}
 		?>	
 		<?php if (!hook("replacecolresourcetitle")){?>
-		<div class="CollectionPanelInfo"><a onclick="return <?php echo ($resource_view_modal?"Modal":"CentralSpace") ?>Load(this,true);" href="<?php echo $baseurl_short?>pages/view.php?ref=<?php echo urlencode($ref) ?>&search=<?php echo urlencode("!collection" . $usercollection)?>&k=<?php echo urlencode($k) ?>" <?php if (!$infobox) { ?>title="<?php echo htmlspecialchars(i18n_get_translated($result[$n]["field".$view_title_field]))?>"<?php } ?> ><?php echo htmlspecialchars(tidy_trim(i18n_get_translated($title),14));?></a>&nbsp;</div>
+		<div class="CollectionPanelInfo"><a onclick="return <?php echo ($resource_view_modal?"Modal":"CentralSpace") ?>Load(this,true);" href="<?php echo $baseurl_short?>pages/view.php?ref=<?php echo urlencode($ref) ?>&search=<?php echo urlencode("!collection" . $usercollection)?>&k=<?php echo urlencode($k) ?>" title="<?php echo htmlspecialchars(i18n_get_translated($result[$n]["field".$view_title_field]))?>"><?php echo htmlspecialchars(tidy_trim(i18n_get_translated($title),14));?></a>&nbsp;</div>
 		<?php } ?>
 		
 		<?php if ($k!="" && $feedback) { # Allow feedback for external access key users
@@ -876,12 +870,6 @@ hook("thumblistextra");
 ?>
 </div>  
 <?php 
-
-# Add the infobox.
-?>
-	<div id="InfoBoxCollection"><div id="InfoBoxCollectionInner"> </div></div></div>
-	<?php
-
 
 }
 

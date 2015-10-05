@@ -89,9 +89,6 @@ function errorhandler($errno, $errstr, $errfile, $errline)
 error_reporting(E_ALL);
 set_error_handler("errorhandler");
 
-# Set some defaults
-$infobox=true;
-
 # *** LOAD CONFIG ***
 # Load the default config first, if it exists, so any new settings are present even if missing from config.php
 if (file_exists(dirname(__FILE__)."/config.default.php")) {include dirname(__FILE__) . "/config.default.php";}

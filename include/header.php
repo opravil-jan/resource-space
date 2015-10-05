@@ -259,15 +259,6 @@ echo get_plugin_css($ctheme);
 
 hook("headblock");
  
-# Infobox JS include
-if ($infobox)
-	{ ?>
-	<script type="text/javascript">
-	var InfoBoxImageMode=<?php echo ($infobox_image_mode?"true":"false")?>;
-	</script>
-	<script src="<?php echo $baseurl_short;?>lib/js/infobox.js?css_reload_key=<?php echo $css_reload_key ?>" type="text/javascript"></script>
-    <?php
-	}
 endif; # !hook("customhtmlheader") 
 if($slimheader)
     {
@@ -275,7 +266,7 @@ if($slimheader)
     }
 ?>
 </head>
-<body lang="<?php echo $language ?>" class="<?php echo implode(' ', $body_classes); ?>" <?php if (isset($bodyattribs)) { ?><?php echo $bodyattribs?><?php } if($infobox) {?> onmousemove="InfoBoxMM(event);"<?php } ?>>
+<body lang="<?php echo $language ?>" class="<?php echo implode(' ', $body_classes); ?>" <?php if (isset($bodyattribs)) { ?><?php echo $bodyattribs?><?php } ?>>
 
 <!-- Loading graphic -->
 <div id="LoadingBox"><?php echo $lang["pleasewait"] ?><img src="<?php echo $baseurl_short ?>gfx/interface/loading.gif"></div>
