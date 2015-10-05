@@ -1034,7 +1034,7 @@ function email_resource($resource,$resourcename,$fromusername,$userlist,$message
 	if($attach_user_smart_groups)
 		{
 		$group_userlist=resolve_userlist_groups_smart($userlist,true);
-		$userlist=array_merge($uerlist,$group_userlist);
+		$userlist=array_merge($userlist,$group_userlist);
 		}
 		
 	$ulist=trim_array(explode(",",$userlist));
