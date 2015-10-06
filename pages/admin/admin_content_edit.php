@@ -253,8 +253,8 @@ if($html_validation !== true && $html_validation !== '')
 				<input type="submit" name="save" value="<?php echo $lang['saveandreturntolist']; ?>" onClick="jQuery('#returntolist').val(true);" />
 			</div>
 		</form>
-	</div>
-</div>
+	</div><!-- End of BasicsBox -->
+
 <script>
 // When to take us back to manage content list
 jQuery('#deleteme, #deletecustom').change(function() {
