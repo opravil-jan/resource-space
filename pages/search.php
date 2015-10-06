@@ -10,7 +10,7 @@ include_once '../include/render_functions.php';
 $s=explode(" ",getvalescaped("search",""));
 $k=getvalescaped("k","");if (($k=="") || (!check_access_key_collection(str_replace("!collection","",$s[0]),$k))) {include "../include/authenticate.php";}
 
-if ($k="")
+if ($k=="")
     {
     #note current user collection for add/remove links if we haven't got it set already
     if(!isset($usercollection))
