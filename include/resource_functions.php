@@ -1031,12 +1031,21 @@ function email_resource($resource,$resourcename,$fromusername,$userlist,$message
 
 	if (trim($userlist)=="") {return ($lang["mustspecifyoneusername"]);}
 	$userlist=resolve_userlist_groups($userlist);
-	if($attach_user_smart_groups)
+	
+	if($attach_user_smart_groups && strpos($userlist,$lang["groupsmart"] . ": ")!==false)
 		{
-		$group_userlist=resolve_userlist_groups_smart($userlist,true);
-		$userlist=array_merge($userlist,$group_userlist);
+		$groups_users=resolve_userlist_groups_smart($userlist,true);
+		if($groups_users!='')
+			{
+			if($userlist!="")
+				{
+				$userlist=remove_groups_smart_from_userlist($userlist);
+				$userlist.=",";
+				}
+			$userlist.=$groups_users;
+			}
 		}
-		
+	
 	$ulist=trim_array(explode(",",$userlist));
 	$ulist=array_filter($ulist);
 	$ulist=array_values($ulist);

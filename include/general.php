@@ -2523,7 +2523,27 @@ function resolve_userlist_groups_smart($userlist,$return_usernames=false)
 		}
 	return $newlist;
 	}
+
+function remove_groups_smart_from_userlist($ulist)
+	{
+	global $lang;
 	
+	$ulist=explode(",",$ulist);
+	$new_ulist='';
+	foreach($ulist as $option)
+		{
+		if(strpos($option,$lang["groupsmart"] . ": ")===false)
+			{
+			if($new_ulist!="")
+				{
+				$new_ulist.=",";
+				}
+			$new_ulist.=$option;
+			}
+		}
+	return $new_ulist;
+	}
+
 function get_suggested_keywords($search,$ref="")
 	{
 	# For the given partial word, suggest complete existing keywords.
