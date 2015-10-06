@@ -1040,7 +1040,10 @@ function email_resource($resource,$resourcename,$fromusername,$userlist,$message
 			if($userlist!="")
 				{
 				$userlist=remove_groups_smart_from_userlist($userlist);
-				$userlist.=",";
+				if($userlist!="")
+					{
+					$userlist.=",";
+					}
 				}
 			$userlist.=$groups_users;
 			}

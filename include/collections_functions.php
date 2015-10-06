@@ -988,12 +988,27 @@ function email_collection($colrefs,$collectionname,$fromusername,$userlist,$mess
 	# Add $collection to these user's 'My Collections' page
 	# Send them an e-mail linking to this collection
 	#  handle multiple collections (comma seperated list)
-	global $baseurl,$email_from,$applicationname,$lang,$userref, $email_multi_collections,$usergroup;
+	global $baseurl,$email_from,$applicationname,$lang,$userref, $email_multi_collections,$usergroup,$attach_user_smart_groups;
 	if ($useremail==""){$useremail=$email_from;}
 	if ($group==""){$group=$usergroup;}
 	
 	if (trim($userlist)=="") {return ($lang["mustspecifyoneusername"]);}
 	$userlist=resolve_userlist_groups($userlist);
+	
+	if($attach_user_smart_groups && strpos($userlist,$lang["groupsmart"] . ": ")!==false){
+		$groups_users=resolve_userlist_groups_smart($userlist,true);
+		if($groups_users!=''){
+			if($userlist!=""){
+				$userlist=remove_groups_smart_from_userlist($userlist);
+				if($userlist!="")
+					{
+					$userlist.=",";
+					}
+			}
+			$userlist.=$groups_users;
+		}
+	}
+
 	$ulist=trim_array(explode(",",$userlist));
 	$emails=array();
 	$key_required=array();
