@@ -1031,9 +1031,9 @@ function email_resource($resource,$resourcename,$fromusername,$userlist,$message
 
 	if (trim($userlist)=="") {return ($lang["mustspecifyoneusername"]);}
 	$userlist=resolve_userlist_groups($userlist);
-	
 	if($attach_user_smart_groups && strpos($userlist,$lang["groupsmart"] . ": ")!==false)
 		{
+		$userlist_with_groups=$userlist;
 		$groups_users=resolve_userlist_groups_smart($userlist,true);
 		if($groups_users!='')
 			{
@@ -1070,7 +1070,8 @@ function email_resource($resource,$resourcename,$fromusername,$userlist,$message
 
 #	Commented 'no message' line out as formatted oddly, and unnecessary.
 #	if ($message==""){$message=$lang['nomessage'];}
-
+	$resolve_open_access=false;
+	
 	for ($n=0;$n<count($emails);$n++)
 		{
 		$key="";
@@ -1080,10 +1081,11 @@ function email_resource($resource,$resourcename,$fromusername,$userlist,$message
 			$k=generate_resource_access_key($resource,$userref,$access,$expires,$emails[$n],$group);
 			$key="&k=". $k;
 			}
-                elseif ($useraccess==0 && $open_internal_access)
-                    {
-                    $userid=sql_value("select ref value from user where email='$emails[$n]'","");
-                    open_access_to_user($userid,$resource,$expires);    
+                elseif ($useraccess==0 && $open_internal_access && !$resolve_open_access)
+                    {debug("smart_groups: going to resolve open access");
+					# get this all done at once
+					resolve_open_access((isset($userlist_with_groups)?$userlist_with_groups:$userlist),$resource,$expires);
+					$resolve_open_access=true;
                     }
 		
 		# make vars available to template
@@ -1446,12 +1448,17 @@ function save_resource_custom_access($resource)
 		}
 	}
 	
-function get_custom_access($resource,$usergroup)
+function get_custom_access($resource,$usergroup,$return_default=true)
 	{
-	global $custom_access;
+	global $custom_access,$default_customaccess;
 	if ($custom_access==false) {return 0;} # Custom access disabled? Always return 'open' access for resources marked as custom.
 
-	return sql_value("select access value from resource_custom_access where resource='$resource' and usergroup='$usergroup'",2);
+	$result=sql_value("select access value from resource_custom_access where resource='$resource' and usergroup='$usergroup'",'');
+	if($result=='' && $return_default)
+		{
+		return $default_customaccess;
+		}
+	return $result;
 	}
 	
 function get_themes_by_resource($ref)
@@ -2285,6 +2292,7 @@ function get_resource_access($resource)
                 $resourcedata=$resource;
                 $passthru="yes";
                 }
+                
 	$ref=$resourcedata['ref'];
 	$access=$resourcedata["access"];
 	$resource_type=$resourcedata['resource_type'];
@@ -2343,16 +2351,18 @@ function get_resource_access($resource)
 		}
 
 
-	# Check for user-specific access (overrides any other restriction)
-	global $userref;
+	# Check for user-specific and group-specific access (overrides any other restriction)
+	global $userref,$usergroup;
 
 	if ($passthru=="no")
         {
-		$userspecific=get_custom_access_user($resource,$userref);	
+		$userspecific=get_custom_access_user($resource,$userref);
+		$groupspecific=get_custom_access($resource,$usergroup,false);	
 		} 
 	else
-                {
+        {
 		$userspecific=$resourcedata['user_access'];
+		$groupspecific=$resourcedata['group_access'];
 		}
 
 	
@@ -2361,12 +2371,17 @@ function get_resource_access($resource)
 		$customuseraccess=true;
 		return $userspecific;
 		}
+	if ($groupspecific!="")
+		{
+		$customgroupaccess=true;
+		return $groupspecific;
+		}
         
-        if (checkperm('T'.$resource_type))
-                {
-                // this resource type is always confidential/hidden for this user group
-				return 2;
-                }
+	if (checkperm('T'.$resource_type))
+		{
+		// this resource type is always confidential/hidden for this user group
+		return 2;
+		}
 		
 	global $usersearchfilter, $search_filter_strict; 
 	if ((trim($usersearchfilter)!="") && $search_filter_strict)
@@ -2467,7 +2482,7 @@ function edit_resource_external_access($key,$access=-1,$expires="",$group="")
 if (!function_exists("resource_download_allowed")){
 function resource_download_allowed($resource,$size,$resource_type,$alternative=-1)
 	{
-
+	
 	# For the given resource and size, can the curent user download it?
 	# resource type and access may already be available in the case of search, so pass them along to get_resource_access to avoid extra queries
 	# $resource can be a resource-specific search result array.
@@ -2479,7 +2494,8 @@ function resource_download_allowed($resource,$size,$resource_type,$alternative=-
 		# Only if no specific user access override (i.e. they have successfully requested this size).
 		global $userref;
 		$usercustomaccess = get_custom_access_user($resource,$userref);
-		if ($usercustomaccess === false || !($usercustomaccess==='0')) {return false;}
+		$usergroupcustomaccess = get_custom_access($resource,$usergroup);
+		if (($usercustomaccess === false || !($usercustomaccess==='0')) && ($usergroupcustomaccess === false || !($usergroupcustomaccess==='0'))) {return false;}
 		}
 
 	# Full access

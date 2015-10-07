@@ -1830,49 +1830,82 @@ else
           $ref
           );
        $rca_users = sql_query($query);
+       
+       $group_query = sprintf('
+          SELECT rca.usergroup AS usergroup_ref,
+          u.name AS name
+          FROM resource_custom_access AS rca
+          INNER JOIN usergroup AS u ON rca.usergroup = u.ref
+          WHERE resource = "%s";
+          ',
+          $ref
+          );
+       $rca_usergroups = sql_query($group_query);
 
        ?>
     </div> <!-- end of previous collapsible section -->
     <h2 id="resource_custom_access" <?php echo ($collapsible_sections) ? ' class="CollapsibleSectionHead"' : ''; ?>>Resource custom access</h2>
     <div  id="ResourceCustomAccessSection" <?php echo ($collapsible_sections) ? 'class="CollapsibleSection"' : ''; ?>>
        <script type="text/javascript">
-       function removeCustomAccess(user_ref) {
+       function removeCustomAccess(ref,type) {
+		console.log('<?php echo $baseurl_short; ?>pages/ajax/remove_custom_access.php?resource=<?php echo $ref?>&ref='+ref+'&type='+type);
         jQuery.ajax({
           type: 'POST',
           url: '<?php echo $baseurl_short; ?>pages/ajax/remove_custom_access.php',
           data: {
             ajax: 'true',
             resource: <?php echo $ref; ?>,
-            user_ref: user_ref
+            ref: ref,
+            type: type
          },
          success: function() {
-            jQuery('#rca_user_' + user_ref).remove();
+			 if(type=='user')
+				{
+				jQuery('#rca_user_' + ref).remove();
+				}
+			else if (type=='usergroup')
+				{
+				jQuery('#rca_usergroup_' + ref).remove();	
+				}
          }
       });
      }
      </script>
      <div class="Question" id="question_resource_custom_access">
-      <label for="res_custom_access">Users with custom access</label>
+      <label for="res_custom_access"><?php echo $lang['remove_custom_access_users_groups']?></label>
       <!-- table here -->
       <table id="res_custom_access" cellpadding="3" cellspacing="3">
         <tbody>
           <?php
           foreach ($rca_users as $rca_user_info)
-          {
+			{
              ?>
              <tr id="rca_user_<?php echo $rca_user_info['user_ref'] ?>">
                <td valign="middle" nowrap=""><?php echo $rca_user_info['user']; ?></td>
                <td valign="middle" nowrap="">&nbsp;</td>
                <td width="10" valign="middle">
                  <input type="hidden" name="remove_access_user_ref" value="<?php echo $rca_user_info['user_ref'] ?>">
-                 <input type="submit" name="remove_access" value="Remove access" onClick="removeCustomAccess(<?php echo $rca_user_info['user_ref']; ?>); return false;">
+                 <input type="submit" name="remove_access" value="Remove access" onClick="removeCustomAccess(<?php echo $rca_user_info['user_ref']; ?>,'user'); return false;">
+              </td>
+           </tr>
+           <?php
+			}
+        foreach ($rca_usergroups as $rca_usergroup_info)
+			{
+             ?>
+             <tr id="rca_group_<?php echo $rca_usergroup_info['usergroup_ref'] ?>">
+               <td valign="middle" nowrap=""><?php echo $rca_usergroup_info['name']." (".$lang['group'].")"?></td>
+               <td valign="middle" nowrap="">&nbsp;</td>
+               <td width="10" valign="middle">
+                 <input type="hidden" name="remove_access_usergroup_ref" value="<?php echo $rca_usergroup_info['usergroup_ref'] ?>">
+                 <input type="submit" name="remove_access_group" value="Remove access" onClick="removeCustomAccess(<?php echo $rca_usergroup_info['usergroup_ref']; ?>,'usergroup'); return false;">
               </td>
            </tr>
            <?php
         }
 
                     // Add a default message if no users are attached
-        if(count($rca_users) == 0)
+        if(count($rca_users) == 0 && count($rca_usergroups) == 0)
         {
           ?>
           <tr>

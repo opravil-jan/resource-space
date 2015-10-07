@@ -3257,6 +3257,51 @@ function open_access_to_user($user,$resource,$expires)
 	
 	return true;
 	}
+
+function open_access_to_group($group,$resource,$expires)
+	{
+	# Give the user full access to the given resource.
+	# Used when approving requests.
+	
+	# Delete any existing custom access
+	sql_query("delete from resource_custom_access where usergroup=$group and resource=$resource");
+	
+	# Insert new row
+	sql_query("insert into resource_custom_access(resource,access,usergroup,user_expires) values ('$resource','0',$group," . ($expires==""?"null":"'$expires'") . ")");
+	
+	return true;
+	}
+
+function resolve_open_access($userlist,$resource,$expires)
+	{
+	global $open_internal_access,$lang;
+	
+	$groupids=resolve_userlist_groups_smart($userlist);
+	debug("smart_groups: list=".$groupids);
+	if($groupids!='')
+		{
+		$groupids=explode(",",$groupids);
+		foreach ($groupids as $group)
+			{
+			open_access_to_group($group,$resource,$expires);
+			}
+		$userlist=remove_groups_smart_from_userlist($userlist); 
+		}
+	if($userlist!='')
+		{
+		$userlist_array=explode(",",$userlist);
+		debug("smart_groups: userlist=".$userlist);
+		foreach($userlist_array as $option)
+			{
+			#user
+			$userid=sql_value("select ref value from user where username='$option'","");
+			if($userid!="")
+				{
+				open_access_to_user($userid,$resource,$expires);   
+				}
+			}
+		}
+	}
 	
 function remove_access_to_user($user,$resource)
 	{
