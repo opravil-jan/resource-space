@@ -302,7 +302,7 @@ function send_periodic_report_emails()
 		if(!$unsubscribed_user)
 			{
 			echo $lang["sendingreportto"] . " " . $email . "<br>" . $output . $delete_link . $unsubscribe . "<br>";
-			send_mail($email,$title,$output . $delete_link  . $unsubscribe,"","","",null,"","",true);
+			send_mail($email,$title,$output . $delete_link  . $unsubscribe);
 			}
 
 		// Jump to next report if this should only be sent to one user
@@ -355,7 +355,7 @@ function send_periodic_report_emails()
 				);
 
 				echo $lang["sendingreportto"] . " " . $email . "<br>" . $output . $unsubscribe_link . "<br>";
-				send_mail($email, $title, $output . $unsubscribe_link, '', '', '', null, '', '', true);
+				send_mail($email, $title, $output . $unsubscribe_link);
 				}
 			}
 

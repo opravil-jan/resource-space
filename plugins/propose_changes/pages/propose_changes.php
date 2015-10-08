@@ -147,7 +147,7 @@ if (getval("save","")!="")
 		
 		debug("propose_Changes: sending accepted email to user " . $view_user);
 		$notifyuser=get_user($view_user);
-		send_mail($notifyuser["email"],$applicationname . ": " . $lang["propose_changes_proposed_changes_reviewed"],$message,"","","emailproposedchangesreviewed",$templatevars,"","",true);
+		send_mail($notifyuser["email"],$applicationname . ": " . $lang["propose_changes_proposed_changes_reviewed"],$message,"","","emailproposedchangesreviewed",$templatevars);
 			
 		 
 		redirect($baseurl_short."pages/view.php?ref=" . $ref . "&search=" . urlencode($search) . "&offset=" . $offset . "&order_by=" . $order_by . "&sort=".$sort."&archive=" . $archive . "&refreshcollectionframe=true");
@@ -199,7 +199,7 @@ if (getval("save","")!="")
 				{				
 				debug("propose_changes: sending submitted email to admin");
 				
-				send_mail($email_notify,$applicationname . ": " . $lang["propose_changes_proposed_changes_submitted"],$message,"","","emailproposedchanges",$templatevars,"","",true);
+				send_mail($email_notify,$applicationname . ": " . $lang["propose_changes_proposed_changes_submitted"],$message,"","","emailproposedchanges",$templatevars);
 				}
 			if($propose_changes_notify_contributor)
 				{
@@ -207,7 +207,7 @@ if (getval("save","")!="")
 				if($notifyuser)
 					{
 					debug("propose_changes: sending submitted email to contributor");
-					send_mail($notifyuser["email"],$applicationname . ": " . $lang["propose_changes_proposed_changes_submitted"],$message,"","","emailproposedchanges",$templatevars,"","",true);;
+					send_mail($notifyuser["email"],$applicationname . ": " . $lang["propose_changes_proposed_changes_submitted"],$message,"","","emailproposedchanges",$templatevars);
 					}
 				}
 					
@@ -216,7 +216,7 @@ if (getval("save","")!="")
 				if($propose_changes_notify_address!="")
 					{	
 					debug("propose_changes: sending submitted email to : ". $propose_changes_notify_address);
-					send_mail($propose_changes_notify_address,$applicationname . ": " . $lang["propose_changes_proposed_changes_submitted"],$message,"","","emailproposedchanges",$templatevars,"","",true);
+					send_mail($propose_changes_notify_address,$applicationname . ": " . $lang["propose_changes_proposed_changes_submitted"],$message,"","","emailproposedchanges",$templatevars);
 					}
 				}					
 			$resulttext=$lang["propose_changes_proposed_changes_submitted"];			

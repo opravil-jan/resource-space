@@ -3475,12 +3475,12 @@ function payment_set_complete($collection,$emailconfirmation="")
 	$summary.="</table>";
 	# Send email to admin
 	$message=$lang["purchase_complete_email_admin_body"] . "<br>" . $lang["username"] . ": " . $username . "(" . $userfullname . ")<br>" . $summary . "<br><br>$baseurl/?c=" . $collection . "<br>";
-	send_mail($email_notify,$applicationname . ": " . $lang["purchase_complete_email_admin"],$message,"","","",null,"","",true);
+	send_mail($email_notify,$applicationname . ": " . $lang["purchase_complete_email_admin"],$message);
 	
 	#Send email to user
 	$confirmation_address=($emailconfirmation!="")?$emailconfirmation:$useremail;	
 	$userconfirmmessage= $lang["purchase_complete_email_user_body"] . $summary . "<br><br>$baseurl/?c=" . $collection . "<br>";
-	send_mail($useremail,$applicationname . ": " . $lang["purchase_complete_email_user"] ,$userconfirmmessage,"","","",null,"","",true);
+	send_mail($useremail,$applicationname . ": " . $lang["purchase_complete_email_user"] ,$userconfirmmessage);
 	
 	# Rename so that can be viewed on my purchases page
 	sql_query("update collection set name= '" . date("Y-m-d H:i") . "' where ref='$collection'");
