@@ -2102,12 +2102,7 @@ function compile_collection_actions(array $collection_data, $top_actions)
     // Download option
     if($download_usage && ((isset($zipcommand) || $collection_download) && $count_result > 0))
         {
-        $data_attribute['url'] = sprintf('%spages/terms.php?k=%s&url=pages/download_usage.php?collection=%s&k=%s',
-            $baseurl_short,
-            urlencode($k),
-            urlencode($collection_data['ref']),
-            urlencode($k)
-        );
+        $data_attribute['url'] = $baseurl_short . "pages/terms.php?k=" . urlencode($k) . "&url=pages/download_usage.php?collection=" . urlencode($collection_data['ref']) ."%26k=" . urlencode($k);
         $options[$o]['value']='download_collection';
 		$options[$o]['label']=$lang['action-download'];
 		$options[$o]['data_attr']=$data_attribute;
@@ -2115,12 +2110,7 @@ function compile_collection_actions(array $collection_data, $top_actions)
         }
     else if((isset($zipcommand) || $collection_download) && $count_result > 0)
         {
-        $data_attribute['url'] = sprintf('%spages/terms.php?k=%s&url=pages/collection_download.php?collection=%s&k=%s',
-            $baseurl_short,
-            urlencode($k),
-            urlencode($collection_data['ref']),
-            urlencode($k)
-        );
+        $data_attribute['url'] = $baseurl_short . "pages/terms.php?k=" . urlencode($k) . "&url=pages/collection_download.php?collection=" . urlencode($collection_data['ref']) ."%26k=" . urlencode($k);
         $options[$o]['value']='download_collection';
 		$options[$o]['label']=$lang['action-download'];
 		$options[$o]['data_attr']=$data_attribute;
@@ -2128,10 +2118,7 @@ function compile_collection_actions(array $collection_data, $top_actions)
         }
     else if(isset($zipcommand) || $collection_download) 
         {
-        $data_attribute['url'] = sprintf('%spages/terms.php?url=pages/collection_download.php?collection=%s',
-            $baseurl_short,
-            urlencode($collection_data['ref'])
-        );
+        $data_attribute['url'] = $baseurl_short . "pages/terms.php?k=" . urlencode($k) . "&url=pages/collection_download.php?collection=" . urlencode($collection_data['ref']) ."%26k=" . urlencode($k);
         $options[$o]['value']='download_collection';
 		$options[$o]['label']=$lang['action-download'];
 		$options[$o]['data_attr']=$data_attribute;
@@ -2139,7 +2126,7 @@ function compile_collection_actions(array $collection_data, $top_actions)
         }
 
     // Contact Sheet
-    if($contact_sheet == true && ($manage_collections_contact_sheet_link || $contact_sheet_link_on_collection_bar))
+    if($k=="" && $contact_sheet == true && ($manage_collections_contact_sheet_link || $contact_sheet_link_on_collection_bar))
         {
         $data_attribute = array(
             'url' => sprintf('%spages/contactsheet_settings.php?ref=%s',
@@ -2155,7 +2142,7 @@ function compile_collection_actions(array $collection_data, $top_actions)
         }
 
     // Share
-    if($manage_collections_share_link && $allow_share && (checkperm('v') || checkperm ('g'))) 
+    if($k=="" && $manage_collections_share_link && $allow_share && (checkperm('v') || checkperm ('g'))) 
         {
         $extra_tag_attributes = sprintf('
                 data-url="%spages/collection_share.php?ref=%s"
@@ -2172,7 +2159,7 @@ function compile_collection_actions(array $collection_data, $top_actions)
         }
 
     // Remove
-    if($manage_collections_remove_link && $userref != $collection_data['user'])
+    if($k=="" && $manage_collections_remove_link && $userref != $collection_data['user'])
         {
         $options[$o]['value']='remove_collection';
 		$options[$o]['label']=$lang['action-remove'];
@@ -2180,7 +2167,7 @@ function compile_collection_actions(array $collection_data, $top_actions)
         }
 
     // Delete
-    if((($userref == $collection_data['user']) || checkperm('h')) && ($collection_data['cant_delete'] == 0)) 
+    if($k=="" && (($userref == $collection_data['user']) || checkperm('h')) && ($collection_data['cant_delete'] == 0)) 
         {
         $options[$o]['value']='delete_collection';
 		$options[$o]['label']=$lang['action-delete'];
@@ -2188,7 +2175,7 @@ function compile_collection_actions(array $collection_data, $top_actions)
         }
 
     // Collection Purge
-    if($collection_purge && isset($collections) && checkperm('e0') && $collection_data['cant_delete'] == 0)
+    if($k=="" && $collection_purge && isset($collections) && checkperm('e0') && $collection_data['cant_delete'] == 0)
         {
         $options[$o]['value']='purge_collection';
 		$options[$o]['label']=$lang['purgeanddelete'];
@@ -2196,7 +2183,7 @@ function compile_collection_actions(array $collection_data, $top_actions)
         }
 
     // Collection log
-    if(($userref== $collection_data['user']) || (checkperm('h')))
+    if($k=="" && ($userref== $collection_data['user']) || (checkperm('h')))
         {
         $extra_tag_attributes = sprintf('
                 data-url="%spages/collection_log.php?ref=%s"
@@ -2213,13 +2200,9 @@ function compile_collection_actions(array $collection_data, $top_actions)
         }
         
     // View all
-    if((isset($collection_data["c"]) && $collection_data["c"]>0) || count($result) > 0)
+    if($k=="" && (isset($collection_data["c"]) && $collection_data["c"]>0) || count($result) > 0)
         {
-        $data_attribute['url'] = sprintf('%spages/search.php?search=!collection%s',
-            $baseurl_short,
-            urlencode($collection_data['ref'])
-        );
-
+        $data_attribute['url'] =  $baseurl_short . 'pages/search.php?search=!collection' . urlencode($collection_data['ref']) . "&k=" . urlencode($k);
         $options[$o]['value']='view_all_resources_in_collection';
 		$options[$o]['label']=$lang['view_all_resources'];
 		$options[$o]['data_attr']=$data_attribute;
@@ -2228,7 +2211,7 @@ function compile_collection_actions(array $collection_data, $top_actions)
 
     // Edit all
     # If this collection is (fully) editable, then display an edit all link
-    if($show_edit_all_link && (count($result) > 0))
+    if($k=="" && $show_edit_all_link && (count($result) > 0))
         {
         if(!$edit_all_checkperms || allow_multi_edit($collection_data['ref'])) 
             {
@@ -2249,7 +2232,8 @@ function compile_collection_actions(array $collection_data, $top_actions)
 
     // Delete all
     // Note: functionality moved from edit collection page
-    if(!$top_actions
+    if($k=="" 
+		&& !$top_actions
         && (count($result) != 0 || $count_result != 0)
         && !(isset($allow_resource_deletion) && !$allow_resource_deletion)
         && collection_writeable($collection_data['ref'])
@@ -2279,7 +2263,7 @@ function compile_collection_actions(array $collection_data, $top_actions)
         }
 
     // Remove all
-    if(isset($emptycollection) && $remove_resources_link_on_collection_bar && collection_writeable($collection_data['ref']))
+    if($k == '' && isset($emptycollection) && $remove_resources_link_on_collection_bar && collection_writeable($collection_data['ref']))
         {
         $data_attribute['url'] = sprintf('%spages/collections.php?emptycollection=%s&removeall=true&submitted=removeall&ajax=true',
             $baseurl_short,
@@ -2293,7 +2277,7 @@ function compile_collection_actions(array $collection_data, $top_actions)
         }
     
     // Edit Previews
-	if ($count_result>0 && ($userref == $collection_data['user'] || $collection_data['allow_changes'] == 1 || checkperm('h')))
+	if ($k == '' && $count_result>0 && ($userref == $collection_data['user'] || $collection_data['allow_changes'] == 1 || checkperm('h')))
 		{
 		$main_pages=array("search","collection_manage","collection_public","themes");
 		$back_to_page=(in_array($pagename,$main_pages)?htmlspecialchars($pagename):"");
@@ -2314,7 +2298,7 @@ function compile_collection_actions(array $collection_data, $top_actions)
 		}
 
     // Show disk usage
-    if(!$top_actions && $show_searchitemsdiskusage) 
+    if($k == '' && !$top_actions && $show_searchitemsdiskusage) 
         {
         $extra_tag_attributes = sprintf('
                 data-url="%spages/search_disk_usage.php?search=!collection%s&k=%s"

@@ -134,12 +134,7 @@ function render_actions(array $collection_data, $top_actions = true, $two_line =
 
     global $baseurl, $lang, $k, $pagename;
 
-    // No need for dropdown actions when sharing externally
-    if(trim($k) !== '')
-        {
-        return;
-        }
-
+    
     // globals that could also be passed as a reference
     global $result /*search result*/;
 
@@ -183,7 +178,8 @@ function render_actions(array $collection_data, $top_actions = true, $two_line =
             $actions_array = array_merge($collection_actions_array, $search_actions_array);
             
             $modify_actions_array = hook('modify_unified_dropdown_actions_options', '', array($actions_array,$top_actions));
-            if(!empty($modify_actions_array))
+            
+	if(!empty($modify_actions_array))
                 {
                 $actions_array = $modify_actions_array;
                 }

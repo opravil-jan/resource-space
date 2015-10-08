@@ -23,9 +23,9 @@ function HookRefineresultsSearchRender_search_actions_add_option($options)
     if($k != '' || ($k == '' && substr($search, 0, 1) == '!'))
         {
         $s = explode(' ', $search);
-        $default_search = $s[0];
+        $default_search = str_replace(',','',$s[0]);
         }
-
+	
     // Search within these results option
     if ($results > 1)
         {
@@ -39,19 +39,14 @@ function HookRefineresultsSearchRender_search_actions_add_option($options)
     // Clear search terms option
     if($search != '')
         {
-        $data_attribute['url'] = sprintf('%spages/search.php?search=%s%s',
-            $baseurl_short,
-            $default_search,
-            $parameters_string
-        );
-        $options[$c]['value']='clear_search_terms';
+        $data_attribute['url'] = $baseurl_short . 'pages/search.php?search=' . $default_search . $parameters_string . '&k=' . urlencode($k);
+		$options[$c]['value']='clear_search_terms';
 		$options[$c]['label']=$lang['clearsearch'];
 		$options[$c]['data_attr']=$data_attribute;
 		$c++;
 		
 		$return=true;
         }
-	
 	if($return)
 		{
 		return $options;
