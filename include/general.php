@@ -966,8 +966,9 @@ function get_user($ref)
         if (isset($udata_cache[$ref])){
           $return=$udata_cache[$ref];
         } else {
-	$udata_cache[$ref]=sql_query("select u.*, g.permissions, g.fixed_theme, g.parent, g.search_filter, g.edit_filter, g.ip_restrict ip_restrict_group, g.name groupname, u.ip_restrict ip_restrict_user, resource_defaults,g.config_options,g.request_mode, g.derestrict_filter from user u join usergroup g on u.usergroup=g.ref where u.ref='$ref'");
+	$udata_cache[$ref]=sql_query("select u.*, g.permissions, g.fixed_theme, g.parent, g.search_filter, g.edit_filter, g.ip_restrict ip_restrict_group, g.name groupname, u.ip_restrict ip_restrict_user, resource_defaults,g.config_options,g.request_mode, g.derestrict_filter from user u left join usergroup g on u.usergroup=g.ref where u.ref='$ref'");
 	}
+    
 	# Return a user's credentials.
 	if (count($udata_cache[$ref])>0) {return $udata_cache[$ref][0];} else {return false;}
 	}
