@@ -917,9 +917,14 @@ function create_previews($ref,$thumbonly=false,$extension="jpg",$previewonly=fal
 	
 	# Debug
 	debug("File source is $file");
-	
-	# Make sure the file exists
-	if (!file_exists($file)) {return false;}
+	# Make sure the file exists, if not update preview_attempts so that we don't keep trying to generate a preview
+	if (!file_exists($file)) 
+		{
+		sql_query("update resource set preview_attempts=ifnull(preview_attempts,0) + 1 where ref='$ref'");
+		return false;
+		}
+					
+
 	
 	# If configured, make sure the file is within the size limit for preview generation
 	if (isset($preview_generate_max_file_size) && !$ignoremaxsize)
@@ -1371,8 +1376,7 @@ function create_previews_using_im($ref,$thumbonly=false,$extension="jpg",$previe
 			{
 			if(!$target)
 				{
-				$preview_attempts=sql_value("select preview_attempts as value from resource where ref=" . $ref, 0);
-				sql_query("update resource set preview_attempts=" . ($preview_attempts+1) . " where ref='$ref'");
+				sql_query("update resource set preview_attempts=ifnull(preview_attempts,0) + 1 where ref='$ref'");
 				}
 			}
 		return true;
