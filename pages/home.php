@@ -227,8 +227,7 @@ if (!hook("replaceslideshow"))
 			$welcometext = true;
 			}
 	} # End of hook replaceslideshow
-if (checkperm("s")) 
-	{
+
 	if($home_dash && $slideshow_big && !$welcometext){loadWelcomeText(); $welcometext=true;}
 	hook("homebeforepanels");
 	?>
@@ -607,7 +606,6 @@ if (checkperm("s"))
 	<div class="clearerleft"></div>
 	<?php
 	if($small_slideshow && !$home_dash && !$welcometext){loadWelcomeText();}
-	} // end of checkperm("s") 
 else 
 	{ ?>
 	<div class="BasicsBox" id="HomeSiteText">
