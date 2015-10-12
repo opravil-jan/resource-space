@@ -230,6 +230,7 @@ foreach($resources as $resource) // For each resources
 			}
 		else
 			{
+			sql_query("update resource set preview_attempts=ifnull(preview_attempts,0) + 1 where ref='" . $resource['ref'] . "'");
 			echo sprintf("Skipped resource " . $resource['ref'] . " - maximum attempts reached or nonexistent file extension. \n");
 			}
 			
