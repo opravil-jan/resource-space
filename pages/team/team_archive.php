@@ -19,6 +19,8 @@ include "../../include/header.php";
 
 	<li><a href="<?php echo $baseurl_short?>pages/search.php?search=<?php echo urlencode("!archivepending")?>" onClick="return CentralSpaceLoad(this,true);"><?php echo $lang["viewresourcespendingarchive"]?></a></li>
 
+	<?php hook("addlinktoteamarchive");?>
+
 	</ul>
 	</div>
 	
