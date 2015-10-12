@@ -16,6 +16,10 @@ if ($k == "" && isset($anonymous_login) && $username == $anonymous_login){
 	$user_is_anon = false;
 }
 
+# Allow alternative configuration settings for this resource type.
+$resource=get_resource_data($ref);
+resource_type_config_override($resource["resource_type"]);
+
 if (getval("save","")!="")
 	{
 	if ($k!="" || $user_is_anon || $userrequestmode==0)
