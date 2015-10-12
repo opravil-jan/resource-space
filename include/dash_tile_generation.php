@@ -81,7 +81,7 @@ function tile_config_theme($tile,$tile_id,$tile_width,$tile_height)
 	}
 function tile_config_themeselector($tile,$tile_id,$tile_width,$tile_height)
 	{
-	global $lang,$pagename,$baseurl_short,$dash_tile_shadows;
+	global $lang,$pagename,$baseurl_short,$dash_tile_shadows, $theme_category_levels, $theme_direct_jump;
 	?>
 	<div class="featuredcollectionselector HomePanel DashTile DashTileDraggable allUsers" tile="<?php echo $tile["ref"]?>" id="<?php echo str_replace("contents_","",$tile_id);?>" >
 		<div id="<?php echo $tile_id?>" class="HomePanelThemes HomePanelDynamicDash HomePanelIN <?php echo ($dash_tile_shadows)? "TileContentShadow":""; ?>" >
@@ -95,12 +95,19 @@ function tile_config_themeselector($tile,$tile_id,$tile_width,$tile_height)
 					for ($n=0;$n<count($headers);$n++)
 						{
 						?>
-						<option value="<?php echo $baseurl_short?>pages/themes.php?header=<?php echo urlencode($headers[$n])?>"><?php echo i18n_get_translated(str_replace("*","",$headers[$n]))?></option>
+						<option value="<?php echo $baseurl_short?>pages/themes.php?theme1=<?php echo urlencode($headers[$n])?>"><?php echo i18n_get_translated(str_replace("*","",$headers[$n]))?></option>
 						<?php
 						}
 					?>
 					</select>
+					<?php
+				if($theme_category_levels == 1 || !$theme_direct_jump)
+					{
+					?>
 					<a id="themeviewall" onClick="return CentralSpaceLoad(this,true);" href="<?php echo $baseurl_short?>pages/themes.php">&gt;&nbsp;<?php echo $lang["viewall"] ?></a>
+					<?php
+					}
+					?>
 				</p>
 		</div>
 	</div>
