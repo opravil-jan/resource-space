@@ -606,16 +606,7 @@ if (!hook("replaceslideshow"))
 	<div class="clearerleft"></div>
 	<?php
 	if($small_slideshow && !$home_dash && !$welcometext){loadWelcomeText();}
-else 
-	{ ?>
-	<div class="BasicsBox" id="HomeSiteText">
-		<div id="HomeSiteTextInner">
-	    	<h1><?php echo text("restrictedtitle")?></h1>
-	    	<p><?php echo text("restrictedtext")?></p>
-		</div>
-	</div>
-	<?php 
-	}
+
 } // End of ReplaceHome hook
 
 include "../include/footer.php";
