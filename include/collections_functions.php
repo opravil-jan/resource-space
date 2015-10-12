@@ -1964,7 +1964,7 @@ function compile_collection_actions(array $collection_data, $top_actions)
            $edit_all_checkperms, $preview_all, $order_by, $sort, $archive, $contact_sheet_link_on_collection_bar,
            $show_searchitemsdiskusage, $emptycollection, $remove_resources_link_on_collection_bar, $count_result,
            $download_usage, $home_dash, $top_nav_upload_type, $pagename, $offset, $col_order_by, $find, $default_sort,
-           $starsearch;
+           $starsearch, $restricted_share;
 
     $options = array();
 	$o=0;
@@ -2142,7 +2142,7 @@ function compile_collection_actions(array $collection_data, $top_actions)
         }
 
     // Share
-    if($k=="" && $manage_collections_share_link && $allow_share && (checkperm('v') || checkperm ('g'))) 
+    if($k=="" && $manage_collections_share_link && $allow_share && (checkperm('v') || checkperm ('g') || (collection_min_access($collection_data['ref'])<=1 && $restricted_share))) 
         {
         $extra_tag_attributes = sprintf('
                 data-url="%spages/collection_share.php?ref=%s"
