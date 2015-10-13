@@ -24,7 +24,9 @@ function loadWelcomeText()
 		{ ?>
 		<div class="BasicsBox <?php echo $home_dash ? 'dashtext':''; ?>" id="HomeSiteText">
 			<div id="HomeSiteTextInner">
-	    	<h1><?php echo str_replace("[ver]",$productversion,text("welcometitle")) ?></h1>
+	    	<h1><?php 
+		# Include version number, but only when this isn't an SVN checkout
+		echo str_replace("[ver]",str_replace("SVN","",$productversion),text("welcometitle")) ?></h1>
 	    	<p><?php echo text("welcometext")?></p>
 	    	</div>
 		</div>
