@@ -240,6 +240,7 @@ $lang = set_language($defaultlanguage);
 <title><?php echo $lang["setup-rs_initial_configuration"];?></title>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <link href="../css/global.css?csr=5" rel="stylesheet" type="text/css" /> 
+<link href="../css/colour.css?csr=5" rel="stylesheet" type="text/css" /> 
 <link href="../css/Col-multi.css" rel="stylesheet" type="text/css" id="colourcss" /> 
 <script type="text/javascript" src="../lib/js/jquery-1.7.2.min.js"></script> 
 
