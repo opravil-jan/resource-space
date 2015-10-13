@@ -660,10 +660,10 @@ var pluploadconfig = {
                         //Change URL if exif box status changes
                         jQuery('#no_exif').live('change', function(){
                                 if(jQuery(this).is(':checked')){
-                                        uploader.settings.url ='<?php echo $baseurl_short?>pages/upload_plupload.php?replace=<?php echo urlencode($replace) ?>&alternative=<?php echo urlencode($alternative) ?>&collection_add=<?php echo urlencode($collection_add)?>&resource_type=<?php echo urlencode($resource_type)?>&autorotate=<?php echo urlencode(getval("autorotate",""))?>&replace_resource=<?php echo urlencode($replace_resource)?>&no_exif=true<?php hook('addtopluploadurl')?>';
+                                        uploader.settings.url ='<?php echo $baseurl_short?>pages/upload_plupload.php?replace=<?php echo urlencode($replace) ?>&alternative=<?php echo urlencode($alternative) ?>&collection_add=<?php echo urlencode($collection_add)?>&resource_type=<?php echo urlencode($resource_type)?>&autorotate=<?php echo urlencode(getval("autorotate",""))?>&replace_resource=<?php echo urlencode($replace_resource)?>&no_exif=yes<?php hook('addtopluploadurl')?>';
                                 }
                                 else {
-                                        uploader.settings.url ='<?php echo $baseurl_short?>pages/upload_plupload.php?replace=<?php echo urlencode($replace) ?>&alternative=<?php echo urlencode($alternative) ?>&collection_add=<?php echo urlencode($collection_add)?>&resource_type=<?php echo urlencode($resource_type)?>&autorotate=<?php echo urlencode(getval("autorotate",""))?>&replace_resource=<?php echo urlencode($replace_resource)?>&no_exif=false<?php hook('addtopluploadurl')?>';
+                                        uploader.settings.url ='<?php echo $baseurl_short?>pages/upload_plupload.php?replace=<?php echo urlencode($replace) ?>&alternative=<?php echo urlencode($alternative) ?>&collection_add=<?php echo urlencode($collection_add)?>&resource_type=<?php echo urlencode($resource_type)?>&autorotate=<?php echo urlencode(getval("autorotate",""))?>&replace_resource=<?php echo urlencode($replace_resource)?>&no_exif=<?php hook('addtopluploadurl')?>';
                                 }
                         });
                 
