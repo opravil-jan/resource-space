@@ -394,9 +394,11 @@ input.warn { border: 2px solid #f00; }
 input.ok{ border:2px solid #0f0; }
 input#submit { margin: 30px; font-size:120%; }
 
-div.configitem { padding-top:10px; padding-left:40px; padding-bottom: 5px; border-bottom: 1px solid #555555; }
-
+div.configitem { padding-top:10px; padding-left:40px; padding-bottom: 5px; border-bottom: 1px solid #555555; clear:left;}
 label { padding-right: 10px; width: 30%; font-weight: bold; }
+
+div.configitem label { width:400px; display:block; float:left;}
+
 div.advsection{ margin-bottom: 20px; }
 .ajloadicon { padding-left:4px; }
 h2#dbaseconfig{  min-height: 32px;}
@@ -1083,7 +1085,7 @@ else
 	<?php if (isset($warnings)){ ?>	
 		<div id="warnheader"><?php echo $lang["setup-warnheader"];?></div>
 	<?php } ?>	
-	<div id="tabs" class="starthidden" style="width:80%;margin:0 auto 0 auto;">
+	<div id="tabs" class="starthidden" style="width:90%;margin:0 auto 0 auto;">
 		<ul>
 			<li><a href="#tab-1"><?php echo $lang["setup-basicsettings"];?></a></li>
 			<li><a href="#tab-2"><?php echo $lang["setup-advancedsettings"];?></a></li>
