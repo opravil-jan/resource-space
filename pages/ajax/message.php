@@ -24,7 +24,7 @@
 			return;
 			}
 
-		// Purge message that have an expired TTL then get out of here
+		// Purge messages that have an expired TTL then get out of here
 		if (isset($_GET['purge']))
 			{
 			message_purge();
@@ -157,14 +157,44 @@
 		}
 		jQuery('div#MessageContainer').append("<div class='MessageBox' style='display: none;' id='" + id + "'>" + message + "<br />" + url + "</div>").after(function()
 		{
-			jQuery("div#" + id).show().bind("click",function() {
-				jQuery("div#" + id).fadeOut("fast").remove();
-				if (typeof callback!=="undefined")
+			var t = window.setTimeout(function()
+			{
+				jQuery("div#" + id).fadeOut("fast",function()
+					{
+						this.remove()
+					}
+				)
+			},<?php echo MESSAGE_FADEOUT_SECONDS; ?>000);
+
+			jQuery("div#" + id).show().bind("click",function()
+			{
+				jQuery("div#" + id).fadeOut("fast", function()
 				{
-					callback(ref);
-				}
-			}).delay(<?php echo MESSAGE_FADEOUT_SECONDS; ?>*1000).fadeOut(<?php echo MESSAGE_FADEOUT_SECONDS; ?>*1000, function() {
-				jQuery("div#" + id).remove();
+					jQuery("div#" + id).remove();
+					jQuery.get('<?php echo $baseurl; ?>/pages/ajax/message.php?seen=' + ref);
+					if (typeof callback === 'function')
+					{
+						callback();
+					}
+				});
+			});
+
+			jQuery("div#" + id).bind("mouseenter",function()
+			{
+				window.clearTimeout(t);
+				jQuery("div#" + id).fadeIn("fast");
+			});
+
+			jQuery("div#" + id).bind("mouseleave",function()
+			{
+				window.clearTimeout(t);
+				t = window.setTimeout(function()
+				{
+					jQuery("div#" + id).fadeOut("fast",function()
+						{
+							this.remove();
+						}
+					)},<?php echo ceil(MESSAGE_FADEOUT_SECONDS / 2); ?>000);
 			});
 		});
 	}
