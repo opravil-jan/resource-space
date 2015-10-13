@@ -19,12 +19,12 @@ include "../include/header.php";
 if (!hook("replacehome")) { 
 function loadWelcomeText() 
 	{
-	global $welcome_text_picturepanel,$no_welcometext,$home_dash;
+	global $welcome_text_picturepanel,$no_welcometext,$home_dash,$productversion;
 	if (!hook('homereplacewelcome') && !$no_welcometext)
 		{ ?>
 		<div class="BasicsBox <?php echo $home_dash ? 'dashtext':''; ?>" id="HomeSiteText">
 			<div id="HomeSiteTextInner">
-	    	<h1><?php echo text("welcometitle")?></h1>
+	    	<h1><?php echo str_replace("[ver]",$productversion,text("welcometitle")) ?></h1>
 	    	<p><?php echo text("welcometext")?></p>
 	    	</div>
 		</div>
