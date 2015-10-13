@@ -1011,7 +1011,11 @@ function save_user($ref)
 		if ($password!=$lang["hidden"])	
 			{
 			# Save password.
-			if (getval("suggest","")=="") {$password=md5("RS" . getvalescaped("username","") . $password);}
+			if (getval("suggest","")=="")
+				{
+				$password = hash('sha256', md5('RS' . getvalescaped('username', '') . $password));
+				}
+
 			$passsql=",password='" . $password . "',password_last_change=now()";
 			}
 			
