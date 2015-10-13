@@ -2277,11 +2277,11 @@ function compile_collection_actions(array $collection_data, $top_actions)
         }
     
     // Edit Previews
-	if ($k == '' && $count_result>0 && ($userref == $collection_data['user'] || $collection_data['allow_changes'] == 1 || checkperm('h')))
+	if ($k == '' && $count_result > 0 && ($userref == $collection_data['user'] || $collection_data['allow_changes'] == 1 || checkperm('h')) && allow_multi_edit($collection_data['ref']))
 		{
-		$main_pages=array("search","collection_manage","collection_public","themes");
-		$back_to_page=(in_array($pagename,$main_pages)?htmlspecialchars($pagename):"");
-		 $data_attribute['url'] = sprintf('%spages/collection_edit_previews.php?ref=%s&offset=%s&order_by=%s&col_order_by=<%s&sort=%s&find=%s&backto=%s',
+		$main_pages   = array('search', 'collection_manage', 'collection_public', 'themes');
+		$back_to_page = (in_array($pagename, $main_pages) ? htmlspecialchars($pagename) : '');
+		$data_attribute['url'] = sprintf('%spages/collection_edit_previews.php?ref=%s&offset=%s&order_by=%s&col_order_by=<%s&sort=%s&find=%s&backto=%s',
             $baseurl_short,
             urlencode($collection_data['ref']),
             urlencode($offset),
@@ -2291,9 +2291,10 @@ function compile_collection_actions(array $collection_data, $top_actions)
             urlencode($find),
             $back_to_page
         );
-        $options[$o]['value']='edit_previews';
-		$options[$o]['label']=$lang['editcollectionresources'];
-		$options[$o]['data_attr']=$data_attribute;
+
+        $options[$o]['value']     = 'edit_previews';
+		$options[$o]['label']     = $lang['editcollectionresources'];
+		$options[$o]['data_attr'] = $data_attribute;
 		$o++;
 		}
 
