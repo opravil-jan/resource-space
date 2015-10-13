@@ -97,7 +97,7 @@ input[readonly] {color: #000000;}
 .HomePanelHelp h2 {background: url(../gfx/interface/help.png) no-repeat 0 0;}
 
 #SearchBoxPanel, #ResearchBoxPanel,#HomeSiteText.dashtext,.HomePanelIN {
-	background: rgba(0, 62, 81, 0.79);
+	background: rgba(30, 30, 30, 0.70);
 	border: 1px solid #d0d0d0;
 	color:#FFF;
 }
