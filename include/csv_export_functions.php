@@ -21,13 +21,9 @@ function generateResourcesMetadataCSV(array $resources)
         {
         foreach(get_resource_field_data($resource['ref'], false, true, -1, getval("k","")!="") as $field_data)
             {
-            if($field_data['name'] == '')
-                {
-                die('Please check field ID ' . $field_data['ref'] . ' and make sure its "' . $lang['property-shorthand_name'] . '" is set!');
-                }
-            $csv_field_headers[$field_data['name']] = $field_data['title'];
+            $csv_field_headers[$field_data['resource_type_field']] = $field_data['title'];
 
-            $resources_fields_data[$resource['ref']][$field_data['name']] = $field_data['value'];
+            $resources_fields_data[$resource['ref']][$field_data['resource_type_field']] = $field_data['value'];
             }
         }
     $csv_field_headers = array_unique($csv_field_headers);
