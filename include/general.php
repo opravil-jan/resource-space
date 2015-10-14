@@ -4247,19 +4247,61 @@ function notify_resource_change($resource)
 # Takes a string and add verbatim regex matches to the keywords list on found matches (for that field)
 # It solves the problem, for example, indexing an entire "nnn.nnn.nnn" string value when '.' are used as a keyword separator.
 # Uses config option $resource_field_verbatim_keyword_regex[resource type field] = '/regex/'
-function add_verbatim_keywords(&$keywords, $string, $resource_type_field)
+# Also changes "field:<value>" type searches to "field:,<value>" for full matching for field types such as "Check box list" (config option to specify this)
+function add_verbatim_keywords(&$keywords, $string, $resource_type_field, $called_from_search=false)
 	{
-	global $resource_field_verbatim_keyword_regex;
-	if (empty($resource_field_verbatim_keyword_regex[$resource_type_field]))
+	global $resource_field_verbatim_keyword_regex,$resource_field_checkbox_match_full;
+
+	// add ",<string>" if specified resource_type_field is found within $resource_field_checkbox_match_full array.
+	if( !$called_from_search &&
+		isset($resource_field_checkbox_match_full) &&
+		is_array($resource_field_checkbox_match_full) &&
+		in_array($resource_type_field,$resource_field_checkbox_match_full))
 		{
-		return;		// return if regex not found or is blank
-		}
-	preg_match_all($resource_field_verbatim_keyword_regex[$resource_type_field], $string, $matches);
-	foreach ($matches as $match)
-		{
-		foreach ($match as $sub_match)
+		preg_match_all('/,[^,]+/', $string, $matches);
+		if (isset($matches[0][0]))
 			{
-			array_push($keywords,$sub_match);		// note that the keywords array is passed in by reference.
+			foreach ($matches[0] as $match)
+				{
+				$match=strtolower($match);
+				array_push($keywords,$match);
+				}
+			}
+		}
+
+	// normal verbatim expansion of keywords as defined in config.php
+	if (!empty($resource_field_verbatim_keyword_regex[$resource_type_field]))
+		{
+		preg_match_all($resource_field_verbatim_keyword_regex[$resource_type_field], $string, $matches);
+		foreach ($matches as $match)
+			{
+			foreach ($match as $sub_match)
+				{
+				array_push($keywords, $sub_match);        // note that the keywords array is passed in by reference.
+				}
+			}
+		}
+
+	// when searching change "field:<string>" to "field:,<string>" if specified resource_type_field is found within $resource_field_checkbox_match_full array.
+	if ($called_from_search &&
+		isset($resource_field_checkbox_match_full) &&
+		is_array($resource_field_checkbox_match_full) &&
+		in_array($resource_type_field,$resource_field_checkbox_match_full))
+		{
+		$found_name = sql_value("SELECT `name` AS 'value' FROM `resource_type_field` WHERE `ref`='{$resource_type_field}'", "");
+		preg_match_all('/' . $found_name . ':([^,]+)/', $string, $matches);
+		if (isset($matches[1][0]))
+			{
+			foreach ($matches[1] as $match)
+				{
+				$match=strtolower($match);
+				$remove = "{$found_name}:{$match}";
+				if (in_array($remove,$keywords))
+					{
+					unset($keywords[array_search($remove,$keywords)]);
+					}
+				array_push($keywords, "{$found_name}:,{$match}");
+				}
 			}
 		}
 	}

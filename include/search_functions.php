@@ -64,7 +64,7 @@ function do_search($search,$restypes="",$order_by="relevance",$archive=0,$fetchr
 
     foreach (get_indexed_resource_type_fields() as $resource_type_field)
         {
-        add_verbatim_keywords($keywords,$search,$resource_type_field);      // add any regex matched verbatim keywords for those indexed resource type fields
+        add_verbatim_keywords($keywords,$search,$resource_type_field,true);      // add any regex matched verbatim keywords for those indexed resource type fields
         }
 
     $search=trim($search);
