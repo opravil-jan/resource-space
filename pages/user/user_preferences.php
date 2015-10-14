@@ -175,18 +175,88 @@ include "../../include/header.php";
 <div class="CollapsibleSections">
     <?php
     // Result display section
+    $all_field_info = get_fields_for_search_display(array_unique(array_merge(
+        $sort_fields,
+        $thumbs_display_fields,
+        $list_display_fields,
+        $xl_thumbs_display_fields,
+        $small_thumbs_display_fields))
+    );
+
+    // Create a sort_fields array with information for sort fields
+    $n  = 0;
+    $sf = array();
+    foreach($sort_fields as $sort_field)
+        {
+        // Find field in selected list
+        for($m = 0; $m < count($all_field_info); $m++)
+            {
+            if($all_field_info[$m]['ref'] == $sort_field)
+                {
+                $field_info      = $all_field_info[$m];
+                $sf[$n]['ref']   = $sort_field;
+                $sf[$n]['title'] = $field_info['title'];
+
+                $n++;
+                }
+            }
+        }
+
+    $sort_order_fields = array('relevance' => $lang['relevance']);
+    if($random_sort)
+        {
+        $sort_order_fields['random'] = $lang['random'];
+        }
+
+    if($popularity_sort)
+        {
+        $sort_order_fields['popularity'] = $lang['popularity'];
+        }
+
+    if($orderbyrating)
+        {
+        $sort_order_fields['rating'] = $lang['rating'];
+        }
+
+    if($date_column)
+        {
+        $sort_order_fields['date'] = $lang['date'];
+        }
+
+    if($colour_sort)
+        {
+        $sort_order_fields['colour'] = $lang['colour'];
+        }
+
+    if($order_by_resource_id)
+        {
+        $sort_order_fields['resourceid'] = $lang['resourceid'];
+        }
+
+    if($order_by_resource_type)
+        {
+        $sort_order_fields['resourcetype'] = $lang['type'];
+        }
+
+    // Add thumbs_display_fields to sort order links for thumbs views
+    for($x = 0; $x < count($sf); $x++)
+        {
+        if(!isset($metadata_template_title_field))
+            {
+            $metadata_template_title_field = false;
+            }
+
+        if($sf[$x]['ref'] != $metadata_template_title_field)
+            {
+            $sort_order_fields['field' . $sf[$x]['ref']] = htmlspecialchars($sf[$x]['title']);
+            }
+        }
+
     $page_def[] = config_add_html('<h2 class="CollapsibleSectionHead">' . $lang['resultsdisplay'] . '</h2><div id="UserPreferenceResultsDisplaySection" class="CollapsibleSection">');
     $page_def[] = config_add_single_select(
         'default_sort',
         $lang['userpreference_default_sort_label'],
-        array(
-            'relevance'  => $lang['relevance'],
-            'resourceid' => $lang['resourceid'],
-            'popularity' => $lang['popularity'],
-            'rating'     => $lang['rating'],
-            'date'       => $lang['date'],
-            'colour'     => $lang['colour'],
-        ),
+        $sort_order_fields,
         true,
         300,
         '',
