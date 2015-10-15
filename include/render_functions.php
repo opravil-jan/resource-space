@@ -165,7 +165,7 @@ function render_actions(array $collection_data, $top_actions = true, $two_line =
         <?php
         }
         ?>
-        <select id="<?php echo $action_selection_id; ?>" <?php if(!$top_actions) { echo 'class="SearchWidth"'; } ?>>
+        <select onchange="action_onchange_<?php echo $action_selection_id; ?>(this.value);" id="<?php echo $action_selection_id; ?>" <?php if(!$top_actions) { echo 'class="SearchWidth"'; } ?>>
             <option class="SelectAction" value=""><?php echo $lang["actions-select"]?></option>
             <?php
 
@@ -211,14 +211,14 @@ function render_actions(array $collection_data, $top_actions = true, $two_line =
             ?>
         </select>
         <script>
-        jQuery('#<?php echo $action_selection_id; ?>').change(function() {
-
-            if(this.value == '')
+        function action_onchange_<?php echo $action_selection_id; ?>(v)
+            {
+            if(v == '')
                 {
                 return false;
                 }
 
-            switch(this.value)
+            switch(v)
                 {
             <?php
             if(!empty($collection_data))
@@ -365,7 +365,7 @@ function render_actions(array $collection_data, $top_actions = true, $two_line =
                 // Go back to no action option
                 jQuery('#<?php echo $action_selection_id; ?> option[value=""]').attr('selected', 'selected');
 
-        });
+        }
         </script>
     </div>
     
