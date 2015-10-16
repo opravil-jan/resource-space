@@ -1079,3 +1079,6 @@ a.FeaturedSimpleLink:hover {
 	max-width: 215px;
 	overflow-wrap: break-word;
 }
+.MessageUnread {
+    font-weight: bold;
+}
