@@ -72,7 +72,7 @@ for ($n=0;$n<count($messages);$n++)
 					if ($messages[$n]["seen"]==0)
 						{
 						?><a href="<?php echo $baseurl_short?>pages/user/user_messages.php" onclick="jQuery.get('<?php
-							echo $baseurl; ?>/pages/ajax/message.php?seen=<?php echo $messages[$n]['ref']; ?>');
+							echo $baseurl; ?>/pages/ajax/message.php?seen=<?php echo $messages[$n]['ref']; ?>',function() { message_poll(); });
 							return CentralSpaceLoad(this,true);
 							">&gt;&nbsp;<?php echo $lang["mymessages_markread"]; ?></a><?php
 						}
