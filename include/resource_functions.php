@@ -783,8 +783,8 @@ function remove_keyword_mappings($ref,$string,$resource_type_field,$partial_inde
 		{
         unset ($kwpos);
 		if (is_array($keywords[$n])){
-			$keywords[$n]=$keywords[$n]['keyword'];            
 			$kwpos=$keywords[$n]['position'];
+			$keywords[$n]=$keywords[$n]['keyword'];
 		}        
 		$kw=$keywords[$n]; 
         if (!isset($kwpos)){$kwpos=$n;}
