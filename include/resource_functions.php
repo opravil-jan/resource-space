@@ -1632,32 +1632,24 @@ function write_metadata($path, $ref, $uniqid="")
                         break;
                     case "keywords":                  
                         # Keywords shall be written one at a time and not all together.
-			if(!isset($writtenfields["keywords"])){$writtenfields["keywords"]="";} 
-			$keywords = explode(",", $writevalue); # "keyword1,keyword2, keyword3" (with or without spaces)
-                        if (implode("", $keywords) != "")
+						if(!isset($writtenfields["keywords"])){$writtenfields["keywords"]="";} 
+						$keywords = explode(",", $writevalue); # "keyword1,keyword2, keyword3" (with or without spaces)
+						if (implode("", $keywords) != "")
                         	{
                         	# Only write non-empty keywords/ may be more than one field mapped to keywords so we don't want to overwrite with blank
 	                        foreach ($keywords as $keyword)
 	                            {
-	                            $keyword = trim($keyword);
+                                $keyword = trim($keyword);
 	                            if ($keyword != "")
-	                            	{
-                                        if($exifappend)
-                                            {
-                                            if(strpos($writtenfields[$group_tag],$keyword)!==false)
-                                                {
-                                                // The new keyword is already included in what is being written, skip to next group tag
-                                                continue;                                
-                                                } 
-                                            $writtenfields[$group_tag].=$keyword;
-                                            }
-                                        else
-                                            {$writtenfields[$group_tag]=$writevalue;} 
-                                        # Convert the data to UTF-8 if not already.
-                                        if (!$exiftool_write_omit_utf8_conversion && (!isset($mysql_charset) || (isset($mysql_charset) && strtolower($mysql_charset)!="utf8"))){$keyword = mb_convert_encoding($keyword, 'UTF-8');}
-                                        $command.= escapeshellarg("-" . $group_tag . ($exifappend?"+":"") . "=" . htmlentities($keyword, ENT_QUOTES, "UTF-8")) . " ";
-                                        }
-                                    $exifappend=true; // Need to append for subsequent values
+	                            	{    
+									debug("write_metadata - writing keyword:" . $keyword);
+									$writtenfields[$group_tag].="," . $keyword;
+										 
+									# Convert the data to UTF-8 if not already.
+									if (!$exiftool_write_omit_utf8_conversion && (!isset($mysql_charset) || (isset($mysql_charset) && strtolower($mysql_charset)!="utf8"))){$keyword = mb_convert_encoding($keyword, 'UTF-8');}
+									$command.= escapeshellarg("-" . $group_tag . "-=" . htmlentities($keyword, ENT_QUOTES, "UTF-8")) . " "; // In case value is already embedded, need to manually remove it to prevent duplication
+									$command.= escapeshellarg("-" . $group_tag . "+=" . htmlentities($keyword, ENT_QUOTES, "UTF-8")) . " ";
+									}
 	                            }
 	                        }
                         break;
