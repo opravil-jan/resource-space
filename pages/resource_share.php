@@ -354,42 +354,31 @@ if($editing && !$editexternalurl)
                 {
                 ?>
                 <div class="Listview">
-		
-                    <table border="0" cellspacing="0" cellpadding="0" class="ListviewStyle">
-                        <tr class="ListviewTitleStyle">
-                            <td><?php echo $lang["user"];   ?></td>
-                            <td><?php echo $lang["property-user_group"];        ?></td>
-                            <td><?php echo $lang["expires"];  ?></td>
-                            <td><?php echo $lang["access"];    ?></td>
-                            <!-- Future support for tools (e.g. delete) <td><div class="ListTools"><?php echo $lang["tools"]?></div></td> -->
-                        </tr>
-                <?php
-                foreach ($custom_access_rows as $ca)
-                    {
-		    $expires = ($ca["expires"] == "") ? $lang["never"] : nicedate($ca["expires"],false);
-		    $access  = ($ca["access"] == -1)  ? "" : $lang["access" . $ca["access"]];
-                    ?>
-                        <tr>
-                            <td><?php echo htmlspecialchars($ca["user"])     ?></td>
-                            <td><?php echo htmlspecialchars($ca["usergroup"])                   ?></td>
-                            <td><?php echo htmlspecialchars($expires)                         ?></td>
-                            <td><?php echo htmlspecialchars($access);                         ?></td>
-                            <!--
-			    <td>
-                                <div class="ListTools">
-                                </div>
-                            </td>
-			    -->
-                        </tr>
-                        <?php
-                        }
-                    }
-                    ?>
-                    </table>
-                </div>
-                </div>
-	    
-	    
+					<table border="0" cellspacing="0" cellpadding="0" class="ListviewStyle">
+						<tr class="ListviewTitleStyle">
+							<td><?php echo $lang["user"];   ?></td>
+							<td><?php echo $lang["property-user_group"];        ?></td>
+							<td><?php echo $lang["expires"];  ?></td>
+							<td><?php echo $lang["access"];    ?></td>
+							<!-- Future support for tools (e.g. delete) <td><div class="ListTools"><?php echo $lang["tools"]?></div></td> -->
+						</tr>
+					<?php
+						foreach ($custom_access_rows as $ca)
+						{
+						$expires = ($ca["expires"] == "") ? $lang["never"] : nicedate($ca["expires"],false);
+						$access  = ($ca["access"] == -1)  ? "" : $lang["access" . $ca["access"]];
+						?><tr>
+							<td><?php echo htmlspecialchars($ca["user"]); ?></td>
+							<td><?php echo htmlspecialchars($ca["usergroup"]); ?></td>
+							<td><?php echo htmlspecialchars($expires); ?></td>
+							<td><?php echo htmlspecialchars($access); ?></td>
+						</tr>
+						<?php
+						}
+					?></table>
+				</div> <!-- end Listview --><?php
+				}
+		?></div> <!-- end Question -->
         </form>
     </div>
 </div> <!-- BasicsBox -->
