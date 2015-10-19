@@ -346,40 +346,37 @@ function hook($name,$pagename="",$params=array())
 	$hook_cache_index = $name . "|" . $pagename;
 	
 	# we have already processed this hook name and page combination before so return from cache
-	if (isset($hook_cache[$hook_cache_index])) 
+	if (isset($hook_cache[$hook_cache_index]))
 		{
 		# increment stats
 		global $hook_cache_hits;
-
 		$hook_cache_hits++;
-		$b_return = false;
 
 		foreach ($hook_cache[$hook_cache_index] as $function)
 			{
-			$hook_function_return = call_user_func_array($function, $params);
-			if(is_array($hook_function_return) && isset($hook_cache_result[$hook_cache_index]))
+			$hook_return_value = call_user_func_array($function, $params);
+			if (isset($return_value) && (gettype($return_value) == gettype($hook_return_value)) && (is_array($hook_return_value) || is_string($hook_return_value) || is_bool($hook_return_value)))
 				{
-				// We merge the cached result with the new result from the plugin and remove any duplicates
-				$b_return = array_unique(array_merge_recursive($hook_cache_result[$hook_cache_index], $hook_function_return), SORT_REGULAR);
-				}
-			else if(is_string($hook_function_return) && isset($hook_cache_result[$hook_cache_index]))
-				{
-				$b_return .= $hook_function_return;
+				if (is_array($hook_return_value))
+					{
+					$return_value = array_unique(array_merge_recursive($return_value, $hook_return_value), SORT_REGULAR);		// array merge
+					}
+				elseif (is_string($hook_return_value))
+					{
+					$return_value .= $hook_return_value;		// appends string
+					}
+				elseif (is_bool($hook_return_value))
+					{
+					$return_value = $return_value || $hook_return_value;		// boolean OR
+					}
 				}
 			else
 				{
-				$hook_cache_result[$hook_cache_index] = $hook_function_return;
-				if(is_bool($hook_function_return))
-					{
-					$b_return = $b_return || $hook_function_return;
-					}
-				else
-					{
-					$b_return = $hook_function_return;	
-					} 
+				$return_value = $hook_return_value;
 				}
 			}
-		return $b_return;
+
+		return (isset($return_value) ? $return_value : false);
 		}
 
 	# we have not encountered this hook and page combination before so go add it
