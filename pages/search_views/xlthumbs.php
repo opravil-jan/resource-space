@@ -26,19 +26,7 @@ if (!hook("renderresultlargethumb"))
 				<tr>
 				<td>
     				<?php   
-    				// get mp3 paths if necessary and set $use_mp3_player switch
-					if (!(isset($resource['is_transcoding']) && $resource['is_transcoding']==1) && (in_array($result[$n]["file_extension"],$ffmpeg_audio_extensions)|| $result[$n]["file_extension"]=="mp3")&& $mp3_player && $mp3_player_xlarge_view)
-						{$use_mp3_player=true;} 
-					else {$use_mp3_player=false;}
-					if ($use_mp3_player)
-						{	
-						$mp3realpath=get_resource_path($ref,true,"",false,"mp3");
-						if (file_exists($mp3realpath))
-							{
-							$mp3path=get_resource_path($ref,false,"",false,"mp3");
-							}
-						}
-					$show_flv=false;
+    				$show_flv=false;
 					if ((in_array($result[$n]["file_extension"],$ffmpeg_supported_extensions) || $result[$n]["file_extension"]=="flv") && $flv_player_xlarge_view)
 						{ 
 						$flvfile=get_resource_path($ref,true,"pre",false,$ffmpeg_preview_extension);
@@ -46,6 +34,17 @@ if (!hook("renderresultlargethumb"))
 							{$flvfile=get_resource_path($ref,true,"",false,$ffmpeg_preview_extension);}
 						else if (!(isset($result[$n]['is_transcoding']) && $result[$n]['is_transcoding']!=0) && file_exists($flvfile) && (strpos(strtolower($flvfile),".".$ffmpeg_preview_extension)!==false)) 
 							{$show_flv=true;}
+						}
+					else
+						{
+						// Set $use_mp3_player switch if appropriate
+						$use_mp3_player = ($mp3_player_xlarge_view && !(isset($result[$n]['is_transcoding']) && $result[$n]['is_transcoding']==1) && ((in_array($result[$n]["file_extension"],$ffmpeg_audio_extensions) || $result[$n]["file_extension"]=="mp3") && $mp3_player));
+						if ($use_mp3_player)
+							{
+							$mp3realpath=get_resource_path($ref,true,"",false,"mp3");
+							if (file_exists($mp3realpath))
+								{$mp3path=get_resource_path($ref,false,"",false,"mp3");}
+							}
 						}
 					if (isset($flvfile) && hook("replacevideoplayerlogicxl","",array($flvfile,$result,$n)))
 						{ }
@@ -57,8 +56,15 @@ if (!hook("renderresultlargethumb"))
 				            include "video_player.php";
 				            }
 				        }
-				    elseif ($use_mp3_player && file_exists($mp3realpath) && hook("custommp3player"))
-				    	{/* leave preview to the custom mp3 player*/}	    
+				    elseif ($use_mp3_player && file_exists($mp3realpath) && !hook("custommp3player"))
+						{
+						$thumb_path=get_resource_path($ref,true,"pre",false,"jpg");
+						if(file_exists($thumb_path))
+							{$thumb_url=get_resource_path($ref,false,"pre",false,"jpg"); }
+						else
+							{$thumb_url=$baseurl_short . "gfx/" . get_nopreview_icon($result[$n]["resource_type"],$result[$n]["file_extension"],false);}
+						include "mp3_play.php";
+						}    
     				elseif ($result[$n]['file_extension']=="swf" && $display_swf && $display_swf_xlarge_view)
     					{
         				$swffile=get_resource_path($ref,true,"",false,"swf");
@@ -121,8 +127,6 @@ if (!hook("renderresultlargethumb"))
     			</tr>
     			</table>
     			<?php 
-    			if ($use_mp3_player && file_exists($mp3realpath))
-    				{include "mp3_play.php";}
 				} ?> <!-- END HOOK Renderimagelargethumb-->
 			<?php 
 			hook("beforesearchstars");

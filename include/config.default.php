@@ -2014,6 +2014,7 @@ $use_checkboxes_for_selection=false;
 
 # allow player for mp3 files
 # player docs at http://flash-mp3-player.net/players/maxi/
+# Updated October 2015 so will use VideoJS if enabled ($videojs=true;)
 $mp3_player=true;
 
 # Show the performance metrics in the footer (for debug)
@@ -2279,12 +2280,14 @@ $icc_preview_options = '-intent perceptual -black-point-compensation';
 $collection_dropdown_user_access_mode=false;
 
 # show mp3 player in xlarge thumbs view (if $mp3_player=true)
-$mp3_player_xlarge_view=false;
+$mp3_player_xlarge_view=true;
 # show flv player in xlarge thumbs view 
 $flv_player_xlarge_view=false;
 # show embedded swfs in xlarge thumbs view 
 $display_swf_xlarge_view=false;
 
+# show mp3 player in thumbs view (if $mp3_player=true)
+$mp3_player_thumbs_view=false;
 # show flv player in thumbs view 
 $video_player_thumbs_view=false;
 # show flv player in small thumbs view 
@@ -2294,7 +2297,7 @@ $video_player_small_thumbs_view=false;
 $video_player_thumbs_view_alt=false;
 #$video_player_thumbs_view_alt_name='searchprev';
 
-# play vidoes on hover instead of on click
+# play videos/audio on hover instead of on click
 $video_search_play_hover=false; // search.php
 $video_view_play_hover=false; // view.php
 $video_preview_play_hover=false; // preview.php and preview_all.php

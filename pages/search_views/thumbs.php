@@ -41,6 +41,17 @@ if (!hook("renderresultthumb"))
 						$show_flv=true;
 					}
 				}
+				else
+					{
+					// Set $use_mp3_player switch if appropriate
+					$use_mp3_player = ($mp3_player_thumbs_view && !(isset($result[$n]['is_transcoding']) && $result[$n]['is_transcoding']==1) && ((in_array($result[$n]["file_extension"],$ffmpeg_audio_extensions) || $result[$n]["file_extension"]=="mp3") && $mp3_player));
+					if ($use_mp3_player)
+						{
+						$mp3realpath=get_resource_path($ref,true,"",false,"mp3");
+						if (file_exists($mp3realpath))
+							{$mp3path=get_resource_path($ref,false,"",false,"mp3");}
+						}
+					}
 				if(isset($flvfile) && hook("replacevideoplayerlogic","",array($flvfile,$result,$n))){
 				
 				}
@@ -50,6 +61,16 @@ if (!hook("renderresultthumb"))
 						include "video_player.php";
 					}
 				}
+				elseif ($use_mp3_player && file_exists($mp3realpath) && !hook("custommp3player"))
+					{
+					$thumb_path=get_resource_path($ref,true,"pre",false,"jpg");
+					if(file_exists($thumb_path))
+						{$thumb_url=get_resource_path($ref,false,"pre",false,"jpg"); }
+					else
+						{$thumb_url=$baseurl_short . "gfx/" . get_nopreview_icon($result[$n]["resource_type"],$result[$n]["file_extension"],false);}
+
+					include "mp3_play.php";
+					}
 				else{?><!-- new code end -->
 				<div id="triangle" style="border-color: transparent transparent rgb(7, 101, 145); border-width: 0px 0px 200px 200px;"></div>
 				<a 

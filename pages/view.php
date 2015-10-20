@@ -98,20 +98,14 @@ if($comments_resource_enable && $comments_view_panel_show_marker){
 	$resource_comments=sql_value("select count(*) value from comment where resource_ref=$ref","0");
 }
 
-// get mp3 paths if necessary and set $use_mp3_player switch
-if (!(isset($resource['is_transcoding']) && $resource['is_transcoding']==1) && (in_array($resource["file_extension"],$ffmpeg_audio_extensions) || $resource["file_extension"]=="mp3") && $mp3_player){
-		$use_mp3_player=true;
-	} 
-	else {
-		$use_mp3_player=false;
-	}
-if ($use_mp3_player){
+// Set $use_mp3_player switch if appropriate
+$use_mp3_player = (!(isset($resource['is_transcoding']) && $resource['is_transcoding']==1) && ((in_array($resource["file_extension"],$ffmpeg_audio_extensions) || $resource["file_extension"]=="mp3") && $mp3_player));
+if ($use_mp3_player)
+	{
 	$mp3realpath=get_resource_path($ref,true,"",false,"mp3");
-	if (file_exists($mp3realpath)){
-		$mp3path=get_resource_path($ref,false,"",false,"mp3");
+	if (file_exists($mp3realpath))
+		{$mp3path=get_resource_path($ref,false,"",false,"mp3");}
 	}
-}	
-
 # Load access level
 $access=get_resource_access($ref);
 hook("beforepermissionscheck");
@@ -623,7 +617,22 @@ elseif ((!(isset($resource['is_transcoding']) && $resource['is_transcoding']!=0)
 	# If configured, and if the resource itself is not an FLV file (in which case the FLV can already be downloaded), then allow the FLV file to be downloaded.
 	if ($flv_preview_downloadable && $resource["file_extension"]!="flv") {$flv_download=true;}
 	}
-elseif ($use_mp3_player && file_exists($mp3realpath) && hook("custommp3player")){}	
+elseif ($videojs && $use_mp3_player && file_exists($mp3realpath) && !hook("replacemp3player"))
+	{?>
+	<div id="previewimagewrapper">
+	<?php 
+	$thumb_path=get_resource_path($ref,true,"pre",false,"jpg");
+	if(file_exists($thumb_path))
+		{$thumb_url=get_resource_path($ref,false,"pre",false,"jpg"); }
+	else
+		{$thumb_url=$baseurl_short . "gfx/" . get_nopreview_icon($resource["resource_type"],$resource["file_extension"],false);}
+	include "mp3_play.php";
+	if(isset($previewcaption))
+		{				
+		display_field_data($previewcaption, true);
+		}
+	?></div><?php
+	}	
 elseif ($resource['file_extension']=="swf" && $display_swf){
 	$swffile=get_resource_path($ref,true,"",false,"swf");
 	if (file_exists($swffile))
@@ -1156,10 +1165,11 @@ if ($alt_access)
 	}
 # --- end of alternative files listing
 
-if ($use_mp3_player && file_exists($mp3realpath) && $access==0){
-		include "mp3_play.php";
-}
-
+if (!$videojs && $use_mp3_player && file_exists($mp3realpath) && $access==0)
+	{
+	//Legacy custom mp3 player support - need to show in this location
+    include "mp3_play.php";
+	}
 ?>
 
 

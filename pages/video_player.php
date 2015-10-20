@@ -98,14 +98,15 @@ if(!hook("swfplayer"))
 		} 
 	else 
 		{ 
-		global $ffmpeg_preview_extension,$css_reload_key;
+		global $ffmpeg_preview_extension,$css_reload_key,$context;
 		?>
-		<link href="<?php echo $baseurl_short?>lib/videojs/video-js.css?r=<?=$css_reload_key?>" rel="stylesheet">
-        <script src="<?php echo $baseurl_short?>lib/videojs/video.dev.js?r=<?=$css_reload_key?>"></script>
+		<link href="<?php echo $baseurl_short?>lib/videojs/video-js.min.css?r=<?=$css_reload_key?>" rel="stylesheet">
+        <script src="<?php echo $baseurl_short?>lib/videojs/video.min.js?r=<?=$css_reload_key?>"></script>
 		<script src="<?php echo $baseurl_short?>lib/js/videojs-extras.js?r=<?=$css_reload_key?>"></script>
 		<!-- START VIDEOJS -->
+		<div class="videojscontent">
 		<video 
-			id="introvideo<?php echo $ref?>"
+			id="<?php echo $context ?>_<?php echo $display ?>_introvideo<?php echo $ref?>"
 			controls
 			data-setup='{ 
 				<?php if($play_on_hover){?>
@@ -132,13 +133,20 @@ if(!hook("swfplayer"))
 			class="video-js vjs-default-skin vjs-big-play-centered <?php if($pagename=='search'){echo "video-$display";}?>" 
 			poster="<?php echo $thumb_raw?>"
 			<?php if($play_on_hover){ ?>
-				onmouseout="if(this.id=='introvideo<?php echo $ref?>'){videoPause(this);}"
-				onmouseover="if(this.id=='introvideo<?php echo $ref?>'){videoPlay(this);}"
+				onmouseout="videojs_<?php echo $context ?>_<?php echo $display ?>_introvideo<?php echo $ref ?>[0].pause();"
+				onmouseover="videojs_<?php echo $context ?>_<?php echo $display ?>_introvideo<?php echo $ref ?>[0].play();"
 			<?php } ?>
 		>
 		    <source src="<?php echo $flashpath_raw?>" type="video/<?php echo $ffmpeg_preview_extension?>" >
 		    <p class="vjs-no-js">To view this video please enable JavaScript, and consider upgrading to a web browser that <a href="http://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a></p>
 		</video>
+		
+		<?php if($play_on_hover){ ?>	
+				<script>
+				var videojs_<?php echo $context ?>_<?php echo $display ?>_introvideo<?php echo $ref ?> = jQuery('#<?php echo $context ?>_<?php echo $display ?>_introvideo<?php echo $ref ?>');
+				</script>
+		<?php } ?>
+		</div>
 		<!-- END VIDEOJS -->
 		<?php
 		}
