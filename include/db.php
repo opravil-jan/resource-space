@@ -321,16 +321,15 @@ $headerinsert="";
 # Initialise hook for plugins
 hook("initialise");
 
-# Global hook cache and related hits counter
-$hook_cache = array();
-$hook_cache_hits = 0;
-$hook_cache_result = array();
-
 # Load the language specific stemming algorithm, if one exists
 $stemming_file=dirname(__FILE__) . "/../lib/stemming/" . safe_file_name($defaultlanguage) . ".php"; # Important - use the system default language NOT the user selected language, because the stemmer must use the system defaults when indexing for all users.
 if (file_exists($stemming_file)) {include ($stemming_file);}
-	
-function hook($name,$pagename="",$params=array())
+
+# Global hook cache and related hits counter
+$hook_cache = array();
+$hook_cache_hits = 0;
+
+function hook($name,$pagename="",$params=array(),$last_hook_value_wins=false)
 	{
 	# Plugin architecture.  Look for hooks with this name (and corresponding page, if applicable) and run them sequentially.
 	# Utilises a cache for significantly better performance.  
@@ -339,7 +338,7 @@ function hook($name,$pagename="",$params=array())
 	# Allow modifications to the hook itself:
 	if(function_exists("hook_modifier") && !hook_modifier($name, $pagename, $params)) return;
 
-	global $hook_cache, $hook_cache_result;	
+	global $hook_cache;
 	if ($pagename=="") global $pagename;		
 	
 	# the index name for the $hook_cache
@@ -355,11 +354,11 @@ function hook($name,$pagename="",$params=array())
 		foreach ($hook_cache[$hook_cache_index] as $function)
 			{
 			$hook_return_value = call_user_func_array($function, $params);
-			if (isset($return_value) && (gettype($return_value) == gettype($hook_return_value)) && (is_array($hook_return_value) || is_string($hook_return_value) || is_bool($hook_return_value)))
+			if (!$last_hook_value_wins && isset($return_value) && (gettype($return_value) == gettype($hook_return_value)) && (is_array($hook_return_value) || is_string($hook_return_value) || is_bool($hook_return_value)))
 				{
 				if (is_array($hook_return_value))
 					{
-					$return_value = array_unique(array_merge_recursive($return_value, $hook_return_value), SORT_REGULAR);		// array merge
+					array_push($return_value, $hook_return_value);		// append the return array
 					}
 				elseif (is_string($hook_return_value))
 					{
@@ -408,7 +407,7 @@ function hook($name,$pagename="",$params=array())
 	$hook_cache[$hook_cache_index]=$function_list;
 	
 	# do a callback to run the function(s) - this will not cause an infinite loop as we have just added to cache for execution.
-	return hook($name,$pagename,$params);	
+	return hook($name,$pagename,$params,$last_hook_value_wins);
 	}
 
 # Indicate that from now on we want to group together DML statements into one transaction (faster as only one commit at end).
