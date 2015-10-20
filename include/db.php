@@ -351,31 +351,35 @@ function hook($name,$pagename="",$params=array(),$last_hook_value_wins=false)
 		global $hook_cache_hits;
 		$hook_cache_hits++;
 
+		unset($GLOBALS['hook_return_value']);
+
+		// we use $GLOBALS['hook_return_value'] so that hooks can directly modify the overall return value
+
 		foreach ($hook_cache[$hook_cache_index] as $function)
 			{
-			$hook_return_value = call_user_func_array($function, $params);
-			if (!$last_hook_value_wins && isset($return_value) && (gettype($return_value) == gettype($hook_return_value)) && (is_array($hook_return_value) || is_string($hook_return_value) || is_bool($hook_return_value)))
+			$function_return_value = call_user_func_array($function, $params);
+			if (!$last_hook_value_wins && isset($GLOBALS['hook_return_value']) && (gettype($GLOBALS['hook_return_value']) == gettype($function_return_value)) && (is_array($function_return_value) || is_string($function_return_value) || is_bool($function_return_value)))
 				{
-				if (is_array($hook_return_value))
+				if (is_array($function_return_value))
 					{
-					array_push($return_value, $hook_return_value);		// append the return array
+					array_push($GLOBALS['hook_return_value'], $function_return_value);		// append the return array
 					}
-				elseif (is_string($hook_return_value))
+				elseif (is_string($function_return_value))
 					{
-					$return_value .= $hook_return_value;		// appends string
+					$GLOBALS['hook_return_value'] .= $function_return_value;		// appends string
 					}
-				elseif (is_bool($hook_return_value))
+				elseif (is_bool($function_return_value))
 					{
-					$return_value = $return_value || $hook_return_value;		// boolean OR
+					$GLOBALS['hook_return_value'] = $GLOBALS['hook_return_value'] || $function_return_value;		// boolean OR
 					}
 				}
 			else
 				{
-				$return_value = $hook_return_value;
+				$GLOBALS['hook_return_value'] = $function_return_value;
 				}
 			}
 
-		return (isset($return_value) ? $return_value : false);
+		return (isset($GLOBALS['hook_return_value']) ? $GLOBALS['hook_return_value'] : false);
 		}
 
 	# we have not encountered this hook and page combination before so go add it
@@ -405,7 +409,7 @@ function hook($name,$pagename="",$params=array(),$last_hook_value_wins=false)
 	
 	# add the function list to cache
 	$hook_cache[$hook_cache_index]=$function_list;
-	
+
 	# do a callback to run the function(s) - this will not cause an infinite loop as we have just added to cache for execution.
 	return hook($name,$pagename,$params,$last_hook_value_wins);
 	}
