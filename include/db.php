@@ -358,7 +358,15 @@ function hook($name,$pagename="",$params=array(),$last_hook_value_wins=false)
 		foreach ($hook_cache[$hook_cache_index] as $function)
 			{
 			$function_return_value = call_user_func_array($function, $params);
-			if (!$last_hook_value_wins && isset($GLOBALS['hook_return_value']) && (gettype($GLOBALS['hook_return_value']) == gettype($function_return_value)) && (is_array($function_return_value) || is_string($function_return_value) || is_bool($function_return_value)))
+			if ($function_return_value === null)
+				{
+				continue;	// the function did not return a value so skip to next hook call
+				}
+
+			if (!$last_hook_value_wins &&
+				isset($GLOBALS['hook_return_value']) &&
+				(gettype($GLOBALS['hook_return_value']) == gettype($function_return_value)) &&
+				(is_array($function_return_value) || is_string($function_return_value) || is_bool($function_return_value)))
 				{
 				if (is_array($function_return_value))
 					{
