@@ -339,7 +339,10 @@ function hook($name,$pagename="",$params=array(),$last_hook_value_wins=false)
 	if(function_exists("hook_modifier") && !hook_modifier($name, $pagename, $params)) return;
 
 	global $hook_cache;
-	if ($pagename=="") global $pagename;		
+	if($pagename == '')
+		{
+		global $pagename;
+		}
 	
 	# the index name for the $hook_cache
 	$hook_cache_index = $name . "|" . $pagename;
@@ -358,6 +361,7 @@ function hook($name,$pagename="",$params=array(),$last_hook_value_wins=false)
 		foreach ($hook_cache[$hook_cache_index] as $function)
 			{
 			$function_return_value = call_user_func_array($function, $params);
+
 			if ($function_return_value === null)
 				{
 				continue;	// the function did not return a value so skip to next hook call
@@ -370,7 +374,10 @@ function hook($name,$pagename="",$params=array(),$last_hook_value_wins=false)
 				{
 				if (is_array($function_return_value))
 					{
-					array_push($GLOBALS['hook_return_value'], $function_return_value);		// append the return array
+					// We merge the cached result with the new result from the plugin and remove any duplicates
+					// Note: in custom plugins developers should work with the full array (ie. superset) rather than just a sub-set of the array.
+					//       If your plugin needs to know if the array has been modified previously by other plugins use the global variable "hook_return_value"
+					$GLOBALS['hook_return_value'] = array_unique(array_merge_recursive($GLOBALS['hook_return_value'], $function_return_value), SORT_REGULAR);
 					}
 				elseif (is_string($function_return_value))
 					{
@@ -416,10 +423,10 @@ function hook($name,$pagename="",$params=array(),$last_hook_value_wins=false)
 		}	
 	
 	# add the function list to cache
-	$hook_cache[$hook_cache_index]=$function_list;
+	$hook_cache[$hook_cache_index] = $function_list;
 
 	# do a callback to run the function(s) - this will not cause an infinite loop as we have just added to cache for execution.
-	return hook($name,$pagename,$params,$last_hook_value_wins);
+	return hook($name, $pagename, $params, $last_hook_value_wins);
 	}
 
 # Indicate that from now on we want to group together DML statements into one transaction (faster as only one commit at end).
