@@ -171,7 +171,7 @@ global $psd_transparency_checkerboard;
 if ($extension=="psd" && !isset($newfile) && $psd_transparency_checkerboard)
 	{
     $composite_fullpath = get_utility_path("im-composite");
-    $wait = run_command($composite_fullpath . " -compose Dst_Over -tile pattern:checkerboard ".escapeshellarg($file)." ".$target);
+    $wait = run_command($composite_fullpath . " -compose Dst_Over -tile pattern:checkerboard ".escapeshellarg($file)."[0] ".$target);
 
 	if (file_exists($target)){
 		$newfile=$target;
