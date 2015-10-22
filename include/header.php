@@ -324,6 +324,20 @@ if($slimheader)
         if($linkedheaderimgsrc !="") 
             {
             $header_img_src = $linkedheaderimgsrc;
+            if(substr($header_img_src, 0, 4) !== 'http')
+                {
+                // Set via System Config page?
+                if (substr($header_img_src, 0, 13) == '[storage_url]')
+                    {
+                    // Parse and replace the storage URL
+                    $header_img_src = str_replace('[storage_url]', $storageurl, $header_img_src);
+                    }
+                else
+                    {
+                    // Set via config.php
+                    $header_img_src = $baseurl_short . $header_img_src;
+                    }
+                }
             }
         else 
             {

@@ -2244,6 +2244,7 @@ $lang['userpreference_cc_me_label'] = 'CC me when sending resources and collecti
 
 /* System Config */
 $lang['systemconfig'] = 'System configuration';
+$lang['systemconfig_linkedheaderimgsrc_label'] = 'Application logo';
 $lang['systemconfig_description'] = 'The options on this page are system wide and can change some of the functionality available to the users. Please note that any option that is also user specific will take precedence if set.';
 $lang['systemconfig_multilingual'] = 'Multilingual';
 $lang['systemconfig_default_language_label'] = 'Default language';
