@@ -123,10 +123,19 @@ if ($noattach=="")
 			# Use the original filename if one has been set.
 			# Strip any path information (e.g. if the staticsync.php is used).
 			# append preview size to base name if not the original
-			if ($size!=""){$filename=strip_extension(mb_basename($origfile))."-".$size.".".$ext;}
-			else {$filename = strip_extension(mb_basename($origfile)).".".$ext;}
+			if($size != '' && !$download_filenames_without_size)
+				{
+				$filename = strip_extension(mb_basename($origfile)) . '-' . $size . '.' . $ext;
+				}
+			else
+				{
+				$filename = strip_extension(mb_basename($origfile)) . '.' . $ext;
+				}
 
-			if ($prefix_resource_id_to_filename) { $filename = $prefix_filename_string . $ref . "_" . $filename; }
+			if($prefix_resource_id_to_filename)
+				{
+				$filename = $prefix_filename_string . $ref . "_" . $filename;
+				}
 			}
 		}
 
@@ -151,7 +160,7 @@ if ($noattach=="")
 		if ($newfilename)
 			{
 			$filename = trim(nl2br(strip_tags($newfilename)));
-			if($size != "")
+			if($size != "" && !$download_filenames_without_size)
 				{
 				$filename = substr($filename, 0, 200) . '-' . $size . '.' . $ext;
 				}
@@ -159,6 +168,7 @@ if ($noattach=="")
 				{
 				$filename = substr($filename, 0, 200) . '.' . $ext;
 				}
+
 			if($prefix_resource_id_to_filename)
 				{
 				$filename = $prefix_filename_string . $ref . '_' . $filename;

@@ -924,6 +924,9 @@ $hide_main_simple_search=false;
 # Use original filename when downloading a file?
 $original_filenames_when_downloading=true;
 
+# Should the download filename have the size appended to it?
+$download_filenames_without_size = false;
+
 # When $original_filenames_when_downloading, should the original filename be prefixed with the resource ID?
 # This ensures unique filenames when downloading multiple files.
 # WARNING: if switching this off, be aware that when downloading a collection as a zip file, a file with the same name as another file in the collection will overwrite that existing file. It is therefore advisiable to leave this set to 'true'.
