@@ -26,7 +26,7 @@ $xml_source='
 <resource type="1">
 <keyfield ref="8">556688</keyfield>
 
-<collection>name of collection</collection> 
+<collection>numeric id of collection</collection> 
 <FILENAME>/somewhere/New Bitmap Image.bmpx</FILENAME>
 
 <field ref="18">Foobar</field>
@@ -77,6 +77,16 @@ foreach ($resources as $resource)
 		echo "<br>" . $field["attributes"]["REF"] . "=" . $field["value"];
 		update_field($ref,$field["attributes"]["REF"],$field["value"]);
 		}
+        
+     # Add to collections
+    $fields=get_nodes_by_tag("COLLECTION",$resource["id"]);		
+    foreach ($fields as $field)
+        {
+        $collection=get_collection($field["value"]);
+        $collectionname=$collection["name"];
+        echo "<br>collection=" . $collection["name"] . " (" . $field["value"] . ")";
+        add_resource_to_collection($ref,$field["value"]);
+        }
 		
 	# Update resource type
 	update_resource_type($ref,$resource["attributes"]["TYPE"]);
