@@ -2345,25 +2345,27 @@ function get_resource_access($resource)
 
 	# Check for user-specific and group-specific access (overrides any other restriction)
 	global $userref,$usergroup;
-
-	if ($passthru=="no")
+    
+    if ($access!=0)
         {
-		$userspecific=get_custom_access_user($resource,$userref);
-		$groupspecific=get_custom_access($resource,$usergroup,false);	
-		} 
-	else
-        {
-		$userspecific=$resourcedata['user_access'];
-		$groupspecific=$resourcedata['group_access'];
-		}
-
+        if ($passthru=="no")
+            {
+            $userspecific=get_custom_access_user($resource,$userref);
+            $groupspecific=get_custom_access($resource,$usergroup,false);	
+            } 
+        else
+            {
+            $userspecific=$resourcedata['user_access'];
+            $groupspecific=$resourcedata['group_access'];
+            }
+        }
 	
-	if ($userspecific!="")
+	if (isset($userspecific) && $userspecific!="")
 		{
 		$customuseraccess=true;
 		return $userspecific;
 		}
-	if ($groupspecific!="")
+	if (isset($groupspecific) && $groupspecific!="")
 		{
 		$customgroupaccess=true;
 		return $groupspecific;
