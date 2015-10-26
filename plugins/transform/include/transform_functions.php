@@ -20,6 +20,11 @@ function generate_transform_preview($ref){
 	if(!file_exists($transformsourcepath)) // use original if screen not available
 		{$transformsourcepath= get_resource_path($ref,true,'',false,$orig_ext);}
 		
+	$modify_transformsourcepath=hook("modifytransformsourcepath");
+	if($modify_transformsourcepath){
+		$transformsourcepath=$modify_transformsourcepath;
+	}
+		
 	# Since this check is in get_temp_dir() omit: if(!is_dir($storagedir."/tmp")){mkdir($storagedir."/tmp",0777);}
 	if(!is_dir(get_temp_dir() . "/transform_plugin")){mkdir(get_temp_dir() . "/transform_plugin",0777);}
 

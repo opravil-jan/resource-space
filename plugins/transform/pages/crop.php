@@ -72,6 +72,7 @@ $previewpath = get_temp_dir() . "/transform_plugin/".$cropper_cropsize."_$ref.jp
 //exit();
 $originalpath= get_resource_path($ref,true,'',false,$orig_ext);
 
+hook('transformcropbeforegetsize');
 
 // retrieve image sizes for original image and preview used for cropping
 $cropsizes = getimagesize($previewpath);
@@ -441,7 +442,9 @@ if ($cropper_enable_alternative_files && !$download && !$original && getval("sli
     if (file_exists(get_temp_dir() . "/transform_plugin/pre_$ref.jpg")){
 	unlink(get_temp_dir() . "/transform_plugin/pre_$ref.jpg");
     }
-
+	
+	hook("transformcropafterreplaceoriginal");
+	
     redirect("pages/view.php?ref=$ref");
     exit;
 
