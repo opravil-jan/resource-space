@@ -576,5 +576,12 @@ render_advanced_search_buttons();
 // show result count as it stands ?>
 </div> <!-- BasicsBox -->
 <?php
+if($archive!==0){
+	?>
+	<script>
+		UpdateResultCount();
+	</script>
+	<?php
+}
 include "../include/footer.php";
 ?>
