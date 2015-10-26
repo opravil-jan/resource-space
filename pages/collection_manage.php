@@ -38,8 +38,16 @@ if ($name!="" && $collection_allow_creation)
 	}
 
 $delete=getvalescaped("delete","");
-if ($delete!="")
+if ($delete != '')
 	{
+	// Check user is actually allowed to delete the resource first
+	$collection_data = get_collection($delete);
+	if(!($k == '' && (($userref == $collection_data['user']) || checkperm('h')) && $collection_data['cant_delete'] == 0))
+		{
+		header('HTTP/1.1 401 Unauthorized');
+		die('Permission denied!');
+		}
+
 	# Delete collection
 	delete_collection($delete);
 
