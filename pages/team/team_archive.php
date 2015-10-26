@@ -11,6 +11,8 @@ include "../../include/header.php";
   <h1><?php echo $lang["managearchiveresources"]?></h1>
   <p><?php echo text("introtext")?></p>
   
+  <p><a href="<?php echo $baseurl_short?>pages/team/team_home.php" onClick="return CentralSpaceLoad(this,true);">&lt;&nbsp;<?php echo $lang["backtoteamhome"]?></a></p>
+  
 	<div class="VerticalNav">
 	<ul>
 	<li><a href="<?php echo $baseurl_short?>pages/edit.php?ref=-<?php echo $userref?>&single=true&status=2" onClick="return CentralSpaceLoad(this,true);"><?php echo $lang["newarchiveresource"]?></a></li>
@@ -24,7 +26,6 @@ include "../../include/header.php";
 	</ul>
 	</div>
 	
-	<p><a href="<?php echo $baseurl_short?>pages/team/team_home.php" onClick="return CentralSpaceLoad(this,true);">&lt;&nbsp;<?php echo $lang["backtoteamhome"]?></a></p>
   </div>
 
 <?php
