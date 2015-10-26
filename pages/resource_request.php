@@ -17,8 +17,24 @@ if ($k == "" && isset($anonymous_login) && $username == $anonymous_login){
 }
 
 # Allow alternative configuration settings for this resource type.
-$resource=get_resource_data($ref);
+$resource            = get_resource_data($ref);
+$resource_field_data = get_resource_field_data($ref);
+
 resource_type_config_override($resource["resource_type"]);
+
+$resource_title = '';
+
+// Get any metadata fields we may want to show to the user on this page
+// Currently only title is showing
+foreach($resource_field_data as $resource_field)
+	{
+	if($view_title_field != $resource_field['ref'])
+		{
+		continue;
+		}
+
+	$resource_title = $resource_field['value'];
+	}
 
 if (getval("save","")!="")
 	{
@@ -56,7 +72,11 @@ if (getval("save","")!="")
 include "../include/header.php";
 ?>
 
-<div class="BasicsBox"> 
+<div class="BasicsBox">
+	<p>
+		<a href="<?php echo $baseurl_short; ?>pages/view.php?ref=<?php echo urlencode($ref); ?>&k=<?php echo urlencode($k); ?>" onClick="return CentralSpaceLoad(this, true);">&lt;&nbsp;<?php echo $lang['backtoresourceview']; ?></a>
+	</p>
+
   <h1><?php echo $lang["requestresource"]?></h1>
   <p><?php echo text("introtext")?></p>
   
@@ -67,6 +87,12 @@ include "../include/header.php";
 	<div class="Question">
 	<label><?php echo $lang["resourceid"]?></label>
 	<div class="Fixed"><?php echo htmlspecialchars($ref)?></div>
+	<div class="clearerleft"> </div>
+	</div>
+	
+	<div class="Question">
+	<label><?php echo $lang['resourcetitle']; ?></label>
+	<div class="Fixed"><?php echo htmlspecialchars($resource_title); ?></div>
 	<div class="clearerleft"> </div>
 	</div>
 	
