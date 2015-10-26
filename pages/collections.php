@@ -854,12 +854,20 @@ if ($count_result>0)
 	} # End of results condition
 
 	
-if ($count_result>$max_collection_thumbs){
-	?><div class="CollectionPanelShell"><table border="0" class="CollectionResourceAlign"><tr><td><img/></td>
-		</tr></table>
-		<div class="CollectionPanelInfo"><a onclick="return CentralSpaceLoad(this,true);" href="<?php echo $baseurl_short?>pages/search.php?search=!collection<?php echo $usercollection?>&k=<?php echo urlencode($k) ?>"><?php echo $lang['viewall']?>...</a></div>
-		
-		<?php
+if($count_result > $max_collection_thumbs)
+	{
+	?>
+	<div class="CollectionPanelShell">
+		<table border="0" class="CollectionResourceAlign">
+			<tr>
+				<td><img/></td>
+			</tr>
+		</table>
+		<div class="CollectionPanelInfo">
+			<a onclick="return CentralSpaceLoad(this,true);" href="<?php echo $baseurl_short?>pages/search.php?search=!collection<?php echo $usercollection?>&k=<?php echo urlencode($k) ?>"><?php echo $lang['viewall']?>...</a>
+		</div>
+	</div>
+	<?php
 	}
 
 ?></div><?php		
