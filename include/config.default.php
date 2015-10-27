@@ -894,6 +894,9 @@ $disable_quoted_printable_enc=false;
 # This makes sense if $terms_download is active.
 $watermark_open=false;
 
+# Set to true to extend $watermark_open to the search page. $watermark_open must be set to true.
+$watermark_open_search=false; 
+
 # Simple search even more simple
 # Set to 'true' to make the simple search bar more basic, with just the single search box.
 $basic_simple_search=false;
