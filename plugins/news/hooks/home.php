@@ -8,10 +8,16 @@ function HookNewsHomeSearchbarbottomtoolbar()
 	$news = get_news_headlines("",$recent,"");
 	$results=count($news);
    	?>
-	<div id="ssearchbox" class="HomePanelIN">
-		<h1 style="color:#FFF;"><?php echo $lang['title']; ?></h1>
-		<div id="NewsBodyDisplay">
-         <?php
+
+
+	<div id="SearchBoxPanel" style="margin-top:10px;">
+	<div id="HomeSiteText">
+        
+		
+		
+	<h1><?php echo $lang['title']; ?></h1>
+       
+	<?php
 		if($results > 0)
 			{
 			for($n = 0; ($n < $results); $n++)
