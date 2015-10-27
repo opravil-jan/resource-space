@@ -160,7 +160,7 @@ $field_types=array(
 		11=>$lang["fieldtype-dynamic_tree_in_development"],
 		12=>$lang["fieldtype-radio_buttons"]
 		);
-		
+
 // Define array of field properties containing title and associated lang help text, with a flag to indicate if it is a boolean value that we will save from POST data and boolean to indicate will be set with any 'synced' fields
 
 // example field :-
@@ -207,7 +207,10 @@ $fieldcolumns=array("title"=>array($lang["property-title"],"",0,1),
 					"onchange_macro"=>array($lang["property-onchange_macro"],$lang["information-onchange_macro"],2,1)				
 					);
 
-				
+$modify_resource_type_field_columns=hook("modifyresourcetypefieldcolumns","",array($fieldcolumns));
+if($modify_resource_type_field_columns!=''){
+        $fieldcolumns=$modify_resource_type_field_columns;
+}				
 if(getval("save","")!="" && getval("delete","")=="")
 	{
 	# Save field config
