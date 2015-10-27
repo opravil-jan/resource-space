@@ -16,7 +16,7 @@ $xml_source='
 <resource type="1">
 <keyfield ref="8">556677</keyfield>
 
-<collection>name of collection</collection> 
+<collection>numeric id of collection</collection> 
 <FILENAME>/dir/dir/filename_of_image.jpg</FILENAME>
 
 <field ref="18">my description of the picture</field>
