@@ -1082,3 +1082,6 @@ a.FeaturedSimpleLink:hover {
 .MessageUnread {
     font-weight: bold;
 }
+#toggleHiddenCollectionsLink{
+	margin-left:10px;
+}
