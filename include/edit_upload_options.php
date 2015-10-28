@@ -79,6 +79,7 @@ if ($ref<0)
 	               
 		for ($n=0;$n<count($list);$n++)
 			{
+			if($hidden_collections_hide_on_upload && in_array($list[$n]['ref'],$hidden_collections)){continue;}
 			if ($collection_dropdown_user_access_mode){    
 	                $colusername=$list[$n]['fullname'];
 	                

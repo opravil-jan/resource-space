@@ -1044,6 +1044,8 @@ $upload_do_not_add_to_new_collection_opt=true;
 $upload_collection_name_required=false;
 #Batch uploads - always upload to My Collection
 $upload_force_mycollection=false;
+#Batch Uploads, do not display hidden collections
+$hidden_collections_hide_on_upload=false;
 
 # When batch uploading, enable the 'copy resource data from existing resource' feature
 $enable_copy_data_from=true;
