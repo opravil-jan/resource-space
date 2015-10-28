@@ -1240,7 +1240,10 @@ function create_previews_using_im($ref,$thumbonly=false,$extension="jpg",$previe
 			    $flatten = "-flatten";
 			}
 
-            $command = $convert_fullpath . ' '. escapeshellarg($file) .(($extension!="png" && $extension!="gif")?'[0] +matte ':'') . $flatten . ' -quality ' . $imagemagick_quality;
+            // Extensions for which the alpha/ matte channel should not be set to Off (i.e. +matte option)
+            $extensions_no_alpha_off = array('png', 'gif', 'tif');
+
+            $command = $convert_fullpath . ' '. escapeshellarg($file) . (!in_array($extension, $extensions_no_alpha_off) ? '[0] +matte ' : ' ') . $flatten . ' -quality ' . $imagemagick_quality;
 
 			# fetch target width and height
 			$tw=$ps[$n]["width"];$th=$ps[$n]["height"];
