@@ -1964,7 +1964,7 @@ function compile_collection_actions(array $collection_data, $top_actions)
            $edit_all_checkperms, $preview_all, $order_by, $sort, $archive, $contact_sheet_link_on_collection_bar,
            $show_searchitemsdiskusage, $emptycollection, $remove_resources_link_on_collection_bar, $count_result,
            $download_usage, $home_dash, $top_nav_upload_type, $pagename, $offset, $col_order_by, $find, $default_sort,
-           $starsearch, $restricted_share;
+           $starsearch, $restricted_share, $hidden_collections;
 
     $options = array();
 	$o=0;
@@ -2336,7 +2336,24 @@ function compile_collection_actions(array $collection_data, $top_actions)
         );
 
 		$o++;
-        }
+    
+		// Hide Collection
+		$user_mycollection=sql_value("select ref value from collection where user={$userref} and name='My Collection' order by ref limit 1","");
+		// check that this collection is not hidden. use first in alphabetical order otherwise
+		if(in_array($user_mycollection,$hidden_collections)){
+			$user_mycollection=sql_value("select ref value from collection where user={$userref} and ref not in({$hidden_collections}) order by ref limit 1","");
+		}
+		$extra_tag_attributes = sprintf('
+                data-mycol="%s"
+            ',
+            urlencode($user_mycollection)
+        );
+		
+		$options[$o]['value'] = 'hide_collection';
+		$options[$o]['label'] = $lang['hide_collection'];
+		$options[$o]['extra_tag_attributes']=$extra_tag_attributes;	
+		$o++;
+		}
 
     // Add extra collection actions and manipulate existing actions through plugins
     $modified_options = hook('render_actions_add_collection_option', '', array($top_actions,$options));

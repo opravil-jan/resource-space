@@ -361,6 +361,7 @@ $lang["currentcollection"]="Current collection";
 $lang["viewcollection"]="View collection";
 $lang['hiddencollections_hide']="Hide hidden collections";
 $lang['hiddencollections_show']="Show hidden collections";
+$lang['hide_collection']="Hide collection";
 $lang["viewall"]="View all";
 $lang['view_all_resources'] = 'View all resources';
 $lang["action-editall"]="Edit all";

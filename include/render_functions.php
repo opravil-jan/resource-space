@@ -347,6 +347,25 @@ function render_actions(array $collection_data, $top_actions = true, $two_line =
                             });
                         }
                     break;
+
+					case 'hide_collection':
+						var action = 'hidecollection';
+						var collection = <?php echo urlencode($collection_data['ref']);?>;
+						var mycol = jQuery('#<?php echo $action_selection_id; ?> option:selected').data('mycol');
+						
+						jQuery.ajax({
+							type: 'POST',
+							url: baseurl_short + 'pages/ajax/showhide_collection.php?action=' + action + '&collection=' + collection,
+							success: function(data) {
+								if (data.trim() == "HIDDEN") {
+									CollectionDivLoad('<?php echo $baseurl; ?>/pages/collections.php?collection='+mycol);
+								}
+							},
+							error: function (err) {
+								console.log("AJAX error : " + JSON.stringify(err, null, 2));
+							}
+						}); 
+						break;
                 <?php
                 }
                 ?>
