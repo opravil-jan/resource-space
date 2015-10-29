@@ -379,6 +379,9 @@ switch ($callback)
 		ON `activity_log`.`user`=`user`.`ref`
 		WHERE
 			`activity_log`.`ref` LIKE '%{$filter}%' OR
+			`activity_log`.`logged` LIKE '%{$filter}%' OR
+			`user`.`username` LIKE '%{$filter}%' OR
+			`activity_log`.`note` LIKE '%{$filter}%' OR
 			`activity_log`.`value_old` LIKE '%{$filter}%' OR
 			`activity_log`.`value_new` LIKE '%{$filter}%' OR
 			`activity_log`.`value_diff` LIKE '%{$filter}%' OR
