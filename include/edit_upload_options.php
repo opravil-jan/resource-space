@@ -58,12 +58,12 @@ if ($ref<0)
 		<select name="collection_add" id="collection_add" class="stdwidth">
 		
 		<?php if ($upload_add_to_new_collection_opt && $collection_allow_creation) { 
-			if($hidden_collections_hide_on_upload && $hidden_collections_upload_toggle){
+			if(isset($hidden_collections_hide_on_upload) && $hidden_collections_hide_on_upload && $hidden_collections_upload_toggle){
 				$non_col_options++;
 			}
 			?><option value="-1" <?php if ($upload_add_to_new_collection){ ?>selected <?php }?>>(<?php echo $lang["createnewcollection"]?>)</option><?php } ?>
 		<?php if ($upload_do_not_add_to_new_collection_opt && !hook("remove_do_not_add_to_collection")) {
-			if($hidden_collections_hide_on_upload && $hidden_collections_upload_toggle){
+			if(isset($hidden_collections_hide_on_upload) && $hidden_collections_hide_on_upload && $hidden_collections_upload_toggle){
 				$non_col_options++;
 			}
 			?><option value="" <?php if (!$upload_add_to_new_collection || $do_not_add_to_new_collection_default){ ?>selected <?php }?>><?php echo $lang["batchdonotaddcollection"]?></option><?php } ?>
@@ -88,9 +88,9 @@ if ($ref<0)
 		for ($n=0;$n<count($list);$n++)
 			{
 			$hide_collection=false;
-			if($hidden_collections_hide_on_upload && !$hidden_collections_upload_toggle && in_array($list[$n]['ref'],$hidden_collections)){continue;}
+			if(isset($hidden_collections_hide_on_upload) && $hidden_collections_hide_on_upload && !$hidden_collections_upload_toggle && in_array($list[$n]['ref'],$hidden_collections)){continue;}
 			
-			if($hidden_collections_hide_on_upload && $hidden_collections_upload_toggle)
+			if(isset($hidden_collections_hide_on_upload) && $hidden_collections_hide_on_upload && $hidden_collections_upload_toggle)
 				{
 				$hide_collection=true;
 				if(in_array($list[$n]['ref'],$hidden_collections))
@@ -152,7 +152,7 @@ if ($ref<0)
 		?>
 		</select>
 		<?php
-		if ($hidden_collections_hide_on_upload && $hidden_collections_upload_toggle)
+		if (isset($hidden_collections_hide_on_upload) && $hidden_collections_hide_on_upload && $hidden_collections_upload_toggle)
 			{
 			?>
 			<span>
