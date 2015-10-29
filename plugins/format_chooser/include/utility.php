@@ -94,6 +94,15 @@ function convertImage($resource, $page, $alternative, $target, $width, $height, 
 
 	$command .= " \"$originalPath\"[0] -auto-orient";
 
+    // Handle alpha/ matte channels
+    $extensions_no_alpha_off = array('png', 'gif', 'tif');
+    $target_extension        = pathinfo($target, PATHINFO_EXTENSION);
+
+    if(!in_array($target_extension, $extensions_no_alpha_off))
+        {
+        $command .= ' -background white -flatten';
+        }
+
 	if ($width != 0 && $height != 0)
 		{
 		# Apply resize ('>' means: never enlarge)
@@ -103,9 +112,11 @@ function convertImage($resource, $page, $alternative, $target, $width, $height, 
 		$command .= '>"';
 		}
 
-	if ($profile === '')
+	if($profile === '')
+		{
 		$command .= ' +profile *';
-	else if (!empty($profile))
+		}
+	elseif(!empty($profile))
 		{
 		// Find out if the image does already have a profile
 		$identify = get_utility_path("im-identify");
@@ -118,6 +129,8 @@ function convertImage($resource, $page, $alternative, $target, $width, $height, 
 		}
 
 	$command .= " \"$target\"";
+
+	// echo '<pre>';print_r($command);echo '</pre>';die('<br>You died in ' . __FILE__ . ' @' . __LINE__);
 
 	run_command($command);
 	}
