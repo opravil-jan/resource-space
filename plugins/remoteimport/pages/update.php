@@ -108,6 +108,9 @@ foreach ($resources as $resource)
 			if(count($extension)>1)
 				{
 				$extension=trim(strtolower($extension[count($extension)-1]));
+
+                // Save the file extension in the database
+                sql_query('UPDATE resource SET file_extension = "' . escape_check($extension) . '" WHERE ref = "' . escape_check($ref) . '";');
 				} 
 			else
 				{
