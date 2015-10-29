@@ -1044,6 +1044,8 @@ $upload_do_not_add_to_new_collection_opt=true;
 $upload_collection_name_required=false;
 #Batch uploads - always upload to My Collection
 $upload_force_mycollection=false;
+#Batch Uploads, do not display hidden collections
+$hidden_collections_hide_on_upload=false;
 #Batch Uploads, include show/hide hidden collection toggle. Must have $hidden_collections_hide_on_upload=true;
 $hidden_collections_upload_toggle=false;
 
