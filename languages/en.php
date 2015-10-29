@@ -175,6 +175,12 @@ $lang["property-total_collections"]="Total collections";
 $lang["property-collection_resource_relationships"]="Collection resource relationships";
 $lang["property-total_users"]="Total users";
 
+# Used for activity log
+$lang["property-old_value"]="Old value";
+$lang["property-new_value"]="New value";
+$lang["property-table"]="Table";
+$lang["property-column"]="Column";
+$lang["property-table_reference"]="Table reference";
 
 # Top navigation bar (also reused for page titles)
 $lang["logout"]="Log out";
@@ -2211,6 +2217,7 @@ $lang["systemconsoledebuglog"]="Debug log";
 $lang["systemconsolememorycpu"]="Memory &amp; CPU";
 $lang["systemconsoledatabase"]="Database";
 $lang["systemconsolesqllogtransactions"]="SQL Transaction Log";
+$lang["systemconsoleactivitylog"]="Activity Log";
 $lang["systemconsoleturnoffafter"]="Turn off after";
 $lang["systemconsoleonpermallusers"]="On (permanently for all users)";
 $lang["systemconsoleonallusers"]="On (all users)";
@@ -2309,4 +2316,7 @@ $lang["sendbulkmessage"]="Send bulk message";
 $lang["message_sent"]="Message sent";
 
 $lang["confirm_remove_custom_usergroup_access"]="This will revoke all custom user group access. Are you sure?";
+
+
+
 

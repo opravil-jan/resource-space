@@ -10,7 +10,7 @@ $callback = getval("callback","");
 if ($callback == "")
 	{
 	include "../../include/header.php";
-	foreach (array("debuglog","memorycpu","database","sqllogtransactions") as $section)
+	foreach (array("debuglog","memorycpu","database","sqllogtransactions","activitylog") as $section)
 	{
 		?><script>
 			var timeOutControl<?php echo $section; ?> = null;
@@ -360,6 +360,35 @@ switch ($callback)
 
 		break;
 
+	case "activitylog":
+		{
+		$results = sql_query("SELECT
+			`activity_log`.`ref` as '{$lang['property-reference']}',
+			`activity_log`.`logged` as '{$lang['fieldtype-date_and_time']}',
+			`user`.`username` as '{$lang['user']}',
+			`activity_log`.`note` as '{$lang["fieldtitle-notes"]}',
+			`activity_log`.`value_old` as '{$lang['property-old_value']}',
+			`activity_log`.`value_new` as '{$lang['property-new_value']}',
+			if(`activity_log`.`value_diff`='','',concat('<pre>',`activity_log`.`value_diff`,'</pre>')) as '{$lang['difference']}',
+			`activity_log`.`remote_table` as '{$lang['property-table']}',
+			`activity_log`.`remote_column` as '{$lang['property-column']}',
+			`activity_log`.`remote_ref` as '{$lang['property-table_reference']}'
+		FROM
+			`activity_log`
+		LEFT OUTER JOIN `user`
+		ON `activity_log`.`user`=`user`.`ref`
+		WHERE
+			`activity_log`.`ref` LIKE '%{$filter}%' OR
+			`activity_log`.`value_old` LIKE '%{$filter}%' OR
+			`activity_log`.`value_new` LIKE '%{$filter}%' OR
+			`activity_log`.`value_diff` LIKE '%{$filter}%' OR
+			`activity_log`.`remote_table` LIKE '%{$filter}%' OR
+			`activity_log`.`remote_column` LIKE '%{$filter}%' OR
+			`activity_log`.`remote_ref` LIKE '%{$filter}%'
+		ORDER BY `activity_log`.`ref` DESC");
+		break;
+		}
+
 	}		// end of callback switch
 
 ?>
@@ -457,9 +486,9 @@ if (!$sorted && $sortby)
 				<tr class="resource_type_field_row">
 					<?php
 					foreach ($results[$i] as $cell)
-					{
-						?><td><?php echo str_highlight(htmlspecialchars($cell),$filter); ?></td><?php
-					}
+						{
+						?><td><?php echo str_highlight(preg_replace('/&lt;(\/*)pre&gt;/i','<$1pre>',htmlspecialchars($cell)),$filter); ?></td><?php
+						}
 					?>
 					<?php
 					if (count($actions) > 0)
