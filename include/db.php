@@ -18,6 +18,9 @@
 # Functions used for debugging via System Console
 include_once "debug_functions.php";
 
+# Functions used for activity logging
+include_once "log_functions.php";
+
 # Switch on output buffering.
 ob_start(null,4096);
 

@@ -2,6 +2,8 @@
 # Resource functions
 # Functions to create, edit and index resources
 
+include_once __DIR__ . '/definitions.php';		// includes log code definitions for resource_log() callers.
+
 function create_resource($resource_type,$archive=999,$user=-1)
 	{
 	# Create a new resource.
