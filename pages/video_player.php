@@ -32,6 +32,10 @@ if (!file_exists($flashfile) || $video_preview_original)
 	  {
 	  $flashpath=get_resource_path($ref,false,"",false,$ffmpeg_preview_extension,-1,1,false,"",$alternative,false);
 	  }
+	else
+		{
+		$flashpath='';
+		}
 	}
 
 $flashpath_raw=$flashpath;     
