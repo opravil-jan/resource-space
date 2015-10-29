@@ -2316,7 +2316,4 @@ $lang["sendbulkmessage"]="Send bulk message";
 $lang["message_sent"]="Message sent";
 
 $lang["confirm_remove_custom_usergroup_access"]="This will revoke all custom user group access. Are you sure?";
-
-
-
-
+$lang['applogo_does_not_exists']="The uploaded logo is no longer available";

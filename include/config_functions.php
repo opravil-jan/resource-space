@@ -476,7 +476,14 @@ function config_add_text_input($config_var, $label, $password = false, $width = 
 */
 function config_file_input($name, $label, $current, $form_action, $width = 300)
     {
-    global $lang;
+    global $lang,$storagedir;
+    
+    if($current !=='')
+		{ 
+		$missing_file = str_replace('[storage_url]', $storagedir, $current);
+		$pathparts=explode("/",$current);
+		}
+		
     ?>
     <div class="Question">
         <form method="POST" action="<?php echo $form_action; ?>" enctype="multipart/form-data">
@@ -485,7 +492,14 @@ function config_file_input($name, $label, $current, $form_action, $width = 300)
                 <span id="AutoSaveStatus-<?php echo $name; ?>" style="display:none;"></span>
             </div>
         <?php
-        if('' === $current || !get_config_option(null, $name, $current_option) || $current_option === '')
+        if($current !== '' && $pathparts[1]=="system" && !file_exists($missing_file))
+			{
+			?>
+            <span><?php echo $lang['applogo_does_not_exists']; ?></span>
+            <input type="submit" name="clear_<?php echo $name; ?>" value="<?php echo $lang["clearbutton"]; ?>">
+            <?php
+			}
+        elseif('' === $current || !get_config_option(null, $name, $current_option) || $current_option === '')
             {
             ?>
             <input type="file" name="<?php echo $name; ?>" style="width:<?php echo $width; ?>px">
@@ -758,6 +772,20 @@ function config_process_file_input(array $page_def, $file_location, $redirect_lo
                     }
                 }
             }
+        // CLEAR
+        if(getval('clear_' . $config_name, '') !== '')
+			{
+			if(get_config_option(null, $config_name, $missing_file))
+                {
+				$missing_file = str_replace('[storage_url]' . '/' . $file_location, $file_server_location, $missing_file);
+				 if(!file_exists($missing_file))
+					{
+					set_config_option(null, $config_name, '');
+
+					$redirect = true;
+					}
+				}
+			}
 
         // UPLOAD
         if(getval('upload_' . $config_name, '') !== '')
