@@ -394,6 +394,11 @@ switch ($callback)
 		WHERE
 			`activity_log`.`ref` LIKE '%{$filter}%' OR
 			`activity_log`.`logged` LIKE '%{$filter}%' OR
+			(
+			CASE `activity_log`.`log_code`
+				$when_statements
+				ELSE `activity_log`.`log_code`
+			END) LIKE '%{$filter}%' OR
 			`activity_log`.`log_code` LIKE '%{$filter}%' OR
 			`user`.`username` LIKE '%{$filter}%' OR
 			`activity_log`.`note` LIKE '%{$filter}%' OR
