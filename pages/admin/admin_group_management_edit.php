@@ -29,6 +29,11 @@ if ($new_group_name!="")
 	{
 	sql_query("insert into usergroup(name,request_mode) values('$new_group_name','1')");
 	$ref=sql_insert_id();
+
+	log_activity(null,LOG_CODE_CREATED,null,'usergroup',null,$ref);
+	log_activity(null,LOG_CODE_CREATED,$new_group_name,'usergroup','name',$ref,null,'');
+	log_activity(null,LOG_CODE_CREATED,'1','usergroup','request_mode',$ref,null,'');
+
 	redirect($baseurl_short."pages/admin/admin_group_management_edit.php?ref={$ref}{$url_params}");	// redirect to prevent repost and expose of form data
 	exit;
 	}
@@ -48,6 +53,7 @@ $has_dependants=$dependant_user_count + $dependant_groups > 0;
 if (!$has_dependants && getval("deleteme",false))
 	{
 	sql_query("delete from usergroup where ref='{$ref}'");
+	log_activity('',LOG_CODE_DELETED,null,'usergroup',null,$ref);
 
 	// No need to keep any records of language content for this user group
 	sql_query('DELETE FROM site_text WHERE specific_to_group = "' . $ref . '";');
@@ -97,6 +103,7 @@ if (getval("save",false))
 		if (isset($logo_extension))
 			{
 			sql_query("update usergroup set group_specific_logo='{$logo_extension}' where ref='{$ref}'");
+			log_activity(null,null,null,'usergroup','group_specific_logo',$ref);
 			}
 
 	foreach (array("name","permissions","fixed_theme","parent","search_filter","edit_filter","derestrict_filter",
@@ -127,6 +134,7 @@ if (getval("save",false))
 			$sql="update usergroup set ";
 			}		
 		$sql.="{$column}='{$val}'";
+		log_activity(null,LOG_CODE_EDITED,$val,'usergroup',$column,$ref);
 		}
 	$sql.=" where ref='{$ref}'";
 	sql_query($sql);

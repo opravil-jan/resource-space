@@ -2,7 +2,7 @@
 
 include_once __DIR__ . '/definitions.php';		// includes log code definitions for resource_log() callers.
 
-function log_activity($note, $log_code=LOG_CODE_UNSPECIFIED, $value_new=null, $remote_table=null, $remote_column=null, $remote_ref=null, $ref_column_override=null, $value_old=null, $user=null, $generate_diff=false)
+function log_activity($note=null, $log_code=LOG_CODE_UNSPECIFIED, $value_new=null, $remote_table=null, $remote_column=null, $remote_ref=null, $ref_column_override=null, $value_old=null, $user=null, $generate_diff=false)
 	{
 
 	if(!function_exists('log_diff'))
@@ -43,7 +43,7 @@ function log_activity($note, $log_code=LOG_CODE_UNSPECIFIED, $value_new=null, $r
 		"NOW()," .
 		"'{$user}'," .
 		"'" . (!LOG_CODE_validate($log_code) ? LOG_CODE_UNSPECIFIED : $log_code) . "'," .
-		"'" . escape_check($note) . "'," .
+		"'" . (is_null($note) ? '' : escape_check($note)) . "'," .
 		"'" . (is_null($value_old) ? '' : escape_check($value_old)) . "'," .
 		"'" . (is_null($value_new) ? '' : escape_check($value_new)) . "'," .
 		"'" . (!is_null($value_old) && !is_null($value_new) && $generate_diff ? escape_check(log_diff($value_old,$value_new)) : '') . "'," .

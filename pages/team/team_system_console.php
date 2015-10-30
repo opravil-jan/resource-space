@@ -373,13 +373,14 @@ switch ($callback)
 				{
 				continue;
 				}
-			$when_statements .= " WHEN '" . escape_check($value) . "' THEN '" . escape_check($lang['log_code_' . $value]) . "'";
+			$when_statements .= " WHEN ASCII('" . escape_check($value) . "') THEN '" . escape_check($lang['log_code_' . $value]) . "'";
 			}
+
 		$results = sql_query("SELECT
 			`activity_log`.`ref` as '{$lang['property-reference']}',
 			`activity_log`.`logged` as '{$lang['fieldtype-date_and_time']}',
 			`user`.`username` as '{$lang['user']}',
-			CASE `activity_log`.`log_code`
+			CASE ASCII(`activity_log`.`log_code`)
 				$when_statements
 				ELSE `activity_log`.`log_code`
 			END as '{$lang['property-operation']}',
@@ -398,7 +399,7 @@ switch ($callback)
 			`activity_log`.`ref` LIKE '%{$filter}%' OR
 			`activity_log`.`logged` LIKE '%{$filter}%' OR
 			(
-			CASE `activity_log`.`log_code`
+			CASE ASCII(`activity_log`.`log_code`)
 				$when_statements
 				ELSE `activity_log`.`log_code`
 			END) LIKE '%{$filter}%' OR
