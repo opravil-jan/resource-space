@@ -362,11 +362,25 @@ switch ($callback)
 
 	case "activitylog":
 		{
+		// decode using the enumerated
+		$when_statements  = "";
+		foreach (array_values(LOG_CODE_get_all()) as $value)
+			{
+			if (!isset($lang['log_code_' . $value]))
+				{
+				continue;
+				}
+			$when_statements .= " WHEN '" . escape_check($value) . "' THEN '" . escape_check($lang['log_code_' . $value]) . "'";
+			}
 		$results = sql_query("SELECT
 			`activity_log`.`ref` as '{$lang['property-reference']}',
 			`activity_log`.`logged` as '{$lang['fieldtype-date_and_time']}',
 			`user`.`username` as '{$lang['user']}',
-			`activity_log`.`note` as '{$lang["fieldtitle-notes"]}',
+			CASE `activity_log`.`log_code`
+				$when_statements
+				ELSE `activity_log`.`log_code`
+			END as '{$lang['property-operation']}',
+			`activity_log`.`note` as '{$lang['fieldtitle-notes']}',
 			`activity_log`.`value_old` as '{$lang['property-old_value']}',
 			`activity_log`.`value_new` as '{$lang['property-new_value']}',
 			if(`activity_log`.`value_diff`='','',concat('<pre>',`activity_log`.`value_diff`,'</pre>')) as '{$lang['difference']}',
@@ -380,6 +394,7 @@ switch ($callback)
 		WHERE
 			`activity_log`.`ref` LIKE '%{$filter}%' OR
 			`activity_log`.`logged` LIKE '%{$filter}%' OR
+			`activity_log`.`log_code` LIKE '%{$filter}%' OR
 			`user`.`username` LIKE '%{$filter}%' OR
 			`activity_log`.`note` LIKE '%{$filter}%' OR
 			`activity_log`.`value_old` LIKE '%{$filter}%' OR
