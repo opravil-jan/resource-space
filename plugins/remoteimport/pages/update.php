@@ -9,6 +9,7 @@ include "../../../include/authenticate.php";
 include "../include/xml_functions.php";
 
 $xml_source=getvalescaped("xml","");
+$xml_raw         = getval('xml', '');
 
 /*
 $xml_source='
@@ -40,7 +41,7 @@ $xml_source='
 $sign=md5($scramble_key . $xml_source);
 if (getval("sign","")!=$sign) {exit("Invalid signature");}
 
-$xml=parse_xml_into_array($xml_source);
+$xml=parse_xml_into_array($xml_raw);
 echo "<pre>";
 
 $resources=get_nodes_by_tag("RESOURCE");
@@ -75,7 +76,17 @@ foreach ($resources as $resource)
 	foreach ($fields as $field)
 		{
 		echo "<br>" . $field["attributes"]["REF"] . "=" . $field["value"];
-		update_field($ref,$field["attributes"]["REF"],$field["value"]);
+		$fieldtype=sql_value("select type value from resource_type_field where ref='" . $field["attributes"]["REF"] . "'",1);
+		if($fieldtype==8)
+			{
+			// HTML type - value should have been encoded for submission
+			$value=htmlspecialchars_decode($field["value"]);
+			}
+		else
+			{
+			$value=$field["value"];
+			}
+		update_field($ref,$field["attributes"]["REF"],$value);
 		}
         
      # Add to collections
