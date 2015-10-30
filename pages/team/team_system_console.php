@@ -174,8 +174,11 @@ switch ($callback)
 			}
 
 		// ----- start of tail read
-
-		if (isset($debug_log_location) && file_exists($debug_log_location) && is_readable($debug_log_location))
+		if(!isset($debug_log_location))
+			{
+			$debug_log_location = get_debug_log_dir() . "/debug.txt";
+			}
+		if (file_exists($debug_log_location) && is_readable($debug_log_location))
 			{
 			$data = tail($debug_log_location,1000);
 			$lines = array();
