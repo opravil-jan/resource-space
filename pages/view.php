@@ -323,9 +323,10 @@ function check_view_display_condition($fields,$n)
 	
 function display_field_data($field,$valueonly=false,$fixedwidth=452)
 	{
+		
 	global $ref, $show_expiry_warning, $access, $search, $extra, $lang;
 	$value=$field["value"];
-
+			
 	$modified_field=hook("beforeviewdisplayfielddata_processing","",array($field));
 	if($modified_field){
 		$field=$modified_field;
@@ -337,25 +338,36 @@ function display_field_data($field,$valueonly=false,$fixedwidth=452)
 		$extra.="<div class=\"RecordStory\"> <h1>" . $lang["warningexpired"] . "</h1><p>" . $lang["warningexpiredtext"] . "</p><p id=\"WarningOK\"><a href=\"#\" onClick=\"document.getElementById('RecordDownload').style.display='block';document.getElementById('WarningOK').style.display='none';\">" . $lang["warningexpiredok"] . "</a></p></div><style>#RecordDownload {display:none;}</style>";
 		}
 	
+	# Process the value using a plugin. Might be processing an empty value so need to do before we remove the empty values
+	$plugin="../plugins/value_filter_" . $field["name"] . ".php";
+	
+	if ($field['value_filter']!="")	{eval($field['value_filter']);}
+	else if (file_exists($plugin)) {include $plugin;}
+	else if ($field["type"]==4 && strpos($value,":")!=false){$value=NiceDate($value,true,true);} // Show the time as well as date if entered
+	else if ($field["type"]==4 || $field["type"]==6) {$value=NiceDate($value,false,true);}
+			
+			
+	
+	
+	if (($field["type"]==2) || ($field["type"]==3) || ($field["type"]==7) || ($field["type"]==9)) {$value=TidyList($value);}
+	
 	if (($value!="") && ($value!=",") && ($field["display_field"]==1) && ($access==0 || ($access==1 && !$field["hide_when_restricted"])))
-		{
+		{			
 		if (!$valueonly)
 			{$title=htmlspecialchars(str_replace("Keywords - ","",$field["title"]));}
 		else {$title="";}
-		//if ($field["type"]==4 || $field["type"]==6) {$value=NiceDate($value,false,true);}
 
 		# Value formatting
 		if (($field["type"]==2) || ($field["type"]==7) || ($field["type"]==9))
 			{$i18n_split_keywords =true;}
 		else 	{$i18n_split_keywords =false;}
 		$value=i18n_get_translated($value,$i18n_split_keywords );
-		if (($field["type"]==2) || ($field["type"]==3) || ($field["type"]==7) || ($field["type"]==9)) {$value=TidyList($value);}
 		
 		// Don't display the comma for radio buttons:
 		if($field['type'] == 12) {
 			$value = str_replace(',', '', $value);
 		}
-		
+				
 		$value_unformatted=$value; # store unformatted value for replacement also
 
 		if ($field["type"]!=8 || ($field["type"]==8 && $value == strip_tags($value))) # Do not convert HTML formatted fields (that are already HTML) to HTML. Added check for extracted fields set to ckeditor that have not yet been edited.
@@ -369,16 +381,7 @@ function display_field_data($field,$valueonly=false,$fixedwidth=452)
 		}
 
 		if (!$valueonly && trim($field["display_template"])!="")
-			{
-			# Process the value using a plugin
-			$plugin="../plugins/value_filter_" . $field["name"] . ".php";
-			if ($field['value_filter']!=""){
-				eval($field['value_filter']);
-			}
-			else if (file_exists($plugin)) {include $plugin;}
-			else if ($field["type"]==4 && strpos($value,":")!=false){$value=NiceDate($value,true,true);} // Show the time as well as date if entered
-			else if ($field["type"]==4 || $field["type"]==6) {$value=NiceDate($value,false,true);}
-			
+			{			
 			# Highlight keywords
 			$value=highlightkeywords($value,$search,$field["partial_index"],$field["name"],$field["keywords_index"]);
 			
@@ -396,20 +399,12 @@ function display_field_data($field,$valueonly=false,$fixedwidth=452)
 			$extra.=$template;
 			}
 		else
-			{
+			{			
 			#There is a value in this field, but we also need to check again for a current-language value after the i18n_get_translated() function was called, to avoid drawing empty fields
 			if ($value!=""){
 				# Draw this field normally.				
 				
-					# value filter plugin should be used regardless of whether a display template is used.
-					$plugin="../plugins/value_filter_" . $field["name"] . ".php";
-					if ($field['value_filter']!=""){
-						eval($field['value_filter']);
-					}
-					else if (file_exists($plugin)) {include $plugin;}
-					else if ($field["type"]==4 && strpos($value,":")!=false){$value=NiceDate($value,true,true);} // Show the time as well as date if entered
-					else if ($field["type"]==4 || $field["type"]==6) {$value=NiceDate($value,false,true);}
-				
+					
 				# Highlight keywords
 				$value=highlightkeywords($value,$search,$field["partial_index"],$field["name"],$field["keywords_index"]);
 				

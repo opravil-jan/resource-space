@@ -1131,7 +1131,7 @@ function render_search_field($field,$value="",$autoupdate,$class="stdwidth",$for
             
             # Translate all options
             $options=trim_array(explode(",",$field["options"]));
-            
+           
             $adjusted_dropdownoptions=hook("adjustdropdownoptions");
             if ($adjusted_dropdownoptions){$options=$adjusted_dropdownoptions;}
             
@@ -1183,12 +1183,14 @@ function render_search_field($field,$value="",$autoupdate,$class="stdwidth",$for
                 $newoptions=array();
                 foreach ($options as $option)
                     {
-                    if ($option!="" && (count($limit_keywords)==0 || in_array($option,$limit_keywords)))
+                    if ($option!=="" && (count($limit_keywords)==0 || in_array(strval($option,$limit_keywords))))
                         {
                         $newoptions[]=$option;
                         }
                     }
+					
                 $options=$newoptions;
+				
                 $height=ceil(count($options)/$cols);
 
                 global $checkbox_ordered_vertically, $checkbox_vertical_columns;
@@ -1210,7 +1212,7 @@ function render_search_field($field,$value="",$autoupdate,$class="stdwidth",$for
                                     $trans=$option_trans[$option];
 
                                     $name=$field["ref"] . "_" . md5($option);
-                                    if ($option!="")
+                                    if ($option!=="")
                                         {
                                         ?>
                                         <td valign=middle><input type=checkbox id="<?php echo htmlspecialchars($name) ?>" name="<?php echo ($name) ?>" value="yes" <?php if (in_array(cleanse_string($trans,true),$set)) {?>checked<?php } ?> <?php if ($autoupdate) { ?>onClick="UpdateResultCount();"<?php } ?>></td><td valign=middle><?php echo htmlspecialchars($trans)?>&nbsp;&nbsp;</td>
@@ -1235,7 +1237,7 @@ function render_search_field($field,$value="",$autoupdate,$class="stdwidth",$for
                         {
                         $wrap++;if ($wrap>$cols) {$wrap=1;?></tr><tr><?php }
                         $name=$field["ref"] . "_" . md5($option);
-                        if ($option!="")
+                        if ($option!=="")
                             {
                             ?>
                             <td valign=middle><input type=checkbox id="<?php echo htmlspecialchars($name) ?>" name="<?php echo htmlspecialchars($name) ?>" value="yes" <?php if (in_array(cleanse_string(i18n_get_translated($option),true),$set)) {?>checked<?php } ?> <?php if ($autoupdate) { ?>onClick="UpdateResultCount();"<?php } ?>></td><td valign=middle><?php echo htmlspecialchars($trans)?>&nbsp;&nbsp;</td>
@@ -1575,7 +1577,7 @@ function search_form_to_search_query($fields,$fromsearchbar=false)
                 # Process dropdown box
                 $name="field_" . $fields[$n]["ref"];
                 $value=getvalescaped($name,"");
-                if ($value!="")
+                if ($value!=="")
                     {
                     /*
                     $vs=split_keywords($value);
@@ -1768,14 +1770,15 @@ function search_form_to_search_query($fields,$fromsearchbar=false)
                         $value = getvalescaped($name, '');
 
                         if($value == $option) {
-                            $c++;
-                            if($p != '') {
+                            if($p != '' || ($p=='' && emptyiszero($value)))
+                                {
+                                $c++;
                                 $p .= ';';
-                            }
+                                }
                             $p .= mb_strtolower(i18n_get_translated($option), 'UTF-8');
                         }
                     }
-
+        
                     // All options ticked - omit from the search (unless using AND matching, or there is only one option intended as a boolean selection)
                     if(($c == count($options) && !$checkbox_and) && (count($options) > 1)) {
                         $p = '';

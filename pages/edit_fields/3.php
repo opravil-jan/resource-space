@@ -1,7 +1,7 @@
 <?php /* -------- Drop down list ------------------ */ 
 
 # Translate all options
-$options=trim_array(explode(",",$field["options"]));
+$options=trim_array(explode(",",$field["options"])); 
 $modified_options=hook("modify_field_options","",array($field));
 if($modified_options!=""){$options=$modified_options;}
 $adjusted_dropdownoptions=hook("adjustdropdownoptions","",array($field,$options));
@@ -23,11 +23,8 @@ if (substr($value,0,1) == ',') { $value = substr($value,1); }	// strip the leadi
 ?><select class="stdwidth" name="<?php echo $name?>" id="<?php echo $name?>" <?php echo $help_js; hook("additionaldropdownattributes","",array($field)); ?>
 <?php if ($edit_autosave) {?>onChange="AutoSave('<?php echo $field["ref"] ?>');"<?php } ?>
 >
-<?php if (!hook("replacedropdowndefault","",array($field)))
+<?php if (trim($options[0])=="" && !hook("replacedropdowndefault","",array($field)))
 	{ 
-	if(empty($value)) {
-		$value = (empty($options[0])) ? "" : $options[0];
-	}
 	?><option value=""></option><?php
 	} ?>
 <?php

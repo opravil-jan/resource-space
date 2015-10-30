@@ -407,7 +407,7 @@ function split_keywords($search,$index=false,$partial_index=false,$is_date=false
 					for ($m=0;$m<count($words);$m++) {$return2[]=trim($words[$m]);}
 					}
 				}
-
+				
 			$return2=trim_array($return2,$config_trimchars);
 			if ($partial_index) {return add_partial_index($return2);}
 			return $return2;
@@ -692,8 +692,8 @@ function get_image_sizes($ref,$internal=false,$extension="jpg",$onlyifexists=tru
 
 function trim_array($array,$trimchars='')
 	{
-	if(empty($array[0])){$unshiftblank=true;}
-	$array = array_filter($array);
+	if(isset($array[0]) && empty($array[0]) && !(emptyiszero($array[0]))){$unshiftblank=true;}
+    $array = array_filter($array,'emptyiszero');
 	$array_trimmed=array();
 	$index=0;
 	# removes whitespace from the beginning/end of all elements in an array
@@ -4409,4 +4409,7 @@ function metadata_field_edit_access($field)
 	return (!checkperm("F*") || checkperm("F-" . $field))&& !checkperm("F" . $field);
 	}
 
-
+function emptyiszero($value)
+    {
+    return ($value !== null && $value !== false && trim($value) !== '');
+    }
