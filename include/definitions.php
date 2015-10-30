@@ -21,21 +21,28 @@ define ('LOG_CODE_UNSPECIFIED',			'U');
 define ('LOG_CODE_VIEWED',				'v');
 define ('LOG_CODE_DELETED',				'x');
 
-// validates log code as if a enumerated type
-function is_LOG_CODE($log_code)
+// validates LOG_CODE is legal
+function LOG_CODE_validate($log_code)
 	{
-	return is_defined_legal('LOG_CODE',$log_code);
+	return in_array($log_code,LOG_CODE_get_all());
 	}
 
-// used by is_<>() functions
-function is_defined_legal($prefix,$value)
+// returns all allowable LOG_CODEs
+function LOG_CODE_get_all()
 	{
-	foreach (get_defined_constants() as $key => $val)
+	return definitions_get_by_prefix('LOG_CODE');
+	}
+
+// used internally
+function definitions_get_by_prefix($prefix)
+	{
+	$return_definitions = array();
+	foreach (get_defined_constants() as $key=>$value)
 		{
-		if (preg_match('/^' . $prefix . '/', $key) && $val == $value)
+		if (preg_match('/^' . $prefix . '/', $key))
 			{
-			return true;
+			$return_definitions[$key]=$value;
 			}
 		}
-	return false;
+	return $return_definitions;
 	}

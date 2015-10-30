@@ -181,6 +181,8 @@ $lang["property-new_value"]="New value";
 $lang["property-table"]="Table";
 $lang["property-column"]="Column";
 $lang["property-table_reference"]="Table reference";
+$lang["property-code"]="Code";
+$lang["property-operation"]="Operation";
 
 # Top navigation bar (also reused for page titles)
 $lang["logout"]="Log out";
@@ -561,6 +563,24 @@ $lang["log-r"]="Reverted metadata";
 $lang["log-b"]="Created alternate";
 $lang["log-missinglang"]="[type] (missing lang)"; # [type] will be replaced.
 $lang['log-adminpermissionsrequired'] = 'Full admin permission required!';
+
+/* Universal log codes (generic - not for example, resource specific) */
+$lang["log_code_a"]="Access changed";
+$lang["log_code_b"]=$lang["log-b"];
+$lang["log_code_c"]="Created";
+$lang["log_code_d"]=$lang["log-d"];
+$lang["log_code_e"]="Edited";
+$lang["log_code_E"]="Emailed";
+$lang["log_code_l"]=$lang["log-l"];
+$lang["log_code_m"]="Multi-edited";
+$lang["log_code_p"]="Payed";
+$lang["log_code_r"]="Reverted or re-uploaded";
+$lang["log_code_s"]=$lang["log-s"];
+$lang["log_code_t"]=$lang["log-t"];
+$lang["log_code_u"]=$lang["log-u"];
+$lang["log_code_U"]="Unspecified";
+$lang["log_code_v"]="Viewed";
+$lang["log_code_x"]="Deleted";
 
 $lang["backtoresourceview"]="Back to resource view";
 $lang["continuetoresourceview"]="Continue to resource view";
