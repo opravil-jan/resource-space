@@ -81,6 +81,7 @@ if($submitdashtile)
 		
 		if(($tile["all_users"] || $all_users ) && checkPermission_dashadmin())
 			{
+			log_activity($lang['manage_all_dash'], LOG_CODE_EDITED, $title . ($text == '' ? '' : " ({$text})"),'dash_tile',null,$tile['ref']);
 			update_dash_tile($tile,$buildurl,$link,$title,$reload_interval,$all_users,$default_order_by,$resource_count,$text);
 			}
 		else if(!$tile["all_users"] && !$all_users) # Not an all_users tile
@@ -94,7 +95,11 @@ if($submitdashtile)
 		{
 		#CREATE NEW
 		$tile = create_dash_tile($buildurl,$link,$title,$reload_interval,$all_users,$default_order_by,$resource_count,$text);
-		if(!$all_users)
+		if($all_users)
+			{
+			log_activity($lang['manage_all_dash'], LOG_CODE_CREATED, $title . ($text == '' ? '' : " ({$text})"),'dash_tile',null,$tile['ref']);
+			}
+		else
 			{
 			$existing = add_user_dash_tile($userref,$tile,$default_order_by);
 			if(isset($existing[0]))
@@ -102,6 +107,7 @@ if($submitdashtile)
 				$error=$lang["existingdashtilefound"];
 				}
 			}
+
 
 		}
 

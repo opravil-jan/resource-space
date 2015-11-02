@@ -5,9 +5,10 @@ include "../include/authenticate.php";
 
 if (getval("save","")!="")
 	{
-        rs_setcookie("language", getval("language", ""), 1000); # Only used if not global cookies
-        rs_setcookie("language", getval("language", ""), 1000, $baseurl_short);    
-        rs_setcookie("language", getval("language", ""), 1000, $baseurl_short . "pages/");
+	rs_setcookie("language", getval("language", ""), 1000); # Only used if not global cookies
+    rs_setcookie("language", getval("language", ""), 1000, $baseurl_short);
+    rs_setcookie("language", getval("language", ""), 1000, $baseurl_short . "pages/");
+	log_activity($lang["languageselection"],LOG_CODE_EDITED,getval("language", ""));
 	redirect(getval("uri",$baseurl_short."pages/" . ($use_theme_as_home?'themes.php':$default_home_page)));
 	}
 include "../include/header.php";

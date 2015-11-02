@@ -20,6 +20,8 @@ $starsearch = getvalescaped('starsearch', '');
 // Do the search again to get the results back
 $search_results = do_search($search, $restypes, $order_by, $archive, -1, $sort, false, $starsearch);
 
+log_activity($lang['csvExportResultsMetadata'],LOG_CODE_DOWNLOADED,$search . ($restypes == '' ? '' : ' (' . $restypes . ')'));
+
 header("Content-type: application/octet-stream");
 header("Content-disposition: attachment; filename=search_results_metadata.csv");
 
