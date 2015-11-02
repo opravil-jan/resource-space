@@ -568,6 +568,7 @@ $lang['log-adminpermissionsrequired'] = 'Full admin permission required!';
 $lang["log_code_a"]="Access changed";
 $lang["log_code_b"]=$lang["log-b"];
 $lang["log_code_c"]="Created";
+$lang["log_code_C"]="Copied";
 $lang["log_code_d"]=$lang["log-d"];
 $lang["log_code_e"]="Edited";
 $lang["log_code_E"]="Emailed";

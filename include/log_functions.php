@@ -5,6 +5,11 @@ include_once __DIR__ . '/definitions.php';		// includes log code definitions for
 function log_activity($note=null, $log_code=LOG_CODE_UNSPECIFIED, $value_new=null, $remote_table=null, $remote_column=null, $remote_ref=null, $ref_column_override=null, $value_old=null, $user=null, $generate_diff=false)
 	{
 
+	if (is_null($log_code))
+		{
+		$log_code == LOG_CODE_UNSPECIFIED;
+		}
+
 	if(!function_exists('log_diff'))
 		{
 		include_once(__DIR__ . '/resource_functions.php');
@@ -18,19 +23,10 @@ function log_activity($note=null, $log_code=LOG_CODE_UNSPECIFIED, $value_new=nul
 
 	if (is_null($value_old) && !is_null($remote_table) && !is_null($remote_column) && !is_null($remote_ref))	// only try and get the old value if not explicitly set and we have table details
 		{
-		$log_table_last_value_cache_index = "{$remote_table}|{$remote_ref}";
-		global $log_table_last_value_cache;
-		if (!isset($log_table_last_value_cache[$log_table_last_value_cache_index]))
+		$row = sql_query("SELECT * FROM `{$remote_table}` WHERE `" . (is_null($ref_column_override) ? 'ref' : escape_check($ref_column_override)) . "`='{$remote_ref}'");
+		if (isset($row[0][$remote_column]))
 			{
-			$row = sql_query("SELECT * FROM `{$remote_table}` WHERE `" . (is_null($ref_column_override) ? 'ref' : escape_check($ref_column_override)) . "`='{$remote_ref}'");
-			if (isset($row[0]))
-				{
-				$log_table_last_value_cache[$log_table_last_value_cache_index] = $row[0];
-				}
-			}
-		if (isset($log_table_last_value_cache[$log_table_last_value_cache_index][$remote_column]))
-			{
-			$value_old = $log_table_last_value_cache[$log_table_last_value_cache_index][$remote_column];
+			$value_old = $row[0][$remote_column];
 			$log_code = $log_code==LOG_CODE_UNSPECIFIED ? LOG_CODE_EDITED : $log_code;
 			}
 		else
@@ -39,7 +35,7 @@ function log_activity($note=null, $log_code=LOG_CODE_UNSPECIFIED, $value_new=nul
 			}
 		}
 
-	if ($log_code == LOG_CODE_EDITED && $value_old == $value_new)	// return if the value has not changed
+	if ($value_old == $value_new)	// return if the value has not changed
 		{
 		return;
 		}

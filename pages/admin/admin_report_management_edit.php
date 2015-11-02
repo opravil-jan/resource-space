@@ -23,6 +23,8 @@ if ($new_report_name!="")
 	{
 	sql_query("insert into report(name) values('{$new_report_name}')");
 	$ref=sql_insert_id();
+	log_activity(null,LOG_CODE_CREATED,escape_check($new_report_name),'report','name',$ref);
+
 	redirect($baseurl_short."pages/admin/admin_report_management_edit.php?ref={$ref}{$url_params}");	// redirect to prevent repost and expose form data
 	exit;
 	}
@@ -30,7 +32,10 @@ elseif ($copyreport!="")
 	{
 	// Copy report?
 	sql_query("insert into report (name, query) select concat('" . $lang["copy_of"] . " ',name), query from report where ref='$ref'");
+	$from_ref=$ref;
 	$ref=sql_insert_id();
+	$new_copied_name = sql_value("SELECT `name` AS 'value' FROM `report` WHERE `ref`='{$ref}'",'');
+	log_activity($lang["copy_of"] . ' ' . $from_ref,LOG_CODE_COPIED,escape_check($new_copied_name ),'report','name',$ref);
 	}
 elseif (!sql_value("select ref as value from report where ref='{$ref}'",false))
 	{
@@ -43,6 +48,7 @@ elseif (!sql_value("select ref as value from report where ref='{$ref}'",false))
 if (getval("deleteme",false))
 	{
 	sql_query("delete from report where ref='{$ref}'");
+	log_activity(null,LOG_CODE_DELETED,null,'report','name',$ref);
 	redirect("{$baseurl_short}pages/admin/admin_report_management.php?{$url_params}");		// return to the report management page
 	exit;
 	}
@@ -51,6 +57,8 @@ $name=getvalescaped("name","");
 $query=getvalescaped("query","");
 if (getval("save",false) && $query!="")
 	{
+	log_activity(null,LOG_CODE_EDITED,$name,'report','name',$ref,null,sql_value("SELECT `name` AS value FROM `report` WHERE ref={$ref}",""));
+	log_activity(null,LOG_CODE_EDITED,$query,'report','query',$ref,null,sql_value("SELECT `query` AS value FROM `report` WHERE ref={$ref}",""));
 	sql_query("update report set query='" . $query . "',name='{$name}' where ref={$ref}");
 	redirect("{$baseurl_short}pages/admin/admin_report_management.php?{$url_params}");		// return to the report management page
 	exit;
