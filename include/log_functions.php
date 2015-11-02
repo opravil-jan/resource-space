@@ -39,6 +39,11 @@ function log_activity($note=null, $log_code=LOG_CODE_UNSPECIFIED, $value_new=nul
 			}
 		}
 
+	if ($log_code == LOG_CODE_EDITED && $value_old == $value_new)	// return if the value has not changed
+		{
+		return;
+		}
+
 	sql_query("INSERT INTO `activity_log` (`logged`,`user`,`log_code`,`note`,`value_old`,`value_new`,`value_diff`,`remote_table`,`remote_column`,`remote_ref`) VALUES (" .
 		"NOW()," .
 		"'{$user}'," .
