@@ -69,24 +69,6 @@ function get_resource_path($ref,$getfilepath,$size,$generate=true,$extension="jp
 	$folder="";
 	#if (!file_exists(dirname(__FILE__) . $folder)) {mkdir(dirname(__FILE__) . $folder,0777);}
 	
-	for ($n=0;$n<strlen($ref);$n++)
-		{
-		$folder.=substr($ref,$n,1);
-		if (($scramble) && ($n==(strlen($ref)-1))) {$folder.="_" . $scramblepath;}
-		$folder.="/";
-		#echo "<li>" . $folder;
-		if ((!(file_exists($storagedir . "/" . $folder))) && $generate) {@mkdir($storagedir . "/" . $folder,0777);chmod($storagedir . "/" . $folder,0777);}
-		}
-		
-	# Add the page to the filename for everything except page 1.
-	if ($page==1) {$p="";} else {$p="_" . $page;}
-	
-	# Add the alternative file ID to the filename if provided
-	if ($alternative>0) {$a="_alt_" . $alternative;} else {$a="";}
-	
-	# Add the watermarked url too
-	if ($watermarked) {$p.="_wm";}
-	
 	# Original separation support
 	if($originals_separate_storage && $size=="")
 		{
@@ -102,6 +84,26 @@ function get_resource_path($ref,$getfilepath,$size,$generate=true,$extension="jp
 		{
 		$path_suffix="/";
 		}
+	
+	for ($n=0;$n<strlen($ref);$n++)
+		{
+		$folder.=substr($ref,$n,1);
+		if (($scramble) && ($n==(strlen($ref)-1))) {$folder.="_" . $scramblepath;}
+		$folder.="/";
+		#echo "<li>" . $folder;
+		if ((!(file_exists($storagedir . $path_suffix . $folder))) && $generate) {@mkdir($storagedir . $path_suffix . $folder,0777);chmod($storagedir . $path_suffix . $folder,0777);}
+		}
+		
+	# Add the page to the filename for everything except page 1.
+	if ($page==1) {$p="";} else {$p="_" . $page;}
+	
+	# Add the alternative file ID to the filename if provided
+	if ($alternative>0) {$a="_alt_" . $alternative;} else {$a="";}
+	
+	# Add the watermarked url too
+	if ($watermarked) {$p.="_wm";}
+	
+	
 		
 	$filefolder=$storagedir . $path_suffix . $folder;
 	
