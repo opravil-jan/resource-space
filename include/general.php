@@ -15,7 +15,7 @@ function get_resource_path($ref,$getfilepath,$size,$generate=true,$extension="jp
 	    $override=hook("get_resource_path_override","general",array($ref,$getfilepath,$size,$generate,$extension,$scramble,$page,$watermarked,$file_modified,$alternative,$includemodified));
 	    if (is_string($override)) {return $override;}
 
-	global $storagedir;
+	global $storagedir,$originals_separate_storage;
 
 	if ($size=="")
 		{
@@ -87,16 +87,33 @@ function get_resource_path($ref,$getfilepath,$size,$generate=true,$extension="jp
 	# Add the watermarked url too
 	if ($watermarked) {$p.="_wm";}
 	
+	# Original separation support
+	if($originals_separate_storage && $size=="")
+		{
+		# Original file (core file or alternative)
+		$path_suffix="/original/";
+		}
+	elseif($originals_separate_storage)
+		{
+		# Preview or thumb
+		$path_suffix="/resized/";
+		}
+	else
+		{
+		$path_suffix="/";
+		}
+		
+	$filefolder=$storagedir . $path_suffix . $folder;
+	
 	# Fetching the file path? Add the full path to the file
-	$filefolder=$storagedir . "/" . $folder;
 	if ($getfilepath)
 	    {
-	    $folder=$filefolder;
+	    $folder=$filefolder; 
 	    }
 	else
 	    {
 	    global $storageurl;
-	    $folder=$storageurl . "/" . $folder;
+	    $folder=$storageurl . $path_suffix . $folder;
 	    }
 	
 	if ($scramble)

@@ -136,6 +136,9 @@ and running.
 #$storagedir="/path/to/filestore"; # Where to put the media files. Can be absolute (/var/www/blah/blah) or relative to the installation. Note: no trailing slash
 #$storageurl="http://my.storage.server/filestore"; # Where the storagedir is available. Can be absolute (http://files.example.com) or relative to the installation. Note: no trailing slash
 
+# Store original files separately from RS previews? If this setting is adjusted with resources in the system you'll need to run ../pages/tools/filestore_separation.php.
+$originals_separate_storage=false;
+
 include "version.php";
 
 $applicationname="ResourceSpace"; # The name of your implementation / installation (e.g. 'MyCompany Resource System')
