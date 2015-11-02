@@ -7,6 +7,7 @@
 define ('LOG_CODE_ACCESS_CHANGED',		'a');
 define ('LOG_CODE_ALTERNATIVE_CREATED',	'b');
 define ('LOG_CODE_CREATED',				'c');
+define ('LOG_CODE_COPY',				'C');
 define ('LOG_CODE_DOWNLOADED',			'd');
 define ('LOG_CODE_EDITED',				'e');
 define ('LOG_CODE_EMAILED',				'E');

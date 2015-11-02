@@ -1480,6 +1480,7 @@ function check_site_text_custom($page,$name)
 
 function save_site_text($page,$name,$language,$group)
 	{
+	global $lang;
 	# Saves the submitted site text changes to the database.
 
 	if ($group=="") {$g="null";$gc="is";} else {$g="'" . $group . "'";$gc="=";}
@@ -1519,11 +1520,13 @@ function save_site_text($page,$name,$language,$group)
 			{
 			# Insert a new row for this language/group.
 			sql_query("insert into site_text(page,name,language,specific_to_group,text,custom) values ('$page','$name','$language',$g,'" . getvalescaped("text","") . "','$custom')");
+			log_activity($lang["text"],LOG_CODE_CREATED,getvalescaped("text",""),'site_text',null,"'{$page}','{$name}','{$language}',{$g}");
 			}
 		else
 			{
 			# Update existing row
 			sql_query("update site_text set text='" . getvalescaped("text","") . "' where page='$page' and name='$name' and language='$language' and specific_to_group $gc $g");
+			log_activity($lang["text"],LOG_CODE_EDITED,getvalescaped("text",""),'site_text',null,"'{$page}','{$name}','{$language}',{$g}");
 			}
                         
                 # Language clean up - remove all entries that are exactly the same as the default text.
