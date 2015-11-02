@@ -79,7 +79,8 @@ if ($checkbox_ordered_vertically)
 			# Work out which option to fetch.
 			$o=($x*$height)+$y;
 			if ($o<count($options))
-				{					
+				{
+				$option=$options[$o];			
 				$trans=$option_trans[$option];
 
 				$name=$field["ref"] . "_" . md5($option);				
