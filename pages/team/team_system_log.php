@@ -27,7 +27,7 @@ function SystemConsoleactivitylogLoad(refresh_secs, extra)
 
 <div class="BasicsBox">
 
-	<?php if ($backurl!="none"){?><p><a href="<?php echo $backurl?>" onClick="return CentralSpaceLoad(this,true);">&lt;&nbsp;<?php echo $lang["manageusers"]?></a></p><?php } ?>
+	<?php if ($backurl!=""){?><p><a href="<?php echo $backurl?>" onClick="return CentralSpaceLoad(this,true);">&lt;&nbsp;<?php echo $lang["manageusers"]?></a></p><?php } ?>
 
 	<h1><?php echo $lang["systemlog"]; ?></h1>
 	<p><?php echo text("introtext"); ?></p>
