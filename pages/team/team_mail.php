@@ -17,6 +17,7 @@ if (getval("send","")!="")
 	if ($result=="")
 		{
 		$error=($message_type==MESSAGE_ENUM_NOTIFICATION_TYPE_EMAIL ? $lang["emailsent"] : $lang["message_sent"]);
+		log_activity($error,LOG_CODE_SYSTEM);
 		}
 	else
 		{

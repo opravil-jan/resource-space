@@ -29,7 +29,9 @@ if ($type!="")
 	header("Content-type: application/octet-stream");
 	header("Content-disposition: attachment; filename=".$mysql_db."_" . date("d_M_Y_h-iA") . "." . $extension . "");
 	passthru('"' . $path . '" -h ' . $mysql_server . ' -u ' . $mysql_username . ($mysql_password == '' ? '' : ' -p' . $mysql_password) . ' ' . $param . ' ' . $mysql_db);
-	
+
+	log_activity($lang["exportdata"],LOG_CODE_SYSTEM);
+
 	exit();
 	}
 include "../../include/header.php";

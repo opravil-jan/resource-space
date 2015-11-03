@@ -54,6 +54,7 @@ if(!empty($index) && isset($tile) && !isset($usertile))
 	update_default_dash_tile_order($tile["ref"],$index);
 	reorder_default_dash();
 	echo "Tile ".$tile["ref"]." at index: ".($index);
+	log_activity($lang["dashtile"],LOG_CODE_REORDERED,$index,'dash_tile','default_order_by',$tile["ref"]);
 	exit();
 	}
 

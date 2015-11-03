@@ -17,6 +17,7 @@ define ('LOG_CODE_PAYED',				'p');
 define ('LOG_CODE_REVERTED_REUPLOADED',	'r');
 define ('LOG_CODE_REORDERED',			'R');
 define ('LOG_CODE_STATUS_CHANGED',		's');
+define ('LOG_CODE_SYSTEM',				'S');
 define ('LOG_CODE_TRANSFORMED',			't');
 define ('LOG_CODE_UPLOADED',			'u');
 define ('LOG_CODE_UNSPECIFIED',			'U');

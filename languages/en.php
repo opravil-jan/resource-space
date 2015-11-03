@@ -578,6 +578,7 @@ $lang["log_code_p"]="Payed";
 $lang["log_code_r"]="Reverted or re-uploaded";
 $lang["log_code_R"]="Reordered";
 $lang["log_code_s"]=$lang["log-s"];
+$lang["log_code_S"]="System";
 $lang["log_code_t"]=$lang["log-t"];
 $lang["log_code_u"]=$lang["log-u"];
 $lang["log_code_U"]="Unspecified";
