@@ -227,7 +227,13 @@ function set_config_option($user_id, $param_name, $param_value)
             is_null($user_id) ? 'IS NULL' : '= \'' . $user_id . '\'',
             $param_name
         );
-        }
+
+		if (is_null($user_id))		// only log activity for system changes, i.e. when user not specified
+			{
+			log_activity(null, LOG_CODE_EDITED, $param_value, 'user_preferences', 'value', "parameter='" . escape_check($param_name) . "'", null, $current_param_value);
+			}
+
+		}
 
     sql_query($query);
 
