@@ -35,7 +35,7 @@ elseif ($copyreport!="")
 	$from_ref=$ref;
 	$ref=sql_insert_id();
 	$new_copied_name = sql_value("SELECT `name` AS 'value' FROM `report` WHERE `ref`='{$ref}'",'');
-	log_activity($lang["copy_of"] . ' ' . $from_ref,LOG_CODE_COPIED,escape_check($new_copied_name ),'report','name',$ref);
+	log_activity($lang["copy_of"] . ' ' . $from_ref,LOG_CODE_COPIED,escape_check($new_copied_name),'report','name',$ref,null,'');
 	}
 elseif (!sql_value("select ref as value from report where ref='{$ref}'",false))
 	{
@@ -43,12 +43,10 @@ elseif (!sql_value("select ref as value from report where ref='{$ref}'",false))
 	exit;
 	}	
 
-
-
 if (getval("deleteme",false))
 	{
-	sql_query("delete from report where ref='{$ref}'");
 	log_activity(null,LOG_CODE_DELETED,null,'report','name',$ref);
+	sql_query("delete from report where ref='{$ref}'");
 	redirect("{$baseurl_short}pages/admin/admin_report_management.php?{$url_params}");		// return to the report management page
 	exit;
 	}
@@ -58,7 +56,7 @@ $query=getvalescaped("query","");
 if (getval("save",false) && $query!="")
 	{
 	log_activity(null,LOG_CODE_EDITED,$name,'report','name',$ref,null,sql_value("SELECT `name` AS value FROM `report` WHERE ref={$ref}",""));
-	log_activity(null,LOG_CODE_EDITED,$query,'report','query',$ref,null,sql_value("SELECT `query` AS value FROM `report` WHERE ref={$ref}",""));
+	log_activity(null,LOG_CODE_EDITED,$query,'report','query',$ref,null,sql_value("SELECT `query` AS value FROM `report` WHERE ref={$ref}",""),null,true);
 	sql_query("update report set query='" . $query . "',name='{$name}' where ref={$ref}");
 	redirect("{$baseurl_short}pages/admin/admin_report_management.php?{$url_params}");		// return to the report management page
 	exit;

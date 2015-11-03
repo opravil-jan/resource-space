@@ -10,6 +10,8 @@ $title=sql_value("select title value from resource_type_field where ref='$ref'",
 # Perform copy
 if (getval("saveform","")!="")
 	{
+	global $lang;
+
 	$sync=getvalescaped("sync","");
 	if ($sync==1) {$sync="'" . $ref . "'";} else {$sync="null";}
 	
@@ -82,14 +84,12 @@ if (getval("saveform","")!="")
 		regexp_filter,
                 display_condition,
                 onchange_macro,
-		" . $sync . "	
-	
+		" . $sync . "
 		from resource_type_field where ref='$ref'
-		
-		
-		");	
+		");
 	$copied=sql_insert_id();
-        redirect($baseurl_short . "pages/admin/admin_resource_type_field_edit.php?ref=" . $copied);
+	log_activity(null,LOG_CODE_COPIED,$lang['copy_of'] . " {$ref}",'resource_type_field','',$copied);
+	redirect($baseurl_short . "pages/admin/admin_resource_type_field_edit.php?ref=" . $copied);
 	}
         
 if ($copied!='')
@@ -147,6 +147,4 @@ for ($n=0;$n<count($types);$n++)
 </div><!--End of BasicsBox -->
 <?php
 
-
 include "../../include/footer.php";
-	

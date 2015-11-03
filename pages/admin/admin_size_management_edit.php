@@ -20,6 +20,7 @@ if ($new_size_id!="")
 	{
 	sql_query("insert into preview_size(id,name,internal,width,height) values('" . strtolower($new_size_id) . "','{$new_size_id}',0,0,0)");
 	$ref=sql_insert_id();
+	log_activity(null,LOG_CODE_CREATED,$new_size_id,'preview_size','id',$ref,null,'');
 	redirect("{$baseurl_short}pages/admin/admin_size_management_edit.php?ref={$ref}{$url_params}");	// redirect to prevent repost and expose form data
 	exit;
 	}
@@ -35,6 +36,7 @@ if (!sql_value("select ref as value from preview_size where ref='{$ref}' and int
 if (getval("deleteme",false))
 	{
 	sql_query("delete from preview_size where ref='{$ref}'");
+	log_activity(null,LOG_CODE_DELETED,null,'preview_size',null,$ref);
 	redirect("{$baseurl_short}pages/admin/admin_size_management.php?{$url_params}");		// return to the size management page
 	exit;
 	}
@@ -67,6 +69,7 @@ if (getval("save",false))
 			$sql_columns="";
 			}
 		$sql_columns.="{$col}='{$val}'";
+		log_activity(null,LOG_CODE_EDITED,$val,'preview_size',$col,$ref);
 		}
 
 	if (isset($sql_columns)) sql_query("update preview_size set {$sql_columns} where ref={$ref}");

@@ -35,7 +35,7 @@ function log_activity($note=null, $log_code=LOG_CODE_UNSPECIFIED, $value_new=nul
 			}
 		}
 
-	if ($value_old == $value_new)	// return if the value has not changed
+	if ($value_old == $value_new && ($log_code == LOG_CODE_EDITED || $log_code == LOG_CODE_COPIED))	// return if the value has not changed
 		{
 		return;
 		}

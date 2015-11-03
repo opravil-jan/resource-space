@@ -40,6 +40,12 @@ if($backurl=="")
 if (getval("save","")!="")
 	{
 	# Save resource type data
+
+	log_activity(null,null,$name,'resource_type','name',$ref);
+	log_activity(null,null,$config_options,'resource_type','config_options',$ref);
+	log_activity(null,null,$allowed_extensions,'resource_type','allowed_extensions',$ref);
+	log_activity(null,null,$tab,'resource_type','tab_name',$ref);
+
 	sql_query("update resource_type set name='" . $name . "',config_options='" . $config_options . "', allowed_extensions='" . $allowed_extensions . "',tab_name='" . $tab . "' where ref='$ref'");
 	
 	redirect(generateURL($baseurl_short . "pages/admin/admin_resource_types.php",$url_params));
