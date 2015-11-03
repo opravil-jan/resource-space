@@ -576,6 +576,7 @@ $lang["log_code_l"]=$lang["log-l"];
 $lang["log_code_m"]="Multi-edited";
 $lang["log_code_p"]="Payed";
 $lang["log_code_r"]="Reverted or re-uploaded";
+$lang["log_code_R"]="Reordered";
 $lang["log_code_s"]=$lang["log-s"];
 $lang["log_code_t"]=$lang["log-t"];
 $lang["log_code_u"]=$lang["log-u"];
@@ -902,6 +903,8 @@ $lang["requestnewpassword"]="Request new password";
 
 # New for 1.4
 $lang["reorderresources"]="Reorder resources within collection (hold and drag)";
+$lang['resourcetypereordered']="Resource type position reordered";
+$lang['resourcetypefieldreordered']="Resource type field position reordered";
 $lang["addorviewcomments"]="Add or view comments";
 $lang["collectioncomments"]="Collection comments";
 $lang["collectioncommentsinfo"]="Add a comment to this collection for this resource. This will only apply to this collection.";
@@ -2338,3 +2341,5 @@ $lang["message_sent"]="Message sent";
 
 $lang["confirm_remove_custom_usergroup_access"]="This will revoke all custom user group access. Are you sure?";
 $lang['applogo_does_not_exists']="The uploaded logo is no longer available";
+
+

@@ -240,7 +240,7 @@ if(getval("save","")!="" && getval("delete","")=="")
 			$sql="update resource_type_field set ";
 			}		
 		$sql.="{$column}=" . (($val=="")?"NULL":"'{$val}'");
-		log_activity(null,LOG_CODE_UNSPECIFIED,$val,'resource_type_field',$column,$ref);
+		log_activity(null,LOG_CODE_EDITED,$val,'resource_type_field',$column,$ref);
 
 		// Add SQL to update synced fields if field is marked as a sync field
 		if ($sync_field!="" && $sync_field>0 && $column_detail[3]==1)
