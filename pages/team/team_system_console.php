@@ -1,15 +1,35 @@
 <?php
 
-include "../../include/db.php";
-include "../../include/general.php";
-include "../../include/authenticate.php"; if (!checkperm("a")) {exit ("Permission denied.");}
+$same_page_callback = basename(__FILE__)==basename($_SERVER['PHP_SELF']);
 
-// ----- Main page load -----
+if ($same_page_callback)
+	{
+	include "../../include/db.php";
+	include "../../include/general.php";
+	include "../../include/authenticate.php";
+	}
 
 $callback = getval("callback","");
+$actasuser = getval("actasuser","");
+
+if (!checkperm("a") && $callback!="activitylog")		// currently only activity log is allowed for callback
+	{
+	exit ("Permission denied.");
+	}
+
+if (!checkperm("a"))	// if not an admin then force act as user as current user
+	{
+	$actasuser=$userref;
+	}
+
+
+// ----- Main page load -----
 if ($callback == "")
 	{
-	include "../../include/header.php";
+	if ($same_page_callback)
+		{
+		include "../../include/header.php";
+		}
 	foreach (array("debuglog","memorycpu","database","sqllogtransactions","activitylog") as $section)
 	{
 		?><script>
@@ -396,7 +416,7 @@ switch ($callback)
 		LEFT OUTER JOIN `user`
 		ON `activity_log`.`user`=`user`.`ref`
 		WHERE
-			`activity_log`.`ref` LIKE '%{$filter}%' OR
+			(`activity_log`.`ref` LIKE '%{$filter}%' OR
 			`activity_log`.`logged` LIKE '%{$filter}%' OR
 			(
 			CASE ASCII(`activity_log`.`log_code`)
@@ -411,36 +431,49 @@ switch ($callback)
 			`activity_log`.`value_diff` LIKE '%{$filter}%' OR
 			`activity_log`.`remote_table` LIKE '%{$filter}%' OR
 			`activity_log`.`remote_column` LIKE '%{$filter}%' OR
-			`activity_log`.`remote_ref` LIKE '%{$filter}%'
+			`activity_log`.`remote_ref` LIKE '%{$filter}%')
+			" . ($actasuser == "" ? "" : " AND `activity_log`.`user`='{$actasuser}'" ) . "
 		ORDER BY `activity_log`.`ref` DESC");
 		break;
+
 		}
 
 	}		// end of callback switch
 
-?>
-<br />
-<input type="text" class="stdwidth" placeholder="<?php echo $lang["filterbutton"]; ?>" value="<?php echo $filter; ?>"
-	onblur="SystemConsole<?php echo $callback; ?>Stop();"
-	onkeyup="if(this.value=='')
-	{
-	   jQuery('#filterbutton<?php echo $callback; ?>').attr('disabled','disabled');
-	   jQuery('#clearbutton<?php echo $callback; ?>').attr('disabled','disabled')
-	} else {
-		jQuery('#filterbutton<?php echo $callback; ?>').removeAttr('disabled');
-		jQuery('#clearbutton<?php echo $callback; ?>').removeAttr('disabled')
-	}
-	filter<?php echo $callback; ?>=this.value;
-	var e = event;
-	if (e.keyCode === 13)
-	{
-		SystemConsole<?php echo $callback; ?>Load(refreshSecs<?php echo $callback; ?>);
-	}" ></input>
+	if($same_page_callback)	// do not display any filters if page being directly included
+		{
 
-<input id="filterbutton<?php echo $callback; ?>" <?php if($filter=="") { ?>disabled="disabled" <?php } ?>type="button" onclick="SystemConsole<?php echo $callback; ?>Load(refreshSecs<?php echo $callback; ?>);" value="<?php echo $lang['filterbutton']; ?>"></input>
-<input id="clearbutton<?php echo $callback; ?>" <?php if($filter=="") { ?>disabled="disabled" <?php } ?>type="button" onclick="filter<?php echo $callback; ?>=''; SystemConsole<?php echo $callback; ?>Load(refreshSecs<?php echo $callback; ?>);" value="<?php echo $lang["clearbutton"]; ?>"></input>
+		?>
+			<br/>
+			<input type="text" class="stdwidth" placeholder="<?php echo $lang["filterbutton"]; ?>"
+				   value="<?php echo $filter; ?>"
+				   onblur="SystemConsole<?php echo $callback; ?>Stop();"
+				   onkeyup="if(this.value=='')
+					   {
+					   jQuery('#filterbutton<?php echo $callback; ?>').attr('disabled','disabled');
+					   jQuery('#clearbutton<?php echo $callback; ?>').attr('disabled','disabled')
+					   } else {
+					   jQuery('#filterbutton<?php echo $callback; ?>').removeAttr('disabled');
+					   jQuery('#clearbutton<?php echo $callback; ?>').removeAttr('disabled')
+					   }
+					   filter<?php echo $callback; ?>=this.value;
+					   var e = event;
+					   if (e.keyCode === 13)
+					   {
+					   SystemConsole<?php echo $callback; ?>Load(refreshSecs<?php echo $callback; ?>);
+					   }"></input>
 
-<?php
+			<input id="filterbutton<?php echo $callback; ?>" <?php if ($filter == "") { ?>disabled="disabled"
+				   <?php } ?>type="button"
+				   onclick="SystemConsole<?php echo $callback; ?>Load(refreshSecs<?php echo $callback; ?>);"
+				   value="<?php echo $lang['filterbutton']; ?>"></input>
+			<input id="clearbutton<?php echo $callback; ?>" <?php if ($filter == "") { ?>disabled="disabled"
+				   <?php } ?>type="button"
+				   onclick="filter<?php echo $callback; ?>=''; SystemConsole<?php echo $callback; ?>Load(refreshSecs<?php echo $callback; ?>);"
+				   value="<?php echo $lang["clearbutton"]; ?>"></input>
+
+		<?php
+		}
 
 if (count($results)==0)
 	{

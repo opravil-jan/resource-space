@@ -103,6 +103,8 @@ include "../../include/header.php";
 
     	<?php hook("customteamfunction")?>
 
+	<li><a href="<?php echo $baseurl_short; ?>pages/team/team_system_log.php" onClick="return CentralSpaceLoad(this,true);"><?php echo $lang["systemlog"]; ?></a></li>
+
 	<?php
 	# Include a link to the System Setup area for those with the appropriate permissions.
 	if (checkperm("a")) { ?>
