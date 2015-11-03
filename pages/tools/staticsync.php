@@ -129,7 +129,7 @@ function ProcessFolder($folder)
            $staticsync_autotheme, $staticsync_folder_structure, $staticsync_extension_mapping_default, 
            $staticsync_extension_mapping, $staticsync_mapped_category_tree, $staticsync_title_includes_path, 
            $staticsync_ingest, $staticsync_mapfolders, $staticsync_alternatives_suffix, $theme_category_levels, $staticsync_defaultstate,
-           $additional_archive_states,$staticsync_extension_mapping_append_values;
+           $additional_archive_states,$staticsync_extension_mapping_append_values, $staticsync_deleted_state;
     
     $collection = 0;
     
@@ -488,7 +488,7 @@ if (!$staticsync_ingest)
             {
             echo "File no longer exists: {$rf["ref"]} ($fp)" . PHP_EOL;
             # Set to archived.
-            sql_query("UPDATE resource SET archive=2 WHERE ref='{$rf["ref"]}'");
+            sql_query("UPDATE resource SET archive='" . $staticsync_deleted_state . "' WHERE ref='{$rf["ref"]}'");
             sql_query("DELETE FROM collection_resource WHERE resource='{$rf["ref"]}'");
             }
         }
