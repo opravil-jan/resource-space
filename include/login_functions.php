@@ -84,7 +84,11 @@ function perform_login()
 
 		# Log this
 		daily_stat("User session",$userref);
-		if (!$api){sql_query("insert into resource_log(date,user,resource,type) values (now()," . (($userref!="")?"'$userref'":"null") . ",0,'l')");}
+		if (!$api)
+			{
+			/* sql_query("insert into resource_log(date,user,resource,type) values (now()," . (($userref!="")?"'$userref'":"null") . ",0,'l')"); */
+			log_activity(null,LOG_CODE_LOGGED_IN,$ip,"user","ref",($userref!="" ? $userref :"null"),null,'',($userref!="" ? $userref :"null"));
+			}
 
 		# Blank the IP address lockout counter for this IP
 		sql_query("delete from ip_lockout where ip='" . escape_check($ip) . "'");
