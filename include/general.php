@@ -1369,21 +1369,35 @@ function get_all_site_text($findpage="",$findname="",$findtext="")
         
         if ($findtext!="")
             {
-            # When searching text, search all languages to pick up matches for languages other than the default
-            $search_languages=array_keys($languages);
-            }
+            # When searching text, search all languages to pick up matches for languages other than the default. Add array so that default is first then we can skip adding duplicates.
+			$search_languages=array($defaultlanguage);
+			$search_languages = $search_languages + array_keys($languages);	
+			}
         else
             {
             # Process only the default language when not searching.
             $search_languages=array($defaultlanguage);
             }
-            
+			
+		
+		global $language, $lang; // Need to save these for later so we can revert after search
+		$languagesaved=$language;
+		$langsaved=$lang;
+		
         foreach ($search_languages as $search_language)
             {
             # Reset $lang and include the appropriate file to search.
             $lang=array();
             include dirname(__FILE__)."/../languages/" . safe_file_name($search_language) . ".php";
             
+			# Include plugin languages in reverse order as per db.php
+			global $plugins;
+			$language = $search_language;
+			for ($n=count($plugins)-1;$n>=0;$n--)
+				{				
+				register_plugin_language($plugins[$n]);
+				}		
+			
             # Find language strings.
             ksort($lang);
             foreach ($lang as $key=>$text)
@@ -1403,15 +1417,29 @@ function get_all_site_text($findpage="",$findname="",$findtext="")
                     ($findtext=="" || stripos($text,$findtext)!==false)
                     )
                     {
-                    $row["page"]=$pagename;
-                    $row["name"]=$key;
-                    $row["text"]=$text;
-                    $row["language"]=$search_language;
-                    $row["group"]="";
-                    $return[]=$row;
+					$testrow=array();
+                    $testrow["page"]=$pagename;
+                    $testrow["name"]=$key;
+                    $testrow["text"]=$text;
+                    $testrow["language"]=$defaultlanguage;
+                    $testrow["group"]="";
+					// Make sure this isn't already set for default/another language
+					if(!in_array($testrow,$return))
+						{
+						$row["page"]=$pagename;
+						$row["name"]=$key;
+						$row["text"]=$text;
+						$row["language"]=$search_language;
+						$row["group"]="";
+						$return[]=$row;
+						}
                     }
                 }
             }
+		
+		// Need to revert to saved values
+		$language=$languagesaved;
+		$lang=$langsaved;
         
         # If searching, also search overridden text in site_text and return that also.
         if ($findtext!="" || $findpage!="" || $findname!="")
@@ -1421,6 +1449,7 @@ function get_all_site_text($findpage="",$findname="",$findtext="")
             if ($findname!="") {$search="name like '%" . escape_check($findname) . "%'";}          
             
             $site_text=sql_query ("select * from site_text where $search");
+			
             foreach ($site_text as $text)
                 {
                 $row["page"]=$text["page"];
@@ -1428,26 +1457,38 @@ function get_all_site_text($findpage="",$findname="",$findtext="")
                 $row["text"]=$text["text"];
                 $row["language"]=$text["language"];
                 $row["group"]=$text["specific_to_group"];
-                $return[]=$row;
+				// Make sure we dont'include the default if we have overwritten 
+                $customisedtext=false;
+				for($n=0;$n<count($return);$n++)
+					{
+					if ($row["page"]==$return[$n]["page"] && $row["name"]==$return[$n]["name"] && $row["language"]==$return[$n]["language"] && $row["group"]==$return[$n]["group"])
+						{
+						$customisedtext=true;
+						$return[$n]=$row;
+						}						
+					}
+				if(!$customisedtext)
+					{$return[]=$row;}				
                 }
-            }
-            
-            
+            }  
         return $return;
 	}
 
-function get_site_text($page,$name,$language,$group)
+function get_site_text($page,$name,$getlanguage,$group)
 	{
 	# Returns a specific site text entry.
-        global $defaultlanguage;
+    global $defaultlanguage, $lang, $language; // Registering plugin text uses $language and $lang 	
+    // Need to save these globals for later so we can revert after search
+	$languagesaved=$language;
+	$langsaved=$lang;
+        
 	if ($group=="") {$g="null";$gc="is";} else {$g="'" . $group . "'";$gc="=";}
 	
-	$text=sql_query ("select * from site_text where page='$page' and name='$name' and language='$language' and specific_to_group $gc $g");
+	$text=sql_query ("select * from site_text where page='$page' and name='$name' and language='$getlanguage' and specific_to_group $gc $g");
 	if (count($text)>0)
 		{
                 return $text[0]["text"];
                 }
-        
         # Fall back to default language.
 	$text=sql_query ("select * from site_text where page='$page' and name='$name' and language='$defaultlanguage' and specific_to_group $gc $g");
 	if (count($text)>0)
@@ -1467,9 +1508,26 @@ function get_site_text($page,$name,$language,$group)
         
         # Include specific language(s)
         @include dirname(__FILE__)."/../languages/" . safe_file_name($defaultlanguage) . ".php";
-        @include dirname(__FILE__)."/../languages/" . safe_file_name($language) . ".php";
+        @include dirname(__FILE__)."/../languages/" . safe_file_name($getlanguage) . ".php";
+		
+		# Include plugin languages in reverse order as per db.php
+		global $plugins;	
+		$language = $defaultlanguage;
+		for ($n=count($plugins)-1;$n>=0;$n--)
+			{				
+			register_plugin_language($plugins[$n]);
+			}
+        $language = $getlanguage;
+		for ($n=count($plugins)-1;$n>=0;$n--)
+			{				
+			register_plugin_language($plugins[$n]);
+			}
         
-        if (array_key_exists($key,$lang)) {return $lang[$key];} else {return "";}
+        // Revert globals to saved values
+		$language=$languagesaved;
+		$lang=$langsaved;
+        
+		if (array_key_exists($key,$lang)) {return $lang[$key];} else {return "";}
 	}
 
 function check_site_text_custom($page,$name)

@@ -62,9 +62,20 @@ if(($save != '') && getval('langswitch', '') == '' && $html_validation === true)
 	}
 	
 # Fetch user data
+
+//Need to save $lang and $language so we can revert after finding specific text
+$langsaved=$lang;
+$languagesaved=$language;	
+	
 $text        = get_site_text($page, $name, $editlanguage, $editgroup);
 $defaulttext = get_site_text($page, $name, $defaultlanguage, '');
 
+
+// Revert to original values
+$lang=$langsaved;
+$language=$languagesaved;
+        
+		
 # Default text? Show that this is the case
 $text_info = '';
 if($text == $defaulttext && ($editlanguage != $defaultlanguage || $editgroup != ''))
