@@ -126,7 +126,11 @@ include "../include/header.php";
 if (isset($custom_registration_fields))
 	{
 	$custom=explode(",",$custom_registration_fields);
-	$required=explode(",",$custom_registration_required);
+	
+	if (isset($custom_registration_required))
+	{
+		$required=explode(",",$custom_registration_required);
+		}
 	
 	for ($n=0;$n<count($custom);$n++)
 		{
@@ -151,7 +155,11 @@ if (isset($custom_registration_fields))
 			?>
 			<div class="Question" id="Question<?php echo $n?>">
 			<label for="custom<?php echo $n?>"><?php echo htmlspecialchars(i18n_get_translated($custom[$n]))?>
-			<?php if (in_array($custom[$n],$required)) { ?><sup>*</sup><?php } ?>
+			<?php if (isset($required))
+			{
+				if (in_array($custom[$n],$required)) { ?><sup>*</sup><?php }
+				}
+				 ?>
 			</label>
 			
 			<?php if ($type==1) {  # Normal text box
