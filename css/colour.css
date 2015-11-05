@@ -319,12 +319,12 @@ li.plupload_droptext {color:#999;}
     background-color:rgb(238, 238, 238);
     box-shadow: 0 0 40px rgba(0,0,0,0.5);
     }
-#modal .RecordHeader
+#modal .RecordHeader, #modal .BasicsBox h1
   {
   background: linear-gradient(#424242 , #1B1B1B);
   color: #fff;
   }
-#modal .RecordHeader h1
+#modal .RecordHeader h1, #modal .BasicsBox h1
   {
   color: #fff;
   }

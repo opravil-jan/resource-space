@@ -345,8 +345,8 @@ input.defaultbutton {position: absolute; left: -100%; width: 0; height: 0;}
 .BasicsBox h1 {padding: 0px 0px 0.5em;}
 .BasicsBox h2 {font-size: 1.2em;margin-bottom: 4px;}
 .BasicsBox .HorizontalNav ul {padding:0.2em 0;margin:0 0 1.5em;list-style:none;}
-.BasicsBox .HorizontalNav li {display:inline;padding:0em 1em 0em 0em;margin:0em 0.5em 0em 0em;}
-.BasicsBox .VerticalNav ul {padding:0.2em 0;margin:0 0 1.5em;list-style:none;}
+.BasicsBox .HorizontalNav li {display:inline;padding:0em 0.9em 0em 0em;margin:0em 0.5em 0em 0em;}
+.BasicsBox .VerticalNav ul {padding:0.2em 0;margin:0 0 1em;list-style:none;}
 .BasicsBox .VerticalNav li {padding:0 0.35em 0 0em;margin:0px 0.5em 1em 0px;}
 .nopadding,.nopadding .VerticalNav ul {padding:0px;margin:0px;}
 
@@ -953,7 +953,7 @@ div.video-js {margin:auto;}
     text-align:left;
     opacity: 1;
     display:none;
-    overflow-y: scroll;
+    overflow-y: auto;
     z-index: 102;
     }
 #modal .RecordBox
@@ -963,6 +963,10 @@ div.video-js {margin:auto;}
 #modal .RecordHeader
 	{
 	margin:-20px -20px 20px -20px;padding:14px 20px 0 20px;
+	}
+#modal .BasicsBox h1
+	{
+	margin:-20px -20px 20px -20px;padding:14px 20px 10px 20px;
 	}
 #modal .BasicsBox, #modal #CollapsibleSections
 	{

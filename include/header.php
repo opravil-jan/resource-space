@@ -412,7 +412,7 @@ else
 	<ul>
 	<?php if (!hook("replaceheaderfullnamelink")){?>
 	<li><?php if ($allow_password_change && !checkperm("p") && (!isset($password_reset_mode) || !$password_reset_mode)) { ?>
-	<a href="<?php echo $baseurl?>/pages/user/user_home.php"  onClick="return CentralSpaceLoad(this,true);"><?php } ?><?php echo htmlspecialchars(($userfullname=="" ? $username : $userfullname)) ?><?php } /* end replacefullnamelink */?><?php if ($allow_password_change && !checkperm("p")) { ?></a>
+	<a href="<?php echo $baseurl?>/pages/user/user_home.php"  onClick="ModalClose();return ModalLoad(this,true,true,'right');"><?php } ?><?php echo htmlspecialchars(($userfullname=="" ? $username : $userfullname)) ?><?php } /* end replacefullnamelink */?><?php if ($allow_password_change && !checkperm("p")) { ?></a>
 		<span style="display: none;" class="MessageCountPill"></span>
 		<div id="MessageContainer" style="position:absolute; "></div>
 	<?php } ?></li>
