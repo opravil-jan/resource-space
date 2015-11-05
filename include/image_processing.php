@@ -65,13 +65,21 @@ function upload_file($ref,$no_exif=false,$revert=false,$autorotate=false)
 
 		global $filename_field;
 		if($no_exif && isset($filename_field)) {
-			$user_set_filename = get_data_by_field($ref, $filename_field);
+			$user_set_filename            = get_data_by_field($ref, $filename_field);
+			$user_set_filename_path_parts = pathinfo($user_set_filename);
+
+			// $user_set_filename is for an already existing resource or when original filename is a visible field
+			// on the upload form
 			if(trim($user_set_filename) != '') {
 				// Get extension of file just in case the user didn't provide one
 				$path_parts = pathinfo($filename);
+					
 				$original_extension = $path_parts['extension'];
 
-				$filename = $user_set_filename;
+				if($original_extension == $user_set_filename_path_parts['extension'])
+					{
+					$filename = $user_set_filename;
+					}
 
 				// If the user filename doesn't have an extension add the original one
 				$path_parts = pathinfo($filename);
