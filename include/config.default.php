@@ -1499,6 +1499,8 @@ $small_thumbs_display_extended_fields=array();
 	$small_search_results_title_trim=30;
 	$small_search_results_title_wordwrap=100;
 
+# Enable list view option for search screen
+$searchlist=true;
 # List Display Fields: array of fields to display on the list view
 $list_display_fields=array(8,3,12);
 $list_search_results_title_trim=25;
