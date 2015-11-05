@@ -979,7 +979,7 @@ function nicedate($date,$time=false,$wordy=true)
 	{
 	# format a MySQL ISO date
 	# Always use the 'wordy' style from now on as this works better internationally.
-	global $lang;
+	global $lang,$date_d_m_y;
 	$y = substr($date,0,4);
 	if (($y=="") || ($y=="0000")) return "-";
 	$m = @$lang["months"][substr($date,5,2)-1];
@@ -987,7 +987,13 @@ function nicedate($date,$time=false,$wordy=true)
 	$d = substr($date,8, 2);
 	if ($d=="" || $d=="00") return $m . " " . $y;
 	$t = $time ? (" @ "  . substr($date,11,5)) : "";
-	return $d . " " . $m . " " . substr($y, 2, 2) . $t;
+	if($date_d_m_y)
+		{
+		return $d . " " . $m . " " . substr($y, 2, 2) . $t;
+		}
+	else{
+		return $m . " " . $d . " " . substr($y, 2, 2) . $t;
+		}
 	}	
 }
 
