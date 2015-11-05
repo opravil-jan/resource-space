@@ -2491,8 +2491,7 @@ function search_special($search,$sql_join,$fetchrows,$sql_prefix,$sql_suffix,$or
     # Since there will only be one special search executed at a time, only one of the
     # hook implementations will set the value.  So, you know that the value set
     # will always be the correct one (unless two plugins use the same !<type> value).
-    $sql="";
-    hook("addspecialsearch", "", array($search));
+    $sql=hook("addspecialsearch", "", array($search));
     
     if($sql != "")
         {
