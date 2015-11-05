@@ -8,6 +8,7 @@ include "../../include/header.php";
 $sortby = getval("sortby","");
 $filter = getval("filter","");
 $backurl=getval("backurl","");
+$actasuser=getval('actasuser',$userref);;
 
 ?><script>
 
@@ -20,7 +21,7 @@ function SystemConsoleactivitylogLoad(refresh_secs, extra)
 	{
 		extra = "";
 	}
-	CentralSpaceLoad("team_system_log.php?sortby=" + encodeURIComponent(sortByactivitylog) + '&filter=' + encodeURIComponent(filteractivitylog) + extra);
+	CentralSpaceLoad("team_system_log.php?sortby=" + encodeURIComponent(sortByactivitylog) + '&actasuser=<?php echo $actasuser; ?>&filter=' + encodeURIComponent(filteractivitylog) + extra);
 }
 
 </script>
@@ -54,6 +55,7 @@ function SystemConsoleactivitylogLoad(refresh_secs, extra)
 <?php
 
 $_GET['callback']="activitylog";
+$_GET['actasuser']=$actasuser;
 include_once __DIR__ . "/team_system_console.php";
 
 include "../../include/footer.php";

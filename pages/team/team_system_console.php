@@ -45,7 +45,7 @@ if ($callback == "")
 					extra = "";
 				}
 				jQuery('#SystemConsole<?php echo $section; ?>').load('team_system_console.php?callback=<?php echo $section; ?>&sortby=' + encodeURIComponent(sortBy<?php echo $section;
-				?>) + '&filter=' + encodeURIComponent(filter<?php echo $section; ?>) + extra);
+				?>) + '&actasuser=<?php echo getval('actasuser',''); ?>&filter=' + encodeURIComponent(filter<?php echo $section; ?>) + extra);
 				if (refresh_secs >= 0)
 				{
 					clearTimeout(timeOutControl<?php echo $section; ?>);
@@ -400,16 +400,17 @@ switch ($callback)
 		$results = sql_query("
 
 		 SELECT
-			`activity_log`.`logged` as '{$lang['fieldtype-date_and_time']}',
-			`user`.`username` as '{$lang['user']}',
-			CASE ASCII(`activity_log`.`log_code`) $when_statements ELSE `activity_log`.`log_code` END as '{$lang['property-operation']}',
-			`activity_log`.`note` as '{$lang['fieldtitle-notes']}',
-			`activity_log`.`value_old` as '{$lang['property-old_value']}',
-			`activity_log`.`value_new` as '{$lang['property-new_value']}',
-			if(`activity_log`.`value_diff`='','',concat('<pre>',`activity_log`.`value_diff`,'</pre>')) as '{$lang['difference']}',
-			`activity_log`.`remote_table` as '{$lang['property-table']}',
-			`activity_log`.`remote_column` as '{$lang['property-column']}',
-			`activity_log`.`remote_ref` as '{$lang['property-table_reference']}'
+			`activity_log`.`logged` AS '{$lang['fieldtype-date_and_time']}',
+			`user`.`username` AS '{$lang['user']}',
+			CASE ASCII(`activity_log`.`log_code`) $when_statements ELSE `activity_log`.`log_code` END AS '{$lang['property-operation']}',
+			`activity_log`.`note` AS '{$lang['fieldtitle-notes']}',
+			null AS '{$lang['property-resource-field']}',
+			`activity_log`.`value_old` AS '{$lang['property-old_value']}',
+			`activity_log`.`value_new` AS '{$lang['property-new_value']}',
+			if(`activity_log`.`value_diff`='','',concat('<pre>',`activity_log`.`value_diff`,'</pre>')) AS '{$lang['difference']}',
+			`activity_log`.`remote_table`AS '{$lang['property-table']}',
+			`activity_log`.`remote_column` AS '{$lang['property-column']}',
+			`activity_log`.`remote_ref` AS '{$lang['property-table_reference']}'
 		FROM
 			`activity_log`
 		LEFT OUTER JOIN `user`
@@ -431,20 +432,23 @@ switch ($callback)
 		UNION
 
 		SELECT
-			`resource_log`.`date` as '{$lang['fieldtype-date_and_time']}',
-			`user`.`username` as '{$lang['user']}',
-			CASE ASCII(`resource_log`.`type`) $when_statements ELSE `resource_log`.`type` END as '{$lang['property-operation']}',
-			`resource_log`.`notes` as '{$lang['fieldtitle-notes']}',
-			`resource_log`.`previous_value` as '{$lang['property-old_value']}',
-			'' as '{$lang['property-new_value']}',
-			if(`resource_log`.`diff`='','',concat('<pre>',`resource_log`.`diff`,'</pre>')) as '{$lang['difference']}',
-			'resource' as '{$lang['property-table']}',
-			'ref' as '{$lang['property-column']}',
-			`resource_log`.`resource` as '{$lang['property-table_reference']}'
+			`resource_log`.`date` AS '{$lang['fieldtype-date_and_time']}',
+			`user`.`username` AS '{$lang['user']}',
+			CASE ASCII(`resource_log`.`type`) $when_statements ELSE `resource_log`.`type` END AS '{$lang['property-operation']}',
+			`resource_log`.`notes` AS '{$lang['fieldtitle-notes']}',
+			`resource_type_field`.`title` AS '{$lang['property-resource-field']}',
+			`resource_log`.`previous_value` AS '{$lang['property-old_value']}',
+			'' AS '{$lang['property-new_value']}',
+			if(`resource_log`.`diff`='','',concat('<pre>',`resource_log`.`diff`,'</pre>')) AS '{$lang['difference']}',
+			'resource' AS '{$lang['property-table']}',
+			'ref' AS '{$lang['property-column']}',
+			`resource_log`.`resource` AS '{$lang['property-table_reference']}'
 		FROM
 			`resource_log`
 		LEFT OUTER JOIN `user`
-		ON `resource_log`.`user`=`user`.`ref`
+			ON `resource_log`.`user`=`user`.`ref`
+		LEFT OUTER JOIN `resource_type_field`
+			ON `resource_log`.`resource_type_field`=`resource_type_field`.`ref`
 
 		WHERE
 			" . ($actasuser == "" ? "" : "`resource_log`.`user`='{$actasuser}' AND " ) . "

@@ -176,6 +176,7 @@ $lang["property-collection_resource_relationships"]="Collection resource relatio
 $lang["property-total_users"]="Total users";
 
 # Used for activity log
+$lang["property-resource-field"]="Resource field";
 $lang["property-old_value"]="Old value";
 $lang["property-new_value"]="New value";
 $lang["property-table"]="Table";
