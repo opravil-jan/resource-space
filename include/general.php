@@ -1004,6 +1004,7 @@ function save_user($ref)
 		sql_query("delete from user where ref='$ref'");
 		include dirname(__FILE__) ."/dash_functions.php";
 		empty_user_dash($ref);
+		log_activity(null,LOG_CODE_DELETED,null,'user',null,$ref);
 		return true;
 		}
 	else
@@ -1039,10 +1040,27 @@ function save_user($ref)
 			}
 			
 		$additional_sql=hook("additionaluserfieldssave");
-		
-		sql_query("update user set username='" . trim(getvalescaped("username","")) . "'" . $passsql . ",fullname='" . getvalescaped("fullname","") . "',email='" . getvalescaped("email","") . "',usergroup='" . getvalescaped("usergroup","") . "',account_expires=$expires,ip_restrict='" . getvalescaped("ip_restrict","") . "',comments='" . getvalescaped("comments","") . "',approved='" . ((getval("approved","")=="")?"0":"1") . "' $additional_sql where ref='$ref'");
+
+		log_activity(null,LOG_CODE_EDITED,trim(getvalescaped("username","")),'user','username',$ref);
+		log_activity(null,LOG_CODE_EDITED,trim(getvalescaped("fullname","")),'user','fullname',$ref);
+		log_activity(null,LOG_CODE_EDITED,trim(getvalescaped("email","")),'user','email',$ref);
+		log_activity(null,LOG_CODE_EDITED,trim(getvalescaped("usergroup","")),'user','usergroup',$ref);
+		log_activity(null,LOG_CODE_EDITED,getvalescaped("ip_restrict",""),'user','ip_restrict',$ref,null,'');
+		log_activity(null,LOG_CODE_EDITED,$expires,'user','account_expires',$ref);
+		log_activity(null,LOG_CODE_EDITED,getvalescaped("comments",""),'user','comments',$ref);
+		log_activity(null,LOG_CODE_EDITED,((getval("approved","")=="")?"0":"1"),'user','approved',$ref);
+
+		sql_query("update user set
+			username='" . trim(getvalescaped("username","")) . "'" . $passsql . ",
+			fullname='" . getvalescaped("fullname","") . "',
+			email='" . getvalescaped("email","") . "',
+			usergroup='" . getvalescaped("usergroup","") . "',
+			account_expires=$expires,
+			ip_restrict='" . getvalescaped("ip_restrict","") . "',
+			comments='" . getvalescaped("comments","") . "',
+			approved='" . ((getval("approved","")=="")?"0":"1") . "' $additional_sql where ref='$ref'");
 		}
-		
+
 	if ($allow_password_email && getval("emailme","")!="")
 		{
 		email_user_welcome(getval("email",""),getval("username",""),getval("password",""),getvalescaped("usergroup",""));
@@ -1326,6 +1344,7 @@ function new_user($newuser)
 	$new=create_collection($newref,"My Collection",0,1); # Do not translate this string!
 	# set this to be the user's current collection
 	sql_query("update user set current_collection='$new' where ref='$newref'");
+	log_activity($lang["createuserwithusername"],LOG_CODE_CREATED,$newuser,'user','ref',$newref,null,'');
 	
 	return $newref;
 	}
