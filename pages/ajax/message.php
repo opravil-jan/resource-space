@@ -83,7 +83,7 @@
 				if(xhr.status==200 && (messages=jQuery.parseJSON(messages)) && messages.length>0)
 				{
 					jQuery('span.MessageCountPill').html(messages.length).click(function() {
-						document.location.href='<?php echo $baseurl; ?>/pages/user/user_messages.php';
+						CentralSpaceLoad('<?php echo $baseurl; ?>/pages/user/user_messages.php',true);
 					}).fadeIn();
 					if (activeSeconds > 0 || message_poll_first_run)
 					{
