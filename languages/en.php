@@ -1049,6 +1049,7 @@ $lang["rename"]="Rename";
 $lang["showalllanguages"]="Show all languages";
 $lang["hidealllanguages"]="Hide all languages";
 $lang["clicktologinasthisuser"]="Click to log in as this user";
+$lang["clicktoviewlog"]="Click to view log";
 $lang["addkeyword"]="Add keyword";
 $lang["selectedresources"]="Selected resources";
 $lang["addresourcebatchlocalfolder"]="Add resource batch - fetch from local upload folder";

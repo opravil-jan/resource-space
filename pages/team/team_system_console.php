@@ -581,9 +581,30 @@ if (!$sorted && $sortby)
 				?>
 				<tr class="resource_type_field_row">
 					<?php
-					foreach ($results[$i] as $cell)
+					foreach ($results[$i] as $key=>$cell)
 						{
-						?><td><?php echo str_highlight(preg_replace('/&lt;(\/*)pre&gt;/i','<$1pre>',htmlspecialchars($cell)),$filter); ?></td><?php
+						?><td><?php
+
+							$close_anchor=false;
+							if(
+								$key==$lang['property-table_reference'] &&
+								isset($results[$i][$lang['property-table']]) &&
+								$results[$i][$lang['property-table']]=='resource' &&
+								isset($results[$i][$lang['property-column']]) &&
+								$results[$i][$lang['property-column']]=='ref' &&
+								$cell!='' &&
+								$cell > 0
+							)
+								{
+								?><a href="<?php echo $baseurl; ?>/pages/view.php?ref=<?php echo $cell; ?>" onclick="return ModalLoad(this,true);"><?php
+								$close_anchor=true;
+								}
+							echo str_highlight(preg_replace('/&lt;(\/*)pre&gt;/i','<$1pre>',htmlspecialchars($cell)),$filter);
+							if ($close_anchor)
+								{
+								?></a><?php
+								}
+						?></td><?php
 						}
 					?>
 					<?php

@@ -204,6 +204,11 @@ if (!hook("ticktoemailpassword"))
 <div class="Question"><label><?php echo $lang["ticktodelete"]?></label><input name="deleteme" type="checkbox"  value="yes"><div class="clearerleft"> </div></div>
 <?php hook("additionaluserlinks");?>
 <?php if ($user["approved"]==1 && !hook("loginasuser")) { ?>
+
+<div class="Question"><label><?php echo $lang["log"]?></label>
+<div class="Fixed"><a href="<?php echo $baseurl_short?>pages/team/team_system_log.php?actasuser=<?php echo $ref?>">&gt;&nbsp;<?php echo $lang["clicktoviewlog"]; ?></a></div>
+<div class="clearerleft"> </div></div>
+
 <div class="Question"><label><?php echo $lang["login"]?></label>
 <div class="Fixed"><a href="<?php echo $baseurl_short?>pages/team/team_user_edit.php?ref=<?php echo $ref?>&loginas=true">&gt;&nbsp;<?php echo $lang["clicktologinasthisuser"]?></a></div>
 <div class="clearerleft"> </div></div>
