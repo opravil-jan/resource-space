@@ -385,6 +385,7 @@ switch ($callback)
 
 	case "activitylog":
 		{
+
 		// decode using the enumerated
 		$when_statements  = "";
 		foreach (array_values(LOG_CODE_get_all()) as $value)
@@ -396,14 +397,12 @@ switch ($callback)
 			$when_statements .= " WHEN ASCII('" . escape_check($value) . "') THEN '" . escape_check($lang['log_code_' . $value]) . "'";
 			}
 
-		$results = sql_query("SELECT
-			`activity_log`.`ref` as '{$lang['property-reference']}',
+		$results = sql_query("
+
+		 SELECT
 			`activity_log`.`logged` as '{$lang['fieldtype-date_and_time']}',
 			`user`.`username` as '{$lang['user']}',
-			CASE ASCII(`activity_log`.`log_code`)
-				$when_statements
-				ELSE `activity_log`.`log_code`
-			END as '{$lang['property-operation']}',
+			CASE ASCII(`activity_log`.`log_code`) $when_statements ELSE `activity_log`.`log_code` END as '{$lang['property-operation']}',
 			`activity_log`.`note` as '{$lang['fieldtitle-notes']}',
 			`activity_log`.`value_old` as '{$lang['property-old_value']}',
 			`activity_log`.`value_new` as '{$lang['property-new_value']}',
@@ -416,14 +415,9 @@ switch ($callback)
 		LEFT OUTER JOIN `user`
 		ON `activity_log`.`user`=`user`.`ref`
 		WHERE
+			" . ($actasuser == "" ? "" : "`activity_log`.`user`='{$actasuser}' AND " ) . "
 			(`activity_log`.`ref` LIKE '%{$filter}%' OR
 			`activity_log`.`logged` LIKE '%{$filter}%' OR
-			(
-			CASE ASCII(`activity_log`.`log_code`)
-				$when_statements
-				ELSE `activity_log`.`log_code`
-			END) LIKE '%{$filter}%' OR
-			`activity_log`.`log_code` LIKE '%{$filter}%' OR
 			`user`.`username` LIKE '%{$filter}%' OR
 			`activity_log`.`note` LIKE '%{$filter}%' OR
 			`activity_log`.`value_old` LIKE '%{$filter}%' OR
@@ -431,9 +425,47 @@ switch ($callback)
 			`activity_log`.`value_diff` LIKE '%{$filter}%' OR
 			`activity_log`.`remote_table` LIKE '%{$filter}%' OR
 			`activity_log`.`remote_column` LIKE '%{$filter}%' OR
-			`activity_log`.`remote_ref` LIKE '%{$filter}%')
-			" . ($actasuser == "" ? "" : " AND `activity_log`.`user`='{$actasuser}'" ) . "
-		ORDER BY `activity_log`.`ref` DESC");
+			`activity_log`.`remote_ref` LIKE '%{$filter}%' OR
+			(CASE ASCII(`activity_log`.`log_code`) $when_statements ELSE `activity_log`.`log_code` END) LIKE '%{$filter}%')
+
+		UNION
+
+		SELECT
+			`resource_log`.`date` as '{$lang['fieldtype-date_and_time']}',
+			`user`.`username` as '{$lang['user']}',
+			CASE ASCII(`resource_log`.`type`) $when_statements ELSE `resource_log`.`type` END as '{$lang['property-operation']}',
+			`resource_log`.`notes` as '{$lang['fieldtitle-notes']}',
+			`resource_log`.`previous_value` as '{$lang['property-old_value']}',
+			'' as '{$lang['property-new_value']}',
+			if(`resource_log`.`diff`='','',concat('<pre>',`resource_log`.`diff`,'</pre>')) as '{$lang['difference']}',
+			'resource' as '{$lang['property-table']}',
+			'ref' as '{$lang['property-column']}',
+			`resource_log`.`resource` as '{$lang['property-table_reference']}'
+		FROM
+			`resource_log`
+		LEFT OUTER JOIN `user`
+		ON `resource_log`.`user`=`user`.`ref`
+
+		WHERE
+			" . ($actasuser == "" ? "" : "`resource_log`.`user`='{$actasuser}' AND " ) . "
+			(`resource_log`.`ref` LIKE '%{$filter}%' OR
+			`resource_log`.`date` LIKE '%{$filter}%' OR
+			`user`.`username` LIKE '%{$filter}%' OR
+			`resource_log`.`notes` LIKE '%{$filter}%' OR
+			`resource_log`.`previous_value` LIKE '%{$filter}%' OR
+			'resource' LIKE '%{$filter}%' OR
+			'ref' LIKE '%{$filter}%' OR
+			`resource_log`.`resource` LIKE '%{$filter}%' OR
+			(CASE ASCII(`resource_log`.`type`)
+				$when_statements
+				ELSE `resource_log`.`type`
+			END) LIKE '%{$filter}%')
+
+			ORDER BY 1 DESC
+
+			LIMIT 40
+
+		");
 		break;
 
 		}
@@ -540,7 +572,7 @@ if (!$sorted && $sortby)
 		</tbody>
 		<tbody id="resource_type_field_table_body" class="ui-sortable">
 			<?php			
-			for ($i=0; $i<count($results) && $i<20; $i++)
+			for ($i=0; $i<count($results) && $i<($callback == "activitylog" ? 40 : 20); $i++)
 				{				
 				?>
 				<tr class="resource_type_field_row">
