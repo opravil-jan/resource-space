@@ -2342,7 +2342,7 @@ function compile_collection_actions(array $collection_data, $top_actions)
 		// check that this collection is not hidden. use first in alphabetical order otherwise
 		if(in_array($user_mycollection,$hidden_collections)){
 			$hidden_collections_list=implode(",",array_filter($hidden_collections));
-			$user_mycollection=sql_value("select ref value from collection where user={$userref}" . ((count($hidden_collections)>0)?" and ref not in(" . $hidden_collections_list . ")":"") . " order by ref limit 1","");
+			$user_mycollection=sql_value("select ref value from collection where user={$userref}" . ((trim($hidden_collections_list)!='')?" and ref not in(" . $hidden_collections_list . ")":"") . " order by ref limit 1","");
 		}
 		$extra_tag_attributes = sprintf('
                 data-mycol="%s"
