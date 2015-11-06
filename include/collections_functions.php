@@ -2159,7 +2159,7 @@ function compile_collection_actions(array $collection_data, $top_actions)
         }
 
     // Remove
-    if($k=="" && $manage_collections_remove_link && $userref != $collection_data['user'])
+    if($k=="" && $manage_collections_remove_link && $userref != $collection_data['user'] && !checkperm('b'))
         {
         $options[$o]['value']='remove_collection';
 		$options[$o]['label']=$lang['action-remove'];
