@@ -2032,7 +2032,7 @@ function compile_collection_actions(array $collection_data, $top_actions)
         }
 
     // Edit Collection
-    if(($userref == $collection_data['user']) || (checkperm('h'))) 
+    if((($userref == $collection_data['user']) || (checkperm('h')))  && $k == '') 
         {
         $extra_tag_attributes = sprintf('
                 data-url="%spages/collection_edit.php?ref=%s"
@@ -2049,7 +2049,7 @@ function compile_collection_actions(array $collection_data, $top_actions)
         }
 
     // Upload to collection
-    if((checkperm('c') || checkperm('d')) && $collection_data['savedsearch'] == 0 && ($userref == $collection_data['user'] || $collection_data['allow_changes'] == 1 || checkperm('h')))
+    if(((checkperm('c') || checkperm('d')) && $collection_data['savedsearch'] == 0 && ($userref == $collection_data['user'] || $collection_data['allow_changes'] == 1 || checkperm('h'))) && $k == '')
         {
         $data_attribute['url'] = sprintf('%spages/edit.php?uploader=%s&ref=-%s&collection_add=%s',
             $baseurl_short,
@@ -2065,7 +2065,7 @@ function compile_collection_actions(array $collection_data, $top_actions)
         }
 
     // Home_dash is on, AND NOT Anonymous use, AND (Dash tile user (NOT with a managed dash) || Dash Tile Admin)
-    if(!$top_actions && $home_dash && checkPermission_dashcreate())
+    if(!$top_actions && $home_dash && $k == '' && checkPermission_dashcreate())
         {
         $data_attribute['url'] = sprintf('
             %spages/dash_tile.php?create=true&tltype=srch&promoted_resource=true&freetext=true&all_users=1&link=/pages/search.php?search=!collection%s&order_by=relevance&sort=DESC
@@ -2183,7 +2183,7 @@ function compile_collection_actions(array $collection_data, $top_actions)
         }
 
     // Collection log
-    if($k=="" && ($userref== $collection_data['user']) || (checkperm('h')))
+    if($k=="" && ($userref== $collection_data['user'] || (checkperm('h'))))
         {
         $extra_tag_attributes = sprintf('
                 data-url="%spages/collection_log.php?ref=%s"
