@@ -1637,6 +1637,7 @@ $lang["can_manage_users"]="Can manage users";
 $lang["can_manage_keywords"]="Can manage keywords";
 $lang["can_access_system_setup"]="Can access the System Setup area";
 $lang["can_change_own_password"]="Can change own account password";
+$lang["can_manage_users"]="Can manage users";
 $lang["can_manage_users_in_children_groups"]="Can manage users in children groups to the user's group only";
 $lang["can_email_resources_to_own_and_children_and_parent_groups"]="Can email resources to users in the user's own group, children groups and parent group only";
 
