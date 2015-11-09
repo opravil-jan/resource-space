@@ -27,6 +27,7 @@ if (!hook("renderresultlargethumb"))
 				<td>
     				<?php   
     				$show_flv=false;
+    				$use_mp3_player=false;
 					if ((in_array($result[$n]["file_extension"],$ffmpeg_supported_extensions) || $result[$n]["file_extension"]=="flv") && $flv_player_xlarge_view)
 						{ 
 						$flvfile=get_resource_path($ref,true,"pre",false,$ffmpeg_preview_extension);
