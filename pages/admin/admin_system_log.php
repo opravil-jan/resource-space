@@ -13,7 +13,8 @@ if (!checkperm_user_edit($userref))
 $sortby = getval("sortby","");
 $filter = getval("filter","");
 $backurl=getval("backurl","");
-$actasuser=getval('actasuser',$userref);;
+$actasuser=getval('actasuser',$userref);
+$offset=getval('offset',0);
 
 include "../../include/header.php";
 
@@ -21,6 +22,7 @@ include "../../include/header.php";
 
 var sortByactivitylog = "<?php echo $sortby; ?>";
 var filteractivitylog = "<?php echo $filter; ?>";
+var offset = "<?php echo $offset; ?>";
 
 function SystemConsoleactivitylogLoad(refresh_secs, extra)
 {
@@ -28,7 +30,9 @@ function SystemConsoleactivitylogLoad(refresh_secs, extra)
 	{
 		extra = "";
 	}
-	CentralSpaceLoad("team_system_log.php?sortby=" + encodeURIComponent(sortByactivitylog) + '&actasuser=<?php echo $actasuser; ?>&filter=' + encodeURIComponent(filteractivitylog) + extra);
+	CentralSpaceLoad("admin_system_log.php?sortby=" + encodeURIComponent(sortByactivitylog) +
+	'&actasuser=<?php echo $actasuser; ?>&filter=' + encodeURIComponent(filteractivitylog) +
+	'&offset=' + encodeURIComponent(offset) + extra);
 }
 
 </script>
@@ -56,13 +60,23 @@ function SystemConsoleactivitylogLoad(refresh_secs, extra)
 	   SystemConsoleactivitylogLoad();
 	   }">
 </input>
-<input id="filterbuttonactivitylog" type="button" onclick="SystemConsoleactivitylogLoad();" value="Filter">
-<input id="clearbuttonactivitylog" type="button" onclick="filteractivitylog=''; SystemConsoleactivitylogLoad();" value="Clear">
+<input id="filterbuttonactivitylog" type="button" onclick="offset=0; SystemConsoleactivitylogLoad();" value="<?php echo $lang['filterbutton']; ?>">
+<input id="clearbuttonactivitylog" type="button" onclick="filteractivitylog=''; offset=0; SystemConsoleactivitylogLoad();" value="<?php echo $lang['clearbutton']; ?>">
 
 <?php
 
 $_GET['callback']="activitylog";
 $_GET['actasuser']=$actasuser;
 include_once __DIR__ . "/../team/team_system_console.php";
+
+if (count($results) > $results_per_page)
+	{
+	?><input type="button" onclick="offset++; SystemConsoleactivitylogLoad();" value="<?php echo $lang["loadmorebutton"]; ?>">&nbsp;<?php
+	}
+
+if ($offset > 0)
+	{
+	?><input id = "clearbuttonactivitylog" type = "button" onclick = "offset--; SystemConsoleactivitylogLoad();" value = "<?php echo $lang['back']; ?>" ><?php
+	}
 
 include "../../include/footer.php";

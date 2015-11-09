@@ -232,6 +232,7 @@ $lang["reload"]="Reload";
 $lang["pause"]="Pause";
 $lang["filterbutton"]="Filter";
 $lang["stopbutton"]="Stop";
+$lang["loadmorebutton"]="Load more";
 
 $lang["gotoadvancedsearch"]="Advanced search";
 $lang["viewnewmaterial"]="View new material";
@@ -413,6 +414,7 @@ $lang["forthispackage"]="for this package";
 $lang["didnotinclude"]="Did not include";
 $lang["selectcollection"]="Select collection";
 $lang["total"]="Total";
+$lang["lastmatching"]="Last matching";
 $lang["ownedbyyou"]="owned by you";
 $lang["edit_theme_category"]="Edit featured collection category";
 $lang["emailthemecollectionmessageexternal"]="has e-mailed you collections of resources from $applicationname."; 

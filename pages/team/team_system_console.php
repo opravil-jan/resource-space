@@ -1,6 +1,7 @@
 <?php
 
 $same_page_callback = basename(__FILE__)==basename($_SERVER['PHP_SELF']);
+$results_per_page = 20;
 
 if ($same_page_callback)
 	{
@@ -11,6 +12,7 @@ if ($same_page_callback)
 
 $callback = getval("callback","");
 $actasuser = getval("actasuser","");
+$offset = getval("offset",0);
 
 if (!checkperm("a") && $callback!="activitylog")		// currently only activity log is allowed for callback
 	{
@@ -467,9 +469,12 @@ switch ($callback)
 
 			ORDER BY 1 DESC
 
-			LIMIT 40
 
-		");
+
+			LIMIT 40
+			OFFSET " . ($offset * $results_per_page)
+
+		);
 		break;
 
 		}
@@ -536,7 +541,21 @@ if (!$sorted && $sortby)
 		});
 	}
 ?><div class="Listview">
-	<strong><?php echo $lang['total']; ?>: <?php echo count($results); ?></strong>
+	<?php
+	if ($same_page_callback)
+		{
+	?><strong><?php
+		if ($callback=='activitylog' && count($results) > $results_per_page)
+			{
+			echo $lang['lastmatching'] . ': ' . $results_per_page;
+			}
+		else
+			{
+			echo $lang['total'] . ': ' . count($results);
+			}
+		?></strong><?
+		}
+	?>
 	<table border="0" cellspacing="0" cellpadding="0" class="ListviewStyle">
 		<tbody>
 			<tr class="ListviewTitleStyle">
@@ -576,7 +595,7 @@ if (!$sorted && $sortby)
 		</tbody>
 		<tbody id="resource_type_field_table_body" class="ui-sortable">
 			<?php			
-			for ($i=0; $i<count($results) && $i<20; $i++)
+			for ($i=0; $i<count($results) && $i<$results_per_page; $i++)
 				{				
 				?>
 				<tr class="resource_type_field_row">
