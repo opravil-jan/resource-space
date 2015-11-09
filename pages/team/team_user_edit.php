@@ -44,26 +44,13 @@ elseif ((getval("save","")!="") || (getval("suggest","")!=""))
 $user=get_user($ref);
 if (($user["usergroup"]==3) && ($usergroup!=3)) {redirect($baseurl_short ."login.php?error=error-permissions-login&url=".urlencode($url));}
 
-if (checkperm("U") && $user["usergroup"]!="") # If using "U" parent/child restriction and NOT a newly created usergroup
+if (!checkperm_user_edit($user))
 	{
-	if ($U_perm_strict) 
-		{
-        $sql= "where find_in_set('" . $usergroup . "',parent)";
-        }
-    else
-		{
-        $sql= "where (ref='$usergroup' or find_in_set('" . $usergroup . "',parent))";
-        }
-	$validgroups=sql_array("select ref value from usergroup $sql");
-	if(!in_array($user["usergroup"],$validgroups))
-		{
-		redirect($baseurl_short ."login.php?error=error-permissions-login&url=".urlencode($url));
-		exit();
-		}
-	}
-	
-include "../../include/header.php";
+	redirect($baseurl_short ."login.php?error=error-permissions-login&url=".urlencode($url));
+	exit;
+}
 
+include "../../include/header.php";
 
 # Log in as this user?
 if (getval("loginas","")!="")

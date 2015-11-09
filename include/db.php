@@ -1124,7 +1124,6 @@ function setLanguage()
 	return 'en';
 	}
 
-
 function checkperm($perm)
     {
     # check that the user has the $perm permission
@@ -1132,7 +1131,30 @@ function checkperm($perm)
     if (!(isset($userpermissions))) {return false;}
     if (in_array($perm,$userpermissions)) {return true;} else {return false;}
     }
-    
+
+// check if passed user is allowed to edit users
+function checkperm_user_edit($user)
+	{
+	if (!checkperm('u'))    // does not have edit user permission
+		{
+		return false;
+		}
+	if (!isset($user['usergroup']))		// allow for passing of user array or user ref to this function.
+		{
+		$user=get_user($user);
+		}
+	$usergroup=$user['usergroup'];
+	if (!checkperm('U') || $usergroup == '')    // no user editing restriction, or is not defined so return true
+		{
+		return true;
+		}
+	global $U_perm_strict;
+	$validgroups = sql_array("SELECT `ref` AS  'value' FROM `usergroup` WHERE " .
+		($U_perm_strict ? "FIND_IN_SET('{$usergroup}',parent)" : "(`ref`='{$usergroup}' OR FIND_IN_SET('{$usergroup}',parent))")
+	);
+	return (in_array($usergroup, $validgroups));
+	}
+
 function pagename()
 	{
 	$name=safe_file_name(getvalescaped('pagename', ''));
