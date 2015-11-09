@@ -3,12 +3,19 @@
 include "../../include/db.php";
 include "../../include/general.php";
 include "../../include/authenticate.php";
-include "../../include/header.php";
+
+if (!checkperm_user_edit($userref))
+	{
+	redirect($baseurl_short ."login.php?error=error-permissions-login&url={$baseurl_short}pages/admin/admin_system_log.php");
+	exit;
+	}
 
 $sortby = getval("sortby","");
 $filter = getval("filter","");
 $backurl=getval("backurl","");
 $actasuser=getval('actasuser',$userref);;
+
+include "../../include/header.php";
 
 ?><script>
 

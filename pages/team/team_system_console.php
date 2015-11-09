@@ -17,7 +17,7 @@ if (!checkperm("a") && $callback!="activitylog")		// currently only activity log
 	exit ("Permission denied.");
 	}
 
-if (!checkperm("a"))	// if not an admin then force act as user as current user
+if (!checkperm_user_edit($userref))	// if not an admin then force act as user as current user
 	{
 	$actasuser=$userref;
 	}
