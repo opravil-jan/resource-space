@@ -56,6 +56,6 @@ function SystemConsoleactivitylogLoad(refresh_secs, extra)
 
 $_GET['callback']="activitylog";
 $_GET['actasuser']=$actasuser;
-include_once __DIR__ . "/team_system_console.php";
+include_once __DIR__ . "/../team/team_system_console.php";
 
 include "../../include/footer.php";

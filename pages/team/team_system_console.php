@@ -576,7 +576,7 @@ if (!$sorted && $sortby)
 		</tbody>
 		<tbody id="resource_type_field_table_body" class="ui-sortable">
 			<?php			
-			for ($i=0; $i<count($results) && $i<($callback == "activitylog" ? 40 : 20); $i++)
+			for ($i=0; $i<count($results) && $i<20; $i++)
 				{				
 				?>
 				<tr class="resource_type_field_row">
