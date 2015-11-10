@@ -389,7 +389,7 @@ function do_search($search,$restypes="",$order_by="relevance",$archive=0,$fetchr
                         $empty=true;
                         }
                     
-                    global $noadd, $wildcard_always_applied;
+                    global $noadd, $wildcard_always_applied, $wildcard_always_applied_leading;
                     if (in_array($keyword,$noadd)) # skip common words that are excluded from indexing
                         {
                         $skipped_last=true;
@@ -404,6 +404,11 @@ function do_search($search,$restypes="",$order_by="relevance",$archive=0,$fetchr
                                 {
                                 # Suffix asterisk if none supplied and using $wildcard_always_applied mode.
                                 $keyword=$keyword."*";
+
+                                if($wildcard_always_applied_leading)
+                                    {
+                                    $keyword = '*' . $keyword;
+                                    }
                                 }
                             
                             # Keyword contains a wildcard. Expand.

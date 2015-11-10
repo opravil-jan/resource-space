@@ -2185,6 +2185,9 @@ $wildcard_expand_limit=50;
 # It will also cause some other features to be disabled: related keywords and quoted string support
 $wildcard_always_applied=false;
 
+# Set to true if wildcard should also be prepended to the keyword
+$wildcard_always_applied_leading = false;
+
 
 
 # "U" permission allows management of users in the current group as well as children groups. TO test stricter adherence to the idea of "children only", set this to true. 
