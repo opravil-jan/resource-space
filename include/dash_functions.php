@@ -115,6 +115,16 @@ function delete_dash_tile($tile,$cascade=TRUE,$force=FALSE)
 	}
 
 /*
+ * Turn off push to all users "all_users" flag and cascade delete any existing entries users might have
+ * @$tile, the dash_tile.ref number of the tile to be hidden from all users
+ */
+function revoke_all_users_flag_cascade_delete($tile)
+	{
+	sql_query("UPDATE dash_tile SET `all_users`=0 WHERE `ref`='{$tile}'");
+	sql_query("DELETE FROM `user_dash_tile` WHERE `dash_tile`='{$tile}'");
+	}
+
+/*
  * Returns the position to append a tile to the default dash order
  */
 function append_default_position()

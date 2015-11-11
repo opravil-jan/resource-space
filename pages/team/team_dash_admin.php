@@ -10,6 +10,8 @@ include "../../include/dash_functions.php";
 if(getvalescaped("quicksave",FALSE))
 	{
 	$tile = getvalescaped("tile","");
+	$revokeallusers = getvalescaped("revokeallusers",false);
+
 	#If a valid tile value supplied
 	if(!empty($tile) && is_numeric($tile))
 		{
@@ -19,18 +21,25 @@ if(getvalescaped("quicksave",FALSE))
 			{
 			$tile = $available[0];
 			$active = all_user_dash_tile_active($tile["ref"]);
-
 			if($active)
 				{
-				#Delete if the tile is active		
-				#Check config tiles for permanent deletion
-				$force = false;
-				$search_string = explode('?',$tile["url"]);
-				parse_str(str_replace("&amp;","&",$search_string[1]),$search_string);
-				if($search_string["tltype"]=="conf")
-					{$force = !checkTileConfig($tile,$search_string["tlstyle"]);}
-
-				delete_dash_tile($tile["ref"],true,$force);
+				if ($revokeallusers)
+					{
+					revoke_all_users_flag_cascade_delete($tile['ref']);
+					}
+				else
+					{
+					#Delete if the tile is active
+					#Check config tiles for permanent deletion
+					$force = false;
+					$search_string = explode('?', $tile["url"]);
+					parse_str(str_replace("&amp;", "&", $search_string[1]), $search_string);
+					if ($search_string["tltype"] == "conf")
+						{
+						$force = !checkTileConfig($tile, $search_string["tlstyle"]);
+						}
+						delete_dash_tile($tile["ref"], true, $force);
+					}
 				reorder_default_dash();
 				$dtiles_available = get_alluser_available_tiles();
 				exit("negativeglow");
@@ -95,10 +104,13 @@ include "../../include/header.php";
 	.ListviewStyle tr.negativeglow td,.ListviewStyle tr.negativeglow:hover td{  background: rgba(227, 73, 75, 0.38);}
 	</style>
 	<script type="text/javascript">
-		function processTileChange(tile) {
+		function processTileChange(tile,revoke_all_users) {
+			if(revoke_all_users === undefined) {
+				revoke_all_users = false;
+			}			
 			jQuery.post(
 				window.location,
-				{"tile":tile,"quicksave":"true"},
+				{"tile":tile,"quicksave":"true","revokeallusers":revoke_all_users},
 				function(data){
 					jQuery("#tile"+tile).removeClass("positiveglow");
 					jQuery("#tile"+tile).removeClass("negativeglow");
@@ -115,7 +127,7 @@ include "../../include/header.php";
     				resizable: false,
 					dialogClass: 'confirm-dialog no-close',
                     buttons: {
-                        "<?php echo $lang['confirmdefaultdashtiledelete']; ?>": function() {processTileChange(tile); jQuery(this).dialog( "close" );},
+						"<?php echo $lang['confirmdefaultdashtiledelete']; ?>": function() {processTileChange(tile,true); jQuery(this).dialog( "close" );},
                         "<?php echo $lang['cancel'] ?>":  function() { jQuery(".tilecheck[value="+tile+"]").attr('checked', true); jQuery(this).dialog('close'); }
                     }
                 });
