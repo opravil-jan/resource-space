@@ -10,7 +10,9 @@ function do_search($search,$restypes="",$order_by="relevance",$archive=0,$fetchr
     debug("search=$search $go $fetchrows restypes=$restypes archive=$archive daylimit=$recent_search_daylimit");
     
     # globals needed for hooks   
-    global $sql,$order,$select,$sql_join,$sql_filter,$orig_order,$collections_omit_archived,$search_sql_double_pass_mode,$usergroup,$search_filter_strict,$default_sort;
+    global $sql,$order,$select,$sql_join,$sql_filter,$orig_order,$collections_omit_archived,$search_sql_double_pass_mode,$usergroup,$search_filter_strict,$default_sort,$superaggregationflag;
+
+	$superaggregation = isset($superaggregationflag) && $superaggregationflag===true ? ' WITH ROLLUP' : '';
 
     $alternativeresults = hook("alternativeresults", "", array($go));
     if ($alternativeresults) {return $alternativeresults; }
@@ -525,7 +527,7 @@ function do_search($search,$restypes="",$order_by="relevance",$archive=0,$fetchr
 										}
 									$union="SELECT resource, {$bit_or_condition} SUM(hit_count) AS score FROM resource_keyword k{$c}
 									WHERE (k{$c}.keyword={$keyref} {$filter_by_resource_field_type} {$relatedsql} {$union_restriction_clause})
-									GROUP BY resource";
+									GROUP BY resource{$superaggregation}";
 									$sql_keyword_union[]=$union;
 									}
 
@@ -712,7 +714,7 @@ function do_search($search,$restypes="",$order_by="relevance",$archive=0,$fetchr
 		$sql_join .= " join (
 		select resource,sum(score) as score,
 		" . join(", ", $sql_keyword_union_aggregation) . " from
-		(" . join(" union ", $sql_keyword_union) . ") as hits group by resource) as h on h.resource=r.ref ";
+		(" . join(" union ", $sql_keyword_union) . ") as hits group by resource{$superaggregation}) as h on h.resource=r.ref ";
 
         if ($sql_filter!="") {$sql_filter.=" and ";}
 		$sql_filter .= join(" and ", $sql_keyword_union_criteria);
