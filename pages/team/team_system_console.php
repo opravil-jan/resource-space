@@ -553,7 +553,7 @@ if (!$sorted && $sortby)
 			{
 			echo $lang['total'] . ': ' . count($results);
 			}
-		?></strong><?
+		?></strong><?php
 		}
 	?>
 	<table border="0" cellspacing="0" cellpadding="0" class="ListviewStyle">
