@@ -19,6 +19,15 @@ $findtext=getvalescaped("findtext","");
 $page=getvalescaped("page","");
 $name=getvalescaped("name","");
 
+$extended=false;
+if ($findpage!="" || $findname!="" || $findtext!="")
+  {
+  # Extended view - show the language and user group columns when searching as multiple languages/groups may be returned rather than
+  # the single entry returned when not searching.
+  $extended=true;
+  $groups=get_usergroups();  
+  }
+
 
 if ($page && $name){redirect($baseurl_short."pages/admin/admin_content_edit.php?page=$page&name=$name&offset=$offset&save=true&custom=1");}
 
@@ -47,8 +56,12 @@ $jumpcount=1;
 <table border="0" cellspacing="0" cellpadding="0" class="ListviewStyle">
 <tr class="ListviewTitleStyle">
 <td width="10%"><?php echo $lang["page"]?></td>
-<td width="40%"><?php echo $lang["name"]?></td>
-<td width="40%"><?php echo $lang["text"]?></td>
+<td width="25%"><?php echo $lang["name"]?></td>
+<?php if ($extended) { ?>
+<td width="10%"><?php echo $lang["language"]?></td>
+<td width="10%"><?php echo $lang["group"]?></td>
+<?php } ?>
+<td width="<?php echo ($extended?"40":"55") ?>%"><?php echo $lang["text"]?></td>
 <td width="10%"><div class="ListTools"><?php echo $lang["tools"]?></div></td>
 </tr>
 
@@ -61,6 +74,28 @@ for ($n=$offset;(($n<count($text)) && ($n<($offset+$per_page)));$n++)
 	<td><div class="ListTitle"><a href="<?php echo $url ?>"><?php echo highlightkeywords(($text[$n]["page"]==""||$text[$n]["page"]=="all"?$lang["all"]:$text[$n]["page"]),$findpage,true);?></a></div></td>
 	
 	<td><div class="ListTitle"><a href="<?php echo $url ?>" onClick="return CentralSpaceLoad(this,true);"><?php echo highlightkeywords($text[$n]["name"],$findname,true)?></a></div></td>
+	
+	<?php if ($extended) {
+	# Extended view. Show the language and group when searching, as these variants are expanded out when searching.
+	
+	# Resolve the user group name.
+	$group_resolved=$lang["deleted"];
+	if ($text[$n]["group"]=="")
+	  {
+	  $group_resolved=$lang["all"];
+	  }
+	else
+	  {
+	  # resolve
+	  foreach ($groups as $group)
+	    {
+	    if ($group["ref"]==$text[$n]["group"]) {$group_resolved=$group["name"];}
+	    }
+	  }
+	?>
+	<td><?php echo $text[$n]["language"] ?></td>
+	<td><?php echo $group_resolved ?></td>
+	<?php } ?>
 	
 	<td><a href="<?php echo $url ?>" onClick="return CentralSpaceLoad(this,true);"><?php echo highlightkeywords(tidy_trim(htmlspecialchars($text[$n]["text"]),100),$findtext,true)?></a></td>
 	
