@@ -61,7 +61,7 @@ if ($refinements[0]!=""){
 }
 }
 
-if (strlen($collectiondata["theme"])>0)
+if (isset($collectiondata["theme"]) && strlen($collectiondata["theme"])>0)
 		{
 		$colaccessmode = $lang["themes"];
 		$is_theme=true;						
