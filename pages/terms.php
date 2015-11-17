@@ -26,9 +26,7 @@ if (getval("save","")!="")
 	}
 include "../include/header.php";
 ?>
-
 <div class="BasicsBox"> 
-  <h2>&nbsp;</h2>
   <h1><?php echo $lang["termsandconditions"]?></h1>
   <p><?php echo text("introtext")?></p>
   
@@ -46,13 +44,18 @@ include "../include/header.php";
 	<div class="clearerleft"> </div>
 	</div>
 	
-	<form method="post" action="<?php echo $baseurl_short?>pages/terms.php?k=<?php echo urlencode($k); ?>">
+	<form method="post" action="<?php echo $baseurl_short?>pages/terms.php?k=<?php echo urlencode($k); ?>" onSubmit="if (!document.getElementById('iaccept').checked) {alert('<?php echo $lang["mustaccept"] ?>');return false;}">
 	<input type=hidden name="url" value="<?php echo htmlspecialchars($url)?>">
+	
+	<div class="Question">
+	<label for="iaccept"><?php echo $lang["iaccept"] ?></label>
+	<input type="checkbox" name="iaccept" id="iaccept" />
+	<div class="clearerleft"> </div>
+	</div>
+	
 	<div class="QuestionSubmit">
-	<label for="buttons"> </label>		
-	<input name="decline" type="button" value="&nbsp;&nbsp;<?php echo $lang["idecline"]?>&nbsp;&nbsp;" onClick="history.go(-1);return false;"/>
-
-	<input name="save" type="submit" value="&nbsp;&nbsp;<?php echo $lang["iaccept"]?>&nbsp;&nbsp;" />
+	<label></label>
+	<input name="save" type="submit" value="&nbsp;&nbsp;<?php echo $lang["proceed"]?>&nbsp;&nbsp;" />
 	</div>
 	</form>
 	
