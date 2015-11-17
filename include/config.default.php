@@ -2819,4 +2819,5 @@ $custom_access_overrides_search_filter=false;
 # When requesting a resource or resources, is the "reason for request" field mandatory?
 $resource_request_reason_required=true;
 
-
+# Use the 'chosen' library for rendering dropdowns (improved display and search capability for large dropdowns)
+$chosen_dropdowns=false;
