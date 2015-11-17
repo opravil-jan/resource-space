@@ -468,7 +468,7 @@ try{
 <?php if ($chosen_dropdowns) { ?>
 <!-- Chosen support -->
 <script src="<?php echo $baseurl_short ?>lib/chosen/chosen.jquery.min.js" type="text/javascript"></script>
-<link rel="stylesheet" href="<?php echo $baseurl_short ?>/lib/chosen/chosen.min.css">
+<link rel="stylesheet" href="<?php echo $baseurl_short ?>lib/chosen/chosen.min.css">
 <script type="text/javascript">
   var chosen_config = {
     "#CentralSpace select"           : {disable_search_threshold:10},
