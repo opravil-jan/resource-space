@@ -8,6 +8,12 @@ $readonly=($pagename=="search_advanced");
 if(checkperm('bdk' . $field['ref'])) {
 	$readonly = true;
 }
+
+// In case we let new lines in our value, make sure to clean it for Dynamic keywords
+if(strpos($value, "\r\n") !== false)
+	{
+	$value = str_replace("\r\n", ' ', $value);
+	}
 ?>
 
 <div class="dynamickeywords ui-front">
