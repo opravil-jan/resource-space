@@ -324,19 +324,27 @@ if (!$themes_category_split_pages && !$theme_direct_jump) { ?>
 if(!hook('replacethemesbacklink')){
 if ($themes_category_split_pages && isset($themes[0]) && !$theme_direct_jump)
 	{
-	# Display back link
+	echo "<div class='SearchBreadcrumbs'>";
+	# Display breadcrumb links
 	$link=$baseurl_short."pages/themes.php?";
-	for ($x=0;$x<count($themes);$x++){
+	?>
+	<a href="<?php echo $link ?>" onClick="return CentralSpaceLoad(this,true);">
+		<span><?php echo $lang["themes"] ?></span>
+	</a>
+	<?php			
+	for ($x=0;$x<count($themes);$x++)
+		{
+		//print_r($themes);	
 		if ($x!=0){ $link.="&"; }
 		$link.="theme";
 		$link.=($x==0)?"":$x;
-		$link.="=". urlencode((!isset($themes[$x+1]))?"":$themes[$x]);
-	}
-	if($simpleview)
+		$link.="=". urlencode($themes[$x]);
+		if($simpleview)
 		{$link.="&simpleview=true";}
-	?>
-	<p><a href="<?php echo $link?>" onClick="return CentralSpaceLoad(this,true);">&lt;&nbsp;<?php echo $lang["back"]?></a></p>
-	<?php
+		echo "&gt;&nbsp;";
+		?><a href="<?php echo $link ?>" onClick="return CentralSpaceLoad(this,true);"><span><?php echo htmlspecialchars($themes[$x]) ?>&nbsp;</span></a><?php
+		}
+	echo "</div>";
 
 }
 } # end hook('replacethemesbacklink')

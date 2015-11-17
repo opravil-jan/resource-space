@@ -404,6 +404,7 @@ behavior: url('../css/iepngfix.htc');
 
 .NewFlag {display:inline;font-size:0.6em;margin-left:5px;padding:1px 3px 1px 3px;}
 .Breadcrumbs {float:left;margin-top:4px;}
+.SearchBreadcrumbs {margin-bottom:10px;}
 
 .CategoryBox {overflow:auto;width:360px;height:80px;padding:2px;font-size:1em;}
 .MiniCategoryBox {overflow:auto;width:auto;height:80px;padding:2px;font-size:1em;}

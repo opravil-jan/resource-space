@@ -624,6 +624,13 @@ if (isset($result_title_height))
 	}
 
 #if (is_array($result)||(isset($collections)&&(count($collections)>0)))
+
+if(!$search_titles && isset($theme_link))
+	{
+	// Show the themes breadcrumbs if they exist, but not if we are using the search_titles
+	echo "<div class='SearchBreadcrumbs'>" . $theme_link . '&nbsp;&gt;&nbsp;<span id="coltitle'.$collection.'"><a  href="'.$baseurl_short.'pages/search.php?search=!collection' . $collection . '" onClick="return CentralSpaceLoad(this,true);">'.i18n_get_collection_name($collectiondata). '</a></span>' . "</div>" ;
+	}
+
 if (true) # Always show search header now.
 	{
 	$url=$baseurl_short."pages/search.php?search=" . urlencode($search) . "&amp;order_by=" . urlencode($order_by) . "&amp;sort=".urlencode($sort)."&amp;offset=" . urlencode($offset) . "&amp;archive=" . urlencode($archive)."&amp;sort=".urlencode($sort) . "&amp;restypes=" . urlencode($restypes);
@@ -891,6 +898,7 @@ if (true) # Always show search header now.
 		hook("aftersearchtitle");
 		hook("beforecollectiontoolscolumn");
 		}
+	
 	hook("beforesearchresults");
 	
 	# Archive link

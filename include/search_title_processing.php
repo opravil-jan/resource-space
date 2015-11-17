@@ -61,6 +61,27 @@ if ($refinements[0]!=""){
 }
 }
 
+if (strlen($collectiondata["theme"])>0)
+		{
+		$colaccessmode = $lang["themes"];
+		$is_theme=true;						
+		$theme_link="<a onClick='return CentralSpaceLoad(this,true);' href='" . $baseurl . "/pages/themes.php'>".$lang['themes']."</a> &gt; <a onClick='return CentralSpaceLoad(this,true);' href='".$baseurl . "/pages/themes.php?theme1=" . urlencode($collectiondata["theme"]) . "'>" . i18n_get_translated($collectiondata["theme"]) . "</a>";
+		global $theme_category_levels;
+		for($x=2;$x<=$theme_category_levels;$x++)
+			{					
+			if(isset($collectiondata['theme' . $x]) && strlen($collectiondata['theme' . $x]) > 0)
+				{
+				$theme_link_url = $baseurl . "/pages/themes.php?lastlevelchange=" . $x . "&theme1=" . urlencode($collectiondata["theme"]);
+				for($l=2;$l<=$x;$l++)
+					{
+					$theme_link_url .= "&theme" . $l . "=" . urlencode($collectiondata['theme' . $l]);
+					}
+				$theme_link .= " &gt; <a onClick='return CentralSpaceLoad(this, true);' href='" . $theme_link_url . "'>" . i18n_get_translated($collectiondata['theme' . $x]) . "</a>";
+				}
+			}			
+		}
+
+
 if ($search_titles)
     {
 
@@ -90,22 +111,8 @@ if ($search_titles)
                 
                 }
             }
-       if (strlen($collectiondata["theme"])>0)
-            {
-            $colaccessmode = $lang["themes"];
-            $is_theme=true;
-            $theme_link="<a onClick='return CentralSpaceLoad(this,true);' href='".$baseurl_short."pages/themes.php'>".$lang['themes']."</a> &gt; <a onClick='return CentralSpaceLoad(this,true);' href='".$baseurl_short."pages/themes.php?theme1=".urlencode($collectiondata["theme"])."'>".i18n_get_translated($collectiondata["theme"])."</a>";
-            if(strlen($collectiondata['theme2']) > 0)
-                {
-                $theme_link .= " &gt; <a onClick='return CentralSpaceLoad(this, true);' href='" . $baseurl_short . "pages/themes.php?lastlevelchange=2&theme1=" . urlencode($collectiondata['theme']) . "&theme2=" . urlencode($collectiondata['theme2']) . "'>" . i18n_get_translated($collectiondata['theme2']) . "</a>";
-                }
-
-            if(strlen($collectiondata['theme3']) > 0)
-                {
-                $theme_link .= " &gt; <a onClick='return CentralSpaceLoad(this, true);' href='" . $baseurl_short . "pages/themes.php?lastlevelchange=3theme1=" . urlencode($collectiondata['theme']) . "&theme2=" . urlencode($collectiondata['theme2']) . '&theme3=' . urlencode($collectiondata['theme3']) . "'>" . i18n_get_translated($collectiondata['theme3']) . "</a>";
-                }
-            }
 			
+     			
         // add a tooltip to Smart Collection titles (which provides a more detailed view of the searchstring.    
         $alt_text = '';
         if ($pagename=="search" && isset($collectiondata['savedsearch']) && $collectiondata['savedsearch']!='')
