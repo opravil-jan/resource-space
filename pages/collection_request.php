@@ -80,7 +80,7 @@ include "../include/header.php";
 	<?php } ?>
 	
 	<div class="Question">
-	<label for="requestreason"><?php echo $lang["requestreason"]?> <sup>*</sup></label>
+	<label for="requestreason"><?php echo $lang["requestreason"]?> <?php if ($resource_request_reason_required) { ?><sup>*</sup><?php } ?></label>
 	<textarea class="stdwidth" name="request" id="request" rows=5 cols=50><?php echo htmlspecialchars(getval("request","")) ?></textarea>
 	<div class="clearerleft"> </div>
 	</div>

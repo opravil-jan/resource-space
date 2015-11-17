@@ -47,7 +47,7 @@ $all_field_info=get_fields_for_search_display(array_unique(array_merge($sort_fie
 # get display and normalize display specific variables
 $display=getvalescaped("display",$default_display);setcookie("display",$display, 0, '', '', false, true);
 
-if ($display=="thumbs"){ 
+if ($display=="thumbs" || $display=="stripes"){ 
 	$display_fields	= $thumbs_display_fields;  
 	if (isset($search_result_title_height)) { $result_title_height = $search_result_title_height; }
 	$results_title_trim = $search_results_title_trim;
@@ -1095,6 +1095,12 @@ if (true) # Always show search header now.
                 include "search_views/list.php";
                 }
 
+            if ($display=="stripes")
+                {
+                # ----------------  Stripes view -------------------
+                include "search_views/stripes.php";
+                }
+		
             hook("customdisplaymode");
 
             }

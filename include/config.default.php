@@ -2815,3 +2815,8 @@ $soundex_suggest_limit=10;
 # Option for custom access to override search filters.
 # For this resource, if custom access has been granted for the user or group, nullify the filter for this particular 
 $custom_access_overrides_search_filter=false;
+
+# When requesting a resource or resources, is the "reason for request" field mandatory?
+$resource_request_reason_required=true;
+
+

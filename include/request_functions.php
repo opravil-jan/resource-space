@@ -140,7 +140,7 @@ function email_collection_request($ref,$details)
     {
     # Request mode 0
     # E-mails a collection request (posted) to the team
-    global $applicationname,$email_from,$baseurl,$email_notify,$username,$useremail,$lang,$request_senduserupdates,$userref,$resource_type_request_emails;
+    global $applicationname,$email_from,$baseurl,$email_notify,$username,$useremail,$lang,$request_senduserupdates,$userref,$resource_type_request_emails,$resource_request_reason_required;
     
     $message="";
     #if (isset($username) && trim($username)!="") {$message.=$lang["username"] . ": " . $username . "\n";}
@@ -178,7 +178,7 @@ function email_collection_request($ref,$details)
                 }
             }
         }
-    if (trim($details)!="") {$message.=$lang["requestreason"] . ": " . newlines($details) . "\n\n";} else {return false;}
+    if (trim($details)!="") {$message.=$lang["requestreason"] . ": " . newlines($details) . "\n\n";} elseif ($resource_request_reason_required) {return false;}
     
     # Add custom fields
     $c="";
@@ -539,7 +539,7 @@ function email_resource_request($ref,$details)
     # E-mails a basic resource request for a single resource (posted) to the team
     # (not a managed request)
     
-    global $applicationname,$email_from,$baseurl,$email_notify,$username,$useremail,$userref,$lang,$request_senduserupdates,$watermark,$filename_field,$view_title_field,$access,$resource_type_request_emails;
+    global $applicationname,$email_from,$baseurl,$email_notify,$username,$useremail,$userref,$lang,$request_senduserupdates,$watermark,$filename_field,$view_title_field,$access,$resource_type_request_emails,$resource_request_reason_required;
     
     $resourcedata=get_resource_data($ref);
     $templatevars['thumbnail']=get_resource_path($ref,true,"thm",false,"jpg",$scramble=-1,$page=1,($watermark)?(($access==1)?true:false):false);
@@ -579,7 +579,8 @@ function email_resource_request($ref,$details)
     $templatevars['list']=$list;
 
     $templatevars['details']=stripslashes($details);
-    if ($templatevars['details']!=""){$adddetails=$lang["requestreason"] . ": " . newlines($templatevars['details'])."\n\n";} else {return false;}
+    $adddetails="";
+    if ($templatevars['details']!=""){$adddetails=$lang["requestreason"] . ": " . newlines($templatevars['details'])."\n\n";} elseif ($resource_request_reason_required) {return false;}
     
     # Add custom fields
     $c="";
