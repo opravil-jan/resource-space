@@ -338,6 +338,12 @@ function display_field_data($field,$valueonly=false,$fixedwidth=452)
 		$extra.="<div class=\"RecordStory\"> <h1>" . $lang["warningexpired"] . "</h1><p>" . $lang["warningexpiredtext"] . "</p><p id=\"WarningOK\"><a href=\"#\" onClick=\"document.getElementById('RecordDownload').style.display='block';document.getElementById('WarningOK').style.display='none';\">" . $lang["warningexpiredok"] . "</a></p></div><style>#RecordDownload {display:none;}</style>";
 		}
 	
+	# Handle warning messages
+	if (!$valueonly && $field["type"]==13 && trim($value)!="") 
+		{
+		$extra.="<div class=\"RecordStory\"> <h1>" . $lang["fieldtype-warning_message"] . "</h1><p>" . nl2br(htmlspecialchars($value)) . "</p><br /><p id=\"WarningOK\"><a href=\"#\" onClick=\"document.getElementById('RecordDownload').style.display='block';document.getElementById('WarningOK').style.display='none';\">" . $lang["warningexpiredok"] . "</a></p></div><style>#RecordDownload {display:none;}</style>";
+		}
+	
 	# Process the value using a plugin. Might be processing an empty value so need to do before we remove the empty values
 	$plugin="../plugins/value_filter_" . $field["name"] . ".php";
 	

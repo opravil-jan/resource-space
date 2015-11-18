@@ -70,7 +70,7 @@ function admin_resource_type_field_option($propertyname,$propertytitle,$helptext
 			global $field_types;
 			
 			// Sort  so that the display order makes some sense
-			natsort($field_types);
+			//natsort($field_types);
 			?>
 			<div class="tickset">
 			  <select id="<?php echo $propertyname ?>" name="<?php echo $propertyname ?>" class="stdwidth">
@@ -79,7 +79,7 @@ function admin_resource_type_field_option($propertyname,$propertytitle,$helptext
 				foreach($field_types as $field_type=>$field_type_description)
 					{
 					?>
-					<option value="<?php echo $field_type ?>"<?php if ($currentvalue == $field_type) { echo " selected"; } ?>><?php echo $field_type_description ; ?></option>
+					<option value="<?php echo $field_type ?>"<?php if ($currentvalue == $field_type) { echo " selected"; } ?>><?php echo $lang[$field_type_description] ; ?></option>
 					<?php
 					}
 				?>				
@@ -143,23 +143,7 @@ function admin_resource_type_field_option($propertyname,$propertytitle,$helptext
 	</div>
 	<?php
 	}
-	
-// Define array of field type values with associated description
-$field_types=array(
-		0=>$lang["fieldtype-text_box_single_line"],
-		1=>$lang["fieldtype-text_box_multi-line"],
-		2=>$lang["fieldtype-check_box_list"],
-		3=>$lang["fieldtype-drop_down_list"],
-		4=>$lang["fieldtype-date_and_optional_time"],
-		5=>$lang["fieldtype-text_box_large_multi-line"],
-		6=>$lang["fieldtype-expiry_date"],
-		7=>$lang["fieldtype-category_tree"],
-		8=>$lang["fieldtype-text_box_formatted_and_ckeditor"],
-		9=>$lang["fieldtype-dynamic_keywords_list"],
-		10=>$lang["fieldtype-date"],
-		11=>$lang["fieldtype-dynamic_tree_in_development"],
-		12=>$lang["fieldtype-radio_buttons"]
-		);
+
 
 // Define array of field properties containing title and associated lang help text, with a flag to indicate if it is a boolean value that we will save from POST data and boolean to indicate will be set with any 'synced' fields
 

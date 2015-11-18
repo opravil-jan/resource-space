@@ -1,5 +1,24 @@
 <?php
 
+
+// ------------------------- FIELD TYPES -------------------------
+$field_types=array(
+		0=>"fieldtype-text_box_single_line",
+		1=>"fieldtype-text_box_multi-line",
+		2=>"fieldtype-check_box_list",
+		3=>"fieldtype-drop_down_list",
+		4=>"fieldtype-date_and_optional_time",
+		5=>"fieldtype-text_box_large_multi-line",
+		6=>"fieldtype-expiry_date",
+		7=>"fieldtype-category_tree",
+		8=>"fieldtype-text_box_formatted_and_ckeditor",
+		9=>"fieldtype-dynamic_keywords_list",
+		10=>"fieldtype-date",
+		11=>"fieldtype-dynamic_tree_in_development",
+		12=>"fieldtype-radio_buttons",
+		13=>"fieldtype-warning_message"
+		);
+
 // ------------------------- LOG_CODE_ -------------------------
 
 // codes used for log entries (including resource and activity logs)

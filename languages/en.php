@@ -86,6 +86,7 @@ $lang["fieldtype-category_tree"]="Category tree";
 $lang["fieldtype-dynamic_keywords_list"]="Dynamic keywords list";
 $lang["fieldtype-dynamic_tree_in_development"]="Dynamic tree (in development)";
 $lang["fieldtype-radio_buttons"]="Radio buttons";
+$lang["fieldtype-warning_message"]="Warning message";
 
 # Property labels (for the default properties)
 $lang["documentation-permissions"]="See <a href=../../documentation/permissions.txt target=_blank>the permissions help text file</a> for further information on permissions.";
