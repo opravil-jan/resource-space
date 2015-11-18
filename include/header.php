@@ -487,6 +487,15 @@ hook("afterheader");
 
 } // end if !ajax
 
+// Update header links to add a class that indicates current location 
+?>
+<script>
+jQuery(document).ready(function()
+		{
+		ActivateHeaderLink('<?php echo $baseurl . $_SERVER["REQUEST_URI"] ?>');
+		});
+</script>
+<?php
 // Non-ajax specific hook 
 hook("start_centralspace");
 
