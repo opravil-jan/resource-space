@@ -885,7 +885,7 @@ function add_download_column($ref, $size_info, $downloadthissize)
 		if (!hook("resourcerequest"))
 			{
 			?><td class="DownloadButton"><?php
-			if ($request_adds_to_collection && ($k=="" || isset($_COOKIE['user']))) // We can't add to a collection if we are accessing an external share, unless we are a logged in user
+			if ($request_adds_to_collection && ($k=="" || isset($_COOKIE['user'])) && !checkperm('b')) // We can't add to a collection if we are accessing an external share, unless we are a logged in user
 				{
 				echo add_to_collection_link($ref,$search,"alert('" . addslashes($lang["requestaddedtocollection"]) . "');",$size_info["id"]);
 				}
