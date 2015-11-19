@@ -274,7 +274,8 @@ function csv_upload_process($filename,&$meta,$resource_types,&$messages,$overrid
 					}				
 							
 				if($processcsv)	
-					{								
+					{	
+					$cell_value = mb_convert_encoding($cell_value, "UTF-8");
 					// Prefix value with comma as this is required for indexing and rendering selected options
 					if (in_array($meta[$field_resource_type][$field_name]['type'], array(2,3,7,9,12)) && substr($cell_value,0,1) <> ',')
 						{
