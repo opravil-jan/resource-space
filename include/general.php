@@ -1260,7 +1260,14 @@ function auto_create_user_account()
 				{
 				include_once dirname(__FILE__) . "/../include/collections_functions.php";
 				}
+
 			global $username, $userref;
+
+			if(is_array($anonymous_login) && array_key_exists($baseurl, $anonymous_login))
+				{
+				$anonymous_login = $anonymous_login[$baseurl];
+				}
+
 			$username=$anonymous_login;
 			$userref=sql_value("SELECT ref value FROM user where username='$anonymous_login'","");
 			$sessioncollections=get_session_collections($rs_session,$userref,false);
