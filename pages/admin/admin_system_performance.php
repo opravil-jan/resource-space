@@ -56,12 +56,13 @@ while (microtime(true)<($timer+1)) // Run for one second
 # Disk write test
 $tmp=get_temp_dir();
 $timer=microtime(true);$counter=0;
-$f=fopen($tmp . "/performance_text.txt", "w");
+$f=fopen($tmp . "/performance_test.txt", "w");
 while (microtime(true)<($timer+1)) // Run for one second
     {
     fwrite($f,str_pad("",10000,"X"));
     $counter++;
     }
+unlink($tmp . "/performance_test.txt");
 ?>
 <div class="Question">
 <label><?php echo $lang["disk_write_speed"] ?></label><div class="Fixed"><?php echo round(($counter/$disk_baseline) * 100,1) ?></div>
