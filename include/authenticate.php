@@ -291,10 +291,7 @@ else
 	{
 	if (isset($usergroup))
 		{
-		// Old way of getting the user specific content text (kept here for reference)
-		// $results=sql_query("select language,name,text from site_text where (page='$pagename' or page='all') and specific_to_group='$usergroup'");
-		// for ($n=0;$n<count($results);$n++) {$site_text[$results[$n]["language"] . "-" . $results[$n]["name"]]=$results[$n]["text"];}
-
+		// Fetch user group specific content.
 		$site_text_query = sprintf("
 				SELECT `name`,
 				       `text`,
