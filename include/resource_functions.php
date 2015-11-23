@@ -2347,8 +2347,10 @@ function get_resource_access($resource)
 
 	# Check for user-specific and group-specific access (overrides any other restriction)
 	global $userref,$usergroup;
-    
-    if ($access!=0)
+
+	// We need to check for custom access either when access is set to be custom or
+	// when the user group has restricted access to all resource types
+    if ($access!=0 || !checkperm('g'))
         {
         if ($passthru=="no")
             {
@@ -2419,7 +2421,7 @@ function get_resource_access($resource)
                 if (count($results)==0) {return 2;} # Not found in results, so deny
                 }
 		
-	if ($access==0 && !checkperm("g") && !$customgroupaccess)
+	if ($access==0 && !checkperm("g") && !$customgroupaccess && !$customuseraccess)
 		{
 		# User does not have the 'g' permission. Return restricted for active resources unless group has been granted overide access.
 		$access=1; 
