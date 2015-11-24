@@ -18,11 +18,12 @@ global $userref,$baseurl_short;
 $tile_type=getvalescaped("tltype","");
 $tile_style=getvalescaped("tlstyle","");
 
-$tile=array();
-$tile["link"]=getvalescaped("tllink","");
-$tile["txt"]=getvalescaped("tltxt","");
-$tile["title"]=getvalescaped("tltitle","");
-$tile["resource_count"]=getvalescaped("tlrcount","");
+$tile                   = array();
+$tile['ref']            = getvalescaped('edit', '');
+$tile['link']           = getvalescaped('tllink', '');
+$tile['txt']            = getvalescaped('tltxt', '');
+$tile['title']          = getvalescaped('tltitle', '');
+$tile['resource_count'] = getvalescaped('tlrcount', '');
 
 
 $tile_id="previewdashtile";
