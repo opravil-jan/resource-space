@@ -233,7 +233,7 @@ function managed_collection_request($ref,$details,$ref_is_resource=false)
     # Managed via the administrative interface
     
     # An e-mail is still sent.
-    global $applicationname,$email_from,$baseurl,$email_notify,$username,$useremail,$userref,$lang,$request_senduserupdates,$watermark,$filename_field,$view_title_field,$access,$resource_type_request_emails, $manage_request_admin;
+    global $applicationname,$email_from,$baseurl,$email_notify,$username,$useremail,$userref,$lang,$request_senduserupdates,$watermark,$filename_field,$view_title_field,$access,$resource_type_request_emails, $manage_request_admin, $resource_request_reason_required;
 
     # Has a resource reference (instead of a collection reference) been passed?
     # Manage requests only work with collections. Create a collection containing only this resource.
@@ -293,7 +293,7 @@ function managed_collection_request($ref,$details,$ref_is_resource=false)
                 }
             }
         }
-    if (trim($details)!="") {$message.=$lang["requestreason"] . ": " . newlines($details) . "\n\n";} else {return false;}
+    if (trim($details)!="") {$message.=$lang["requestreason"] . ": " . newlines($details) . "\n\n";}  elseif ($resource_request_reason_required) {return false;}
     
     # Add custom fields
     $c="";
