@@ -1595,7 +1595,7 @@ if (!$disable_geocoding) {
 
 <?php 
 // include collections listing
-if ($view_resource_collections){ ?>
+if ($view_resource_collections && !checkperm('b')){ ?>
 	<div id="resourcecollections"></div>
 	<script type="text/javascript">
 	jQuery("#resourcecollections").load('<?php echo $baseurl_short?>pages/resource_collection_list.php?ref=<?php echo urlencode($ref)?>&k=<?php echo urlencode($k)?>'

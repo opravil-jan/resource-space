@@ -1621,7 +1621,7 @@ function setup_user($userdata)
         $ip_restrict_group=trim($userdata["ip_restrict_group"]);
         $ip_restrict_user=trim($userdata["ip_restrict_user"]);
         
-        if(isset($rs_session))
+        if(isset($rs_session) && !checkperm('b')) // This is only required if anonymous user has collection functionality
 		{
 		if (!function_exists("get_user_collections"))
 			{
@@ -1632,7 +1632,7 @@ function setup_user($userdata)
 		if($anonymous_user_session_collection)
 			{
 			// Just get the first one if more
-			$usercollection=$sessioncollections[0];
+			$usercollection=$sessioncollections[0];		
 			$collection_allow_creation=false; // Hide all links that allow creation of new collections
 			}
 		else

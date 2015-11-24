@@ -2784,12 +2784,13 @@ function get_metadata_templates()
  
 function get_resource_collections($ref)
 	{
-	global $userref;
-	
+	global $userref, $anonymous_user, $username;
+	if (checkperm('b') || (isset($anonymous_login) && $username==$anonymous_login))
+		{return array();}
 	# Returns a list of collections that a resource is used in for the $view_resource_collections option
 	$sql="";
    
-    # Include themes in my collecions? 
+    # Include themes in my collections? 
     # Only filter out themes if $themes_in_my_collections is set to false in config.php
    	global $themes_in_my_collections;
    	if (!$themes_in_my_collections)
