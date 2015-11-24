@@ -335,10 +335,9 @@ if ($_FILES)
 
             // Strip the temp .part suffix off 
             rename("{$plfilepath}.part", $plfilepath);
-    
-    
+
             # Additional ResourceSpace upload code
-            
+
             $plupload_upload_location=$plfilepath;
             if(!hook("initialuploadprocessing"))
                     {			
@@ -617,8 +616,15 @@ var pluploadconfig = {
                                 // show any errors
                                 if (info.response.indexOf("error") > 0)
                                         {
-                                        uploadError = JSON.parse(info.response);
-                                        uploaderrormessage= uploadError.error.code + " " + uploadError.error.message;
+                                        try
+                                            {
+                                            uploadError = JSON.parse(info.response);
+                                            uploaderrormessage= uploadError.error.code + " " + uploadError.error.message;
+                                            }
+                                        catch(e)
+                                            {
+                                            uploaderrormessage = 'Server side error! Please contact the administrator!';
+                                            }
                                         file.status = plupload.FAILED;
                                         if(show_upload_log)
                                             {
