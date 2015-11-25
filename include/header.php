@@ -492,12 +492,17 @@ hook("afterheader");
 
 } // end if !ajax
 
-// Update header links to add a class that indicates current location 
+// Update header links to add a class that indicates current location
+$parsed_url = parse_url($baseurl);
+
+$scheme = @$parsed_url['scheme'];
+$host = @$parsed_url['host'];
+$port = @$parsed_url['port'];
 ?>
 <script>
 jQuery(document).ready(function()
 		{
-		ActivateHeaderLink('<?php echo $baseurl . $_SERVER["REQUEST_URI"] ?>');
+		ActivateHeaderLink('<?php echo $scheme . "://" . $host . (isset($port)?":" . $port:"") . $_SERVER["REQUEST_URI"] ?>');
 		});
 </script>
 <?php
