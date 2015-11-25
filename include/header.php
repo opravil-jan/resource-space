@@ -335,6 +335,11 @@ if($slimheader)
                 else
                     {
                     // Set via config.php
+                    // if image source already has the baseurl short, then remove it and add it here
+                    if(substr($header_img_src, 0, 1) === '/')
+                        {
+                        $header_img_src = substr($header_img_src, 1);
+                        }
                     $header_img_src = $baseurl_short . $header_img_src;
                     }
                 }
