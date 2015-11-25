@@ -1243,7 +1243,7 @@ function auto_create_user_account()
 		}
 
 	# Create the user
-	sql_query("insert into user (username,password,fullname,email,usergroup,comments,approved,lang) values ('" . $newusername . "','" . $password . "','" . getvalescaped("name","") . "','" . $email . "','" . $usergroup . "','" . escape_check($customContents) . "'," . (($approve)?1:0) . ",'$language')");
+	sql_query("insert into user (username,password,fullname,email,usergroup,comments,approved,lang) values ('" . $newusername . "','" . $password . "','" . getvalescaped("name","") . "','" . $email . "','" . $usergroup . "','" . ( escape_check($customContents) . "\n" . getvalescaped("userrequestcomment","")  ) . "'," . (($approve)?1:0) . ",'$language')");
 	$new=sql_insert_id();
     hook("afteruserautocreated", "all",array("new"=>$new));
 	if ($approve)
