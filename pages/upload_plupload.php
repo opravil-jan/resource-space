@@ -6,9 +6,6 @@ include "../include/image_processing.php";
 include "../include/resource_functions.php";
 include_once "../include/collections_functions.php";
 
-
-
-		
 $overquota=overquota();
 $status="";
 $resource_type=getvalescaped("resource_type","");
@@ -193,9 +190,10 @@ if ($_FILES)
 	// usleep(5000);
 
 	// Get parameters
-	$chunk = isset($_REQUEST["chunk"]) ? intval($_REQUEST["chunk"]) : 0;
-	$chunks = isset($_REQUEST["chunks"]) ? intval($_REQUEST["chunks"]) : 0;
-	$plfilename = isset($_REQUEST["name"]) ? $_REQUEST["name"] : '';
+	$chunk       = isset($_REQUEST["chunk"]) ? intval($_REQUEST["chunk"]) : 0;
+	$chunks      = isset($_REQUEST["chunks"]) ? intval($_REQUEST["chunks"]) : 0;
+	$plfilename  = isset($_REQUEST["name"]) ? $_REQUEST["name"] : '';
+    $queue_index = isset($_REQUEST['queue_index']) ? intval($_REQUEST['queue_index']) : 0;
         
         debug("PLUPLOAD - receiving file from user " . $username . ",  filename " . $plfilename . ", chunk " . $chunk . " of " . $chunks);
         
@@ -237,9 +235,6 @@ if ($_FILES)
             @mkdir($targetDir,0777,true);
             }
 
-	
-
-
 	// Remove old temp files	
 	if ($cleanupTargetDir && is_dir($targetDir) && ($dir = opendir($targetDir)))
             {
@@ -259,7 +254,21 @@ if ($_FILES)
             debug("PLUPLOAD - failed to open temporary folder " . $targetDir . " for file received from user " . $username . ",  filename " . $plfilename . ", chunk " . ($chunk+1)  . " of " . $chunks);       		
             die('{"jsonrpc" : "2.0", "error" : {"code": 100, "message": "Failed to open temp directory."}, "id" : "id"}');
             }
-		
+
+    // Check the chunk and file have not been processed before for this filename
+    $pluplpoad_processed_filepath = $targetDir . DIRECTORY_SEPARATOR . 'processing_' . $plfilename . '.txt';
+    if($plupload_allow_duplicates_in_a_row && file_exists($pluplpoad_processed_filepath))
+        {
+        // Get current chunk, queue index and filename so we can know if we processed it before or not
+        $processed_file_content = file_get_contents($pluplpoad_processed_filepath);
+        $processed_file_content = explode(',', $processed_file_content);
+
+        // If this chunk-file-filename has been processed, don't process it again
+        if($chunk == $processed_file_content[0] && $queue_index == $processed_file_content[1])
+            {
+            die('Duplicate chunk [' . $chunk . '] of file "' . $plfilename . '" found at index [' . $queue_index . '] in the upload queue');
+            }
+        }
 
 	// Look for the content type header
 	if (isset($_SERVER["HTTP_CONTENT_TYPE"]))
@@ -290,6 +299,15 @@ if ($_FILES)
                         fclose($in);
                         fclose($out);
                         @unlink($_FILES['file']['tmp_name']);
+
+                        if($plupload_allow_duplicates_in_a_row)
+                            {
+                            // Write in the processed file
+                            $processed_file_handle = fopen($pluplpoad_processed_filepath, 'w');
+                            $processed_file_new_content = $chunk . ',' . $queue_index;
+                            fwrite($processed_file_handle, $processed_file_new_content);
+                            fclose($processed_file_handle);
+                            }
                         }
                     else
                         {
@@ -320,6 +338,15 @@ if ($_FILES)
 
                     fclose($in);
                     fclose($out);
+
+                    if($plupload_allow_duplicates_in_a_row)
+                        {
+                        // Write in the processed file
+                        $processed_file_handle = fopen($pluplpoad_processed_filepath, 'w');
+                        $processed_file_new_content = $chunk . ',' . $queue_index;
+                        fwrite($processed_file_handle, $processed_file_new_content);
+                        fclose($processed_file_handle);
+                        }
                     }
                 else
                     {
@@ -548,6 +575,7 @@ var pluploadconfig = {
         // General settings
         runtimes : '<?php echo $plupload_runtimes ?>',
         url: '<?php echo $baseurl_short?>pages/upload_plupload.php?replace=<?php echo urlencode($replace) ?>&alternative=<?php echo urlencode($alternative) ?>&collection_add=<?php echo urlencode($collection_add)?>&resource_type=<?php echo urlencode($resource_type)?>&no_exif=<?php echo urlencode(getval("no_exif",""))?>&autorotate=<?php echo urlencode(getval("autorotate",""))?>&replace_resource=<?php echo urlencode($replace_resource)?>&archive=<?php echo urlencode($archive) . $uploadparams ?><?php hook('addtopluploadurl')?>',
+        starting_url: '<?php echo $baseurl_short?>pages/upload_plupload.php?replace=<?php echo urlencode($replace) ?>&alternative=<?php echo urlencode($alternative) ?>&collection_add=<?php echo urlencode($collection_add)?>&resource_type=<?php echo urlencode($resource_type)?>&no_exif=<?php echo urlencode(getval("no_exif",""))?>&autorotate=<?php echo urlencode(getval("autorotate",""))?>&replace_resource=<?php echo urlencode($replace_resource)?>&archive=<?php echo urlencode($archive) . $uploadparams ?><?php hook('addtopluploadurl')?>',
          <?php if ($plupload_chunk_size!="")
                 {?>
                 chunk_size: '<?php echo $plupload_chunk_size; ?>',
@@ -655,11 +683,17 @@ var pluploadconfig = {
                 
                         //add flag so that upload_plupload.php can tell if this is the last file.
                         uploader.bind('BeforeUpload', function(up, files) {
-                                if( (uploader.total.uploaded) == uploader.files.length-1)
-                                    {
-                                    uploader.settings.url = uploader.settings.url + '&lastqueued=true';
-                                    }
-                
+                            var pluploader_new_url = uploader.settings.starting_url;
+
+                            // Add index of file in queue so we can know which file is being processed
+                            pluploader_new_url += '&queue_index=' + uploader.total.uploaded;
+
+                            if(uploader.total.uploaded == uploader.files.length-1)
+                                {
+                                pluploader_new_url += '&lastqueued=true';
+                                }
+
+                            uploader.settings.url = pluploader_new_url;
                         });
                     
                 
