@@ -943,7 +943,7 @@ function render_search_field($field,$value="",$autoupdate,$class="stdwidth",$for
                         }
                     if (!$displayconditioncheck) {$displaycondition=false;}
                     #add jQuery code to update on changes
-                        if ($fields[$cf]["type"]==2 && $fields[$cf]["display_as_dropdown"]==0) # add onchange event to each checkbox field
+                        if (($fields[$cf]['type'] == 2 || $fields[$cf]['type'] == 3) && $fields[$cf]['display_as_dropdown'] == 0) # add onchange event to each checkbox field
                             {
                             # construct the value from the ticked boxes
                             $val=","; # Note: it seems wrong to start with a comma, but this ensures it is treated as a comma separated list by split_keywords(), so if just one item is selected it still does individual word adding, so 'South Asia' is split to 'South Asia','South','Asia'.
