@@ -30,18 +30,12 @@
 .HomePanelHelp h2 {background: url(../gfx/whitegry/interface/help.png) no-repeat 0 0;}
 
 /* Black versions of the dash icons */
-.HomePanel .collection-icon,
-.HomePanelDynamicDash.TileContentShadow .collection-icon { background: url("../../../gfx/dash/black-non-collection.png") no-repeat; }
+.HomePanel .collection-icon { background: url("../../../gfx/dash/black-non-collection.png") no-repeat; }
 .HomePanel .theme-icon { background: url("../../../gfx/dash/black-non-theme.png") no-repeat; }
 .HomePanel .shopping-icon { background: url("../../../gfx/dash/black-non-my_collections.png") no-repeat; }
 .HomePanel .search-icon { background: url("../../../gfx/dash/black-non-search.png") no-repeat; }
 .HomePanel .help-icon { background: url("../../../gfx/dash/black-non-help.png") no-repeat; }
 .HomePanel .clock-icon { background: url("../../../gfx/dash/black-non-clock.png") no-repeat;}
-
-.HomePanelDynamicDash.TileContentShadow h2,
-.HomePanelDynamicDash.TileContentShadow p,
-.HomePanelDynamicDash.TileContentShadow { color: #373737; text-shadow: initial; }
-.HomePanelDynamicDash p.tile_corner_box { color: #FFF; }
 
 #SearchBoxPanel h2, #ThemeBoxPanel h2, #ResearchBoxPanel h2 {color: #373737;}
 #SearchBoxPanel,#ThemeBoxPanel,#ResearchBoxPanel{color:#373737;}
