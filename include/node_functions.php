@@ -23,15 +23,15 @@ function set_node($ref, $resource_type_field, $name, $parent, $order_by)
 		return false;
 		}
 
-    if(is_null($ref) && empty($order_by))
+    if(is_null($ref) && ($order_by==""))
         {
-        $order_by  = get_node_order_by($resource_type_field,!empty($parent),$parent);
+        $order_by  = get_node_order_by($resource_type_field,!($parent==""),$parent);
         }
 
     $query  = 'INSERT INTO node (`resource_type_field`, `name`, `parent`, `order_by`)';
     $query .= ' SELECT \'' . escape_check($resource_type_field) . '\', \'' . escape_check($name) . '\'';
 
-    if(empty($parent) || trim($parent==''))
+    if(trim($parent)=='')
         {
         $query .= ', NULL';
         }
@@ -66,7 +66,7 @@ function set_node($ref, $resource_type_field, $name, $parent, $order_by)
 
         // Order by can be changed asynchronously, so when we save a node we can pass null or an empty
         // order_by value and this will mean we can use the current order
-        if(!is_null($ref) && empty($order_by))
+        if(!is_null($ref) && ($order_by==""))
             {
             $order_by = $current_node['order_by'];
             }
@@ -81,7 +81,7 @@ function set_node($ref, $resource_type_field, $name, $parent, $order_by)
             ",
             escape_check($resource_type_field),
             escape_check($name),
-            empty(trim($parent)) ? 'NULL' : '"' . escape_check($parent) . '"',
+            (trim($parent)=="" ? 'NULL' : '\'' . escape_check($parent) . '\''),
             escape_check($order_by),
             escape_check($ref)
         );
@@ -141,7 +141,7 @@ function delete_node($ref)
 */
 function get_node($ref, array &$returned_node)
     {
-    if(is_null($ref) || empty(trim($ref)) || 0 >= $ref)
+    if(is_null($ref) || (trim($ref)=="") || 0 >= $ref)
         {
         return false;
         }
@@ -149,7 +149,7 @@ function get_node($ref, array &$returned_node)
     $query = "SELECT * FROM node WHERE ref = '" . escape_check($ref) . "';";
     $node  = sql_query($query);
 
-    if(empty($node))
+    if($node=="")
         {
         return false;
         }
@@ -175,7 +175,7 @@ function get_nodes($resource_type_field, $parent = NULL, $recursive = FALSE)
 
     $query = sprintf('SELECT * FROM node WHERE resource_type_field = \'%s\' AND %s ORDER BY order_by ASC;',
         escape_check($resource_type_field),
-        empty(trim($parent)) ? 'parent IS NULL' : "parent = '" . escape_check($parent) . "'"
+        (trim($parent)=="") ? 'parent IS NULL' : "parent = '" . escape_check($parent) . "'"
     );
     $nodes = sql_query($query);
 
@@ -247,7 +247,7 @@ function get_tree_node_level($ref)
 
         $depth_level++;
         }
-    while(!empty(trim($parent)));
+    while (trim($parent)=="");
 
     return $depth_level;
     }
@@ -262,7 +262,7 @@ function get_tree_node_level($ref)
 */
 function reorder_node(array $nodes_new_order)
     {
-    if(empty($nodes_new_order))
+    if($nodes_new_order)
         {
         trigger_error('$nodes_new_order cannot be an empty array!');
         }
@@ -302,7 +302,7 @@ function render_new_node_record($form_action, $is_tree, $parent = 0, $node_depth
         trigger_error('$is_tree param for render_new_node_record() must be set to either TRUE or FALSE!');
         }
 
-    if(empty(trim($form_action)))
+    if (trim($form_action)=="")
         {
         trigger_error('$form_action param for render_new_node_record() must be set and not be an empty string!');
         }
@@ -359,7 +359,7 @@ function render_new_node_record($form_action, $is_tree, $parent = 0, $node_depth
                     foreach($parent_node_options as $node)
                         {
                         $selected = '';
-                        if(!empty(trim($parent)) && $node['ref'] == $parent)
+                        if(!(trim($parent)=="") && $node['ref'] == $parent)
                             {
                             $selected = ' selected';
                             }
@@ -406,7 +406,7 @@ function get_node_order_by($resource_type_field, $is_tree = FALSE, $parent = NUL
         {
         $query = sprintf('SELECT COUNT(*) AS value FROM node WHERE resource_type_field = \'%s\' AND %s ORDER BY order_by ASC;',
             escape_check($resource_type_field),
-            empty(trim($parent)) ? 'parent IS NULL' : 'parent = "' . escape_check($parent) . '"'
+            (trim($parent)=="") ? 'parent IS NULL' : 'parent = \'' . escape_check($parent) . '\''
         );
 
         $nodes_counter = sql_value($query, 0);
@@ -438,7 +438,7 @@ function draw_tree_node_table($ref, $resource_type_field, $name, $parent, $order
     {
     global $lang;
 
-    if(is_null($ref) || empty(trim($ref)))
+    if(is_null($ref) || (trim($ref)==""))
         {
         return false;
         }
@@ -494,7 +494,7 @@ function draw_tree_node_table($ref, $resource_type_field, $name, $parent, $order
                     foreach($nodes as $node)
                         {
                         $selected = '';
-                        if(!empty(trim($parent)) && $node['ref'] == $parent)
+                        if(!(trim($parent)=="") && $node['ref'] == $parent)
                             {
                             $selected = ' selected';
                             }
@@ -526,7 +526,7 @@ function draw_tree_node_table($ref, $resource_type_field, $name, $parent, $order
     // Add a way of inserting new records after the last node of each level
     if($last_node)
         {
-        if(empty(trim($parent)))
+        if(trim($parent)=="")
             {
             $parent = 0;
             }

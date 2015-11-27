@@ -29,7 +29,7 @@ $new_node_record_form_action = '/pages/admin/admin_manage_field_options.php?fiel
 
 
 // Process form requests
-if('true' === $ajax && !empty(trim($node_ref)) && 0 < $node_ref)
+if('true' === $ajax && !(trim($node_ref)=="") && 0 < $node_ref)
     {
     $option_name     = getvalescaped('option_name', '');
     $option_parent   = getvalescaped('option_parent', '');
@@ -160,7 +160,7 @@ if('true' === $ajax && 'true' === getval('draw_tree_node_table', '') && 7 == $fi
 
 // [New Option]
 $submit_new_option = getvalescaped('submit_new_option', '');
-if('true' === $ajax && !empty(trim($submit_new_option)) && 'add_new' === $submit_new_option)
+if('true' === $ajax && !(trim($submit_new_option)=="") && 'add_new' === $submit_new_option)
     {
     $new_option_name     = getvalescaped('new_option_name', '');
     $new_option_parent   = getvalescaped('new_option_parent', '');
@@ -168,9 +168,9 @@ if('true' === $ajax && !empty(trim($submit_new_option)) && 'add_new' === $submit
 
     $new_record_ref = set_node(NULL, $field, $new_option_name, $new_option_parent, $new_option_order_by);
 
-    if(isset($new_record_ref) && !empty(trim($new_record_ref)))
+    if(isset($new_record_ref) && !(trim($new_record_ref)==""))
         {
-        if(7 != $field_data['type'] && empty(trim($new_option_parent)))
+        if(7 != $field_data['type'] && (trim($new_option_parent)==""))
             {
             ?>
             <tr id="node_<?php echo $new_record_ref; ?>">
@@ -264,7 +264,7 @@ include '../../include/header.php';
 <?php
 // Category trees
 $tree_nodes = get_nodes($field);
-if($field_data['type'] == 7 && !empty($tree_nodes))
+if($field_data['type'] == 7 && !($tree_nodes==""))
     {
     $nodes_counter = count($tree_nodes);
     $i             = 0;
