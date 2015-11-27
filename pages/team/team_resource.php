@@ -85,7 +85,6 @@ include "../../include/header.php";
 			
 		<?php if (checkperm("k")): // Check if user can manage keywords and fields ?>
 			<li><a href="<?php echo $baseurl_short?>pages/team/team_related_keywords.php" onClick="return CentralSpaceLoad(this,true);"><?php echo $lang["managerelatedkeywords"]?></a></li>
-			<li><a onClick="return CentralSpaceLoad(this,true);" href="<?php echo $baseurl_short?>pages/team/team_fields.php"><?php echo $lang["managefieldoptions"]?></a></li>
 		<?php endif // Check if user can manage keywords and fields ?>
 
 	<?php endif // Check if user can create resources ?>

@@ -33,6 +33,7 @@ input[readonly] {border: none; background: none;}
 input,textarea {box-sizing: border-box;-moz-box-sizing: border-box;-webkit-box-sizing: border-box;}
 option {font-size:1em;}
 input.defaultbutton {position: absolute; left: -100%; width: 0; height: 0;}
+button[type="submit"] { font-size: 1em; }
 #clearbutton {margin: 10px 5px 0 0;width: 122px;}
 #searchbutton{ width: 122px;margin: 10px 0 0 0;}
 /*General tags*/
@@ -410,7 +411,15 @@ behavior: url('../css/iepngfix.htc');
 .MiniCategoryBox {overflow:auto;width:auto;height:80px;padding:2px;font-size:1em;}
  
 .CategoryTree {overflow:auto;width:360px;height:400px;display:none;}
- 
+.backline {
+	background-image: url(../gfx/interface/line.gif);
+	background-position: 14px 0px;
+	background-repeat: repeat-y;
+}
+.node_parent_chosen_selector {
+	width: 200px;
+}
+
 .URLDisplay {width: 100%;font-size: 1em;}
 
 

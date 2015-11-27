@@ -166,6 +166,7 @@ div.autocomplete ul li {color: #000;}
 .CategoryBox {border:1px solid #999999;background-color:#ffffff;color: black;font-weight: normal;}
 .MiniCategoryBox {border:1px solid #999999;background-color:#ffffff;color: black;font-weight: normal;}
 .CategoryTree {border-top:1px solid #737373;border-left:1px solid #999999;border-bottom:1px solid #999999;border-right:1px solid #999999;background-color:white;color: black;font-weight: normal;}
+
 /* Star Ratings */
 .StarSelect {background: transparent url('../gfx/interface/RatingStarRed.gif') no-repeat;}
 .StarWhite {background: transparent url('../gfx/interface/RatingStarWhite.gif') no-repeat;}

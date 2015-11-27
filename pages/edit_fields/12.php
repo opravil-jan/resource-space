@@ -3,14 +3,13 @@
 /**************RADIO BUTTONS****************/
 /*******************************************/
 
-$options = trim_array(explode(",",$field["options"]));
 $set = trim($value);
 // Translate the options:
-for($i = 0; $i < count($options); $i++) {
-    $options[$i] = i18n_get_translated($options[$i]);
+for($i = 0; $i < count($field['node_options']); $i++) {
+    $field['node_options'][$i] = i18n_get_translated($field['node_options'][$i]);
 }
 
-$l=average_length($options);
+$l=average_length($field['node_options']);
 
 $cols=10;
 if($l>5)  {$cols=6;}
@@ -18,7 +17,7 @@ if($l>10) {$cols=4;}
 if($l>15) {$cols=3;}
 if($l>25) {$cols=2;}
 
-$rows=ceil(count($options)/$cols);
+$rows=ceil(count($field['node_options'])/$cols);
 
 // Default behaviour
 if(!isset($display_as_radiobuttons)) {
@@ -66,7 +65,7 @@ if($display_as_radiobuttons)
                             <?php 
                             $row = 1;
                             $col = 1;
-                            foreach ($options as $key => $val) 
+                            foreach ($field['node_options'] as $val)
                                 {
                                 if($col > $cols) 
                                     {
@@ -100,7 +99,7 @@ else if($display_as_checkbox) // On advanced search, by default, show as checkbo
                 <?php
                 $row = 1;
                 $col = 1;
-                foreach ($options as $option) {
+                foreach ($field['node_options'] as $option) {
                     if($col > $cols) {
                         $col = 1;
                         $row++; ?>
@@ -126,7 +125,7 @@ else if($display_as_checkbox) // On advanced search, by default, show as checkbo
 else if($display_as_dropdown) // On advanced search, display it as a dropdown, if set like this:
     { ?>
     <select class="<?php echo $class ?>" name="field_<?php echo $field["ref"]?>" id="field_<?php echo $field["ref"]?>" <?php if ($autoupdate) { ?>onChange="UpdateResultCount();"<?php } ?>><option value=""></option><?php
-    foreach ($options as $key => $value) {
+    foreach ($field['node_options'] as $value) {
         
         if (trim($value) != '') { ?>
             <option value="<?php echo htmlspecialchars(trim($value)); ?>" <?php if($value == $set) { echo 'selected'; } ?>><?php echo htmlspecialchars(trim($value)); ?></option>

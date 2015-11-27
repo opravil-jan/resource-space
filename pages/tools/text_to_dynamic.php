@@ -38,7 +38,12 @@ $values=normalize_values($values); # Reconnect every item and trim them.
 print_r($values);
 
 # Update the field with the master values list.
-sql_query("update resource_type_field set options='" . escape_check(join(", ",$values)) . "',type=9 where ref='$field'");
+//sql_query("update resource_type_field set options='" . escape_check(join(", ",$values)) . "',type=9 where ref='$field'");
+
+foreach ($values as $value)
+    {
+    set_node(null,$field,escape_check(trim($value)),null,null);
+    }
 
 # For each stored value, update to the normalised value to ensure matches.
 $dataset=sql_query("select resource,value from resource_data where resource_type_field='$field' and resource>0");

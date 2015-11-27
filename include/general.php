@@ -3,6 +3,7 @@
 
 include_once ("language_functions.php");
 include_once "message_functions.php";
+include_once 'node_functions.php';
 
 $GLOBALS['get_resource_path_fpcache'] = array();
 function get_resource_path($ref,$getfilepath,$size,$generate=true,$extension="jpg",$scramble=-1,$page=1,$watermarked=false,$file_modified="",$alternative=-1,$includemodified=true)
@@ -787,10 +788,13 @@ function average_length($array)
 function get_field_options($ref)
 	{
 	# For the field with reference $ref, return a sorted array of options.
-	$options=sql_value("select options value from resource_type_field where ref='$ref'","");
-	
+
+	//$options=sql_value("select options value from resource_type_field where ref='$ref'","");
+
+    $options = array();
+    node_field_options_override($options,$ref);
+
 	# Translate all options
-	$options=trim_array(explode(",",$options));
 	for ($m=0;$m<count($options);$m++)
 		{
 		$options[$m]=i18n_get_translated($options[$m]);
@@ -2824,7 +2828,7 @@ function get_simple_search_fields()
     if (isset($country_search) && $country_search) {$sql=" or ref=3";}
 
     # Executes query.
-    $fields = sql_query("select ref, name, title, type, options, order_by, keywords_index, partial_index, resource_type, resource_column, display_field, use_for_similar, iptc_equiv, display_template, tab_name, required, smart_theme_name, exiftool_field, advanced_search, simple_search, help_text, display_as_dropdown, external_user_access, autocomplete_macro, hide_when_uploading, hide_when_restricted, value_filter, exiftool_filter, omit_when_copying, tooltip_text from resource_type_field where (simple_search=1 $sql) and keywords_index=1 order by resource_type,order_by");
+    $fields = sql_query("select *, ref, name, title, type, order_by, keywords_index, partial_index, resource_type, resource_column, display_field, use_for_similar, iptc_equiv, display_template, tab_name, required, smart_theme_name, exiftool_field, advanced_search, simple_search, help_text, display_as_dropdown, external_user_access, autocomplete_macro, hide_when_uploading, hide_when_restricted, value_filter, exiftool_filter, omit_when_copying, tooltip_text from resource_type_field where (simple_search=1 $sql) and keywords_index=1 order by resource_type,order_by");
 
     # Applies field permissions and translates field titles in the newly created array.
     $return = array();
@@ -3027,7 +3031,7 @@ function get_fields($field_refs)
 	# Returns a list of fields with refs matching the supplied field refs.
 	if (!is_array($field_refs)) {print_r($field_refs);exit(" passed to get_fields() is not an array. ");}
 	$return=array();
-	$fields=sql_query("select ref, name, title, type, options ,order_by, keywords_index, partial_index, resource_type, resource_column, display_field, use_for_similar, iptc_equiv, display_template, tab_name, required, smart_theme_name, exiftool_field, advanced_search, simple_search, help_text, display_as_dropdown,tooltip_text,display_condition, onchange_macro from resource_type_field where  ref in ('" . join("','",$field_refs) . "') order by order_by");
+	$fields=sql_query("select *, ref, name, title, type, order_by, keywords_index, partial_index, resource_type, resource_column, display_field, use_for_similar, iptc_equiv, display_template, tab_name, required, smart_theme_name, exiftool_field, advanced_search, simple_search, help_text, display_as_dropdown,tooltip_text,display_condition, onchange_macro from resource_type_field where  ref in ('" . join("','",$field_refs) . "') order by order_by");
 	# Apply field permissions
 	for ($n=0;$n<count($fields);$n++)
 		{
@@ -3113,7 +3117,7 @@ function get_fields_for_search_display($field_refs)
     }
 
     # Executes query.
-    $fields = sql_query("select ref, name, type, title, keywords_index, partial_index, value_filter from resource_type_field where ref in ('" . join("','",$field_refs) . "')");
+    $fields = sql_query("select *, ref, name, type, title, keywords_index, partial_index, value_filter from resource_type_field where ref in ('" . join("','",$field_refs) . "')");
 
     # Applies field permissions and translates field titles in the newly created array.
     $return = array();
@@ -4325,7 +4329,7 @@ function get_resource_type_fields($restypes="", $field_order_by="ref", $field_so
 	// Allow for sorting, enabled for use by System Setup pages
 	//if(!in_array($field_order_by,array("ref","name","tab_name","type","order_by","keywords_index","resource_type","display_field","required"))){$field_order_by="ref";}		
 		
-	$allfields = sql_query("select ref, name, title, type, options ,order_by, keywords_index, partial_index, resource_type, resource_column, display_field, use_for_similar, iptc_equiv, display_template, tab_name, required, smart_theme_name, exiftool_field, advanced_search, simple_search, help_text, display_as_dropdown, tooltip_text from resource_type_field" . $conditionsql . " order by " . $field_order_by . " " . $field_sort);
+	$allfields = sql_query("select *, ref, name, title, type, order_by, keywords_index, partial_index, resource_type, resource_column, display_field, use_for_similar, iptc_equiv, display_template, tab_name, required, smart_theme_name, exiftool_field, advanced_search, simple_search, help_text, display_as_dropdown, tooltip_text from resource_type_field" . $conditionsql . " order by " . $field_order_by . " " . $field_sort);
 	return $allfields;
 	
 	}
@@ -4515,6 +4519,26 @@ function metadata_field_edit_access($field)
 	return (!checkperm("F*") || checkperm("F-" . $field))&& !checkperm("F" . $field);
 	}
 
+
+/**
+* Utility function used to move the element of one array from a position 
+* to another one in the same array
+* Note: the manipulation is done on the same array
+*
+* @param  array    $array
+* @param  integer  $from_index  Array index we are moving from
+* @param  integer  $to_index    Array index we are moving to
+*
+* @return void
+*/
+function move_array_element(array &$array, $from_index, $to_index)
+    {
+    $out = array_splice($array, $from_index, 1);
+    array_splice($array, $to_index, 0, $out);
+
+    return;
+    }
+    
 function emptyiszero($value)
     {
     return ($value !== null && $value !== false && trim($value) !== '');

@@ -91,20 +91,22 @@ function save_resource_data($ref,$multi,$autosave_field="")
                 && ($autosave_field=="" || $autosave_field==$fields[$n]["ref"] || (is_array($autosave_field) && in_array($fields[$n]["ref"],$autosave_field)))
                 )
 			{
-			
+
+            node_field_options_override($fields[$n]);
+
 			if ($fields[$n]["type"]==2)
 				{
 				# construct the value from the ticked boxes
 				$val=","; # Note: it seems wrong to start with a comma, but this ensures it is treated as a comma separated list by split_keywords(), so if just one item is selected it still does individual word adding, so 'South Asia' is split to 'South Asia','South','Asia'.
-				$options=trim_array(explode(",",$fields[$n]["options"]));
+				//$options=trim_array(explode(",",$fields[$n]["options"]));
 
-				for ($m=0;$m<count($options);$m++)
+				for ($m=0;$m<count($fields[$n]['node_options']);$m++)
 					{
-					$name=$fields[$n]["ref"] . "_" . md5($options[$m]);
+					$name=$fields[$n]["ref"] . "_" . md5($fields[$n]['node_options'][$m]);
 					if (getval($name,"")=="yes")
 						{
 						if ($val!=",") {$val.=",";}
-						$val.=$options[$m];
+						$val.=$fields[$n]['node_options'][$m];
 						}
 					}
 				}
@@ -938,7 +940,7 @@ function update_field($resource,$field,$value)
                             # Support both 2 character and 5 character language codes (for example en, en-US).
                             $p=strpos($fieldoptiontranslations[$n],':');                         
                             $currentoptions[]=trim(substr($fieldoptiontranslations[$n],$p+1));
-                            debug("update_field: urrent field option: '" . trim(substr($fieldoptiontranslations[$n],$p+1)) . "'<br>");
+                            debug("update_field: current field option: '" . trim(substr($fieldoptiontranslations[$n],$p+1)) . "'<br>");
                             } 
                         }
                     }
@@ -950,7 +952,10 @@ function update_field($resource,$field,$value)
                 if(!in_array($newvalue,$currentoptions))
                     {
                     # Append the option and update the field
-                    sql_query("update resource_type_field set options=concat(ifnull(options,''), ', " . escape_check(trim($newvalue)) . "') where ref='$field'");
+                    //sql_query("update resource_type_field set options=concat(ifnull(options,''), ', " . escape_check(trim($newvalue)) . "') where ref='$field'");
+
+                    set_node(null,$field,escape_check(trim($newvalue)),null,null);
+
                     $currentoptions[]=trim($newvalue);
                     debug("update_field: field option added: '" . trim($newvalue) . "'<br>");
                     }                    
@@ -2055,7 +2060,7 @@ function get_fields_with_options()
     # Used for 'manage field options' page.
 
     # Executes query.
-    $fields = sql_query("select ref, name, title, type, options ,order_by, keywords_index, partial_index, resource_type, resource_column, display_field, use_for_similar, iptc_equiv, display_template, tab_name, required, smart_theme_name, exiftool_field, advanced_search, simple_search, help_text, display_as_dropdown from resource_type_field where type in (2,3,9) order by resource_type,order_by");
+    $fields = sql_query("select ref, name, title, type, order_by, keywords_index, partial_index, resource_type, resource_column, display_field, use_for_similar, iptc_equiv, display_template, tab_name, required, smart_theme_name, exiftool_field, advanced_search, simple_search, help_text, display_as_dropdown from resource_type_field where type in (2,3,9) order by resource_type,order_by");
 
     # Applies permissions and translates field titles in the newly created array.
     $return = array();
@@ -2074,7 +2079,7 @@ function get_field($field)
     # A standard field title is translated using $lang.  A custom field title is i18n translated.
 
     # Executes query.
-    $r = sql_query("select ref, name, title, type, options ,order_by, keywords_index, partial_index, resource_type, resource_column, display_field, use_for_similar, iptc_equiv, display_template, tab_name, required, smart_theme_name, exiftool_field, advanced_search, simple_search, help_text, display_as_dropdown from resource_type_field where ref='$field'");
+    $r = sql_query("select ref, name, title, type, order_by, keywords_index, partial_index, resource_type, resource_column, display_field, use_for_similar, iptc_equiv, display_template, tab_name, required, smart_theme_name, exiftool_field, advanced_search, simple_search, help_text, display_as_dropdown from resource_type_field where ref='$field'");
 
     # Translates the field title if the searched field is found.
     if (count($r)==0) {
@@ -2091,10 +2096,13 @@ function get_field_options_with_stats($field)
 	# For a given field, list all options with usage stats.
 	# This is for the 'manage field options' page.
 
-	$rawoptions=sql_value("select options value from resource_type_field where ref='$field'","");
-	$options=trim_array(explode(",",i18n_get_translated($rawoptions)));
-	$rawoptions=trim_array(explode(",",$rawoptions));
-	
+	//$rawoptions=sql_value("select options value from resource_type_field where ref='$field'","");
+	//$options=trim_array(explode(",",i18n_get_translated($rawoptions)));
+    //$rawoptions=trim_array(explode(",",$rawoptions));
+
+    $rawoptions=array();
+    node_field_options_override($rawoptions,$field);
+
 	# For the given field, fetch a stats count for each keyword.
 	$usage=sql_query("
 		  SELECT rk.resource_type_field,
@@ -2154,8 +2162,13 @@ function save_field_options($field)
 			$newoptions=array_merge(array_slice($options,0,$n),array($new),array_slice($options,$n+1));
 
 			# Update the options field.
-			sql_query("update resource_type_field set options='" . escape_check(join(", ",$newoptions)) . "' where ref='$field'");
-			
+			//sql_query("update resource_type_field set options='" . escape_check(join(", ",$newoptions)) . "' where ref='$field'");
+
+            foreach ($newoptions as $no)
+                {
+                set_node(null,$field,$no,null,null);
+                }
+
 			# Loop through all matching resources.
 			# The matches list uses 'like' so could potentially return values that do not have this option set. However each value list split out and analysed separately.
 			$matching=sql_query("select resource,value from resource_data where resource_type_field='$field' and value like '%" . escape_check($options[$n]) . "%'");
@@ -2199,7 +2212,12 @@ function save_field_options($field)
 			# Construct a new options value by creating a new array ommitting the item in position $n
 			$new=array_merge(array_slice($options,0,$n),array_slice($options,$n+1));
 			
-			sql_query("update resource_type_field set options='" . escape_check(join(", ",$new)) . "' where ref='$field'");
+			//sql_query("update resource_type_field set options='" . escape_check(join(", ",$new)) . "' where ref='$field'");
+
+            foreach ($new as $new_option)
+                {
+                set_node(null,$field,escape_check(trim($new_option)),null,null);
+                }
 			
 			# Loop through all matching resources.
 			# The matches list uses 'like' so could potentially return values that do not have this option set. However each value list split out and analysed separately.
@@ -2254,7 +2272,8 @@ function get_keyword_from_option($option)
 	
 function add_field_option($field,$option)
 	{
-	sql_query("update resource_type_field set options=concat(ifnull(options,''),', " . escape_check($option) . "') where ref='$field'");
+	//sql_query("update resource_type_field set options=concat(ifnull(options,''),', " . escape_check($option) . "') where ref='$field'");
+    set_node(null,$field,escape_check(trim($option)),null,null);
 	return true;
 	}
 
@@ -3501,6 +3520,3 @@ function delete_resource_custom_access_usergroups($ref)
         # delete all usergroup specific access to resource $ref
         sql_query("delete from resource_custom_access where resource='" . escape_check($ref) . "' and usergroup is not null");
         }
-
-
-

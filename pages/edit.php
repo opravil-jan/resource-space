@@ -6,6 +6,7 @@ include "../include/resource_functions.php";
 include_once "../include/collections_functions.php";
 include "../include/search_functions.php";
 include "../include/image_processing.php";
+include_once '../include/node_functions.php';
 
 # Editing resource or collection of resources (multiple)?
 $ref=getvalescaped("ref","",true);
@@ -1224,7 +1225,7 @@ function display_field($n, $field, $newtab=false)
 {
   global $use, $ref, $original_fields, $multilingual_text_fields, $multiple, $lastrt,$is_template, $language, $lang,
   $blank_edit_template, $edit_autosave, $errors, $tabs_on_edit, $collapsible_sections, $ctrls_to_save,
-  $embedded_data_user_select, $embedded_data_user_select_fields, $show_error, $save_errors;
+  $embedded_data_user_select, $embedded_data_user_select_fields, $show_error, $save_errors, $baseurl;
 
   $name="field_" . $field["ref"];
   $value=$field["value"];
@@ -1373,10 +1374,12 @@ if ($multilingual_text_fields)
      $type=$field["type"];
     if ($type=="") {$type=0;} # Default to text type.
     if (!hook("replacefield","",array($field["type"],$field["ref"],$n)))
-    {
-       global $auto_order_checkbox,$auto_order_checkbox_case_insensitive;
-       include "edit_fields/" . $type . ".php";
-    }
+    	{
+        node_field_options_override($field);
+		global $auto_order_checkbox,$auto_order_checkbox_case_insensitive;
+		include "edit_fields/" . $type . ".php";
+		}
+
     # ----------------------------------------------------------------------------
 
     # Display any error messages from previous save

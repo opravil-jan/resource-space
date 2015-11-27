@@ -45,11 +45,23 @@ if (isset($_FILES['userfile']) || $fileurl!=""){
 	 $value=getvalescaped("field".$required_field,"");
 	 if ($value==''){
 		 $fieldname=i18n_get_translated(sql_value("select title value from resource_type_field where ref='$required_field'",""));
-		 $options=sql_value("select options value from resource_type_field where ref='$required_field'","");
+
+         //$options=sql_value("select options value from resource_type_field where ref='$required_field'","");
+
+         $options=array();
+         node_field_options_override($options,$required_field);
+
 		 $type=sql_value("select type value from resource_type_field where ref='$required_field'","");
-		 
-		 
-		 if ($options!="" && ($type==3 || $type==2)){$optionstring="Allowed Values: ".ltrim(implode("\n",explode(",",$options)),",")."\n";} else {$optionstring="";}
+
+		 if (count($options)!=0 && ($type==3 || $type==2))
+            {
+            $optionstring="Allowed Values: ".ltrim(implode("\n",$options),",")."\n";
+            }
+         else
+            {
+            $optionstring="";
+            }
+
 		 $error_message.="$fieldname is required. Use field$required_field=[string] as a parameter. $optionstring\n";
 		 $missing_fields=true;
 	 } 

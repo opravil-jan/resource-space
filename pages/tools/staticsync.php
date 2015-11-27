@@ -119,7 +119,10 @@ function touch_category_tree_level($path_parts)
         {
         # Save the updated tree.
         $rtf_options = escape_check(join("\n", $tree));
-        sql_query("UPDATE resource_type_field SET options='$rtf_options' WHERE ref='$staticsync_mapped_category_tree'");
+        //sql_query("UPDATE resource_type_field SET options='$rtf_options' WHERE ref='$staticsync_mapped_category_tree'");
+
+        migrate_category_tree_to_nodes($staticsync_mapped_category_tree,$rtf_options);
+
         }
     }
 

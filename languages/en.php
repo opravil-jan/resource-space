@@ -117,6 +117,7 @@ $lang["property-resource_type"]="Resource type";
 $lang["property-field_type"]="Field type";
 
 $lang["property-options"]="Comma separated list of options. The first option will be the default option. If you do not wish to set a default value, use a starting comma to default to blank. E.g. <br />,Option1,Option2 - will default to blank.";
+$lang['property-options_edit_link'] = '<a href="[baseurl_short]pages/admin/admin_manage_field_options.php?field=[ref]">Manage options</a>';
 $lang["property-required"]="Required";
 $lang["property-order_by"]="Order by";
 $lang["property-indexing"]="<b>Indexing</b>";
@@ -2352,8 +2353,11 @@ $lang["message_sent"]="Message sent";
 $lang["confirm_remove_custom_usergroup_access"]="This will revoke all custom user group access. Are you sure?";
 $lang['applogo_does_not_exists']="The uploaded logo is no longer available";
 
+/* Edit field options */
+$lang['manage_metadata_field_options'] = 'Manage metadata field options';
 $lang["system_performance"]="System performance";
 $lang["mysql_throughput"]="MySQL throughput";
 $lang["cpu_benchmark"]="CPU benchmark";
 $lang["disk_write_speed"]="Disk write speed";
 
+$lang["metadata_option_change_warning"]="Please note that at present, updating these options will not automatically alter stored parameters. Batch editing must be used to migrate existing stored values.";

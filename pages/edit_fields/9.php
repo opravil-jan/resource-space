@@ -121,25 +121,28 @@ if(strpos($value, "\r\n") !== false)
 
 	<?php 
 	# Load translations - store original untranslated strings for each keyword, as this is what is actually set.
-	$options=trim_array(explode(",",$field["options"]));
-	for ($m=0;$m<count($options);$m++)
+	for ($m=0;$m<count($field['node_options']);$m++)
 		{
-		$trans=i18n_get_translated($options[$m]);
-		if ($trans!="" && $trans!=$options[$m]) # Only add if actually different (i.e., an i18n string)
+		$trans=i18n_get_translated($field['node_options'][$m]);
+		if ($trans!="" && $trans!=$field['node_options'][$m]) # Only add if actually different (i.e., an i18n string)
 			{
 			?>
-			KeywordsTranslated_<?php echo $name ?>["<?php echo $trans ?>"]="<?php echo $options[$m] ?>";
+			KeywordsTranslated_<?php echo $name ?>["<?php echo $trans ?>"]="<?php echo $field['node_options'][$m] ?>";
 			<?php
 			}
 		}
 
+	$selected_values = array();
+	if(isset($field['value']))
+	    {
+	    $selected_values=explode(',',$field['value']);
+	    }
 
 	# Select all selected options
-	$options=trim_array(explode(",",$value));
-	for ($m=0;$m<count($options);$m++)
+	for ($m=0;$m<count($field['node_options']);$m++)
 		{
-		$trans=i18n_get_translated($options[$m]);
-		if ($trans!="")
+		$trans=i18n_get_translated($field['node_options'][$m]);
+		if ($trans!="" && in_array($trans,$selected_values))
 			{
 			?>
 			addKeyword_<?php echo $name ?>("<?php echo $trans ?>");

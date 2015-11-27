@@ -154,13 +154,16 @@ foreach(array_keys($optionlists) as $thekey){
 	foreach($optionlists[$thekey] as $theval){
 		echo "value: $theval\n";
 		$valuelist .= ",$theval";
+
+        set_node(null,$thekey,escape_check(trim($theval)),null,null);
+
 	}
 
 	$valuelist = escape_check($valuelist);
 
-	$query = "update resource_type_field set options = '$valuelist' where ref = '$thekey'";
+	//$query = "update resource_type_field set options = '$valuelist' where ref = '$thekey'";
 	//echo "$query\n\n";
-	sql_query($query);
+	//sql_query($query);
 
 }
 

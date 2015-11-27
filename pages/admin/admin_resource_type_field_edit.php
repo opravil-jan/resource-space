@@ -13,8 +13,7 @@ if (!checkperm("a"))
 	{
 	exit ("Permission denied.");
 	}
-        
-        
+
 include "../../include/resource_functions.php";
 
 $ref=getvalescaped("ref","",true);
@@ -39,7 +38,7 @@ if($backurl=="")
 	
 function admin_resource_type_field_option($propertyname,$propertytitle,$helptext="",$type, $currentvalue)
 	{
-	global $ref,$lang;
+	global $ref,$lang, $baseurl_short;
 	?>
 	<div class="Question" >
 		<label><?php echo ($propertytitle!="")?$propertytitle:$propertyname ?></label>
@@ -62,7 +61,7 @@ function admin_resource_type_field_option($propertyname,$propertytitle,$helptext
 				
 				<option value="999"<?php if ($currentvalue == "999") { echo " selected"; } ?>><?php echo $lang["resourcetype-archive_only"]; ?></option>
 				</select>
-			  </div>
+            </div>
 			<?php
 			}
 		elseif($propertyname=="type")
@@ -73,7 +72,7 @@ function admin_resource_type_field_option($propertyname,$propertytitle,$helptext
 			//natsort($field_types);
 			?>
 			<div class="tickset">
-			  <select id="<?php echo $propertyname ?>" name="<?php echo $propertyname ?>" class="stdwidth">
+			  <select id="<?php echo $propertyname ?>" name="<?php echo $propertyname ?>" class="stdwidth" onchange="CentralSpacePost(this.form);">
 				
 				<?php
 				foreach($field_types as $field_type=>$field_type_description)
@@ -82,9 +81,24 @@ function admin_resource_type_field_option($propertyname,$propertytitle,$helptext
 					<option value="<?php echo $field_type ?>"<?php if ($currentvalue == $field_type) { echo " selected"; } ?>><?php echo $lang[$field_type_description] ; ?></option>
 					<?php
 					}
-				?>				
+				?>
 				</select>
-			  </div>
+			</div>
+            <?php
+            if (in_array($currentvalue, array(2, 3, 7, 9, 12)))
+                {
+                $placeholders = array('[baseurl_short]', '[ref]');
+                $replacements = array($baseurl_short, $ref);
+                ?>
+                <div class="clearerleft"></div>
+                </div> <!-- end question -->
+
+                <div class="Question">
+                <label><?php echo $lang['options']; ?></label>
+                <span><?php echo str_replace($placeholders, $replacements, $lang['property-options_edit_link']); ?></span>
+                <?php
+                }
+            ?>
 			<?php
 			}
 		elseif($propertyname=="sync_field")
@@ -160,7 +174,6 @@ $fieldcolumns=array("title"=>array($lang["property-title"],"",0,1),
 					"resource_type"=>array($lang["property-resource_type"],"",0,0),
 					"type"=>array($lang["property-field_type"],"",0,1),
 					"name"=>array($lang["property-shorthand_name"],$lang["information-shorthand_name"],0,1),
-					"options"=>array("",$lang["property-options"],2,1),
 					"required"=>array($lang["property-required"],"",1,1),
 					"order_by"=>array($lang["property-order_by"],"",0,1),
 					"keywords_index"=>array($lang["property-index_this_field"],$lang["information-if_you_enable_indexing_below_and_the_field_already_contains_data-you_will_need_to_reindex_this_field"],1,1),
@@ -355,34 +368,15 @@ else
     <?php
     
     foreach ($fieldcolumns as $column=>$column_detail)		
-		    {
-		    if ($column=="partial_index") // Start the hidden advanced section here
-				{?>
-				<h2 id="showhiddenfields" class="CollapsibleSectionHead collapsed" ><?php echo $lang["admin_advanced_field_properties"] ?></h2>
-				<div class="CollapsibleSection" id="admin_hidden_field_properties" >	 
-				<?php
-				}
-		    admin_resource_type_field_option($column,$column_detail[0],$column_detail[1],$column_detail[2],$fielddata[$column]);
-		    if($column=="options")
-		    	{
-		    	?>
-		    	<script>
-		    	if(jQuery('#type').val()!=3){
-		    		jQuery('#options').siblings('.FormHelp').hide();
-		    	} 
-				jQuery('#type').click(function(){
-					if(jQuery(this).val()==3){
-						jQuery('#options').siblings('.FormHelp').show();
-					}
-					else{
-						jQuery('#options').siblings('.FormHelp').hide();
-					}
-				});
-				</script>
-				<?php
-		    	}
-		    }
-    
+	    {
+	    if ($column=="partial_index") // Start the hidden advanced section here
+			{?>
+			<h2 id="showhiddenfields" class="CollapsibleSectionHead collapsed" ><?php echo $lang["admin_advanced_field_properties"] ?></h2>
+			<div class="CollapsibleSection" id="admin_hidden_field_properties" >	 
+			<?php
+			}
+	    admin_resource_type_field_option($column,$column_detail[0],$column_detail[1],$column_detail[2],$fielddata[$column]);
+	    }
     ?>
     
     </div><!-- End of hidden advanced section -->

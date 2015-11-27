@@ -119,7 +119,10 @@ function touch_category_tree_level($path_parts)
 	if ($altered_tree)
 		{
 		# Save the updated tree.
-		sql_query("update resource_type_field set options='" . escape_check(join("\n",$tree)) . "' where ref='" . $staticsync_mapped_category_tree . "'");
+		//sql_query("update resource_type_field set options='" . escape_check(join("\n",$tree)) . "' where ref='" . $staticsync_mapped_category_tree . "'");
+
+        migrate_category_tree_to_nodes($staticsync_mapped_category_tree,join("\n",$tree));
+
 		}
 	}
 

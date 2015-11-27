@@ -3,6 +3,7 @@
 # Functions to perform searches (read only)
 #  - For resource indexing / keyword creation, see resource_functions.php
 
+include_once 'node_functions.php';
 
 if (!function_exists("do_search")) {
 function do_search($search,$restypes="",$order_by="relevance",$archive=0,$fetchrows=-1,$sort="desc",$access_override=false,$starsearch=0,$ignore_filters=false,$return_disk_usage=false,$recent_search_daylimit="", $go=false, $stats_logging=true)
@@ -864,7 +865,7 @@ function get_advanced_search_fields($archive=false, $hiddenfields="")
 
     $hiddenfields=explode(",",$hiddenfields);
 
-    $fields=sql_query("select ref, name, title, type, options ,order_by, keywords_index, partial_index, resource_type, resource_column, display_field, use_for_similar, iptc_equiv, display_template, tab_name, required, smart_theme_name, exiftool_field, advanced_search, simple_search, help_text, tooltip_text, display_as_dropdown, display_condition from resource_type_field where advanced_search=1 and keywords_index=1 and length(name)>0 " . (($archive)?"":"and resource_type<>999") . " order by resource_type,order_by");
+    $fields=sql_query("select *, ref, name, title, type ,order_by, keywords_index, partial_index, resource_type, resource_column, display_field, use_for_similar, iptc_equiv, display_template, tab_name, required, smart_theme_name, exiftool_field, advanced_search, simple_search, help_text, tooltip_text, display_as_dropdown, display_condition from resource_type_field where advanced_search=1 and keywords_index=1 and length(name)>0 " . (($archive)?"":"and resource_type<>999") . " order by resource_type,order_by");
     # Apply field permissions and check for fields hidden in advanced search
     for ($n=0;$n<count($fields);$n++)
         {
@@ -905,6 +906,8 @@ function render_search_field($field,$value="",$autoupdate,$class="stdwidth",$for
     # $field    an associative array of field data, i.e. a row from the resource_type_field table.
     # $name     the input name to use in the form (post name)
     # $value    the default value to set for this field, if any
+
+    node_field_options_override($field);
     
     global $auto_order_checkbox,$auto_order_checkbox_case_insensitive,$lang,$category_tree_open,$minyear,$daterange_search,$is_search,$values,$n;
     $name="field_" . $field["ref"];
@@ -926,7 +929,11 @@ function render_search_field($field,$value="",$autoupdate,$class="stdwidth",$for
                     {
                     $scriptconditions[$condref]["field"] = $fields[$cf]["ref"];  # add new jQuery code to check value
                     $scriptconditions[$condref]['type'] = $fields[$cf]['type'];
-                    $scriptconditions[$condref]['options'] = $fields[$cf]['options'];
+
+                    //$scriptconditions[$condref]['options'] = $fields[$cf]['options'];
+
+                    $scriptconditions[$condref]['node_options'] = array();
+                    node_field_options_override($scriptconditions[$condref]['node_options'],$fields[$cf]['type']);
 
                     $checkvalues=$s[1];
                     $validvalues=explode("|",strtoupper($checkvalues));
@@ -947,7 +954,11 @@ function render_search_field($field,$value="",$autoupdate,$class="stdwidth",$for
                             {
                             # construct the value from the ticked boxes
                             $val=","; # Note: it seems wrong to start with a comma, but this ensures it is treated as a comma separated list by split_keywords(), so if just one item is selected it still does individual word adding, so 'South Asia' is split to 'South Asia','South','Asia'.
-                            $options=trim_array(explode(",",$fields[$cf]["options"]));
+                            //$options=trim_array(explode(",",$fields[$cf]["options"]));
+
+                            $options=array();
+                            node_field_options_override($options,$fields[$cf]['type']);
+
                             ?><script type="text/javascript">
                             jQuery(document).ready(function() {<?php
                                 for ($m=0;$m<count($options);$m++)
@@ -973,7 +984,12 @@ function render_search_field($field,$value="",$autoupdate,$class="stdwidth",$for
                                 });
 
                                 <?php
-                                $options = trim_array(explode(',', $fields[$cf]['options']));
+
+                                $options=array();
+                                node_field_options_override($options,$fields[$cf]['type']);
+
+                                //$options = trim_array(explode(',', ['options']));
+
                                 foreach ($options as $option) {
                                     $name = 'field_' . $fields[$cf]['ref'] . '_' . sha1($option); ?>
                                     
@@ -1029,8 +1045,12 @@ function render_search_field($field,$value="",$autoupdate,$class="stdwidth",$for
                     # Handle Radio Buttons type:
                     if($scriptcondition['type'] == 12) 
                         {
-                        $scriptcondition["options"] = explode(',', $scriptcondition["options"]);
-                        foreach ($scriptcondition["options"] as $key => $radio_button_value) 
+                        //$scriptcondition["options"] = explode(',', $scriptcondition["options"]);
+
+                        $scriptcondition["options"]=array();
+                        node_field_options_override($scriptcondition["options"],12);
+
+                        foreach ($scriptcondition["options"] as $key => $radio_button_value)
                             {
                             $scriptcondition["options"][$key] = sha1($radio_button_value);
                             }
@@ -1137,17 +1157,15 @@ function render_search_field($field,$value="",$autoupdate,$class="stdwidth",$for
             # By default show a checkbox list for both (for multiple selections this enabled OR functionality)
             
             # Translate all options
-            $options=trim_array(explode(",",$field["options"]));
-           
             $adjusted_dropdownoptions=hook("adjustdropdownoptions");
             if ($adjusted_dropdownoptions){$options=$adjusted_dropdownoptions;}
             
             $option_trans=array();
             $option_trans_simple=array();
-            for ($m=0;$m<count($options);$m++)
+            for ($m=0;$m<count($field["node_options"]);$m++)
                 {
-                $trans=i18n_get_translated($options[$m]);
-                $option_trans[$options[$m]]=$trans;
+                $trans=i18n_get_translated($field["node_options"][$m]);
+                $option_trans[$field["node_options"][$m]]=$trans;
                 $option_trans_simple[]=$trans;
                 }
 
@@ -1601,7 +1619,11 @@ function search_form_to_search_query($fields,$fromsearchbar=false)
             else
                 {
                 # Process checkbox list
-                $options=trim_array(explode(",",$fields[$n]["options"]));
+                //$options=trim_array(explode(",",$fields[$n]["options"]));
+
+                $options=array();
+                node_field_options_override($options,$fields[$n]['type']);
+
                 $p="";
                 $c=0;
                 for ($m=0;$m<count($options);$m++)
@@ -1768,7 +1790,10 @@ function search_form_to_search_query($fields,$fromsearchbar=false)
                 } else {
 
                     //Process checkbox behaviour (multiple options selected create a logical AND condition):
-                    $options = trim_array(explode(',', $fields[$n]['options']));
+                    //$options = trim_array(explode(',', $fields[$n]['options']));
+
+                    $options=array();
+                    node_field_options_override($options,$fields[$n]['type']);
                     
                     $p = '';
                     $c = 0;

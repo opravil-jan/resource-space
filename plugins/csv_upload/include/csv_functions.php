@@ -286,8 +286,18 @@ function csv_upload_process($filename,&$meta,$resource_types,&$messages,$overrid
 					if($meta[$field_resource_type][$field_name]['type']==9 && $update_dynamic_field) 
 						{
 						debug("updating dynamic field options for field " . $field_name);
-						sql_query("update resource_type_field set options='," . escape_check(implode(",",$meta[$field_resource_type][$field_name]['options'])) . "' where ref='" . $meta[$field_resource_type][$field_name]['remote_ref'] .  "'");
-						}
+
+                        /*
+                        sql_query("update resource_type_field set options='," . escape_check(implode(",",$meta[$field_resource_type][$field_name]['options'])) .
+                            "' where ref='" . $meta[$field_resource_type][$field_name]['remote_ref'] .  "'");
+                        */
+
+                        foreach ($meta[$field_resource_type][$field_name]['options'] as $option)
+                            {
+                            set_node(null,$meta[$field_resource_type][$field_name]['remote_ref'],$option,null,null);
+                            }
+
+                        }
 					}
 				}
 				
