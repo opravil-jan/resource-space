@@ -8,13 +8,14 @@
 include "../../include/db.php";
 include "../../include/general.php";
 include "../../include/authenticate.php"; 
-$url=$baseurl_short."pages/team/team_user_edit.php?ref=" .getvalescaped("ref","",true);
-if (!checkperm("u")) {redirect($baseurl_short ."login.php?error=error-permissions-login&url=".urlencode($url));}
 
+
+$backurl=getval("backurl","");
+$url=$baseurl_short."pages/team/team_user_edit.php?ref=" .getvalescaped("ref","",true) . "&backurl=" . urlencode($backurl);
+if (!checkperm("u")) {redirect($baseurl_short ."login.php?error=error-permissions-login&url=".urlencode($url));}
 
 $ref=getvalescaped("ref","",true);
 
-$backurl=getval("backurl","");
 
 if (getval("unlock","")!="")
 	{
@@ -193,7 +194,7 @@ if (!hook("ticktoemailpassword"))
 <?php if ($user["approved"]==1 && !hook("loginasuser")) { ?>
 
 <div class="Question"><label><?php echo $lang["log"]?></label>
-<div class="Fixed"><a href="<?php echo $baseurl_short?>pages/team/team_system_log.php?actasuser=<?php echo $ref?>">&gt;&nbsp;<?php echo $lang["clicktoviewlog"]; ?></a></div>
+<div class="Fixed"><a href="<?php echo $baseurl_short ?>pages/admin/admin_system_log.php?actasuser=<?php echo $ref ?>&backurl=<?php echo urlencode($url) ?>" onClick="return CentralSpaceLoad(this,true);">&gt;&nbsp;<?php echo $lang["clicktoviewlog"]?></a></div>
 <div class="clearerleft"> </div></div>
 
 <div class="Question"><label><?php echo $lang["login"]?></label>
