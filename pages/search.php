@@ -723,20 +723,22 @@ if (true) # Always show search header now.
 				<?php
 				}
 			}
-
-		if($display == 'list')
+		if ($searchlist == true) 
 			{
-			?>
-			<span class="smalllisticonactive">&nbsp;</span>
-			<?php
-			}
-		else
-			{
-			?>
-			<a href="<?php echo $url?>&amp;display=list&amp;k=<?php echo urlencode($k) ?>" title='<?php echo $lang["listtitle"] ?>' onClick="return CentralSpaceLoad(this);">
-				<span class="smalllisticon">&nbsp;</span>
-			</a>
-			<?php
+			if($display == 'list')
+				{
+				?>
+				<span class="smalllisticonactive">&nbsp;</span>
+				<?php
+				}
+			else
+				{
+				?>
+				<a href="<?php echo $url?>&amp;display=list&amp;k=<?php echo urlencode($k) ?>" title='<?php echo $lang["listtitle"] ?>' onClick="return CentralSpaceLoad(this);">
+					<span class="smalllisticon">&nbsp;</span>
+				</a>
+				<?php
+				}
 			}
 
 			hook('adddisplaymode');
