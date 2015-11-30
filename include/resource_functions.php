@@ -907,15 +907,15 @@ function update_field($resource,$field,$value)
 	if (!is_numeric($field)){$field=sql_value("select ref value from resource_type_field where name='".escape_check($field)."'","");}
 
 	# Fetch some information about the field
-	$fieldinfo=sql_query("select keywords_index,resource_column,partial_index,type, onchange_macro, options from resource_type_field where ref='$field'");
+	$fieldinfo=sql_query("select keywords_index,resource_column,partial_index,type, onchange_macro from resource_type_field where ref='$field'");
 
 	if (count($fieldinfo)==0) {return false;} else {$fieldinfo=$fieldinfo[0];}
 	
         # If this is a dynamic keyword we need to add it to the field options
         if($fieldinfo['type']==9 && !checkperm('bdk' . $field))
             {
-            $fieldoptions=explode(",",$fieldinfo['options']);
-            $currentoptions=array();
+            $fieldoptions= get_nodes($field);
+			$currentoptions=array();
             foreach($fieldoptions as $fieldoption)
                 {
                 $fieldoptiontranslations=explode("~",$fieldoption);
@@ -2139,7 +2139,8 @@ function save_field_options($field)
 	global $languages,$defaultlanguage;
 	
 	$fielddata=get_field($field);
-	$options=trim_array(explode(",",$fielddata["options"]));
+	$options=get_nodes($field);
+	//$options=trim_array(explode(",",$fielddata["options"]));
 
 	for ($n=0;$n<count($options);$n++)
 		{
