@@ -263,20 +263,33 @@ include "../../include/header.php";
         true
     );
     $page_def[] = config_add_single_select('default_perpage', $lang['userpreference_default_perpage_label'], array(24, 48, 72, 120, 240), false, 300, '', true);
+    
+    // Default Display
+    $default_display_array = array();
+    if($smallthumbs || $GLOBALS['default_display'] == 'smallthumbs')
+		{
+		$default_display_array['smallthumbs'] = $lang['smallthumbstitle'];
+		}
+	$default_display_array['thumbs'] = $lang['largethumbstitle'];
+	if($xlthumbs || $GLOBALS['default_display'] == 'xlthumbs')
+		{
+		$default_display_array['xlthumbs'] = $lang['xlthumbstitle'];
+		}
+	if($searchlist || $GLOBALS['default_display'] == 'list')
+		{
+		$default_display_array['list'] = $lang['listtitle'];
+		}
+	
     $page_def[] = config_add_single_select(
         'default_display',
         $lang['userpreference_default_display_label'],
-        array(
-            'smallthumbs' => $lang['smallthumbstitle'],
-            'thumbs'      => $lang['largethumbstitle'],
-            'xlthumbs'    => $lang['xlthumbstitle'],
-            'list'        => $lang['listtitle']
-        ),
+        $default_display_array,
         true,
         300,
         '',
         true
     );
+    
     $page_def[] = config_add_boolean_select('use_checkboxes_for_selection', $lang['userpreference_use_checkboxes_for_selection_label'], $enable_disable_options, 300, '', true);
     $page_def[] = config_add_boolean_select('resource_view_modal', $lang['userpreference_resource_view_modal_label'], $enable_disable_options, 300, '', true);
     $page_def[] = config_add_html('</div>');
