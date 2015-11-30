@@ -9,7 +9,7 @@ global $baseurl_short,$filename_field;
 # Display a title of the search (if there is a title)
 $searchcrumbs="";
 if ($search_titles_searchcrumbs && $use_refine_searchstring){
-$refinements=str_replace(" -",",-",urldecode($search));
+$refinements=str_replace(" -",",-",rawurldecode($search));
 $refinements=explode(",",$search);
 if (substr($search,0,1)=="!" && substr($search,0,6)!="!empty"){$startsearchcrumbs=1;} else {$startsearchcrumbs=0;}
 if ($refinements[0]!=""){
@@ -40,7 +40,7 @@ if ($refinements[0]!=""){
 		}
 		if (substr(trim($search_title_element),0,6)=="!empty")
         {   // superspecial !empty search  
-			$search_title_elementq=trim(str_replace("!empty","",urldecode($search_title_element)));
+			$search_title_elementq=trim(str_replace("!empty","",rawurldecode($search_title_element)));
 			if (is_numeric($search_title_elementq)){
 				$fref=$search_title_elementq;
 				$ftitle=sql_value("select title value from resource_type_field where ref='" .$search_title_elementq . "'","");

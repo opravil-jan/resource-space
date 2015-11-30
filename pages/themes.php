@@ -256,7 +256,7 @@ foreach ($_GET as $key => $value) {
 	
 	if (substr($key,0,5)=="theme" && substr($key,0,6)!="themes"){		
 		if (empty($value)) break;	# if the value is empty then there is no point in continuing iterations of the loop
-		$themes[$themecount]=urldecode($value);
+		$themes[$themecount]=rawurldecode($value);
 		$themecount++;
 		}
 	}

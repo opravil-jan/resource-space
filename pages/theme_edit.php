@@ -20,7 +20,7 @@ $themecount=0;
 reset($_POST);reset($_GET);foreach (array_merge($_GET, $_POST) as $key=>$value) {
 	// only set necessary vars
 	if (substr($key,0,5)=="theme" && $value!=""){
-		$themes[$themecount]=urldecode($value);
+		$themes[$themecount]=rawurldecode($value);
 		$themecount++;
 		}
 	}

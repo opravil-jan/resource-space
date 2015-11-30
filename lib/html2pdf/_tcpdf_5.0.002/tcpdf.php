@@ -15611,7 +15611,7 @@ if (!class_exists('TCPDF', false)) {
 								$tag['attribute']['src'] = $_SERVER['DOCUMENT_ROOT'].$tag['attribute']['src'];
 							}
 						}
-						$tag['attribute']['src'] = urldecode($tag['attribute']['src']);
+						$tag['attribute']['src'] = rawurldecode($tag['attribute']['src']);
 						$type = $this->getImageFileType($tag['attribute']['src']);
 						$testscrtype = @parse_url($tag['attribute']['src']);
 						if (!isset($testscrtype['query']) OR empty($testscrtype['query'])) {
@@ -16042,7 +16042,7 @@ if (!class_exists('TCPDF', false)) {
 							$tcpdf_method = $tag['attribute']['method'];
 							if (method_exists($this, $tcpdf_method)) {
 								if (isset($tag['attribute']['params']) AND (!empty($tag['attribute']['params']))) {
-									$params = unserialize(urldecode($tag['attribute']['params']));
+									$params = unserialize(rawurldecode($tag['attribute']['params']));
 									call_user_func_array(array($this, $tcpdf_method), $params);
 								} else {
 									$this->$tcpdf_method();
@@ -19714,7 +19714,7 @@ if (!class_exists('TCPDF', false)) {
 								$img = $_SERVER['DOCUMENT_ROOT'].$img;
 							}
 						}
-						$img = urldecode($img);
+						$img = rawurldecode($img);
 						$testscrtype = @parse_url($img);
 						if (!isset($testscrtype['query']) OR empty($testscrtype['query'])) {
 							// convert URL to server path

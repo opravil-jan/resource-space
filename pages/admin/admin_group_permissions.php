@@ -38,7 +38,7 @@ if (getval("save","")!="")
 			$key=substr($key,11);
 			if ((!$reverse && getval("checked_" . $key,"")!="") || ($reverse && !getval("checked_" . $key,"")!=""))
 				{
-				$perms[]=urldecode($key);
+				$perms[]=rawurldecode($key);
 				}
 			}
 		}		

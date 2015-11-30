@@ -28,7 +28,7 @@ if ($themeshare!="false")
 		{
 		// only set necessary vars
 		if (substr($key,0,5)=="theme" && $value!=""){
-			$themes[$themecount]=urldecode($value);
+			$themes[$themecount]=rawurldecode($value);
 			$themecount++;
 			}
 		}

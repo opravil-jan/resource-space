@@ -591,7 +591,7 @@ function save_collection($ref)
 	# Update collection with submitted form data
 	if (!hook('modifysavecollection')) {
 	$sql="update collection set
-				name='" . urldecode(getvalescaped("name","")) . "',
+				name='" . rawurldecode(getvalescaped("name","")) . "',
 				".hook('savecollectionadditionalfields')."
 				keywords='" . getvalescaped("keywords","") . "',
 				public='" . getvalescaped("public","",true) . "',";
