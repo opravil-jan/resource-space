@@ -1001,6 +1001,13 @@ function update_field($resource,$field,$value)
 			{
 			global $resource_field_column_limit;
 			$truncated_value = substr($value, 0, $resource_field_column_limit);
+
+            // Remove backslashes from the end of the truncated value
+            if(substr($truncated_value, -1) === '\\')
+                {
+                $truncated_value = substr($truncated_value, 0, strlen($truncated_value) - 1);
+                }
+
 			if(substr($truncated_value, -1) !== '\'')
 				{
 				$truncated_value .= '\'';
