@@ -44,18 +44,28 @@ if (!collection_readable($collection)) {echo($lang["no_access_to_collection"]);e
 		{
 		document.getElementById('OrientationOptions').style.display='block';		
 		document.getElementById('ThumbnailOptions').style.display='none';
-		document.getElementById('size_options').style.display='none';
+		if (document.getElementById('size_options'))
+			{
+			document.getElementById('size_options').style.display='none';
+			}
+		
 		}
 	else if (jQuery('#sheetstyle').val()=='single')
 		{
 		document.getElementById('ThumbnailOptions').style.display='none';
-		document.getElementById('size_options').style.display='block';
+		if (document.getElementById('size_options'))
+			{
+			document.getElementById('size_options').style.display='block';
+			}
 		}
 	else if (jQuery('#sheetstyle').val()=='thumbnails')
 		{
 		document.getElementById('OrientationOptions').style.display='block';		
 		document.getElementById('ThumbnailOptions').style.display='block';
-		document.getElementById('size_options').style.display='none';
+		if (document.getElementById('size_options'))
+			{
+			document.getElementById('size_options').style.display='none';
+			}	
 		}
 	jQuery().rsContactSheet('revert');	
 		">
