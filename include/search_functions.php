@@ -574,8 +574,8 @@ function do_search($search,$restypes="",$order_by="relevance",$archive=0,$fetchr
                             # Log this
                             if ($stats_logging) {daily_stat("Keyword usage",$keyref);}
                             }
+                        $skipped_last=false;
                         }
-                    $skipped_last=false;
                     }
                 }
             }
