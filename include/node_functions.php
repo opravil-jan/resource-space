@@ -247,7 +247,7 @@ function get_tree_node_level($ref)
 
         $depth_level++;
         }
-    while (trim($parent)=="");
+    while('' != trim($parent));
 
     return $depth_level;
     }
