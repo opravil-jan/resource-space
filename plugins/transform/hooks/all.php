@@ -15,7 +15,6 @@ function HookTransformAllRender_actions_add_collection_option($top_actions,$opti
 		if (isset($theoption['extra_tag_attributes'])){
 			if (preg_match("/\/pages\/collection_log\.php\?ref=(\\d+)/",$theoption['extra_tag_attributes'],$thiscoll)){
 				$selectedcoll = $thiscoll[1];
-				echo "got a collection! $selectedcoll\n";
 			}
 		}
 	}
