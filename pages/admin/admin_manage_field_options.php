@@ -328,7 +328,7 @@ function AddNode(parent)
         if(typeof response !== 'undefined')
             {
             // Add new node and reset to default the values for a new record
-            new_node_children.before(response);
+            jQuery('#new_node_' + new_option_parent.val() + '_children').before(response);
             new_option_name.val('');
             new_option_parent.val(parent);
 
