@@ -314,7 +314,7 @@ function AddNode(parent)
     var new_option_parent     = new_node_children.find('select[name=new_option_parent]');
     var new_option_parent_val = new_option_parent.val();
 
-    if(new_option_parent_val == '')
+    if(typeof new_option_parent_val === 'undefined' || new_option_parent_val == '')
         {
         new_option_parent_val = 0;
         }
