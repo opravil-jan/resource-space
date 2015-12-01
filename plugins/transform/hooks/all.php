@@ -7,18 +7,30 @@ global $baseurl,$baseurl_short;?>
 <?php } 
 function HookTransformAllRender_actions_add_collection_option($top_actions,$options){
 	global $cropper_enable_batch,$count_result,$lang,$collection_data,$baseurl_short, $userref;
+
+	// it seems we can no longer access $collection_data as a global variable in order to determine the currently selected collection.
+	// so, as an ugly hack, we're going to scan through existing options to determine this
+	$selectedcoll = '';
+	foreach ($options as $theoption){
+		if (isset($theoption['extra_tag_attributes'])){
+			if (preg_match("/\/pages\/collection_log\.php\?ref=(\\d+)/",$theoption['extra_tag_attributes'],$thiscoll)){
+				$selectedcoll = $thiscoll[1];
+				echo "got a collection! $selectedcoll\n";
+			}
+		}
+	}
 	
+
 	$c=count($options);
 	
 	if ($cropper_enable_batch && $count_result>0 && ($userref == $collection_data['user'] || $collection_data['allow_changes'] == 1 || checkperm('h'))){
 		$data_attribute['url'] = sprintf('%splugins/transform/pages/collection_transform.php?collection=%s',
             $baseurl_short,
-            urlencode($collection_data['ref'])
+            urlencode($selectedcoll)
         );
         $options[$c]['value']='transform';
 		$options[$c]['label']=$lang["transform"];
 		$options[$c]['data_attr']=$data_attribute;
-		
 		return $options;
 	}
 }
