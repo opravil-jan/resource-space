@@ -309,9 +309,18 @@ if($field_data['type'] == 7 && !$tree_nodes)
 <script>
 function AddNode(parent)
     {
-    var new_node_children = jQuery('#new_node_' + parent + '_children');
-    var new_option_name   = new_node_children.find('input[name=new_option_name]');
-    var new_option_parent = new_node_children.find('select[name=new_option_parent]');
+    var new_node_children     = jQuery('#new_node_' + parent + '_children');
+    var new_option_name       = new_node_children.find('input[name=new_option_name]');
+    var new_option_parent     = new_node_children.find('select[name=new_option_parent]');
+    var new_option_parent_val = new_option_parent.val();
+
+    if(new_option_parent_val == '')
+        {
+        new_option_parent_val = 0;
+        }
+
+    var new_node_parent_children = jQuery('#new_node_' + new_option_parent_val + '_children');
+    var node_parent_children     = jQuery('#node_' + new_option_parent_val + '_children');
 
     var post_url  = '<?php echo $baseurl; ?>/pages/admin/admin_manage_field_options.php';
     var post_data = 
@@ -328,7 +337,16 @@ function AddNode(parent)
         if(typeof response !== 'undefined')
             {
             // Add new node and reset to default the values for a new record
-            jQuery('#new_node_' + new_option_parent.val() + '_children').before(response);
+            // If there are no children in the node append for now
+            if(new_node_parent_children.length == 0)
+                {
+                node_parent_children.append(response);
+                }
+            else
+                {
+                new_node_parent_children.before(response);
+                }
+
             new_option_name.val('');
             new_option_parent.val(parent);
 
