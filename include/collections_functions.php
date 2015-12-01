@@ -559,7 +559,7 @@ function index_collection($ref,$index_string='')
 	
 	// if an index string wasn't supplied, generate one
 	if (!strlen($index_string) > 0){
-		$indexarray = sql_query("select $indexfields from collection c join user u on u.ref=c.user and c.ref = '$ref'");
+		$indexarray = sql_query("select $indexfields from collection c left join user u on u.ref=c.user where c.ref = '$ref'");
 		for ($i=0; $i<count($indexarray); $i++){
 			$index_string = "," . implode(',',$indexarray[$i]);
 		} 
