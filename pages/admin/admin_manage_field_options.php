@@ -341,6 +341,11 @@ function AddNode(parent)
             if(new_node_parent_children.length == 0)
                 {
                 node_parent_children.append(response);
+
+                // Mark node as parent on the UI
+                jQuery('#node_' + new_option_parent_val).data('toggleNodeMode', 'ex');
+                jQuery('#node_' + new_option_parent_val + '_toggle_button').attr('src', '<?php echo $baseurl_short; ?>gfx/interface/node_ex.gif');
+                jQuery('#node_' + new_option_parent_val + '_toggle_button').attr('onclick', 'ToggleTreeNode(' + new_option_parent_val + ', <?php echo $field; ?>);');
                 }
             else
                 {
