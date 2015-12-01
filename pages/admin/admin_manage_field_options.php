@@ -48,7 +48,7 @@ if('true' === $ajax && !(trim($node_ref)=="") && 0 < $node_ref)
         $response['refresh_page'] = false;
         $node_ref_data            = array();
 
-        if(trim($option_parent) != '' && get_node($node_ref, $node_ref_data) && $node_ref_data['parent'] != $option_parent)
+        if(trim($option_parent) != '' || (get_node($node_ref, $node_ref_data) && $node_ref_data['parent'] != $option_parent))
             {
             $response['refresh_page'] = true;
             }
