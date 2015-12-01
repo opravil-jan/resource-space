@@ -97,7 +97,7 @@ if($submitdashtile)
 		$tile = create_dash_tile($buildurl,$link,$title,$reload_interval,$all_users,$default_order_by,$resource_count,$text);
 		if($all_users)
 			{
-			log_activity($lang['manage_all_dash'], LOG_CODE_CREATED, $title . ($text == '' ? '' : " ({$text})"),'dash_tile',null,$tile['ref']);
+			log_activity($lang['manage_all_dash'], LOG_CODE_CREATED, $title . ($text == '' ? '' : " ({$text})"),'dash_tile',null,$tile);
 			}
 		else
 			{
