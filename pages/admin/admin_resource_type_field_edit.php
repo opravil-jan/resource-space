@@ -87,15 +87,13 @@ function admin_resource_type_field_option($propertyname,$propertytitle,$helptext
             <?php
             if (in_array($currentvalue, array(2, 3, 7, 9, 12)))
                 {
-                $placeholders = array('[baseurl_short]', '[ref]');
-                $replacements = array($baseurl_short, $ref);
                 ?>
                 <div class="clearerleft"></div>
                 </div> <!-- end question -->
 
                 <div class="Question">
                 <label><?php echo $lang['options']; ?></label>
-                <span><?php echo str_replace($placeholders, $replacements, $lang['property-options_edit_link']); ?></span>
+                <span><a href="<?php echo $baseurl_short ?>pages/admin/admin_manage_field_options.php?field=<?php echo $ref ?>" onClick="return CentralSpaceLoad(this,true);"><?php echo $lang['property-options_edit_link'] ?></span>
                 <?php
                 }
             ?>

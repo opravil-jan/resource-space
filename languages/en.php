@@ -117,7 +117,7 @@ $lang["property-resource_type"]="Resource type";
 $lang["property-field_type"]="Field type";
 
 $lang["property-options"]="Comma separated list of options. The first option will be the default option. If you do not wish to set a default value, use a starting comma to default to blank. E.g. <br />,Option1,Option2 - will default to blank.";
-$lang['property-options_edit_link'] = '<a href="[baseurl_short]pages/admin/admin_manage_field_options.php?field=[ref]">Manage options</a>';
+$lang['property-options_edit_link'] = 'Manage options';
 $lang["property-required"]="Required";
 $lang["property-order_by"]="Order by";
 $lang["property-indexing"]="<b>Indexing</b>";
