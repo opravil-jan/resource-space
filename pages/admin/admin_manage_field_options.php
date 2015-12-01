@@ -427,7 +427,7 @@ function ToggleTreeNode(ref, field_ref)
         {
         node_children.hide();
         jQuery(table_node).data('toggleNodeMode', 'unex');
-        jQuery(toggle_button).attr('src', '/gfx/interface/node_unex.gif');
+        jQuery(toggle_button).attr('src', '<?php echo $baseurl_short; ?>gfx/interface/node_unex.gif');
 
         return true;
         }
@@ -437,7 +437,7 @@ function ToggleTreeNode(ref, field_ref)
         {
         node_children.show();
         jQuery(table_node).data('toggleNodeMode', 'ex');
-        jQuery(toggle_button).attr('src', '/gfx/interface/node_ex.gif');
+        jQuery(toggle_button).attr('src', '<?php echo $baseurl_short; ?>gfx/interface/node_ex.gif');
 
         return true;
         }
@@ -450,7 +450,7 @@ function ToggleTreeNode(ref, field_ref)
             jQuery('.node_parent_chosen_selector').chosen({});
 
             jQuery(table_node).data('toggleNodeMode', 'ex');
-            jQuery(toggle_button).attr('src', '/gfx/interface/node_ex.gif');
+            jQuery(toggle_button).attr('src', '<?php echo $baseurl_short; ?>gfx/interface/node_ex.gif');
             }
         });
 
