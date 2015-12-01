@@ -454,6 +454,8 @@ if ($cropper_enable_alternative_files && !$download && !$original && getval("sli
 	$sequence=getval("sequence","");
 	if (!is_numeric($sequence)) {exit("Invalid sequence number. Please enter a numeric value.");}
 	if (!checkperm("t")) {exit ("Permission denied.");}
+	if(!is_writable(dirname(__FILE__) . "/../../../".$homeanim_folder."/" . $sequence . ".jpg"))
+		{exit ("Unable to replace existing slideshow image. Please check file permissions or use different slideshow sequence number");}
 	copy($newpath,dirname(__FILE__) . "/../../../".$homeanim_folder."/" . $sequence . ".jpg");
 	$sslinkfile = dirname(__FILE__) . "/../../../".$homeanim_folder."/" . $sequence . ".txt";
 	if (getval("linkslideshow","")==1)
@@ -687,10 +689,9 @@ if(!$cropperestricted)
 	<input type='hidden' name='origheight' id='origheight'  value='<?php echo $origheight ?>' />
 	<?php
 	hook("cropafterhiddeninputs");
-	if(substr(sprintf('%o', fileperms(dirname(__FILE__)."/../../../".$homeanim_folder)), -4)!="0777"){echo "<!-- File Permissions Error-->";} //Notify of file permissions error
+	if(is_writable(dirname(__FILE__)."/../../../" . $homeanim_folder)){echo "<!-- File Permissions Error-->";} //Notify of file permissions error
 	if ($original && !$cropperestricted){ ?> <input type='hidden' name='mode' id='mode'  value='original' /> <?php }
-	if ($cropper_enable_replace_slideshow && !$cropperestricted && checkperm('t')  
-			    && substr(sprintf('%o', fileperms(dirname(__FILE__)."/../../../".$homeanim_folder)), -4)=="0777") 
+	if ($cropper_enable_replace_slideshow && !$cropperestricted && checkperm('t') && is_writable(dirname(__FILE__)."/../../../" . $homeanim_folder)) 
 			{
 		    echo $lang['replaceslideshowimage']; ?>
 	    	<input type="checkbox" name='slideshow' id='slideshow' value="1" onClick="if (this.checked) {document.getElementById('new_width').value='<?php
