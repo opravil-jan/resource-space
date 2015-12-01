@@ -262,7 +262,7 @@ function get_tree_node_level($ref)
 */
 function reorder_node(array $nodes_new_order)
     {
-    if($nodes_new_order)
+    if(0 === count($nodes_new_order))
         {
         trigger_error('$nodes_new_order cannot be an empty array!');
         }
