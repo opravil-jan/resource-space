@@ -22,8 +22,14 @@ $field_data = get_field($field);
 $node_ref   = getvalescaped('node_ref', '');
 $nodes      = array();
 
-$headerinsert .= '<link type="text/css" rel="stylesheet" href="' . $baseurl_short . 'lib/chosen/chosen.min.css"></link>';
-$headerinsert .= '<script type="text/javascript" src="' . $baseurl_short . 'lib/chosen/chosen.jquery.min.js"></script>';
+$chosencsslink ='<link type="text/css" rel="stylesheet" href="' . $baseurl_short . 'lib/chosen/chosen.min.css"></link>';
+$chosenjslink = '<script type="text/javascript" src="' . $baseurl_short . 'lib/chosen/chosen.jquery.min.js"></script>';
+
+if(!$ajax)
+	{
+	$headerinsert .= $chosencsslink;
+	$headerinsert .= $chosenjslink;
+	}
 
 $new_node_record_form_action = '/pages/admin/admin_manage_field_options.php?field=' . $field;
 
@@ -203,6 +209,13 @@ if('true' === $ajax && !(trim($submit_new_option)=="") && 'add_new' === $submit_
 
 
 include '../../include/header.php';
+
+if($ajax)
+	{
+	echo $chosencsslink;
+	echo $chosenjslink;
+	}
+	
 ?>
 <div class="BasicsBox">
     <p>
