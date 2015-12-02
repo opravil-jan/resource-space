@@ -16,8 +16,12 @@ $introtext=text("introtext");
   
 	<div class="VerticalNav">
 	<ul>
+	
+	<?php if ($allow_password_change && !checkperm("p")) { ?>
         <li><a href="<?php echo $baseurl_short?>pages/user/user_change_password.php" onClick="return CentralSpaceLoad(this,true);"><?php echo $lang["changeyourpassword"]?></a></li>
-        <?php
+        <?php } ?>
+	
+	<?php
       	if ($disable_languages==false && $show_language_chooser)
 			{?>
 			<li><a href="<?php echo $baseurl_short?>pages/change_language.php" onClick="return CentralSpaceLoad(this,true);"><?php echo $lang["languageselection"]?></a></li>
