@@ -915,14 +915,14 @@ function update_field($resource,$field,$value)
         if($fieldinfo['type']==9 && !checkperm('bdk' . $field))
             {
             $fieldoptions= get_nodes($field);
-			$currentoptions=array();
+            $currentoptions=array();
             foreach($fieldoptions as $fieldoption)
                 {
-                $fieldoptiontranslations=explode("~",$fieldoption);
+                $fieldoptiontranslations=explode("~",$fieldoption['name']);
                 if (count($fieldoptiontranslations)<2)
                     {
-                    $currentoptions[]=trim($fieldoption); # Not a translatable field
-                    debug("update_field: current field option: '" . trim($fieldoption) . "'<br>");
+                    $currentoptions[]=trim($fieldoption['name']); # Not a translatable field
+                    debug("update_field: current field option: '" . trim($fieldoption['name']) . "'<br>");
                     }
                 else
                     {
@@ -1540,7 +1540,7 @@ function relate_to_array($ref,$array)
 function get_exiftool_fields($resource_type)
 	{
 	# Returns a list of exiftool fields, which are basically fields with an 'exiftool field' set.
-	return sql_query("select f.ref,f.type,f.exiftool_field,f.exiftool_filter,group_concat(',',n.name) as options,f.name from resource_type_field f left join node n on f.ref=n.resource_type_field where length(exiftool_field)>0 and (resource_type='$resource_type' or resource_type='0')  order by exiftool_field");
+	return sql_query("select f.ref,f.type,f.exiftool_field,f.exiftool_filter,group_concat(n.name) as options,f.name from resource_type_field f left join node n on f.ref=n.resource_type_field where length(exiftool_field)>0 and (resource_type='$resource_type' or resource_type='0')  group by f.ref order by exiftool_field");
 	}
 
 function write_metadata($path, $ref, $uniqid="")
