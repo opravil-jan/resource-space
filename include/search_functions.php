@@ -1621,20 +1621,19 @@ function search_form_to_search_query($fields,$fromsearchbar=false)
                 # Process checkbox list
                 //$options=trim_array(explode(",",$fields[$n]["options"]));
                 $options=array();                
-                $options=get_nodes($fields[$n]['ref']);
-                node_field_options_override($options,$fields[$n]['type']);
+                node_field_options_override($options,$fields[$n]['ref']);
 
                 $p="";
                 $c=0;
                 for ($m=0;$m<count($options);$m++)
                     {
-                    $name=$fields[$n]["ref"] . "_" . md5($options[$m]['name']);
+                    $name=$fields[$n]["ref"] . "_" . md5($options[$m]);
                     $value=getvalescaped($name,"");
                     if ($value=="yes")
                         {
                         $c++;
                         if ($p!="") {$p.=";";}
-                        $p.=mb_strtolower(i18n_get_translated($options[$m]['name']), 'UTF-8');
+                        $p.=mb_strtolower(i18n_get_translated($options[$m]), 'UTF-8');
                         }
                     }
                 if (($c==count($options) && !$checkbox_and) && (count($options)>1))
