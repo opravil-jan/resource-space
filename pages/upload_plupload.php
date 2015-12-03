@@ -16,13 +16,27 @@ $offset=getvalescaped("offset","",true);
 $order_by=getvalescaped("order_by","");
 $archive=getvalescaped("archive","",true);
 $setarchivestate=getvalescaped("status","",true);
+$alternative = getvalescaped("alternative",""); # Batch upload alternative files
+$replace = getvalescaped("replace",""); # Replace Resource Batch
+$replace_resource=getvalescaped("replace_resource",""); # Option to replace existing resource file
+if($replace_resource && !get_edit_access($replace_resource)){$replace_resource=false;}
 
 # Load the configuration for the selected resource type. Allows for alternative notification addresses, etc.
 resource_type_config_override($resource_type);
 
-$uploadparams="";
-$uploadparams.="&relateto=" . urlencode(getval("relateto",""));
-$uploadparams.="&filename_field=" . urlencode(getval("filename_field",""));
+$uploadparams= array(
+						"replace"=>$replace,
+						"alternative"=>$alternative,
+						"collection_add"=>$collection_add,
+						"resource_type"=>$resource_type,
+						"no_exif"=>getval("no_exif",""),
+						"autorotate"=>getval("autorotate",""),
+						"replace_resource"=>$replace_resource,
+						"archive"=>$archive,
+						"relateto"=>getval("relateto",""),
+						"filename_field"=>getval("filename_field","")
+					);
+
 
 global $merge_filename_with_title;
 if($merge_filename_with_title) {
@@ -32,15 +46,15 @@ if($merge_filename_with_title) {
     $merge_filename_with_title_spacer = urlencode(getval('merge_filename_with_title_spacer', ''));
     
     if($merge_filename_with_title_option != '') {
-        $uploadparams .= '&merge_filename_with_title_option=' . $merge_filename_with_title_option;
+        $uploadparams['merge_filename_with_title_option'] =  $merge_filename_with_title_option;
     }
     
     if($merge_filename_with_title_include_extensions != '') {
-        $uploadparams .= '&merge_filename_with_title_include_extensions=' . $merge_filename_with_title_include_extensions;
+        $uploadparams['merge_filename_with_title_include_extensions']=$merge_filename_with_title_include_extensions;
     }
 
     if($merge_filename_with_title_spacer != '') {
-        $uploadparams .= '&merge_filename_with_title_spacer=' . $merge_filename_with_title_spacer;
+        $uploadparams['merge_filename_with_title_spacer']= $merge_filename_with_title_spacer;
     }
 
 }
@@ -51,14 +65,18 @@ if($embedded_data_user_select || isset($embedded_data_user_select_fields))
 			{
 			if (strpos($getname,"exif_option_")!==false)
 				{
-				$uploadparams.="&" . urlencode($getname) . "=" . urlencode($getval);	
+				$uploadparams[urlencode($getname)] = $getval;	
 				}
 			}
                 if(getval("exif_override","")!="")
 			{
-			$uploadparams.="&exif_override=true";
+			$uploadparams['exif_override']=true;
 			}
 		}
+		
+		
+$uploadurl=generateURL($baseurl . "/pages/upload_plupload.php",$uploadparams) . hook('addtopluploadurl');
+
 $redirecturl = getval("redirecturl","");
 if(strpos($redirecturl, $baseurl)!==0 && !hook("modifyredirecturl")){$redirecturl="";}
 
@@ -68,12 +86,6 @@ $sort=getval("sort",$default_sort);
 
 $allowed_extensions="";
 if ($resource_type!="") {$allowed_extensions=get_allowed_extensions_by_type($resource_type);}
-
-$alternative = getvalescaped("alternative",""); # Batch upload alternative files
-$replace = getvalescaped("replace",""); # Replace Resource Batch
-
-$replace_resource=getvalescaped("replace_resource",""); # Option to replace existing resource file
-if($replace_resource && !get_edit_access($replace_resource)){$replace_resource=false;}
 
 
 # Create a new collection?
@@ -404,7 +416,7 @@ if ($_FILES)
 							if($notify_on_resource_change_days!=0)
 								{								
 								// we don't need to wait for this..
-								ob_flush();flush();	
+								ob_flush();flush();
 								notify_resource_change($replace_resource);
 								}
 								
@@ -482,8 +494,9 @@ if ($_FILES)
 									if($notify_on_resource_change_days!=0)
 										{								
 										// we don't need to wait for this..
-										ob_flush();flush();	
-										notify_resource_change($replace_resource);
+										ob_flush();flush();
+										
+										notify_resource_change($target_resource[0]);
 										}
 									exit();
 									}
@@ -574,8 +587,8 @@ if($store_uploadedrefs ||($relate_on_upload && $enable_related_resources && getv
 var pluploadconfig = {
         // General settings
         runtimes : '<?php echo $plupload_runtimes ?>',
-        url: '<?php echo $baseurl_short?>pages/upload_plupload.php?replace=<?php echo urlencode($replace) ?>&alternative=<?php echo urlencode($alternative) ?>&collection_add=<?php echo urlencode($collection_add)?>&resource_type=<?php echo urlencode($resource_type)?>&no_exif=<?php echo urlencode(getval("no_exif",""))?>&autorotate=<?php echo urlencode(getval("autorotate",""))?>&replace_resource=<?php echo urlencode($replace_resource)?>&archive=<?php echo urlencode($archive) . $uploadparams ?><?php hook('addtopluploadurl')?>',
-        starting_url: '<?php echo $baseurl_short?>pages/upload_plupload.php?replace=<?php echo urlencode($replace) ?>&alternative=<?php echo urlencode($alternative) ?>&collection_add=<?php echo urlencode($collection_add)?>&resource_type=<?php echo urlencode($resource_type)?>&no_exif=<?php echo urlencode(getval("no_exif",""))?>&autorotate=<?php echo urlencode(getval("autorotate",""))?>&replace_resource=<?php echo urlencode($replace_resource)?>&archive=<?php echo urlencode($archive) . $uploadparams ?><?php hook('addtopluploadurl')?>',
+        url: '<?php echo $uploadurl; ?>',
+        starting_url: '<?php echo $uploadurl; ?>',
          <?php if ($plupload_chunk_size!="")
                 {?>
                 chunk_size: '<?php echo $plupload_chunk_size; ?>',
@@ -700,10 +713,10 @@ var pluploadconfig = {
                         //Change URL if exif box status changes
                         jQuery('#no_exif').live('change', function(){
                                 if(jQuery(this).is(':checked')){
-                                        uploader.settings.url ='<?php echo $baseurl_short?>pages/upload_plupload.php?replace=<?php echo urlencode($replace) ?>&alternative=<?php echo urlencode($alternative) ?>&collection_add=<?php echo urlencode($collection_add)?>&resource_type=<?php echo urlencode($resource_type)?>&autorotate=<?php echo urlencode(getval("autorotate",""))?>&replace_resource=<?php echo urlencode($replace_resource)?>&no_exif=yes<?php hook('addtopluploadurl')?>';
+                                        uploader.settings.starting_url =ReplaceUrlParameter(uploader.settings.starting_url,'no_exif','yes');
                                 }
                                 else {
-                                        uploader.settings.url ='<?php echo $baseurl_short?>pages/upload_plupload.php?replace=<?php echo urlencode($replace) ?>&alternative=<?php echo urlencode($alternative) ?>&collection_add=<?php echo urlencode($collection_add)?>&resource_type=<?php echo urlencode($resource_type)?>&autorotate=<?php echo urlencode(getval("autorotate",""))?>&replace_resource=<?php echo urlencode($replace_resource)?>&no_exif=<?php hook('addtopluploadurl')?>';
+                                       uploader.settings.starting_url =ReplaceUrlParameter(uploader.settings.starting_url,'no_exif','');
                                 }
                         });
                 
