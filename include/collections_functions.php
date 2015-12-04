@@ -334,11 +334,24 @@ function create_collection($userid,$name,$allowchanges=0,$cant_delete=0)
 function delete_collection($ref)
 	{
 	# Deletes the collection with reference $ref
+	global $home_dash;
+	
 	hook("beforedeletecollection");
 	sql_query("delete from collection where ref='$ref'");
 	sql_query("delete from collection_resource where collection='$ref'");
 	sql_query("delete from collection_keyword where collection='$ref'");
-		#log this
+	
+	if($home_dash)
+		{
+		// Delete any dash tiles pointing to this collection
+		$collection_dash_tiles=sql_array("select ref value from dash_tile WHERE link like '%search.php?search=!collection" . $ref . "&%'",0);
+		if(count($collection_dash_tiles)>0)
+			{
+			sql_query("delete from dash_tile WHERE ref in (" .  implode(",",$collection_dash_tiles) . ")");
+			sql_query("delete from user_dash_tile WHERE dash_tile in (" .  implode(",",$collection_dash_tiles) . ")");
+			}
+		}
+	// log this
 	collection_log($ref,"X",0, "");
 	}
 	
