@@ -890,7 +890,8 @@ if (true) # Always show search header now.
 	</div>
 	<div class="clearerleft"></div>
 	</div>
-        <?php 
+	<?php
+} 
 		hook("stickysearchresults");
 
 	if ($search_titles)
@@ -1144,7 +1145,6 @@ if (true) # Always show search header now.
                 }
             } /* end hook replacesearchkey */
         }        
-    }
 $url=$baseurl_short."pages/search.php?search=" . urlencode($search) . "&amp;order_by=" . urlencode($order_by) . "&amp;sort=" . urlencode($sort) . "&amp;archive=" . urlencode($archive) . "&amp;daylimit=" . urlencode($daylimit) . "&amp;k=" . urlencode($k) . "&amp;restypes=" . urlencode($restypes);	
 ?>
 </div> <!-- end of CentralSpaceResources -->
