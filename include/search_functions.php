@@ -933,7 +933,7 @@ function render_search_field($field,$value="",$autoupdate,$class="stdwidth",$for
                     //$scriptconditions[$condref]['options'] = $fields[$cf]['options'];
 
                     $scriptconditions[$condref]['node_options'] = array();
-                    node_field_options_override($scriptconditions[$condref]['node_options'],$fields[$cf]['type']);
+                    node_field_options_override($scriptconditions[$condref]['node_options'],$fields[$cf]['ref']);
 
                     $checkvalues=$s[1];
                     $validvalues=explode("|",strtoupper($checkvalues));
@@ -957,7 +957,7 @@ function render_search_field($field,$value="",$autoupdate,$class="stdwidth",$for
                             //$options=trim_array(explode(",",$fields[$cf]["options"]));
 
                             $options=array();
-                            node_field_options_override($options,$fields[$cf]['type']);
+                            node_field_options_override($options,$fields[$cf]['ref']);
 
                             ?><script type="text/javascript">
                             jQuery(document).ready(function() {<?php
@@ -986,7 +986,7 @@ function render_search_field($field,$value="",$autoupdate,$class="stdwidth",$for
                                 <?php
 
                                 $options=array();
-                                node_field_options_override($options,$fields[$cf]['type']);
+                                node_field_options_override($options,$fields[$cf]['ref']);
 
                                 //$options = trim_array(explode(',', ['options']));
 
@@ -1048,7 +1048,7 @@ function render_search_field($field,$value="",$autoupdate,$class="stdwidth",$for
                         //$scriptcondition["options"] = explode(',', $scriptcondition["options"]);
 
                         $scriptcondition["options"]=array();
-                        node_field_options_override($scriptcondition["options"],12);
+                        node_field_options_override($scriptcondition["options"],$scriptcondition["field"]);
 
                         foreach ($scriptcondition["options"] as $key => $radio_button_value)
                             {
@@ -1792,7 +1792,7 @@ function search_form_to_search_query($fields,$fromsearchbar=false)
                     //$options = trim_array(explode(',', $fields[$n]['options']));
 
                     $options=array();
-                    node_field_options_override($options,$fields[$n]['type']);
+                    node_field_options_override($options,$fields[$n]['ref']);
                     
                     $p = '';
                     $c = 0;
