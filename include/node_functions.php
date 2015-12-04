@@ -132,6 +132,26 @@ function delete_node($ref)
 
 
 /**
+* Delete all nodes for a resource type field
+*
+* @param  integer  $resource_type_field  ID of the resource type field
+*
+* @return void
+*/
+function delete_nodes_for_resource_type_field($ref)
+    {
+    if(is_null($ref) || '' === trim($ref) || 0 === $ref)
+        {
+        trigger_error('$ref must be an integer greater than 0');
+        }
+
+    sql_query("DELETE FROM node WHERE resource_type_field = '" . escape_check($ref) . "';");
+
+    return;
+    }
+
+
+/**
 * Get a specific node by ref
 * 
 * @param  integer  $ref              ID of the node

@@ -18,6 +18,11 @@ function migrate_resource_type_field_check(&$resource_type_field)
 		return;  // get out of here as there is nothing to do
 		}
 
+    // Delete all nodes for this resource type field
+    // This is to prevent systems that migrated to have old values that have been removed from a default field
+    // example: Country field
+    delete_nodes_for_resource_type_field($resource_type_field['ref']);
+
 	if ($resource_type_field['type'] == 7)		// category tree
 		{
         migrate_category_tree_to_nodes($resource_type_field['ref'],$resource_type_field['options']);
