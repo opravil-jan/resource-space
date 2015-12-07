@@ -29,10 +29,3 @@ $lang["csv_upload_override"]="Override";
 $lang["csv_upload_automatic_notes"]='"Automatic" requires a numeric field in the CSV file called "resource_type" that indicates the resource type for each line.';
 $lang["csv_upload_filter_notes"]='"Filter" only processes CSV line where the "resource_type" field matches the specified value.';
 $lang["csv_upload_override_notes"]='"Override" will treat every CSV line as the specified resource type, regardless of "resource_type" existence or value.';
-
-
-
-
-
-
-
