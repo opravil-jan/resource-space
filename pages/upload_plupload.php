@@ -24,6 +24,24 @@ if($replace_resource && !get_edit_access($replace_resource)){$replace_resource=f
 # Load the configuration for the selected resource type. Allows for alternative notification addresses, etc.
 resource_type_config_override($resource_type);
 
+# Create a new collection?
+if ($collection_add==-1)
+	{
+	# The user has chosen Create New Collection from the dropdown.
+	if ($collectionname==""){$collectionname = "Upload " . date("YmdHis");} # Do not translate this string, the collection name is translated when displayed!
+	$collection_add=create_collection($userref,$collectionname);
+	if (getval("public",'0') == 1)
+		{
+		collection_set_public($collection_add);
+		}
+	if (strlen(getval("themestring",'')) > 0)
+		{
+		$themearr = explode('||',getval("themestring",''));
+		collection_set_themes($collection_add,$themearr);
+		}
+	}
+	
+	
 $uploadparams= array(
 						"replace"=>$replace,
 						"alternative"=>$alternative,
@@ -73,8 +91,7 @@ if($embedded_data_user_select || isset($embedded_data_user_select_fields))
 			$uploadparams['exif_override']=true;
 			}
 		}
-		
-		
+				
 $uploadurl=generateURL($baseurl . "/pages/upload_plupload.php",$uploadparams) . hook('addtopluploadurl');
 
 $redirecturl = getval("redirecturl","");
@@ -88,22 +105,6 @@ $allowed_extensions="";
 if ($resource_type!="") {$allowed_extensions=get_allowed_extensions_by_type($resource_type);}
 
 
-# Create a new collection?
-if ($collection_add==-1)
-	{
-	# The user has chosen Create New Collection from the dropdown.
-	if ($collectionname==""){$collectionname = "Upload " . date("YmdHis");} # Do not translate this string, the collection name is translated when displayed!
-	$collection_add=create_collection($userref,$collectionname);
-	if (getval("public",'0') == 1)
-		{
-		collection_set_public($collection_add);
-		}
-	if (strlen(getval("themestring",'')) > 0)
-		{
-		$themearr = explode('||',getval("themestring",''));
-		collection_set_themes($collection_add,$themearr);
-		}
-	}
 if ($collection_add!="")
 	{
 	# Switch to the selected collection (existing or newly created) and refresh the frame.
