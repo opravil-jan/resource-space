@@ -19,18 +19,24 @@ if ($auto_order_checkbox && !hook("ajust_auto_order_checkbox","",array($field)))
 $adjusted_dropdownoptiontrans=hook("adjustdropdownoptiontrans","edit",array($field,$option_trans));
 if ($adjusted_dropdownoptiontrans){$option_trans=$adjusted_dropdownoptiontrans;}
 
-if (substr($value,0,1) == ',') { $value = substr($value,1); }	// strip the leading comma if it exists
-?><select class="stdwidth" name="<?php echo $name?>" id="<?php echo $name?>" <?php echo $help_js; hook("additionaldropdownattributes","",array($field)); ?>
-<?php if ($edit_autosave) {?>onChange="AutoSave('<?php echo $field["ref"] ?>');"<?php } ?>
->
-<?php if (!hook("replacedropdowndefault","",array($field)))
-	{ 
-	if(empty($value)) {
-		$value = (empty($field['node_options'][0])) ? "" : $field['node_options'][0];
-	}
-	?><option value=""></option><?php
-	} ?>
+// strip the leading comma if it exists
+if(substr($value, 0, 1) == ',')
+    {
+    $value = substr($value, 1);
+    }
+
+?>
+<select class="stdwidth" name="<?php echo $name?>" id="<?php echo $name?>" <?php echo $help_js; hook("additionaldropdownattributes","",array($field)); ?>
+<?php if ($edit_autosave) {?>onChange="AutoSave('<?php echo $field["ref"] ?>');"<?php } ?>>
+
 <?php
+if(!hook('replacedropdowndefault', '', array($field)))
+    {
+    ?>
+    <option value=""></option>
+    <?php
+    }
+
 foreach ($option_trans as $option=>$trans)
 	{
 	if (trim($option)!="")
