@@ -451,7 +451,7 @@ function db_end_transaction()
 		}
 	}
 
-function sql_query($sql,$cache=false,$fetchrows=-1,$dbstruct=true, $logthis=2)
+function sql_query($sql,$cache=false,$fetchrows=-1,$dbstruct=true, $logthis=2, $reconnect=true)
     {
     # sql_query(sql) - execute a query and return the results as an array.
 	# Database functions are wrapped in this way so supporting a database server other than MySQL is 
@@ -550,6 +550,7 @@ function sql_query($sql,$cache=false,$fetchrows=-1,$dbstruct=true, $logthis=2)
 	$return_rows=array();
     if ($error!="")
         {
+		echo "###" . $error . "###";	
         if ($error=="Server shutdown in progress")
         	{
 			echo "<span class=error>Sorry, but this query would return too many results. Please try refining your query by adding addition keywords or search parameters.<!--$sql--></span>";        	
@@ -558,6 +559,13 @@ function sql_query($sql,$cache=false,$fetchrows=-1,$dbstruct=true, $logthis=2)
         	{
 			echo "<span class=error>Sorry, but this query contained too many keywords. Please try refining your query by removing any surplus keywords or search parameters.<!--$sql--></span>";        	
         	}
+        elseif (strpos($error,"has gone away")!==false && $reconnect)
+			{
+			# SQL server connection has timed out or been killed. Try to reconnect and run query again.
+			sql_connect();
+			return sql_query($sql,$cache,$fetchrows,$dbstruct,$logthis,false);
+			exit();
+			}
         else
         	{
         	# Check that all database tables and columns exist using the files in the 'dbstruct' folder.
@@ -566,7 +574,7 @@ function sql_query($sql,$cache=false,$fetchrows=-1,$dbstruct=true, $logthis=2)
 				check_db_structs();
         		
         		# Try again (no dbstruct this time to prevent an endless loop)
-        		return sql_query($sql,$cache,$fetchrows,false);
+        		return sql_query($sql,$cache,$fetchrows,false,$reconnect);
         		exit();
         		}
         	
