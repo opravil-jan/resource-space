@@ -550,7 +550,6 @@ function sql_query($sql,$cache=false,$fetchrows=-1,$dbstruct=true, $logthis=2, $
 	$return_rows=array();
     if ($error!="")
         {
-		echo "###" . $error . "###";	
         if ($error=="Server shutdown in progress")
         	{
 			echo "<span class=error>Sorry, but this query would return too many results. Please try refining your query by adding addition keywords or search parameters.<!--$sql--></span>";        	
