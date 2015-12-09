@@ -453,9 +453,18 @@ if ($cropper_enable_alternative_files && !$download && !$original && getval("sli
 	# Produce slideshow.
 	$sequence=getval("sequence","");
 	if (!is_numeric($sequence)) {exit("Invalid sequence number. Please enter a numeric value.");}
-	if (!checkperm("t")) {exit ("Permission denied.");}
-	if(!is_writable(dirname(__FILE__) . "/../../../".$homeanim_folder."/" . $sequence . ".jpg"))
-		{exit ("Unable to replace existing slideshow image. Please check file permissions or use different slideshow sequence number");}
+
+    if(!checkperm('t'))
+        {
+        exit('Permission denied.');
+        }
+
+	if(file_exists(dirname(__FILE__) . '/../../../' . $homeanim_folder . '/' . $sequence . '.jpg') &&
+        !is_writable(dirname(__FILE__) . '/../../../' . $homeanim_folder . '/' . $sequence . '.jpg'))
+		{
+        exit ("Unable to replace existing slideshow image. Please check file permissions or use different slideshow sequence number");
+        }
+
 	copy($newpath,dirname(__FILE__) . "/../../../".$homeanim_folder."/" . $sequence . ".jpg");
 	$sslinkfile = dirname(__FILE__) . "/../../../".$homeanim_folder."/" . $sequence . ".txt";
 	if (getval("linkslideshow","")==1)
