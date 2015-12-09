@@ -738,7 +738,6 @@ function do_search($search,$restypes="",$order_by="relevance",$archive=0,$fetchr
     $special_results=search_special($search,$sql_join,$fetchrows,$sql_prefix,$sql_suffix,$order_by,$orig_order,$select,$sql_filter,$archive,$return_disk_usage);
     if ($special_results!==false) {return $special_results;}
 
-
     # -------------------------------------------------------------------------------------
     # Standard Searches
     # -------------------------------------------------------------------------------------
@@ -2327,7 +2326,7 @@ function search_special($search,$sql_join,$fetchrows,$sql_prefix,$sql_suffix,$or
         # Check access
         if(!collection_readable($collection))
             {
-            return false;
+	    return array();
             }
 
         # Smart collections update
