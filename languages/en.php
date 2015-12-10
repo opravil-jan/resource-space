@@ -790,6 +790,7 @@ $lang["resource-2"]="resources";
 $lang["status-note"]="NOTE";
 $lang["action-changelanguage"]="Change language";
 $lang["loading"]="Loading...";
+$lang['disable_languages']='Disable language selection options';
 
 # Pager
 $lang["next"]="Next";

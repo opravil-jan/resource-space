@@ -51,7 +51,7 @@ $page_def[] = config_add_html('</div>');
 // Multilingual section
 $page_def[] = config_add_html('<h3 class="CollapsibleSectionHead collapsed">' . $lang['systemconfig_multilingual'] . '</h3><div id="SystemConfigMultilingualSection" class="CollapsibleSection">');
 $page_def[] = config_add_single_select('defaultlanguage', $lang['systemconfig_default_language_label'], $languages, true, 300, '', true);
-$page_def[] = config_add_boolean_select('disable_languages', $lang['languageselection'], $enable_disable_options, 300, '', true);
+$page_def[] = config_add_boolean_select('disable_languages', $lang['disable_languages'], $yes_no_options, 300, '', true);
 $page_def[] = config_add_boolean_select('browser_language', $lang['systemconfig_browser_language_label'], $enable_disable_options, 300, '', true);
 $page_def[] = config_add_html('</div>');
 
