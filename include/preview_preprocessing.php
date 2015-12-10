@@ -599,17 +599,17 @@ if ((!isset($newfile)) && (!in_array($extension, $ffmpeg_audio_extensions))&& (!
 		$i = 0;
 		while (!$photoshop_eps && ($eps_line = fgets($eps_file)) && ($i < 100))
 		{
-		if (@eregi("%%BoundingBox: [0-9]+ [0-9]+ ([0-9]+) ([0-9]+)", $eps_line, $regs))
+		if (@preg_match("/%%BoundingBox: [0-9]+ [0-9]+ ([0-9]+) ([0-9]+)/i", $eps_line, $regs))
 			{
 			$eps_bbox_x = $regs[1];
 			$eps_bbox_y = $regs[2];
 			}
-		if (@eregi("%ImageData: ([0-9]+) ([0-9]+)", $eps_line, $regs))
+		if (@preg_match("/%ImageData: ([0-9]+) ([0-9]+)/i", $eps_line, $regs))
 			{
 			$eps_data_x = $regs[1];
 			$eps_data_y = $regs[2];
 			}
-		if (@eregi("%BeginPhotoshop:",$eps_line))
+		if (@preg_match("/%BeginPhotoshop:/i",$eps_line))
 			{
 			$photoshop_eps = true;
 			}
