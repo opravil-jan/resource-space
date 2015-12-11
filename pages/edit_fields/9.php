@@ -133,9 +133,13 @@ if(strpos($value, "\r\n") !== false)
 		}
 
 	$selected_values = array();
-	if(isset($field['value']))
+    if('' === trim($value) && 0 < $ref)
+        {
+        $selected_values = explode(',', $field['value']);
+        }
+	else
 	    {
-	    $selected_values=explode(',',$field['value']);
+	    $selected_values = explode(',', $value);
 	    }
 
 	# Select all selected options
