@@ -336,9 +336,10 @@ $unmanaged_home_dash_admins = false;
 # interval in hours to wait before sending another percent warning 
 #$disk_quota_notification_interval=24;
 $disk_quota_notification_email='';
+
 # GB of disk space left before uploads are disabled.
 # This causes disk space to be checked before each upload attempt
-$disk_quota_limit_size_warning_noupload=10;
+# $disk_quota_limit_size_warning_noupload=10;
 
 # Set your time zone below (default GMT)
 if (function_exists("date_default_timezone_set")) {date_default_timezone_set("GMT");}
