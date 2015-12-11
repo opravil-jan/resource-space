@@ -7,7 +7,7 @@ $k=getvalescaped("k","");if (($k=="") || (!check_access_key_collection(getvalesc
 include "../include/search_functions.php";
 include "../include/resource_functions.php";
 include_once '../include/csv_export_functions.php';
-
+ob_end_clean();
 $uniqid="";$id="";
 $collection=getvalescaped("collection","",true);  if ($k!=""){$usercollection=$collection;}
 $size=getvalescaped("size","");
