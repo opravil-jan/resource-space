@@ -133,7 +133,7 @@ if(strpos($value, "\r\n") !== false)
 		}
 
 	$selected_values = array();
-    if('' === trim($value) && 0 < $ref)
+    if('' === trim($value) && (isset($ref) && 0 < $ref))
         {
         $selected_values = explode(',', $field['value']);
         }
