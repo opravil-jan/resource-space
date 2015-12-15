@@ -491,7 +491,7 @@ if (!$basic_simple_search)
 					document.getElementById('field_<?php echo htmlspecialchars($fields[$n]["name"]) ?>').value='';
 					}
 					
-				if (!document.getElementById('TickBox<?php echo $fields[$n]["resource_type"] ?>').checked)
+				if (document.getElementById('TickBox<?php echo $fields[$n]["resource_type"] ?>') !== null && !document.getElementById('TickBox<?php echo $fields[$n]["resource_type"] ?>').checked)
 					{
 					document.getElementById('simplesearch_<?php echo $fields[$n]["ref"] ?>').style.display='none';
 					// Also deselect it.
