@@ -218,22 +218,27 @@ for ($n=$offset;(($n<count($users)) && ($n<($offset+$per_page)));$n++)
 
 <?php if(!$team_user_filter_top){show_team_user_filter_search();}?>
 
-<?php if(!hook("replace_create_user")){?>
-<div class="BasicsBox">
-    <form method="post" action="<?php echo $baseurl_short?>pages/team/team_user.php">
-		<div class="Question">
-			<label for="newuser"><?php echo $lang["createuserwithusername"]?></label>
-			<div class="tickset">
-			 <div class="Inline"><input type=text name="newuser" id="newuser" maxlength="100" class="shrtwidth" /></div>
-			 <div class="Inline"><input name="Submit" type="submit" value="&nbsp;&nbsp;<?php echo $lang["create"]?>&nbsp;&nbsp;" /></div>
-			</div>
-			<div class="clearerleft"> </div>
-		</div>
-	</form>
-</div>
-<?php } ?>
+<?php
+if(!hook("replace_create_user"))
+    {
+    ?>
+    <div class="BasicsBox">
+        <form method="post" action="<?php echo $baseurl_short?>pages/team/team_user.php">
+    		<div class="Question">
+    			<label for="newuser"><?php echo $lang["createuserwithusername"]?></label>
+    			<div class="tickset">
+    			 <div class="Inline"><input type=text name="newuser" id="newuser" maxlength="100" class="shrtwidth" /></div>
+    			 <div class="Inline"><input name="Submit" type="submit" value="&nbsp;&nbsp;<?php echo $lang["create"]?>&nbsp;&nbsp;" /></div>
+    			</div>
+    			<div class="clearerleft"> </div>
+    		</div>
+    	</form>
+    </div>
+    <?php
+    }
 
-
+    hook('render_options_to_create_users');
+    ?>
 <div class="BasicsBox">
 <div class="Question"><label><?php echo $lang["purgeusers"]?></label>
 <div class="Fixed"><a onClick="return CentralSpaceLoad(this,true);" href="<?php echo $baseurl ?>/pages/team/team_user_purge.php">&gt;&nbsp;<?php echo $lang["purgeusers"]?></a></div>
