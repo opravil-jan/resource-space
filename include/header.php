@@ -421,6 +421,15 @@ else
 		<span style="display: none;" class="MessageCountPill"></span>
 		<div id="MessageContainer" style="position:absolute; "></div>
 	<?php } ?></li>
+	
+	<!-- Team centre link -->
+	<?php if (checkperm("t")) { ?><li><a href="<?php echo $baseurl?>/pages/team/team_home.php" onClick="ModalClose();return ModalLoad(this,true,true,'right');"><?php echo $lang["teamcentre"]?></a>
+	<?php if ($team_centre_alert_icon && (checkperm("R")||checkperm("r")) &&  (sql_value("select sum(thecount) value from (select count(*) thecount from request where status = 0 union select count(*) thecount from research_request where status = 0) as theunion",0) > 0)){
+			echo '<img src="' . $baseurl . '/gfx/images/attention_16.png" width="16" height="16" alt="Alert" class="TeamCentreAlertIcon" />';
+	} ?>
+	</li><?php } ?>
+	<!-- End of team centre link -->
+	
 	<?php hook("addtoplinks");
 	if(!isset($password_reset_mode) || !$password_reset_mode)
 		{?>
@@ -428,7 +437,9 @@ else
 		<?php
 		}
 	hook("addtologintoolbarmiddle");?>
-	<?php if ($contact_link) { ?><li><a href="<?php echo $baseurl?>/pages/contact.php"  onClick="return CentralSpaceLoad(this,true);"><?php echo $lang["contactus"]?></a></li><?php } ?>
+	
+
+	
 	</ul>
 	<?php
 	} /* end replaceheadernav1 */

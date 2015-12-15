@@ -240,6 +240,17 @@ for ($n=$offset;(($n<count($users)) && ($n<($offset+$per_page)));$n++)
 <div class="clearerleft"> </div></div>
 </div>
 
+<?php if (!hook("replaceusersonline")) { ?>
+<div class="BasicsBox">
+<div class="Question"><label><?php echo $lang["usersonline"]?></label>
+<div class="Fixed">
+<?php
+$active=get_active_users();
+for ($n=0;$n<count($active);$n++) {if($n>0) {echo", ";}echo "<b>" . $active[$n]["username"] . "</b> (" . $active[$n]["t"] . ")";}
+?>
+</div><div class="clearerleft"> </div></div></div>	
+<?php } // end hook("replaceusersonline")
+?>
 
 
 <?php

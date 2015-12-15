@@ -49,7 +49,11 @@ notice: function (bounds) {
     SetCookie("geobound",map.getCenter().lon + "," + map.getCenter().lat + "," + map.getZoom()); 
     
     // Specially encoded search string to avoid keyword splitting
-	window.location.href="<?php echo $baseurl_short?>pages/search.php?search=!geo" + (bl.lat + "b" + bl.lon + "t" + tr.lat + "b" + tr.lon).replace(/\-/gi,'m').replace(/\./gi,'p');
+    var url="<?php echo $baseurl_short?>pages/search.php?search=!geo" + (bl.lat + "b" + bl.lon + "t" + tr.lat + "b" + tr.lon).replace(/\-/gi,'m').replace(/\./gi,'p');
+	
+    // ModalLoad(url); // Load via a Modal (experimental)
+    window.location.href=url;
+	
 }
     });map.addControl(control);
 jQuery('#UICenter').scroll(function() {

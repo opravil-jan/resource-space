@@ -201,7 +201,7 @@ $lang["collections"]="Collections";
 $lang["mycontributions"]="My contributions";
 $lang["researchrequest"]="Research request";
 $lang["helpandadvice"]="Help & advice";
-$lang["teamcentre"]="Team Centre";
+$lang["teamcentre"]="Team centre";
 # footer link
 $lang["aboutus"]="About us";
 $lang["interface"]="Interface";
@@ -1634,7 +1634,7 @@ $lang["can_see_all_theme_categories"]="Can see all featured collection categorie
 $lang["can_see_theme_category"]="Can see featured collection category";
 $lang["can_see_theme_sub_category"]="Can see featured collection subcategory";
 $lang["display_only_resources_within_accessible_themes"]="When searching, display only resources that exist within featured collections to which the user has access";
-$lang["can_access_team_centre"]="Can access the Team Centre area";
+$lang["can_access_team_centre"]="Can access the team centre area";
 $lang["can_manage_research_requests"]="Can manage research requests";
 $lang["can_manage_resource_requests"]="Can manage resource requests";
 $lang["can_manage_content"]="Can manage content (intro/help text)";

@@ -8,7 +8,8 @@ include ("../../include/header.php");
 <div class="BasicsBox"> 
    
   <h1><?php echo $lang["systemsetup"]?></h1>
-  <p><?php echo text("introtext")?></p>
+  <?php if (getval("modal","")=="") { ?><p><?php echo text("introtext")?></p><?php } ?>
+  
 
   <div class="VerticalNav">
 	<ul>

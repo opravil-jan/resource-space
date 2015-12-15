@@ -38,7 +38,7 @@ include "../../include/header.php";
 
 <div class="BasicsBox"> 
   <h1><?php echo $lang["teamcentre"]?></h1>
-  <p><?php echo text("introtext")?></p>
+  <?php if (getval("modal","")=="") { ?><p><?php echo text("introtext")?></p><?php } ?>
   
 	<div class="VerticalNav">
 	<ul>
@@ -107,7 +107,21 @@ include "../../include/header.php";
 	# Include a link to the System Setup area for those with the appropriate permissions.
 	if (checkperm("a")) { ?>
 
-	<li><a href="<?php echo $baseurl_short?>pages/admin/admin_home.php" onClick="return CentralSpaceLoad(this,true);"><?php echo $lang["systemsetup"]?></a></li>
+	<li><a href="<?php echo $baseurl_short?>pages/admin/admin_home.php"
+	<?php if (getval("modal","")!="")
+	  {
+	  # If a modal, open in the same modal
+	  ?>
+	  onClick="return ModalLoad(this,true,true,'right');"
+	  <?php
+	  }
+	else
+	  { ?>
+	  onClick="return CentralSpaceLoad(this,true);"
+	  <?php
+	  }
+	?>
+	><?php echo $lang["systemsetup"]?></a></li>
 	<?php hook("customteamfunctionadmin")?>
 	<?php } ?>
 
@@ -115,21 +129,8 @@ include "../../include/header.php";
 	</ul>
 	</div>
 	
-<?php if (checkperm("u") && !checkperm("U")) { # Full admin access only to user/disk quota status
-if (!hook("replaceusersonline")) {
-?>
-<p><?php echo $lang["usersonline"]?>:
-<?php
-$active=get_active_users();
-for ($n=0;$n<count($active);$n++) {if($n>0) {echo", ";}echo "<b>" . $active[$n]["username"] . "</b> (" . $active[$n]["t"] . ")";}
-?>
-</p>	
-<?php } // end hook("replaceusersonline")
-?>
-
 <p><?php echo $lang["diskusage"]?>: <b><?php echo round(($avail?$used/$avail:0)*100,0)?>%</b> (<?php echo $lang["available"]?>: <?php echo formatfilesize($avail)?>; <?php echo $lang["used"]?>: <?php echo formatfilesize($used)?>; <?php echo $lang["free"]?>:  <?php echo formatfilesize($free)?>)
 </p>
-<?php } ?>
 
 </div>
 
