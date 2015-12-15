@@ -749,6 +749,7 @@ $lang["action-deletecollection"]="Delete collection";
 $lang["action-revertmetadata"]="Revert metadata";
 $lang["confirm-revertmetadata"]="Are you sure you want to re-extract the original metadata from this file? This action will simulate a re-upload of the file, and you will lose any altered metadata.";
 $lang["action-remove"]="Remove";
+$lang['action-replace'] = 'Replace';
 $lang["complete"]="Complete";
 $lang["backtohome"]="Back to the home page";
 $lang["continuetohome"]="Continue to the home page";
@@ -2363,3 +2364,8 @@ $lang["cpu_benchmark"]="CPU benchmark";
 $lang["disk_write_speed"]="Disk write speed";
 
 $lang["metadata_option_change_warning"]="Please note that at present, updating these options will not automatically alter stored parameters. Batch editing must be used to migrate existing stored values.";
+
+/* Manage slideshows */
+$lang['manage_slideshow'] = 'Manage slideshow';
+$lang['action-add-new'] = 'Add new';
+$lang['action-submit-button-label'] = 'Submit';

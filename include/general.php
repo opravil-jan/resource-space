@@ -4553,3 +4553,74 @@ if(!function_exists("array_column"))
         return array_map(function($element) use($column_name){return $element[$column_name];}, $array);
     }
 }
+
+
+/**
+* Get data for each image that should be used on the slideshow.
+* The format of the returned array should be: 
+* Array
+* (
+*   [1] => Array
+*         (
+*             [file_path] => /var/www/include/../gfx/homeanim/gfx/1.jpg
+*             [checksum] => 1450107521
+*             [link] => http://localhost/pages/view.php?ref=6019
+*             [link_file_path] => /var/www/include/../gfx/homeanim/gfx/1.txt
+*         )
+*   [2] => Array
+*        (
+*            [file_path] => /var/www/include/../gfx/homeanim/gfx/2.jpg
+*            [checksum] => 2900215034
+*        )
+*   [3] => Array
+*        (
+*            [file_path] => /var/www/include/../gfx/homeanim/gfx/3.jpg
+*            [checksum] => 4350322559
+*        )
+* )
+* 
+* @return array
+*/
+function get_slideshow_files_data()
+    {
+    global $baseurl, $homeanim_folder;
+
+    $dir = dirname(__FILE__) . '/../' . $homeanim_folder;
+    $d   = scandir($dir);
+    sort($d, SORT_NUMERIC);
+
+    $filecount       = 0;
+    $checksum        = 0;
+    $slideshow_files = array();
+
+    foreach($d as $file)
+        {
+        if(preg_match("/[0-9]+\.(jpg)$/", $file))
+            {
+            $filecount++;
+            $slideshow_file_id = substr($file, 0, -4);
+            $checksum += filemtime($dir . '/' . $file);
+
+            $slideshow_files[$slideshow_file_id] = array();
+            $slideshow_files[$slideshow_file_id]['file_path'] = $dir . '/' . $file;
+            $slideshow_files[$slideshow_file_id]['checksum']  = $checksum;
+
+            $linkref        = '';
+            $linkfile       = substr($file, 0, (strlen($file) - 4)) . '.txt';
+            $link_file_path = $dir . '/' . $linkfile;
+
+            if(file_exists($link_file_path))
+                {
+                $linkref    = file_get_contents($link_file_path);
+                $linkaccess = get_resource_access($linkref);
+                if('' !== $linkaccess && (0 == $linkaccess || 1 == $linkaccess))
+                    {
+                    $slideshow_files[$slideshow_file_id]['link'] = $baseurl . "/pages/view.php?ref=" . $linkref;
+                    $slideshow_files[$slideshow_file_id]['link_file_path'] = $link_file_path;
+                    }
+                }
+            }
+        }
+
+    return $slideshow_files;
+    }

@@ -13,6 +13,11 @@ include_once "../include/transform_functions.php";
 // verify that the requested ResourceID is numeric.
 $ref = $_REQUEST['ref'];
 if (!is_numeric($ref)){ echo "Error: non numeric ref."; exit; }
+if(-2147483648 >= $ref || 2147483647 <= $ref)
+    {
+    echo 'The value you chose is not correct, it is out of range for an ID';
+    exit;
+    }
 
 # Load edit access level
 $edit_access=get_edit_access($ref);
@@ -75,26 +80,32 @@ $originalpath= get_resource_path($ref,true,'',false,$orig_ext);
 hook('transformcropbeforegetsize');
 
 // retrieve image sizes for original image and preview used for cropping
-$cropsizes = getimagesize($previewpath);
-$origsizes = getimagesize($originalpath);
+$cropsizes = @getimagesize($previewpath);
+$origsizes = @getimagesize($originalpath);
 $cropwidth = $cropsizes[0];
 $cropheight = $cropsizes[1];
 $origwidth = $origsizes[0];
 $origheight = $origsizes[1];
 
+// Get parameters from Manage slideshow page
+$manage_slideshow_action = getvalescaped('manage_slideshow_action', '');
+$manage_slideshow_id = getvalescaped('manage_slideshow_id', '');
+
+$return_to_url = getvalescaped('return_to_url', '');
+
 
 // if we've been told to do something
 if (isset($_REQUEST['action']) && $_REQUEST['action'] == 'docrop'){
 
-$width = getvalescaped('width','',true);
-$height = getvalescaped('height','',true);
-$xcoord = getvalescaped('xcoord','',true);
-$ycoord = getvalescaped('ycoord','',true);
+$width       = getvalescaped('width','',true);
+$height      = getvalescaped('height','',true);
+$xcoord      = getvalescaped('xcoord','',true);
+$ycoord      = getvalescaped('ycoord','',true);
 $description = getvalescaped('description','');
-$cropsize = getvalescaped('cropsize','',true);
-$new_width = getvalescaped('new_width','',true);
-$new_height = getvalescaped('new_height','',true);
-$alt_type = getvalescaped('alt_type','');
+$cropsize    = getvalescaped('cropsize','',true);
+$new_width   = getvalescaped('new_width','',true);
+$new_height  = getvalescaped('new_height','',true);
+$alt_type    = getvalescaped('alt_type','');
 
 
 if (isset($_REQUEST['flip']) && $_REQUEST['flip'] == 1 && !$cropperestricted){
@@ -442,9 +453,14 @@ if ($cropper_enable_alternative_files && !$download && !$original && getval("sli
     if (file_exists(get_temp_dir() . "/transform_plugin/pre_$ref.jpg")){
 	unlink(get_temp_dir() . "/transform_plugin/pre_$ref.jpg");
     }
-	
+
 	hook("transformcropafterreplaceoriginal");
-	
+
+    if('' !== $return_to_url)
+        {
+        redirect($return_to_url);
+        }
+
     redirect("pages/view.php?ref=$ref");
     exit;
 
@@ -495,6 +511,12 @@ else
 	exit();
 }
 hook("aftercropfinish");
+
+// If other pages request us to go back to them rather then on the view page, do so
+if('' !== $return_to_url)
+    {
+    redirect($return_to_url);
+    }
 
 // send user back to view page
 header("Location:../../../pages/view.php?ref=$ref\n\n");
@@ -559,7 +581,8 @@ if (file_exists($imagepath))
 		
 		
 if(!$cropperestricted)
-    {   ?>
+    {
+    ?>
     <script type="text/javascript" language="javascript">
     
     
@@ -678,11 +701,34 @@ if(!$cropperestricted)
 			    return true;
 		    
 		    }
-		    
+
+    // Function used to set the information needed by the cropper and to display/ hide transform options & actions
+    function replace_slideshow_set_information(replace_slideshow_checkbox)
+        {
+        if(replace_slideshow_checkbox.checked)
+            {
+            document.getElementById('new_width').value  = '<?php if(isset($home_slideshow_width)) { echo $home_slideshow_width; } else { echo "517"; } ?>';
+            document.getElementById('new_height').value = '<?php if(isset($home_slideshow_height)) { echo $home_slideshow_height; } else { echo "350"; } ?>';
+            
+            document.getElementById('transform_options').style.display = 'none';
+            document.getElementById('transform_actions').style.display = 'none';
+            document.getElementById('transform_slideshow_options').style.display = 'block';
+            evaluate_values();
+            }
+        else
+            {
+            document.getElementById('transform_options').style.display = 'block';
+            document.getElementById('transform_actions').style.display = 'block';
+            document.getElementById('transform_slideshow_options').style.display = 'none';
+            }
+
+        return;
+        }
 	    
     </script>
-    
-    <?php  } ?>	
+    <?php
+    }
+    ?>	
     <div id="cropbox"  style='float:left; margin-left:20px'>
       <form name='dimensionsform' id="dimensionsForm" action="<?php echo $baseurl_short?>plugins/transform/pages/crop.php" onsubmit='return validate_transform(this);'>
 	<input type='hidden' name='action' value='docrop' />
@@ -696,20 +742,27 @@ if(!$cropperestricted)
 	<input type='hidden' name='lastHeightSetting' id='lastHeightSetting' value='' />
 	<input type='hidden' name='origwidth' id='origwidth'  value='<?php echo $origwidth ?>' />
 	<input type='hidden' name='origheight' id='origheight'  value='<?php echo $origheight ?>' />
+    <?php
+    if('' !== $return_to_url)
+        {
+        ?>
+        <input name="return_to_url" type="hidden" value="<?php echo $return_to_url; ?>">
+        <?php
+        }
+    ?>
 	<?php
 	hook("cropafterhiddeninputs");
 	if(is_writable(dirname(__FILE__)."/../../../" . $homeanim_folder)){echo "<!-- File Permissions Error-->";} //Notify of file permissions error
 	if ($original && !$cropperestricted){ ?> <input type='hidden' name='mode' id='mode'  value='original' /> <?php }
 	if ($cropper_enable_replace_slideshow && !$cropperestricted && checkperm('t') && is_writable(dirname(__FILE__)."/../../../" . $homeanim_folder)) 
-			{
-		    echo $lang['replaceslideshowimage']; ?>
-	    	<input type="checkbox" name='slideshow' id='slideshow' value="1" onClick="if (this.checked) {document.getElementById('new_width').value='<?php
-	    	if (isset($home_slideshow_width)){echo $home_slideshow_width;}else{echo "517";}
-		    ?>';document.getElementById('new_height').value='<?php
-		    if (isset($home_slideshow_height)){echo $home_slideshow_height;	} 
-		    else {echo"350";}?>';document.getElementById('transform_options').style.display='none';document.getElementById('transform_actions').style.display='none';document.getElementById('transform_slideshow_options').style.display='block';evaluate_values();} else {document.getElementById('transform_options').style.display='block';document.getElementById('transform_actions').style.display='block';document.getElementById('transform_slideshow_options').style.display='none';}"/>
-	<?php 	}?>
-	<table id="transform_slideshow_options" style="display:none;">
+        {
+        echo $lang['replaceslideshowimage']; ?>
+        <input type="checkbox" name='slideshow' id='slideshow' value="1" onClick="replace_slideshow_set_information(this);"
+        <?php if('' !== trim($manage_slideshow_action)) { ?> checked<?php } ?> />
+        <?php
+        }
+        ?>
+	<table id="transform_slideshow_options"<?php if('' === trim($manage_slideshow_action)) { ?> style="display: none;"<?php } ?>>
 		<tr><td colspan="4"><p><?php echo $lang['transformcrophelp'] ?></p></td></tr>
 	    <tr>
 		    <td style='text-align:right'><?php echo $lang["slideshowmakelink"]; ?>: </td>
@@ -717,11 +770,11 @@ if(!$cropperestricted)
 	    </tr>
 	    <tr>
 	    	<td style='text-align:right'><?php echo $lang["slideshowsequencenumber"]; ?>: </td>
-	    	<td><input type='text' name='sequence' id='sequence' value='' size='4' /></td>
+	    	<td><input type='text' name='sequence' id='sequence' value="<?php if('' !== trim($manage_slideshow_id)) { echo $manage_slideshow_id; } ?>" size='4' /></td>
 		</tr>
 	    <tr><td colspan="4"><input type="submit" name="submit" value="<?php echo $lang['replaceslideshowimage'] ?>"></td></tr>
 	</table>
-    <table id="transform_options">
+    <table id="transform_options"<?php if('' !== trim($manage_slideshow_action)) { ?> style="display: none;"<?php } ?>>
       <tr>
         <td style='text-align:right'><?php echo $lang["width"]; ?>: </td>
         <td><input type='text' name='new_width' id='new_width' value='' size='4' <?php ($cropperestricted)?"onblur='evaluate_values()'":"" ?> />
@@ -859,12 +912,25 @@ if ($cropper_debug){
 		?>
   </p>
 </div>
-
 <?php
-if(!$cropperestricted)
-    {?>
+if(!$cropperestricted && '' === trim($manage_slideshow_action))
+    {
+    ?>
     <script>CropManager.attachCropper();</script>
     <?php	
+    }
+else if(!$cropperestricted && '' !== trim($manage_slideshow_action))
+    {
+    ?>
+    <script>
+    jQuery(document).ready(function() {
+        if(jQuery('#slideshow').is(':checked'))
+            {
+            replace_slideshow_set_information(jQuery('#slideshow').get(0))
+            }
+    });
+    </script>
+    <?php
     }
     
 include "../../../include/footer.php";
