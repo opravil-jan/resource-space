@@ -123,7 +123,7 @@ foreach($slideshow_files as $slideshow_image => $slideshow_file_info)
     if(file_exists($slideshow_file_info['file_path']))
         {
         ++$i;
-        $slideshow_image_src = $baseurl_short . $homeanim_folder . '/' . $slideshow_image . '.jpg' . '?checksum=' . $slideshow_file_info['checksum'];
+        $slideshow_image_src = $baseurl_short . $homeanim_folder . '/' . $slideshow_image . '.jpg' . '?nc=' . time();
         ?>
     <div id="slideshow_<?php echo $slideshow_image; ?>" class="Question">
         <label>
