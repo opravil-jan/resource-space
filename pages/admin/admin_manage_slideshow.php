@@ -27,7 +27,7 @@ if('true' === $ajax && ('moveup' === $action || 'movedown' === $action) && !is_n
 
     // Set array pointer to the slideshow ID
     reset($slideshow_files);
-    while(!in_array(key($slideshow_files), [$slideshow_id, null]))
+    while(!in_array(key($slideshow_files), array($slideshow_id, null)))
         {
         next($slideshow_files);
         }

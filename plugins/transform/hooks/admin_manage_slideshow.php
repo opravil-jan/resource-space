@@ -61,7 +61,7 @@ function HookTransformAdmin_manage_slideshowRender_replace_slideshow_form_for_ma
     $replace_slideshow_id = null;
     if(false !== reset($slideshow_files))
         {
-        while(!in_array(key($slideshow_files), [$slideshow_image, null]))
+        while(!in_array(key($slideshow_files), array($slideshow_image, null)))
             {
             next($slideshow_files);
             }
