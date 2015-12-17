@@ -196,7 +196,7 @@ if (!hook("renderresultlargethumb"))
 					{
 					if (!hook("replaceresourcepanelinfolarge"))
 						{ ?>
-						<div class="ResourcePanelInfo">
+						<div class="ResourcePanelInfo ResourceTypeField<?php echo $df[$x]['ref']?>">
 							<div class="extended">
 								<?php 
 								if ($x==0)
@@ -229,7 +229,7 @@ if (!hook("renderresultlargethumb"))
 					{ 
 					if (!hook("replaceresourcepanelinfolargenormal"))
 						{ ?>
-						<div class="ResourcePanelInfo">
+						<div class="ResourcePanelInfo ResourceTypeField<?php echo $df[$x]['ref']?>">
 							<?php 
 							if ($x==0)
 								{ // add link if necessary ?>

@@ -159,7 +159,7 @@ if (!hook("renderresultsmallthumb"))
 					{
 					if (!hook("replaceresourcepanelinfosmall"))
 						{?>
-						<div class="ResourcePanelInfo">
+						<div class="ResourcePanelInfo ResourceTypeField<?php echo $df[$x]['ref']?>">
 							<div class="extended">
 							<?php 
 							if ($x==0)
@@ -194,7 +194,7 @@ if (!hook("renderresultsmallthumb"))
 					{ 
 					if (!hook("replaceresourcepanelinfosmallnormal"))
 						{ ?>
-						<div class="ResourcePanelInfo">
+						<div class="ResourcePanelInfo ResourceTypeField<?php echo $df[$x]['ref']?>">
 							<?php 
 							if ($x==0)
 								{ // add link if necessary ?>
