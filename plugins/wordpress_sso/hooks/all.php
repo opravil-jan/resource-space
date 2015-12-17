@@ -5,7 +5,7 @@ function HookWordpress_ssoAllProvideusercredentials()
 		include_once dirname(__FILE__)."/../include/wordpress_sso_functions.php";
 		
 		#use standard authentication if available
-		if (isset($_COOKIE["user"])){if ($_COOKIE["user"]!="|") {return true;}}
+		if (isset($_COOKIE["user"]) && $_COOKIE["user"]!="|") {return true;}
 		
         global $username,$hashsql,$session_hash,$baseurl,$lang,$wordpress_sso_url, $wordpress_sso_secret, $wordpress_sso_auto_create, $wordpress_sso_auto_approve, $wordpress_sso_auto_create_group,$global_cookies,$user_select_sql;
 		
@@ -130,6 +130,7 @@ function HookWordpress_ssoAllProvideusercredentials()
 				}
 			else // Invalid cookie
 				{
+				debug("wordpress_sso: invalid cookie");
 				wordpress_sso_fail();
 				}
 			}
