@@ -106,7 +106,7 @@
 								continue;
 							}
 							message_refs.push(ref);
-							var message = messages[i]['message'];
+							var message = nl2br(messages[i]['message']);
 							var url = messages[i]['url'];
 							message_display(message, url, ref, function (ref) {
 								jQuery.get('<?php echo $baseurl; ?>/pages/ajax/message.php?seen=' + ref).done(function () {
@@ -166,7 +166,7 @@
 		{
 			return;
 		}
-		jQuery('div#MessageContainer').append("<div class='MessageBox' style='display: none;' id='" + id + "'>" + message + "<br />" + url + "</div>").after(function()
+		jQuery('div#MessageContainer').append("<div class='MessageBox' style='display: none;' id='" + id + "'>" + nl2br(message) + "<br />" + url + "</div>").after(function()
 		{
 			var t = window.setTimeout(function()
 			{

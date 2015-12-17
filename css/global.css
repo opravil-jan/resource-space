@@ -1099,3 +1099,8 @@ a.FeaturedSimpleLink:hover {
 #toggleHiddenCollectionsLink{
 	margin-left:10px;
 }
+
+#user_messages table tr {
+	vertical-align:top;
+	
+}

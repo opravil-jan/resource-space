@@ -38,7 +38,7 @@ include "../../include/header.php";
 		});">&gt;&nbsp;<?php echo $lang['mymessages_markallread']; ?></a>
 <?php
 		}
-?><div class="Listview">
+?><div class="Listview" id="user_messages">
 	<table border="0" cellspacing="0" cellpadding="0" class="ListviewStyle">
 		<tr class="ListviewTitleStyle">
 			<td><?php echo $lang["created"]; ?></td>
@@ -61,7 +61,7 @@ for ($n=0;$n<count($messages);$n++)
 			<td<?php echo $unread_css; ?>><?php echo $messages[$n]["owner"]; ?></td>
 			<td<?php echo $unread_css; ?>><a href="#Header" onclick="message_display('<?php echo $message; ?>','<?php
 				echo $url_encoded; ?>',<?php echo $messages[$n]["ref"]; ?>);"><?php
-					echo htmlentities(strip_tags($messages[$n]["message"]));
+					echo nl2br(strip_tags($messages[$n]["message"],'<br><p>'));
 					?></a></td>
 			<td<?php echo $unread_css; ?>><?php echo nicedate($messages[$n]["expires"]); ?></td>
 			<td<?php echo $unread_css; ?>><?php echo ($messages[$n]["seen"]==0 ? $lang['no'] : $lang['yes']); ?></td>
