@@ -423,7 +423,7 @@ if ($_FILES)
 								
 			    	
 			    # Update disk usage
-			    update_disk_usage($resource);
+			    update_disk_usage($alternative);
 	
                             exit();
                             }
