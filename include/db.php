@@ -1139,7 +1139,7 @@ function checkperm($perm)
     if (in_array($perm,$userpermissions)) {return true;} else {return false;}
     }
 
-// check if passed user is allowed to edit users
+// Check if user is allowed to edit user with passed reference
 function checkperm_user_edit($user)
 	{
 	if (!checkperm('u'))    // does not have edit user permission
@@ -1150,16 +1150,19 @@ function checkperm_user_edit($user)
 		{
 		$user=get_user($user);
 		}
-	$usergroup=$user['usergroup'];
-	if (!checkperm('U') || $usergroup == '')    // no user editing restriction, or is not defined so return true
+	$editusergroup=$user['usergroup'];
+	if (!checkperm('U') || $editusergroup == '')    // no user editing restriction, or is not defined so return true
 		{
 		return true;
 		}
-	global $U_perm_strict;
+	global $U_perm_strict, $usergroup;
+	// Get all the groups that the logged in user can manage 
 	$validgroups = sql_array("SELECT `ref` AS  'value' FROM `usergroup` WHERE " .
 		($U_perm_strict ? "FIND_IN_SET('{$usergroup}',parent)" : "(`ref`='{$usergroup}' OR FIND_IN_SET('{$usergroup}',parent))")
 	);
-	return (in_array($usergroup, $validgroups));
+	
+	// Return true if the target user we are checking is in one of the valid groups
+	return (in_array($editusergroup, $validgroups));
 	}
 
 function pagename()
