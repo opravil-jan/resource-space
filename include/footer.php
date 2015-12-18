@@ -446,9 +446,9 @@ if (!hook("replacecdivrender"))
 <div id="modal_overlay" onClick="ModalClose();"></div>
 <div id="modal_outer">
 <div id="modal">
+</div>
+</div>
 <div id="modal_dialog" style="display:none;"></div>
-</div>
-</div>
 <script type="text/javascript">
 jQuery(window).bind('resize.modal', ModalCentre);
 </script>

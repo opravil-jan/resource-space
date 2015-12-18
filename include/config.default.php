@@ -953,6 +953,9 @@ $file_checksums=false;
 # Calculate checksums on first 50k and size if true or on the full file if false
 $file_checksums_50k = true;
 
+# Block duplicate files based on checksums? (has performance impact). May not work reliably with $file_checksums_offline=true unless checksum script is run frequently. 
+$file_upload_block_duplicates=false;
+
 # checksums will not be generated in realtime; a background cron job must be used
 # recommended if files are large, since the checksums can take time
 $file_checksums_offline = true;

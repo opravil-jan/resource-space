@@ -953,6 +953,7 @@ $lang["requiredantispam"]="The anti-spam code has not been entered correctly, pl
 $lang["viewduplicates"]="View duplicate resources";
 $lang["duplicateresources"]="Duplicate resources";
 $lang["duplicateresourcesfor"]="Duplicate resources for ";
+$lang["duplicateresourceupload"]="Upload failed. This file matches existing resources:";
 $lang["noresourcesfound"]="No resources found";
 $lang["userlog"]="User log";
 $lang["ipaddressrestriction"]="IP address restriction (optional)";
