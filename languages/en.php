@@ -2370,3 +2370,4 @@ $lang["metadata_option_change_warning"]="Please note that at present, updating t
 $lang['manage_slideshow'] = 'Manage slideshow';
 $lang['action-add-new'] = 'Add new';
 $lang['action-submit-button-label'] = 'Submit';
+$lang["slideshow_use_static_image"] = "Use a single random image from the set (image will not change unless page is reloaded";

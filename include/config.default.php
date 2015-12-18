@@ -2836,3 +2836,6 @@ $preview_header_footer=false;
 
 # Create all preview sizes at the full target size if image is smaller (except for HPR as this would result in massive images)
 $previews_allow_enlarge=false;
+
+# Option to use a random static image from the available slideshow images. Requires slideshow_big=true;
+$static_slideshow_image=false;

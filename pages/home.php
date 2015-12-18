@@ -44,7 +44,7 @@ if (!hook("replaceslideshow"))
 	$checksum=0; # Work out a checksum which is the total of all the image files in bytes - used in image URLs to force a refresh if any of the images change.
 	$d = scandir($dir); 
 	sort($d, SORT_NUMERIC);
-	$reslinks=array();
+	$reslinks=array();	
 	foreach ($d as $f) 
 		{ 
 		if(preg_match("/[0-9]+\.(jpg)$/",$f))
@@ -54,6 +54,8 @@ if (!hook("replaceslideshow"))
 			$checksum+=filemtime($dir . "/" . $f);
 			$linkfile=substr($f,0,(strlen($f)-4)) . ".txt";
 			$reslinks[$filecount]="";
+			
+			$imagelink[$filecount]= $baseurl_short . $homeanim_folder . "/" . $f;
 			$linkref="";
 				
 			if(file_exists("../" . $homeanim_folder . "/" . $linkfile))
@@ -63,7 +65,7 @@ if (!hook("replaceslideshow"))
 				if (($linkaccess!=="") && (($linkaccess==0) || ($linkaccess==1))){$reslinks[$filecount]=$baseurl . "/pages/view.php?ref=" . $linkref;}
 				}
 		       
-		       if ($slideshow_big)
+		       if ($slideshow_big && !$static_slideshow_image)
 				  {
 				  # Register with the new large slideshow.
 				  # Include the checksum calculated so far, to ensure a reloaded image if the image on disk has changed.
@@ -77,6 +79,19 @@ if (!hook("replaceslideshow"))
 			}
 	 	} 
 
+	if($static_slideshow_image)
+		{
+		$randomimage=rand(1,$filecount);
+		// We only want to use one of the available images	
+		# Register this image with the large slideshow.
+		?>
+		<script type="text/javascript">
+		var big_slideshow_timer = 0;
+		RegisterSlideshowImage('<?php echo $imagelink[$randomimage] ?>');
+		</script>
+	   <?php
+		}
+		
 	$homeimages=$filecount;
 	if ($filecount>1 && !$slideshow_big) 
 		{ # Only add Javascript if more than one image.

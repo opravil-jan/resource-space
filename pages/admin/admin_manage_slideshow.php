@@ -15,6 +15,7 @@ $slideshow_files = get_slideshow_files_data();
 $ajax         = getvalescaped('ajax', '');
 $action       = getvalescaped('action', '');
 $slideshow_id = getvalescaped('slideshow_id', null, true);
+$manageurl = $baseurl . "/pages/admin/admin_manage_slideshow.php";
 
 /* Re-order */
 if('true' === $ajax && ('moveup' === $action || 'movedown' === $action) && !is_null($slideshow_id))
@@ -108,6 +109,18 @@ if('true' === $ajax && 'delete' === $action && !is_null($slideshow_id))
     exit();
     }
 
+if('true' === $ajax && getval("static","")!="")
+    {
+    if(getval("static","")=="true")
+        {
+        set_config_option($userref, 'static_slideshow_image', true);
+        }
+    else
+        {
+        set_config_option($userref, 'static_slideshow_image', false);       
+        }
+    }
+    
 include '../../include/header.php';
 ?>
 <div class="BasicsBox">
@@ -150,14 +163,25 @@ foreach($slideshow_files as $slideshow_image => $slideshow_file_info)
         <?php
         }
     }
-
+    
+    if($slideshow_big)
+        {?>
+        <div id="slideshow_static_image" class="Question">
+            <label>
+            <?php echo $lang["slideshow_use_static_image"]; ?>    
+            </label>
+            <input type="checkbox" name="slideshow_static_image" id="slideshow_static_image_checkbox" <?php if($static_slideshow_image){echo "checked";} ?> onchange="if(this.checked){jQuery.post('<?php echo $manageurl ?>?ajax=true&static=true');}else{jQuery.post('<?php echo $manageurl ?>?ajax=true&static=false');}"></input>
+        </div>
+        <div class="clearerleft"></div>
+        <?php
+        }
     hook('render_new_element_for_manage_slideshow', '', array($slideshow_files));
 ?>
 </div>
 <script>
 function ReorderSlideshowImage(id, direction)
     {
-    var post_url  = '<?php echo $baseurl; ?>/pages/admin/admin_manage_slideshow.php';
+    var post_url  = '<?php echo $manageurl ?>';
     var post_data =
         {
         ajax: true,
@@ -201,7 +225,7 @@ function ReorderSlideshowImage(id, direction)
 
 function DeleteSlideshowImage(id)
     {
-    var post_url  = '<?php echo $baseurl; ?>/pages/admin/admin_manage_slideshow.php';
+    var post_url  = '<?php echo $manageurl ?>';
     var post_data =
         {
         ajax: true,
