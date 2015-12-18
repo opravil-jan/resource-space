@@ -2830,3 +2830,6 @@ $chosen_dropdowns=false;
 # Set to true only if you want RS to create duplicates when client is losing
 # connection with the server and tries again to send the last chunk
 $plupload_allow_duplicates_in_a_row = false;
+
+# Show header and footer on resource preview page
+$preview_header_footer=false;

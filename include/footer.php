@@ -41,7 +41,8 @@ if (getval("ajax","")=="" && !hook("replace_footer"))
 
 <?php hook("footertop"); ?>
 <?php
-$omit_footer_pages=array("login","user_request","user_password","preview_all","done","preview","change_language");
+$omit_footer_pages=array("login","user_request","user_password","preview_all","done","change_language");
+if(!$preview_header_footer){$omit_footer_pages[]="preview";}
 $modify_omit_footer_pages=hook("modify_omit_footer_pages","",array($omit_footer_pages));
 if(!empty($modify_omit_footer_pages))
 	{
