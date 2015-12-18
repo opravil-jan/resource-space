@@ -2833,3 +2833,6 @@ $plupload_allow_duplicates_in_a_row = false;
 
 # Show header and footer on resource preview page
 $preview_header_footer=false;
+
+# Create all preview sizes at the full target size if image is smaller (except for HPR as this would result in massive images)
+$previews_allow_enlarge=false;

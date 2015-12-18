@@ -868,7 +868,7 @@ function iptc_return_utf8($text)
  
 function create_previews($ref,$thumbonly=false,$extension="jpg",$previewonly=false,$previewbased=false,$alternative=-1,$ignoremaxsize=false,$ingested=false)
 	{
-    global $keep_for_hpr,$imagemagick_path, $preview_generate_max_file_size,$autorotate_no_ingest;
+    global $keep_for_hpr,$imagemagick_path, $preview_generate_max_file_size,$autorotate_no_ingest, $previews_allow_enlarge;
    
     // keep_for_hpr will be set to true if necessary in preview_preprocessing.php to indicate that an intermediate jpg can serve as the hpr.
     // otherwise when the file extension is a jpg it's assumed no hpr is needed.
@@ -1049,7 +1049,7 @@ function create_previews($ref,$thumbonly=false,$extension="jpg",$previewonly=fal
 
 	      # only create previews where the target size IS LESS THAN OR EQUAL TO the source size.
 				# or when producing a small thumbnail (to make sure we have that as a minimum)
-				if (($sw>$tw) || ($sh>$th) || ($id=="thm") || ($id=="col"))
+				if ($previews_allow_enlarge || $sw>$tw || $sh>$th || $id=="thm" || $id=="col")
 					{
 					# Calculate width and height.
 					if ($sw>$sh) {$ratio = ($tw / $sw);} # Landscape
@@ -1116,7 +1116,7 @@ function create_previews($ref,$thumbonly=false,$extension="jpg",$previewonly=fal
 
 function create_previews_using_im($ref,$thumbonly=false,$extension="jpg",$previewonly=false,$previewbased=false,$alternative=-1,$ingested=false)
 	{
-	global $keep_for_hpr,$imagemagick_path,$imagemagick_preserve_profiles,$imagemagick_quality,$imagemagick_colorspace,$default_icc_file,$autorotate_no_ingest,$always_make_previews,$lean_preview_generation;
+	global $keep_for_hpr,$imagemagick_path,$imagemagick_preserve_profiles,$imagemagick_quality,$imagemagick_colorspace,$default_icc_file,$autorotate_no_ingest,$always_make_previews,$lean_preview_generation,$previews_allow_enlarge;
 
 	$icc_transform_complete=false;
 	debug("create_previews_using_im(ref=$ref,thumbonly=$thumbonly,extension=$extension,previewonly=$previewonly,previewbased=$previewbased,alternative=$alternative,ingested=$ingested)");
@@ -1212,7 +1212,7 @@ function create_previews_using_im($ref,$thumbonly=false,$extension="jpg",$previe
 			$count=count($ps)-1;
 			$oversized=0;
 			for($s=$count;$s>0;$s--){
-				if(!in_array($ps[$s]['id'],$force_make) && !in_array($ps[$s]['id'],$always_make_previews) && (isset($o_width) && isset($o_height) && $ps[$s]['width']>$o_width && $ps[$s]['height']>$o_height)){
+				if(!in_array($ps[$s]['id'],$force_make) && !in_array($ps[$s]['id'],$always_make_previews) && (isset($o_width) && isset($o_height) && $ps[$s]['width']>$o_width && $ps[$s]['height']>$o_height) && !$previews_allow_enlarge){
 					$oversized++;
 				}
 				if($oversized>0){
@@ -1286,7 +1286,7 @@ function create_previews_using_im($ref,$thumbonly=false,$extension="jpg",$previe
 			# Always make preview sizes for smaller file sizes.
 			#
 			# Always make pre/thm/col sizes regardless of source image size.
-			if (($id == "hpr" && !($extension=="jpg" || $extension=="jpeg")) || ($id == "scr" && !($extension=="jpg" || $extension=="jpeg")) || ($sw>$tw) || ($sh>$th) || ($id == "pre") || ($id=="thm") || ($id=="col") || in_array($id,$always_make_previews))
+			if (($id == "hpr" && !($extension=="jpg" || $extension=="jpeg")) || $previews_allow_enlarge || ($id == "scr" && !($extension=="jpg" || $extension=="jpeg")) || ($sw>$tw) || ($sh>$th) || ($id == "pre") || ($id=="thm") || ($id=="col") || in_array($id,$always_make_previews))
 				{			
 				# Debug
 				debug("Generating preview size " . $ps[$n]["id"] . " to " . $path);
@@ -1325,7 +1325,7 @@ function create_previews_using_im($ref,$thumbonly=false,$extension="jpg",$previe
 						}
 				}
 
-				$runcommand = $command ." ".(($extension!="png" && $extension!="gif")?" +matte $profile ":"")." -resize " . $tw . "x" . $th . "\">\" ".escapeshellarg($path);
+				$runcommand = $command ." ".(($extension!="png" && $extension!="gif")?" +matte $profile ":"")." -resize " . $tw . "x" . $th . (($previews_allow_enlarge && $id!="hpr")?" ":"\">\" ") .escapeshellarg($path);
                                 if(!hook("imagepskipthumb")):
 				$output=run_command($runcommand);
 				$created_count++;
