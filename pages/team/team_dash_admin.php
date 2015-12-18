@@ -127,7 +127,7 @@ include "../../include/header.php";
     				resizable: false,
 					dialogClass: 'confirm-dialog no-close',
                     buttons: {
-						"<?php echo $lang['confirmdefaultdashtiledelete']; ?>": function() {processTileChange(tile,true); jQuery(this).dialog( "close" );},
+						"<?php echo $lang['confirmdefaultdashtiledelete']; ?>": function() {processTileChange(tile,true); jQuery(this).dialog( "close" );CentralSpaceLoad(window.location.href);},
                         "<?php echo $lang['cancel'] ?>":  function() { jQuery(".tilecheck[value="+tile+"]").attr('checked', true); jQuery(this).dialog('close'); }
                     }
                 });
