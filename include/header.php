@@ -226,6 +226,7 @@ var global_trash_html = '<!-- Global Trash Bin (added through CentralSpaceLoad -
     global_trash_html += '<span class="trash_bin_text"><?php echo $lang["trash_bin_title"]; ?></span>';
     global_trash_html += '</div>';
     global_trash_html += '<div id="trash_bin_delete_dialog" style="display: none;"></div>';
+oktext="<?php echo $lang["ok"] ?>";
 </script>
 
 <script src="<?php echo $baseurl_short?>lib/js/global.js?css_reload_key=<?php echo $css_reload_key?>" type="text/javascript"></script>
