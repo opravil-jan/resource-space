@@ -1347,7 +1347,7 @@ function new_user($newuser)
 	#Create Default Dash for the new user
 	if($home_dash)
 		{
-		include dirname(__FILE__)."/dash_functions.php";
+		include_once dirname(__FILE__)."/dash_functions.php";
 		create_new_user_dash($newref);
 		}
 	
