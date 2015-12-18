@@ -59,12 +59,6 @@
 
 	function message_poll()
 	{
-		<?php
-		if(!getval('expired',false))
-		{
-		// we do not want to poll if password expired otherwise causes infinite loop
-		?>
-
 		if (message_timer != null)
 		{
 			clearTimeout(message_timer);
@@ -86,7 +80,7 @@
 			url: '<?php echo $baseurl; ?>/pages/ajax/message.php',
 			type: 'GET',
 			success: function(messages, textStatus, xhr) {
-				if(xhr.status==200 && (messages=jQuery.parseJSON(messages)) && messages.length>0)
+				if(xhr.status==200 && isJson(messages) && (messages=jQuery.parseJSON(messages)) && messages.length>0)
 				{
 					jQuery('span.MessageCountPill').html(messages.length).click(function() {
 						CentralSpaceLoad('<?php echo $baseurl; ?>/pages/user/user_messages.php',true);
@@ -130,11 +124,6 @@
 			?>
 			message_poll_first_run = false;
 		});
-
-		<?php
-		}	// end of checking if not password expired
-		?>
-
 	}
 
 	jQuery(document).bind("blur focus focusin focusout load resize scroll unload click dblclick mousedown mouseup mousemove mouseover mouseout mouseenter mouseleave change select submit keydown keypress keyup error",
