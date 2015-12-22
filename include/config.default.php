@@ -397,6 +397,9 @@ $filename_field=51;
 $imagemagick_preserve_profiles=false;
 $imagemagick_quality=90; # JPEG quality (0=worst quality/lowest filesize, 100=best quality/highest filesize)
 
+# Allow editing of internal sizes? This will require additional updates to css settings!
+$internal_preview_sizes_editable=false;
+
 # Colorspace usage
 # Use "RGB" for ImageMagick versions before 6.7.6-4
 # Use "RGB" for GraphicsMagick

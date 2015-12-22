@@ -27,7 +27,7 @@ if ($new_size_id!="")
 
 $ref=getval("ref","");
 
-if (!sql_value("select ref as value from preview_size where ref='{$ref}' and internal<>'1'",false))		// note that you are not allowed to edit internal sizes
+if (!sql_value("select ref as value from preview_size where ref='{$ref}' and internal<>'1'",false) && !$internal_preview_sizes_editable)		// note that you are not allowed to edit internal sizes without $internal_preview_sizes_editable=true
 	{
 	redirect("{$baseurl_short}pages/admin/admin_size_management.php?{$url_params}");		// fail safe by returning to the size management page if duff ref passed
 	exit;
@@ -137,12 +137,19 @@ include "../../include/header.php";
 			<input name="allowrestricted" type="checkbox" value="1"<?php if($record['allow_restricted']) {?> checked="checked"<?php }?>>
 			<div class="clearerleft"></div>
 		</div>
-
-		<div class="Question">
-			<label><?php echo $lang["fieldtitle-tick_to_delete_size"]?></label>
-			<input name="deleteme" type="checkbox" value="1">
-			<div class="clearerleft"></div>
-		</div>
+		
+		<?php
+		if(!$record['internal'])
+			{
+			?>
+			<div class="Question">
+				<label><?php echo $lang["fieldtitle-tick_to_delete_size"]?></label>
+				<input name="deleteme" type="checkbox" value="1">
+				<div class="clearerleft"></div>
+			</div>
+			<?php
+			}
+		?>
 
 		<div class="QuestionSubmit">
 			<label for="buttonsave"></label>

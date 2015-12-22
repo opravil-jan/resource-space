@@ -58,7 +58,7 @@ function addColumnHeader($orderName, $labelKey)
 <?php
 		foreach ($sizes as $size)
 			{
-			if ($size['internal']=='1')
+			if ($size['internal']=='1' && !$internal_preview_sizes_editable)
 				{
 				$edit_url="";
 				}
