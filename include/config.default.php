@@ -397,6 +397,10 @@ $filename_field=51;
 $imagemagick_preserve_profiles=false;
 $imagemagick_quality=90; # JPEG quality (0=worst quality/lowest filesize, 100=best quality/highest filesize)
 
+# Allow unique quality settings for each preview size. This will use $imagemagick_quality as a default setting.
+# If you want to adjust the quality settings for internal previews you must also set $internal_preview_sizes_editable=true
+$preview_quality_unique=false;
+
 # Allow editing of internal sizes? This will require additional updates to css settings!
 $internal_preview_sizes_editable=false;
 

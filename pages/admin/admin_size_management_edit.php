@@ -53,6 +53,19 @@ if (getval("save",false))
 
 	$height=getvalescaped("height",-1,true);
 	if ($height>=0) $cols["height"]=$height;
+	
+	if($preview_quality_unique)
+		{
+		$quality=getvalescaped("quality",0,true);
+		if($quality>0 && $quality<=100)
+			{
+			$cols["quality"]=$quality;
+			}
+		else
+			{
+			$cols["quality"]=$imagemagick_quality;	
+			}
+		}
 
 	$cols["padtosize"]=(getval('padtosize',false) ? "1" : "0");
 	$cols["allow_preview"]=(getval('allowpreview',false) ? "1" : "0");
@@ -119,6 +132,19 @@ include "../../include/header.php";
 			<input name="height" type="text" class="shrtwidth" value="<?php echo $record['height']; ?>">
 			<div class="clearerleft"></div>
 		</div>
+		
+		<?php
+		if($preview_quality_unique)
+			{
+			?>
+			<div class="Question">
+				<label><?php echo $lang["property-quality"]; ?></label>
+				<input name="quality" type="text" class="shrtwidth" value="<?php echo($record['quality']!=''?$record['quality']:$imagemagick_quality)?>">
+				<div class="clearerleft"></div>
+			</div>
+			<?php
+			}
+		?>
 
 		<div class="Question">
 			<label><?php echo $lang['property-pad_to_size']; ?></label>

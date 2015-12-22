@@ -1250,8 +1250,10 @@ function create_previews_using_im($ref,$thumbonly=false,$extension="jpg",$previe
 
             // Extensions for which the alpha/ matte channel should not be set to Off (i.e. +matte option)
             $extensions_no_alpha_off = array('png', 'gif', 'tif');
-
-            $command = $convert_fullpath . ' '. escapeshellarg($file) . (!in_array($extension, $extensions_no_alpha_off) ? '[0] +matte ' : ' ') . $flatten . ' -quality ' . $imagemagick_quality;
+			
+			$preview_quality=get_preview_quality($ps[$n]['id']);
+			
+            $command = $convert_fullpath . ' '. escapeshellarg($file) . (!in_array($extension, $extensions_no_alpha_off) ? '[0] +matte ' : ' ') . $flatten . ' -quality ' . $preview_quality;
 
 			# fetch target width and height
 			$tw=$ps[$n]["width"];$th=$ps[$n]["height"];
@@ -1364,7 +1366,7 @@ function create_previews_using_im($ref,$thumbonly=false,$extension="jpg",$previe
 					
 					// alternate command for png/gif using the path from above, and omitting resizing
 					if ($extension=="png" || $extension=="gif"){
-						$runcommand = $convert_fullpath . ' '. escapeshellarg($path) .(($extension!="png" && $extension!="gif")?'[0] +matte ':'') . $flatten . ' -quality ' . $imagemagick_quality ." -tile ".escapeshellarg($watermarkreal)." -draw \"rectangle 0,0 $tw,$th\" ".escapeshellarg($wmpath); 
+						$runcommand = $convert_fullpath . ' '. escapeshellarg($path) .(($extension!="png" && $extension!="gif")?'[0] +matte ':'') . $flatten . ' -quality ' . $preview_quality ." -tile ".escapeshellarg($watermarkreal)." -draw \"rectangle 0,0 $tw,$th\" ".escapeshellarg($wmpath); 
 					}
 					
 					#die($runcommand);

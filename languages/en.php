@@ -165,6 +165,7 @@ $lang["information-id"]="Note: 'Id' below MUST be set to a three character uniqu
 $lang["property-id"]="Id";
 $lang["property-width"]="Width";
 $lang["property-height"]="Height";
+$lang["property-quality"]="Quality";
 $lang["property-pad_to_size"]="Pad to size";
 $lang["property-internal"]="Internal";
 $lang["property-allow_preview"]="Allow preview";

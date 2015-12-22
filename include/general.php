@@ -710,6 +710,23 @@ function get_image_sizes($ref,$internal=false,$extension="jpg",$onlyifexists=tru
 	return $return;
 	}
 
+function get_preview_quality($size)
+	{
+	global $imagemagick_quality,$preview_quality_unique;
+	$preview_quality=$imagemagick_quality; // default
+	if($preview_quality_unique)
+		{
+		debug("convert: select quality value from preview_size where id='$size'");
+		$quality_val=sql_value("select quality value from preview_size where id='{$size}'",'');
+		if($quality_val!='')
+			{
+			$preview_quality=$quality_val;
+			}
+		}
+	debug("convert: preview quality for $size=$preview_quality");
+	return $preview_quality;
+	}
+
 function trim_array($array,$trimchars='')
 	{
 	if(isset($array[0]) && empty($array[0]) && !(emptyiszero($array[0]))){$unshiftblank=true;}
