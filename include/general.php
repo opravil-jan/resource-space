@@ -609,7 +609,7 @@ function copy_hitcount_to_live()
 	# greatest() is used so the value is taken from the hit_count column in the event that new_hit_count is zero to support installations that did not previously have a new_hit_count column (i.e. upgrade compatability)
 	sql_query("update resource set hit_count=greatest(hit_count,new_hit_count)");
 	}
-	
+if(!function_exists("get_image_sizes")){
 function get_image_sizes($ref,$internal=false,$extension="jpg",$onlyifexists=true)
 	{
 	# Returns a table of available image sizes for resource $ref. The standard image sizes are translated using $lang. Custom image sizes are i18n translated.
@@ -709,7 +709,7 @@ function get_image_sizes($ref,$internal=false,$extension="jpg",$onlyifexists=tru
 		}
 	return $return;
 	}
-
+}
 function get_preview_quality($size)
 	{
 	global $imagemagick_quality,$preview_quality_unique;
