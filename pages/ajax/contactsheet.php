@@ -182,7 +182,7 @@ function contact_sheet_add_image()
 		{
 		$pdf->Image($imgpath,$posx,$posy,$imagewidth,$imageheight,$preview_extension,'',$nextline,false,300,$align,false,false,0);
 		}	
-			
+	
 	$bottomy=$pdf->GetY();
 	# Add spacing cell
 	if ($sheetstyle=="list")
@@ -349,6 +349,7 @@ for ($n=0;$n<count($result);$n++){
 	if ($ref!==false){
 		# Find image
 		# Load access level
+		
 		$access=get_resource_access($result[$n]); // feed get_resource_access the resource array rather than the ref, since access is included.
 		$use_watermark=check_use_watermark();
 		$imgpath = get_resource_path($ref,true,$imgsize,false,$preview_extension,-1,1,$use_watermark);
@@ -523,3 +524,5 @@ else{
 	}
 $pdf->Output(i18n_get_collection_name($collectiondata).".pdf","D");
 }
+
+hook("endscript");
