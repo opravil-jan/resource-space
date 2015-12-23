@@ -89,6 +89,8 @@ hook("chgffmpegpreviewext", "", array($ref));
 $resource=get_resource_data($ref);
 if ($resource===false) {exit($lang['resourcenotfound']);}
 
+hook("aftergetresourcedataview","",array($ref,$resource));
+
 # Allow alternative configuration settings for this resource type.
 resource_type_config_override($resource["resource_type"]);
 
