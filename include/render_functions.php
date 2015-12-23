@@ -131,15 +131,6 @@ function render_actions(array $collection_data, $top_actions = true, $two_line =
         {
         return;
         }
-	
-	
-	if (isset($collection_data['count'])){/* nothing */} 
-	else if (isset($collection_data['c'])){
-		$collection_data['count']=$collection_data['c'];	
-	} else if (isset($collection_data['ref'])){
-		$collection_data['count']=count("sql_value select count (ref) from collection where ref='".$collection_data['ref']."'",0);
-	}
-
 
     global $baseurl, $lang, $k, $pagename;
 
@@ -179,16 +170,16 @@ function render_actions(array $collection_data, $top_actions = true, $two_line =
             <?php
 
             // Collection Actions
-            $collection_actions_array = compile_collection_actions($collection_data, $top_actions);	
-            
+            $collection_actions_array = compile_collection_actions($collection_data, $top_actions);
+			
             // Usual search actions
             $search_actions_array = compile_search_actions($top_actions);
             
             $actions_array = array_merge($collection_actions_array, $search_actions_array);
             
             $modify_actions_array = hook('modify_unified_dropdown_actions_options', '', array($actions_array,$top_actions));
-           
-			if(!empty($modify_actions_array))
+            
+	if(!empty($modify_actions_array))
                 {
                 $actions_array = $modify_actions_array;
                 }
@@ -288,7 +279,7 @@ function render_actions(array $collection_data, $top_actions = true, $two_line =
 
             // Add extra collection actions javascript case through plugins
             // Note: if you are just going to a different page, it should be easily picked by the default case
-            $extra_options_js_case = hook('render_actions_add_option_js_case','',array($collection_data));
+            $extra_options_js_case = hook('render_actions_add_option_js_case');
             if(trim($extra_options_js_case) !== '')
                 {
                 echo $extra_options_js_case;
