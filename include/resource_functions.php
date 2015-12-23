@@ -418,19 +418,29 @@ function save_resource_data_multi($collection)
 				{
 				# construct the value from the ticked boxes
 				$val=","; # Note: it seems wrong to start with a comma, but this ensures it is treated as a comma separated list by split_keywords(), so if just one item is selected it still does individual word adding, so 'South Asia' is split to 'South Asia','South','Asia'.
-				$options=trim_array(explode(",",$fields[$n]["options"]));
+                
+                node_field_options_override($fields[$n]);
+				
+                $options = trim_array($fields[$n]['node_options']);
+
 				if ($auto_order_checkbox) {
 					if($auto_order_checkbox_case_insensitive){natcasesort($options);}
 					else{sort($options);}
 				}
 				
-				for ($m=0;$m<count($options);$m++)
+				for($m=0; $m < count($options); $m++)
 					{
-					$name=$fields[$n]["ref"] . "_" . md5($options[$m]);
-					if (getval($name,"")=="yes")
+                    $translated_val = i18n_get_translated($options[$m]);
+					$name           = $fields[$n]['ref'] . '_' . md5($translated_val);
+
+                    if('yes' == getval($name, ''))
 						{
-						if ($val!=",") {$val.=",";}
-						$val.=$options[$m];
+						if($val != ',')
+                            {
+                            $val .= ',';
+                            }
+
+                        $val .= $translated_val;
 						}
 					}
 				}
