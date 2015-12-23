@@ -1,7 +1,7 @@
 <?php
 include "../include/db.php";
 include "../include/general.php";
-include "../include/authenticate.php"; if (! (checkperm("c") || checkperm("d"))) {exit ("Permission denied.");}
+include "../include/authenticate.php"; if (! (checkperm("c") || checkperm("d") || hook('upload_auth_override'))) {exit ("Permission denied.");}
 include "../include/image_processing.php";
 include "../include/resource_functions.php";
 
@@ -165,6 +165,9 @@ function check(filename) {
 <input type="hidden" name="ref" value="<?php echo htmlspecialchars($ref) ?>" />
 <input type="hidden" name="resource_type" value="<?php echo htmlspecialchars($resource_type) ?>" />
 <input type="hidden" name="archive" value="<?php echo htmlspecialchars($setarchive) ?>" />
+<?php
+hook('uploadafterhidden');
+?>
 <br/>
 <?php if ($status!="") { ?><?php echo $status?><?php } ?>
 <div id="invalid" style="display:none;" class="FormIncorrect"><?php echo str_replace_formatted_placeholder("%extensions", str_replace(",",", ",$allowed_extensions), $lang['invalidextension_mustbe-extensions'])?></div>
