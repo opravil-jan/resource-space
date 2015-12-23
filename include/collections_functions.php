@@ -128,7 +128,7 @@ function get_collection($ref)
 			# If this is an external user (i.e. access key based) then fetch the 'request_feedback' value from the access keys table
 			$request_feedback=sql_value("select request_feedback value from external_access_keys where access_key='$k' and request_feedback=1",0);
 			}
-		
+		$return["count"]=sql_value("select count(resource) value from collection_resource where collection='$ref'",0);
 		$return["request_feedback"]=$request_feedback;
 		return $return;}
 	}
@@ -1989,7 +1989,7 @@ function compile_collection_actions(array $collection_data, $top_actions)
         {
         return $options;
         }
-
+	
     if(!collection_is_research_request($collection_data['ref']) || !checkperm('r'))
         {
         if(!$top_actions && checkperm('s') && $pagename === 'collections')
@@ -2097,7 +2097,7 @@ function compile_collection_actions(array $collection_data, $top_actions)
         }
 
     // Request all
-    if($count_result > 0)
+    if(isset($collection_data['count']) && $collection_data['count'] > 0)
         {
         # Ability to request a whole collection (only if user has restricted access to any of these resources)
         $min_access = collection_min_access($result);
@@ -2116,7 +2116,7 @@ function compile_collection_actions(array $collection_data, $top_actions)
         }
 
     // Download option
-    if($download_usage && ((isset($zipcommand) || $collection_download) && $count_result > 0))
+    if($download_usage && ((isset($zipcommand) || $collection_download) && isset($collection_data['count']) && $collection_data['count'] > 0))
         {
         $data_attribute['url'] = $baseurl_short . "pages/terms.php?k=" . urlencode($k) . "&url=pages/download_usage.php?collection=" . urlencode($collection_data['ref']) ."%26k=" . urlencode($k);
         $options[$o]['value']='download_collection';
@@ -2124,7 +2124,7 @@ function compile_collection_actions(array $collection_data, $top_actions)
 		$options[$o]['data_attr']=$data_attribute;
 		$o++;
         }
-    else if((isset($zipcommand) || $collection_download) && $count_result > 0)
+    else if((isset($zipcommand) || $collection_download) && isset($collection_data['count']) && $collection_data['count'] > 0)
         {
         $data_attribute['url'] = $baseurl_short . "pages/terms.php?k=" . urlencode($k) . "&url=pages/collection_download.php?collection=" . urlencode($collection_data['ref']) ."%26k=" . urlencode($k);
         $options[$o]['value']='download_collection';
@@ -2216,7 +2216,7 @@ function compile_collection_actions(array $collection_data, $top_actions)
         }
         
     // View all
-    if($k=="" && (isset($collection_data["c"]) && $collection_data["c"]>0) || count($result) > 0)
+    if($k=="" && (isset($collection_data["count"]) && $collection_data["count"]>0))
         {
         $data_attribute['url'] =  $baseurl_short . 'pages/search.php?search=!collection' . urlencode($collection_data['ref']) . "&k=" . urlencode($k);
         $options[$o]['value']='view_all_resources_in_collection';
@@ -2227,7 +2227,7 @@ function compile_collection_actions(array $collection_data, $top_actions)
 
     // Edit all
     # If this collection is (fully) editable, then display an edit all link
-    if($k=="" && $show_edit_all_link && (count($result) > 0))
+    if($k=="" && $show_edit_all_link && (isset ($collection_data['count']) && $collection_data['count'] > 0))
         {
         if(!$edit_all_checkperms || allow_multi_edit($collection_data['ref'])) 
             {
@@ -2250,7 +2250,7 @@ function compile_collection_actions(array $collection_data, $top_actions)
     // Note: functionality moved from edit collection page
     if($k=="" 
 		&& !$top_actions
-        && (count($result) != 0 || $count_result != 0)
+        && (isset($collection_data["count"]) && $collection_data['count'] != 0)
         && !(isset($allow_resource_deletion) && !$allow_resource_deletion)
         && collection_writeable($collection_data['ref'])
         && allow_multi_edit($collection_data['ref'])
@@ -2262,7 +2262,7 @@ function compile_collection_actions(array $collection_data, $top_actions)
         }
 
     // Preview all
-    if(count($result) != 0 && $k == '' && $preview_all)
+    if(isset($collection_data["count"]) && $collection_data['count'] != 0 && $k == '' && $preview_all)
         {
         $extra_tag_attributes = sprintf('
                 data-url="%spages/preview_all.php?ref=%s"
@@ -2293,7 +2293,7 @@ function compile_collection_actions(array $collection_data, $top_actions)
         }
     
     // Edit Previews
-	if ($k == '' && $count_result > 0 && ($userref == $collection_data['user'] || $collection_data['allow_changes'] == 1 || checkperm('h')) && allow_multi_edit($collection_data['ref']))
+	if ($k == '' && (isset($collection_data["count"]) && $collection_data['count'] > 0) && ($userref == $collection_data['user'] || $collection_data['allow_changes'] == 1 || checkperm('h')) && allow_multi_edit($collection_data['ref']))
 		{
 		$main_pages   = array('search', 'collection_manage', 'collection_public', 'themes');
 		$back_to_page = (in_array($pagename, $main_pages) ? htmlspecialchars($pagename) : '');
@@ -2373,7 +2373,7 @@ function compile_collection_actions(array $collection_data, $top_actions)
 		}
 
     // Add extra collection actions and manipulate existing actions through plugins
-    $modified_options = hook('render_actions_add_collection_option', '', array($top_actions,$options));
+    $modified_options = hook('render_actions_add_collection_option', '', array($top_actions,$options,$collection_data));
     if(is_array($modified_options) && !empty($modified_options))
 		{
         $options=$modified_options;
