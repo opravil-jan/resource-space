@@ -202,7 +202,8 @@ $lang["collections"]="Collections";
 $lang["mycontributions"]="My contributions";
 $lang["researchrequest"]="Research request";
 $lang["helpandadvice"]="Help & advice";
-$lang["teamcentre"]="Team centre";
+$lang["teamcentre"]="Admin";
+
 # footer link
 $lang["aboutus"]="About us";
 $lang["interface"]="Interface";
@@ -241,7 +242,7 @@ $lang["gotoadvancedsearch"]="Advanced search";
 $lang["viewnewmaterial"]="View new material";
 $lang["researchrequestservice"]="Research request service";
 
-# Team Centre
+# Admin
 $lang["manageresources"]="Manage resources";
 $lang["overquota"]="Over disk space quota; cannot add resources";
 $lang["managearchiveresources"]="Manage archive resources";
@@ -275,8 +276,7 @@ $lang["pluginssetup"]="Manage plugins";
 $lang["pluginmanager"]="Plugin manager";
 $lang["users"]="Users";
 
-
-# Team Centre - Bulk E-mails
+# Admin - Bulk E-mails
 $lang["emailrecipients"]="E-mail recipient(s)";
 $lang["emailsubject"]="E-mail subject";
 $lang["emailtext"]="E-mail text";
@@ -286,10 +286,10 @@ $lang["emailsent"]="The e-mail has been sent.";
 $lang["mustspecifyoneuser"]="You must specify at least one user";
 $lang["couldnotmatchusers"]="Could not match all the usernames, or usernames were duplicated";
 
-# Team Centre - User management
+# Admin - User management
 $lang["comments"]="Comments";
 
-# Team Centre - Resource management
+# Admin - Resource management
 $lang["viewuserpending"]="View user contributed resources pending review";
 $lang["userpending"]="User contributed resources pending review";
 $lang["viewuserpendingsubmission"]="View user contributed resources pending submission";
@@ -683,7 +683,7 @@ $lang["searchresearchrequests"]="Search Research Requests";
 $lang["requestasuser"]="Request as user";
 $lang["haspostedresearchrequest"]="has posted a research request"; # username is suffixed to this
 $lang["newresearchrequestwaiting"]="New research request waiting";
-$lang["researchrequestassignedmessage"]="Your research request has been assigned to a member of the team. Once we've completed the research you'll receive an e-mail with a link to all the resources that we recommend.";
+$lang["researchrequestassignedmessage"]="Your research request has been assigned to a member of the admin team. Once we've completed the research you'll receive an e-mail with a link to all the resources that we recommend.";
 $lang["researchrequestassigned"]="Research request assigned";
 $lang["researchrequestcompletemessage"]="Your research request is complete and has been added to your 'my collections' page.";
 $lang["researchrequestcomplete"]="Research request completed";
@@ -699,7 +699,7 @@ $lang["treeobjecttype-group"]=$lang["group"]="Group";
 $lang["groupsmart"]="Group (Smart)";
 $lang["confirmaddgroup"]="Are you sure you want to add all the current members in this group?";
 $lang["confirmaddgroupsmart"]="Are you sure you want to dynamically include members in this group?";
-$lang["backtoteamhome"]="Back to team centre home";
+$lang["backtoteamhome"]="Back to admin home";
 $lang["columnheader-resource_id"]=$lang["resourceid"]="Resource ID";
 $lang["id"]="ID";
 $lang["todate"]="To date";
@@ -1637,7 +1637,7 @@ $lang["can_see_all_theme_categories"]="Can see all featured collection categorie
 $lang["can_see_theme_category"]="Can see featured collection category";
 $lang["can_see_theme_sub_category"]="Can see featured collection subcategory";
 $lang["display_only_resources_within_accessible_themes"]="When searching, display only resources that exist within featured collections to which the user has access";
-$lang["can_access_team_centre"]="Can access the team centre area";
+$lang["can_access_team_centre"]="Can access the admin area";
 $lang["can_manage_research_requests"]="Can manage research requests";
 $lang["can_manage_resource_requests"]="Can manage resource requests";
 $lang["can_manage_content"]="Can manage content (intro/help text)";
@@ -2133,7 +2133,7 @@ $lang["team_batch_select__introtext"]="";
 $lang["team_batch_upload__introtext"]="";
 $lang["team_content__introtext"]="";
 $lang["team_copy__introtext"]="Enter the ID of the resource you would like to copy. Only the resource data will be copied - any uploaded file will not be copied.";
-$lang["team_home__introtext"]="Welcome to the team centre. Use the links below to administer resources, respond to resource requests, manage featured collections and alter system settings.";
+$lang["team_home__introtext"]="Welcome to the admin area. Use the links below to administer resources, respond to resource requests, manage featured collections and alter system settings.";
 $lang["team_report__introtext"]="Please choose a report and a date range. The report can be opened in Microsoft Excel or similar spreadsheet application.";
 $lang["team_research__introtext"]="Organise and manage 'Research Requests'. <br /><br />Choose 'edit research' to review the request details and assign the research to a team member. It is possible to base a research request on a previous collection by entering the collection ID in the 'edit' screen. <br /><br />Once the research request is assigned, choose 'edit collection' to add the research request to 'My collection' panel. Using the standard tools, it is then possible to add resources to the research. <br /><br />Once the research is complete, choose 'edit research',  change the status to complete and an email is automatically  sent to the user who requested the research. The email contains a link to the research and it is also automatically added to their 'My Collection' panel.";
 $lang["team_resource__introtext"]="Add individual resources or batch upload resources. To edit individual resources, simply search for the resource, and click edit in the 'Resource Tool' panel on the resource screen.";
