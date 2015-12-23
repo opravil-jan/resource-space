@@ -1574,8 +1574,15 @@ if ($enable_related_resources && $show_default_related_resources)
     <div class="PanelShadow"></div>
 </div>
 <?php } ?>
-<?php } ?>
-<?php hook("custompanels"); //For custom panels immediately below resource display area ?>
+<?php } 
+
+// juggle $resource at this point as an unknown issue with render_actions used within a hook causes this variable to be reset
+$resourcedata=$resource;?>
+<?php hook("custompanels");//For custom panels immediately below resource display area 
+$resource=$resourcedata;?>
+
+
+
 
 <?php 
 if (!$disable_geocoding) { 
