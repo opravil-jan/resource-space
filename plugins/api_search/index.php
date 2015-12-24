@@ -243,10 +243,6 @@ if($metadata) {
         // NOTE: fields are displayed either like [field18] or [Caption] or [caption]
         foreach ($full_fields_options as $field_key => $full_field_info)
             {
-            // echo '<pre>';var_dump($prettyfieldnames);echo '</pre>';
-            // echo '<pre>';print_r($field_key);echo '</pre>';
-            // echo '<pre>';print_r($results[$i]);echo '</pre>';
-            // die('<br>You died in ' . __FILE__ . ' @' . __LINE__);
             if((!$prettyfieldnames && array_key_exists($field_key, $results[$i])) ||
                 ($prettyfieldnames && array_key_exists($full_field_info['title'], $results[$i])) ||
                 (!$prettyfieldnames && $shortnames && array_key_exists($full_field_info['name'], $results[$i]))
