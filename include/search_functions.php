@@ -1840,6 +1840,13 @@ function search_form_to_search_query($fields,$fromsearchbar=false)
             break;
             }
         }
+
+    $contributed_by=getval('!contributedby',"");
+    if ($contributed_by!="")
+        {
+        $search .= ",!contributedby{$contributed_by}";
+        }
+
     return $search;
     }
 
@@ -2475,7 +2482,7 @@ function search_special($search,$sql_join,$fetchrows,$sql_prefix,$sql_suffix,$or
         }
         
     # View Contributions
-    if (substr($search,0,14)=="!contributions") 
+    if (substr($search,0,14)=="!contributions")
         {
         global $userref;
         
