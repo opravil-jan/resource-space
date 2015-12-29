@@ -820,15 +820,16 @@ function remove_keyword_from_resource($ref,$keyword,$resource_type_field,$option
 			remove_keyword_from_resource($ref,$keyword,$resource_type_field,$optional_column='',$optional_value='',true);
 			}
         }		
-		
+	
+        $keyref=resolve_keyword($keyword,true);
 	if ($optional_column<>'' && $optional_value<>'')	# Check if any optional column value passed and include this condition
 		{
-		sql_query("delete from resource_keyword where resource='$ref' and keyword= ANY (select ref from keyword where keyword='" . escape_check($keyword) . "') and resource_type_field='$resource_type_field'" . (($position!="")?" and position='" . $position ."'":"") . " and $optional_column= $optional_value");
+		sql_query("delete from resource_keyword where resource='$ref' and keyword='$keyref' and resource_type_field='$resource_type_field'" . (($position!="")?" and position='" . $position ."'":"") . " and $optional_column= $optional_value");
 		}
 	else{
-		sql_query("delete from resource_keyword where resource='$ref' and keyword= ANY (select ref from keyword where keyword='" . escape_check($keyword) . "') and resource_type_field='$resource_type_field'" . (($position!="")?" and position='" . $position ."'":""));
+		sql_query("delete from resource_keyword where resource='$ref' and keyword='$keyref' and resource_type_field='$resource_type_field'" . (($position!="")?" and position='" . $position ."'":""));
 		}
-	sql_query("update keyword set hit_count=hit_count-1 where keyword='" . escape_check($keyword) . "' limit 1");
+	sql_query("update keyword set hit_count=hit_count-1 where ref='$keyref' limit 1");
 			
     }
 
