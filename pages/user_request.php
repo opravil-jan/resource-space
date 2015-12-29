@@ -64,7 +64,7 @@ if (getval("save","")!="")
 		$error=$lang["requiredfields"] . ' ' . i18n_get_translated(implode(', ', $missingFields), true);
 		}
 	# Check the anti-spam code is correct
-	elseif (getval("antispamcode","")!=md5(getval("antispam","")))
+	elseif (!hook('replaceantispam_check') && getval("antispamcode","")!=md5(getval("antispam","")))
 		{
 		$error=$lang["requiredantispam"];
 		}
