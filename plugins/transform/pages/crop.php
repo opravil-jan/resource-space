@@ -584,15 +584,15 @@ if(!$cropperestricted)
     {
     ?>
     <script type="text/javascript" language="javascript">
-    
-    
-	    function onEndCrop( coords ) {
-	    document.dimensionsform.xcoord.value=coords.x;
-	    document.dimensionsform.ycoord.value=coords.y;
-	    document.dimensionsform.width.value=coords.w;
-	    document.dimensionsform.height.value=coords.h;
-	    }
-	    
+        function onEndCrop( coords )
+            {
+            document.dimensionsform.xcoord.value=coords.x;
+            document.dimensionsform.ycoord.value=coords.y;
+            document.dimensionsform.width.value=coords.w;
+            document.dimensionsform.height.value=coords.h;
+            }
+
+        var jcrop_api;
     
 		    /**
 		     * A little manager that allows us to reset the options dynamically
@@ -617,13 +617,18 @@ if(!$cropperestricted)
     
     
 				    this.removeCropper();
-				    this.curCrop = jQuery('#cropimage').Jcrop({
-						    onRelease: onEndCrop ,
-						    onChange: onEndCrop ,
-						    onSelect: onEndCrop ,
-						    aspectRatio: jQuery('#new_width').val()/jQuery('#new_height').val()	
-				    });
-							    
+				    this.curCrop = jQuery('#cropimage').Jcrop(
+                        {
+                            onRelease: onEndCrop ,
+                            onChange: onEndCrop ,
+                            onSelect: onEndCrop ,
+                            aspectRatio: jQuery('#new_width').val()/jQuery('#new_height').val()
+                        },
+                        function()
+                            {
+                            jcrop_api = this;
+                            }
+                    );
     
 				    if( e != null ) Event.stop( e );
 			    },
@@ -724,7 +729,20 @@ if(!$cropperestricted)
 
         return;
         }
-	    
+
+    function check_cropper_selection()
+        {
+        var curCoords = jcrop_api.tellSelect();
+        if(curCoords.w === 0 && curCoords.h === 0)
+            {
+            styledalert('Warning!', 'Please select an appropriate size!');
+
+            return false;
+            }
+
+        return true;
+        }
+
     </script>
     <?php
     }
@@ -772,7 +790,12 @@ if(!$cropperestricted)
 	    	<td style='text-align:right'><?php echo $lang["slideshowsequencenumber"]; ?>: </td>
 	    	<td><input type='text' name='sequence' id='sequence' value="<?php if('' !== trim($manage_slideshow_id)) { echo $manage_slideshow_id; } ?>" size='4' /></td>
 		</tr>
-	    <tr><td colspan="4"><input type="submit" name="submit" value="<?php echo $lang['replaceslideshowimage'] ?>"></td></tr>
+	    <tr>
+            <td colspan="4">
+                <input type="submit" name="submit" value="<?php echo $lang['replaceslideshowimage']; ?>"
+                    onclick="if(check_cropper_selection()) { jQuery('#dimensionsForm').submit(); }; return false;">
+            </td>
+        </tr>
 	</table>
     <table id="transform_options"<?php if('' !== trim($manage_slideshow_action)) { ?> style="display: none;"<?php } ?>>
       <tr>
