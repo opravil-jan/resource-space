@@ -302,11 +302,36 @@ include "../../include/header.php";
     $page_def[] = config_add_boolean_select('basic_simple_search', $lang['userpreference_basic_simple_search_label'], $enable_disable_options, 300, '', true);
     $page_def[] = config_add_html('</div>');
 
-    // Email section
-    $page_def[] = config_add_html('<h2 class="CollapsibleSectionHead">' . $lang['email'] . '</h2><div id="UserPreferenceEmailSection" class="CollapsibleSection">');
-    $page_def[] = config_add_boolean_select('cc_me', $lang['userpreference_cc_me_label'], $enable_disable_options, 300, '', true);
-    $page_def[] = config_add_html('</div>');
-
+    // Email section, only show if user has got an email address
+	if ($useremail!="")
+		{
+		$page_def[] = config_add_html('<h2 class="CollapsibleSectionHead">' . $lang['email'] . '</h2><div id="UserPreferenceEmailSection" class="CollapsibleSection">');
+		$page_def[] = config_add_boolean_select('cc_me', $lang['userpreference_cc_me_label'], $enable_disable_options, 300, '', true);
+		$page_def[] = config_add_boolean_select('email_user_notifications', $lang['userpreference_email_me_label'], $enable_disable_options, 300, '', true);
+		$page_def[] = config_add_boolean_select('email_user_daily_digest', $lang['userpreference_email_digest_label'], $enable_disable_options, 300, '', true);
+		$page_def[] = config_add_html('</div>');
+		}
+	
+	// System notifications section - used to disable system generated messages 
+	$page_def[] = config_add_html('<h2 class="CollapsibleSectionHead">' . $lang['mymessages'] . '</h2><div id="UserPreferenceAdminSection" class="CollapsibleSection">');
+	$page_def[] = config_add_boolean_select('user_pref_resource_notifications', $lang['userpreference_resource_notifications'], $enable_disable_options, 300, '', true);
+	if(checkperm("a"))
+		{
+		$page_def[] = config_add_boolean_select('user_pref_system_management_notifications', $lang['userpreference_system_management_notifications'], $enable_disable_options, 300, '', true);
+		}
+	
+	if(checkperm("u"))
+		{		
+		$page_def[] = config_add_boolean_select('user_pref_user_management_notifications', $lang['userpreference_user_management_notifications'], $enable_disable_options, 300, '', true);
+		}
+	if(checkperm("R"))
+		{	
+		$page_def[] = config_add_boolean_select('user_pref_resource_access_notifications', $lang['userpreference_resource_access_notifications'], $enable_disable_options, 300, '', true);
+		}
+		
+	$page_def[] = config_add_html('</div>');
+	
+	
     // Let plugins hook onto page definition and add their own configs if needed
     // or manipulate the list
     $plugin_specific_definition = hook('add_user_preference_page_def', '', array($page_def));

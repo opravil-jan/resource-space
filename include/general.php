@@ -1328,8 +1328,29 @@ function auto_create_user_account()
 		$templatevars['linktouser']="$baseurl?u=$new";
 
 		$message=$lang["userrequestnotification1"] . "\n\n" . $lang["name"] . ": " . $templatevars['name'] . "\n\n" . $lang["email"] . ": " . $templatevars['email'] . "\n\n" . $lang["comment"] . ": " . $templatevars['userrequestcomment'] . "\n\n" . $lang["ipaddress"] . ": '" . $_SERVER["REMOTE_ADDR"] . "'\n\n" . $customContents . "\n\n" . $lang["userrequestnotification3"] . "\n$baseurl?u=$new";
-
-		send_mail($email_notify,$applicationname . ": " . $lang["requestuserlogin"] . " - " . getval("name",""),$message,"",$user_email,"emailuserrequest",$templatevars,getval("name",""));
+		
+		$notificationmessage=$lang["userrequestnotification1"] . "\n" . $lang["name"] . ": " . $templatevars['name'] . "\n" . $lang["email"] . ": " . $templatevars['email'] . "\n" . $lang["comment"] . ": " . $templatevars['userrequestcomment'] . "\n" . $lang["ipaddress"] . ": '" . $_SERVER["REMOTE_ADDR"] . "'\n" . $customContents . "\n" . $lang["userrequestnotification3"];
+       
+	   // Need to global the usergroup so that we can find the appropriate admins
+	   global $usergroup;
+       $approval_notify_users=get_notification_users("USER_ADMIN"); 
+       global $user_pref_user_management_notifications, $email_user_notifications;
+	   foreach($approval_notify_users as $approval_notify_user)
+			{
+			get_config_option($approval_notify_user['ref'],'user_pref_user_management_notifications', $send_message, $user_pref_user_management_notifications);
+			if(!$send_message){continue;} 
+			
+			get_config_option($approval_notify_user['ref'],'email_user_notifications', $send_email, $email_user_notifications);    
+			if($send_email && $approval_notify_user["email"]!="")
+				{
+				send_mail($email_notify,$applicationname . ": " . $lang["requestuserlogin"] . " - " . getval("name",""),$message,"",$user_email,"emailuserrequest",$templatevars,getval("name",""));
+				}        
+			else
+				{
+				// Send a message with long timeout (30 days)
+                message_add($approval_notify_user["ref"],$notificationmessage,$templatevars['linktouser'],$new,MESSAGE_ENUM_NOTIFICATION_TYPE_SCREEN,60 * 60 *24 * 30);
+				}
+			}
 		}
 
 	return true;
@@ -1342,9 +1363,29 @@ function email_user_request()
 	global $applicationname,$user_email,$baseurl,$email_notify,$lang,$customContents;
 
 	# Build a message
-	$message=$lang["userrequestnotification1"] . "\n\n" . $lang["name"] . ": " . getval("name","") . "\n\n" . $lang["email"] . ": " . getval("email","") . "\n\n" . $lang["comment"] . ": " . getval("userrequestcomment","") . "\n\n" . $lang["ipaddress"] . ": '" . $_SERVER["REMOTE_ADDR"] . "'\n\n" . $customContents . "\n\n" . $lang["userrequestnotification2"] . "\n$baseurl";
 
-	send_mail($email_notify,$applicationname . ": " . $lang["requestuserlogin"] . " - " . getval("name",""),$message,"",$user_email,"","",getval("name",""));
+	$message=$lang["userrequestnotification1"] . "\n\n" . $lang["name"] . ": " . getval("name","") . "\n\n" . $lang["email"] . ": " . getval("email","") . "\n\n" . $lang["comment"] . ": " . getval("userrequestcomment","") . "\n\n" . $lang["ipaddress"] . ": '" . $_SERVER["REMOTE_ADDR"] . "'\n\n" . $customContents . "\n\n" . $lang["userrequestnotification2"] . "\n$baseurl";
+	
+	$notificationmessage=$lang["userrequestnotification1"] . "\n" . $lang["name"] . ": " . getvalescaped("name","") . "\n" . $lang["email"] . ": " . getvalescaped("email","") . "\n" . $lang["comment"] . ": " . getvalescaped("userrequestcomment","") . "\n" . $lang["ipaddress"] . ": '" . $_SERVER["REMOTE_ADDR"] . "'\n" . escape_check($customContents) . "\n";
+	
+	$approval_notify_users=get_notification_users("USER_ADMIN"); 
+	foreach($approval_notify_users as $approval_notify_user)
+			{
+			get_config_option($approval_notify_user['ref'],'user_pref_user_management_notifications', $send_message);		  
+            if($send_message==false){continue;}		
+			
+			get_config_option($approval_notify_user['ref'],'email_user_notifications', $send_email);    
+			if($send_email && $approval_notify_user["email"]!="")
+				{
+				send_mail($approval_notify_user["email"],$applicationname . ": " . $lang["requestuserlogin"] . " - " . getval("name",""),$message,"",$user_email,"","",getval("name",""));
+				}        
+			else
+				{
+				// Send a message with long timeout (30 days)
+                message_add($approval_notify_user["ref"],$notificationmessage,"",$approval_notify_user['ref'],MESSAGE_ENUM_NOTIFICATION_TYPE_SCREEN,60 * 60 *24 * 30);
+				}
+			}
+	
 
 	return true;
 	}
@@ -2041,7 +2082,7 @@ function send_mail_phpmailer($email,$subject,$message="",$from="",$reply_to="",$
 		{
 		# Attempt to verify users by email, which allows us to get the email template by lang and usergroup
 		$to_usergroup=sql_query("select lang,usergroup from user where email ='" . escape_check($email) . "'","");
-
+        
 		if (count($to_usergroup)!=0)
 			{
 			$to_usergroupref=$to_usergroup[0]['usergroup'];
@@ -2057,8 +2098,7 @@ function send_mail_phpmailer($email,$subject,$message="",$from="",$reply_to="",$
 		if (isset($to_usergroupref))
 			{	
 			$modified_to_usergroupref=hook("modifytousergroup","",$to_usergroupref);
-			if ($modified_to_usergroupref!==null){$to_usergroupref=$modified_to_usergroupref;}
-
+			if (is_int($modified_to_usergroupref)){$to_usergroupref=$modified_to_usergroupref;}
 			$results=sql_query("select language,name,text from site_text where page='all' and name='$html_template' and specific_to_group='$to_usergroupref'");
 			}
 		else 
@@ -3606,10 +3646,10 @@ function purchase_set_size($collection,$resource,$size,$price)
 function payment_set_complete($collection,$emailconfirmation="")
 	{
 	global $applicationname,$baseurl,$userref,$username,$useremail,$userfullname,$email_notify,$lang,$currency_symbol;
-	# Mark items in the collection as paid so they can be downloaded.
+	// Mark items in the collection as paid so they can be downloaded.
 	sql_query("update collection_resource set purchase_complete=1 where collection='$collection'");
 	
-	# For each resource, add an entry to the log to show it has been purchased.
+	// For each resource, add an entry to the log to show it has been purchased.
 	$resources=sql_query("select * from collection_resource where collection='$collection'");
 	$summary="<style>.InfoTable td {padding:5px;}</style><table border=\"1\" class=\"InfoTable\"><tr><td><strong>" . $lang["property-reference"] . "</strong></td><td><strong>" . $lang["size"] . "</strong></td><td><strong>" . $lang["price"] . "</strong></td></tr>";
 	foreach ($resources as $resource)
@@ -3620,16 +3660,34 @@ function payment_set_complete($collection,$emailconfirmation="")
 		$summary.="<tr><td>" . $resource["resource"] . "</td><td>" . $purchasesize . "</td><td>" . $currency_symbol . $resource["purchase_price"] . "</td></tr>";
 		}
 	$summary.="</table>";
-	# Send email to admin
+	// Send email or notification to admin
 	$message=$lang["purchase_complete_email_admin_body"] . "<br>" . $lang["username"] . ": " . $username . "(" . $userfullname . ")<br>" . $summary . "<br><br>$baseurl/?c=" . $collection . "<br>";
-	send_mail($email_notify,$applicationname . ": " . $lang["purchase_complete_email_admin"],$message);
+	$notificationmessage=$lang["purchase_complete_email_admin_body"] . "\r\n" . $lang["username"] . ": " . $username . "(" . $userfullname . ")";
+	$notify_users=get_notification_users("RESOURCE_ACCESS"); 
+	foreach($notify_users as $notify_user)
+			{
+			get_config_option($notify_user['ref'],'user_pref_resource_access_notifications', $send_message);		  
+            if($send_message==false){continue;}		
+			
+			get_config_option($notify_user['ref'],'email_user_notifications', $send_email);    
+			if($send_email && $notify_user["email"]!="")
+				{
+				send_mail($notify_user["email"],$applicationname . ": " . $lang["purchase_complete_email_admin"],$message);
+				}        
+			else
+				{
+                message_add($notify_user["ref"],$notificationmessage,$baseurl . "/?c=" . $collection,$userref);
+				}
+			}
 	
-	#Send email to user
+	
+	
+	// Send email to user (not a notification as may need to be kept for reference)
 	$confirmation_address=($emailconfirmation!="")?$emailconfirmation:$useremail;	
 	$userconfirmmessage= $lang["purchase_complete_email_user_body"] . $summary . "<br><br>$baseurl/?c=" . $collection . "<br>";
 	send_mail($useremail,$applicationname . ": " . $lang["purchase_complete_email_user"] ,$userconfirmmessage);
 	
-	# Rename so that can be viewed on my purchases page
+	// Rename so that can be viewed on my purchases page
 	sql_query("update collection set name= '" . date("Y-m-d H:i") . "' where ref='$collection'");
 	
 	return true;
@@ -4370,18 +4428,25 @@ function notify_resource_change($resource)
 		}
 		
 	debug("notify_resource_change - checking for users that have downloaded this resource " . $resource);
-	$download_users=sql_array("select u.email value from resource_log rl left join user u on rl.user=u.ref where rl.type='d' and rl.resource=$resource and u.email<>'' and datediff(now(),date)<'$notify_on_resource_change_days'","");
+	$download_users=sql_query("select u.ref, u.email from resource_log rl left join user u on rl.user=u.ref where rl.type='d' and rl.resource=$resource and datediff(now(),date)<'$notify_on_resource_change_days'","");
 	
 	if(count($download_users>0))
 		{
 		global $applicationname, $lang, $baseurl;
 		foreach ($download_users as $download_user)
 			{
-			if($download_user!="")
-				{
-				//send_mail($email,$subject,$message,$from="",$reply_to="",$html_template="",$templatevars=null,$from_name="",$cc="",$bcc="")
-				send_mail($download_user,$applicationname . ": " . $lang["notify_resource_change_email_subject"],str_replace(array("[days]","[url]"),array($notify_on_resource_change_days,$baseurl . "/?r=" . $resource),$lang["notify_resource_change_email"]),"","",array("days"=>$notify_on_resource_change_days,"url"=>$baseurl . "/?r=" . $resource));
-				}
+			get_config_option($download_user['ref'],'user_pref_resource_notifications', $send_message);		  
+            if($send_message==false){continue;}		
+			
+            get_config_option($download_user['ref'],'email_user_notifications', $send_email);
+            if($send_email && $download_user["email"]!="")
+                {
+                send_mail($download_user['email'],$applicationname . ": " . $lang["notify_resource_change_email_subject"],str_replace(array("[days]","[url]"),array($notify_on_resource_change_days,$baseurl . "/?r=" . $resource),$lang["notify_resource_change_email"]),"","",'notify_resource_change_email',array("days"=>$notify_on_resource_change_days,"url"=>$baseurl . "/?r=" . $resource));
+                }
+            else
+                {
+                message_add($download_user['ref'],str_replace(array("[days]","[url]"),array($notify_on_resource_change_days,$baseurl . "/?r=" . $resource),$lang["notify_resource_change_notification"]),$baseurl . "/?r=" . $resource);
+                }
 			}
 		}
 	}
@@ -4630,7 +4695,6 @@ function get_slideshow_files_data()
     return $slideshow_files;
     }
 
-
 /**
  * Ensures the filename cannot leave the directory set.
  *
@@ -4652,3 +4716,72 @@ function safe_file_name($name)
     $newname=substr($newname,0,30);
     return $newname;
     }
+	
+	
+function get_notification_users($userpermission="SYSTEM_ADMIN")
+    {
+    // Returns an array of users (refs and emails) for use when sending email notifications (messages that in the past went to $email_notify, which can be emulated by using $email_notify_usergroups)
+	// Can be passed a specific user type or an array of permissions
+	// Types supported:-
+	// SYSTEM_ADMIN
+	// RESOURCE_ACCESS
+	// RESEARCH_ADMIN
+	// USER_ADMIN
+	
+    global $notification_users_cache, $usergroup,$email_notify_usergroups;
+	$userpermissionindex=is_array($userpermission)?implode("_",$userpermission):$userpermission;
+    if(isset($notification_users_cache[$userpermissionindex]))
+        {return $notification_users_cache[$userpermissionindex];}
+        
+    if(is_array($email_notify_usergroups) && count($email_notify_usergroups)>0)
+		{
+		// If email_notify_usergroups is set we use these over everything else, as long as they have an email address set
+        $notification_users_cache[$userpermissionindex] = sql_query("select ref, email from user where usergroup in (" . implode(",",$email_notify_usergroups) . ") and email <>''");
+        return $notification_users_cache[$userpermissionindex];
+		}
+	
+	if(!is_array($userpermission))
+		{
+		// We have been passed a specific type of administrator to find 
+		switch($userpermission)
+			{
+			case "USER_ADMIN";
+			// Return all users in groups with u permissions AND either no 'U' restriction, or with 'U' but in appropriate group
+			$notification_users_cache[$userpermissionindex] = sql_query("select u.ref, u.email from usergroup ug left join user u on u.usergroup=ug.ref where find_in_set(binary 'u',ug.permissions) <> 0 and u.ref<>''" . (is_int($usergroup)?" and (find_in_set(binary 'U',ug.permissions) = 0 or ug.ref =(select parent from usergroup where ref=" . $usergroup . "))":""));	
+			return $notification_users_cache[$userpermissionindex];
+			break;
+			
+			case "RESOURCE_ACCESS";
+			// Notify users who can grant access to resources, get all users in groups with R permissions
+			$notification_users_cache[$userpermissionindex] = sql_query("select u.ref, u.email from usergroup ug left join user u on u.usergroup=ug.ref where find_in_set(binary 'R',ug.permissions) <> 0");	
+			return $notification_users_cache[$userpermissionindex];		
+			break;
+			
+			case "RESEARCH_ADMIN";
+			// Notify research admins, get all users in groups with r permissions
+			$notification_users_cache[$userpermissionindex] = sql_query("select u.ref, u.email from usergroup ug left join user u on u.usergroup=ug.ref where find_in_set(binary 'r',ug.permissions) <> 0");	
+			return $notification_users_cache[$userpermissionindex];		
+			break;
+					
+			case "SYSTEM_ADMIN";
+			default;
+			// Get all users in groups with A permissions (default if incorrect admin type has been passed)
+			$notification_users_cache[$userpermissionindex] = sql_query("select u.ref, u.email from usergroup ug left join user u on u.usergroup=ug.ref where find_in_set(binary 'A',ug.permissions) <> 0");	
+			return $notification_users_cache[$userpermissionindex];
+			break;
+		
+			}
+		}
+	else
+		{
+		// An array has been passed, find all users with these permissions
+		$condition="";
+		foreach ($userpermission as $permission)
+			{
+			if($condition!=""){$condition.=" and ";}
+			$condition.="find_in_set(binary '" . $permission . "',ug.permissions) <> 0";
+			}
+		$notification_users_cache[$userpermissionindex] = sql_query("select u.ref, u.email from usergroup ug left join user u on u.usergroup=ug.ref where $condition");	
+		return $notification_users_cache[$userpermissionindex];
+		}
+	}

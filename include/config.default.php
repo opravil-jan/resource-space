@@ -2846,3 +2846,16 @@ $previews_allow_enlarge=false;
 
 # Option to use a random static image from the available slideshow images. Requires slideshow_big=true;
 $static_slideshow_image=false;
+
+# User preference - user_pref_resource_notifications. Option to receive notifications about resource management e.g. archive state changes 
+$user_pref_resource_notifications=true;
+# User preference - user_pref_resource_access_notifications. Option to receive notifications about resource access e.g. resource requests
+$user_pref_resource_access_notifications=true;
+
+# User preference - user_pref_user_management_notifications (user admins only). Option to receive notifications about user management changes e.g. account requests
+$user_pref_user_management_notifications=true;
+# User preference - user_pref_system_management_notifications (System admins only). Option to receive notifications about system events e.g. low disk space
+$user_pref_system_management_notifications=true;
+
+# User preference - email_user_notifications. Option to receive emails instead of new style system notifications where appropriate. 
+$email_user_notifications=false;

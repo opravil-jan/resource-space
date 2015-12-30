@@ -1046,8 +1046,10 @@ $lang["userrequestnotification1"]="The User Login Request form has been complete
 $lang["userrequestnotification2"]="If this is a valid request, please visit the system at the URL below and create an account for this user.";
 $lang["ipaddress"]="IP Address";
 $lang["userresourcessubmitted"]="The following user contributed resources have been submitted for review:";
+$lang["userresourcessubmittednotification"]="This user has submitted resources for review.";
 $lang["userresourcesapproved"]="Your submitted resources have been approved:";
 $lang["userresourcesunsubmitted"]="The following user contributed resources have been unsubmitted, and no longer require review:";
+$lang["userresourcesunsubmittednotification"]="This user has changed the status of these resources so no longer require review.";
 $lang["viewalluserpending"]="View all user contributed resources pending review:";
 
 # New for 1.7
@@ -1216,7 +1218,7 @@ $lang["never"]="Never";
 $lang["approved"]="Approved";
 $lang["notapproved"]="Not approved";
 
-$lang["userrequestnotification3"]="If this is a valid request, click the link below to review the details and approve the user account.";
+$lang["userrequestnotification3"]="If this is a valid request, click the link to review the details and approve the user account.";
 
 $lang["ticktoapproveuser"]="You must tick the box to approve this user if you wish to enable this account";
 
@@ -2159,6 +2161,7 @@ $lang["user_request__introtext"]="Please complete the form below to request a us
 $lang["view__storyextract"]="Story extract:";
 $lang["notify_resource_change_email_subject"]="A resource has been modified";
 $lang["notify_resource_change_email"]="A resource that you downloaded in the past [days] days has been modified . Click the link below to view the resource.<br /><br /><a href='[url]'>[url]</a>";
+$lang["notify_resource_change_notification"]="A resource that you downloaded in the past [days] days has been modified.";
 $lang["passwordresetemail"]="Please click on the link below to reset your password.";
 $lang['password_reset_email_html'] = 'Username: [username]<br /><br />Please click on the link below to reset your password.<br /><br /><a href="[url]" target="_blank" >[url]</a>';
 $lang["passwordnewemail"]="Please click on the link below to set a new password for your account.";
@@ -2296,6 +2299,12 @@ $lang['userpreference_resource_view_modal_label'] = 'Resource view modal';
 $lang['userpreference_thumbs_default_label'] = 'Default collection bar display';
 $lang['userpreference_basic_simple_search_label'] = 'Basic simple search';
 $lang['userpreference_cc_me_label'] = 'CC me when sending resources and collections';
+$lang['userpreference_email_me_label'] = 'Send me emails instead of system notifications where possible';
+$lang['userpreference_email_digest_label'] = 'Send me a daily digest of notifications, instead of separate emails';
+$lang['userpreference_system_management_notifications'] = "Send me messages about important system events e.g. low disk space.";
+$lang['userpreference_user_management_notifications'] = "Send me user administration messages e.g. new user acount requests";
+$lang['userpreference_resource_access_notifications'] = "Send me messages about resource access e.g. resource requests";
+$lang['userpreference_resource_notifications'] = "Send me resource messages about resource management e.g. resource state changes, metadata changes";
 
 /* System Config */
 $lang['systemconfig'] = 'System configuration';

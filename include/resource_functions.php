@@ -1995,7 +1995,7 @@ function process_notify_user_contributed_submitted($ref,$htmlbreak)
 		{
 		$user = $result[0]['username'];
 		}
-	return $htmlbreak . $user . ': ' . $url . "\n\n";
+	return $htmlbreak . $user . ': ' . $url;
 	}
 
 function notify_user_contributed_submitted($refs)
@@ -2026,8 +2026,26 @@ function notify_user_contributed_submitted($refs)
 	$templatevars['list']=$list;
 		
 	$message=$lang["userresourcessubmitted"] . "\n\n". $templatevars['list'] . $lang["viewalluserpending"] . "\n\n" . $templatevars['url'];
+	$notificationmessage=$lang["userresourcessubmittednotification"];
+	$notify_users=get_notification_users(array("e-1","e0")); 
+	foreach($notify_users as $notify_user)
+			{
+			get_config_option($notify_user['ref'],'user_pref_resource_notifications', $send_message);		  
+            if($send_message==false){continue;}		
+			
+			get_config_option($notify_user['ref'],'email_user_notifications', $send_email);    
+			if($send_email && $notify_user["email"]!="")
+				{
+				send_mail($notify_user["email"],$applicationname . ": " . $lang["status-1"],$message,"","","emailnotifyresourcessubmitted",$templatevars);
+				}        
+			else
+				{
+				global $userref;
+                message_add($notify_user["ref"],$notificationmessage,$baseurl . "/pages/search.php?search=!contributions" . $userref . "&archive=-1");
+				}
+			}
+			
 	
-	send_mail($email_notify,$applicationname . ": " . $lang["status-1"],$message,"","","emailnotifyresourcessubmitted",$templatevars);
 	}
 function notify_user_contributed_unsubmitted($refs)
 	{
@@ -2067,9 +2085,25 @@ function notify_user_contributed_unsubmitted($refs)
 		
 	$message=$lang["userresourcesunsubmitted"]."\n\n". $templatevars['list'] . $lang["viewalluserpending"] . "\n\n" . $templatevars['url'];
 
-	send_mail($email_notify,$applicationname . ": " . $lang["status-2"],$message,"","","emailnotifyresourcesunsubmitted",$templatevars);
-	}	
-	
+	$notificationmessage=$lang["userresourcessubmittednotification"];
+	$notify_users=get_notification_users(array("e-1","e0")); 
+	foreach($notify_users as $notify_user)
+			{
+			get_config_option($notify_user['ref'],'user_pref_resource_notifications', $send_message);		  
+            if($send_message==false){continue;}		
+			
+			get_config_option($notify_user['ref'],'email_user_notifications', $send_email);    
+			if($send_email && $notify_user["email"]!="")
+				{
+				send_mail($notify_user["email"],$applicationname . ": " . $lang["status-2"],$message,"","","emailnotifyresourcesunsubmitted",$templatevars);
+				}        
+			else
+				{
+				global $userref;
+                message_add($notify_user["ref"],$notificationmessage,$baseurl . "/pages/search.php?search=!contributions" . $userref . "&archive=-2");
+				}
+			}
+	}		
 	
 function get_fields_with_options()
 {
@@ -3248,6 +3282,10 @@ function notify_user_resources_approved($refs)
 	if ($use_phpmailer){$htmlbreak="<br><br>";}
 	$notifyusers=array();
 	
+    if(!is_array($refs))
+        {
+        $refs=array($ref);    
+        }
 	for ($n=0;$n<count($refs);$n++)
 		{
 		$ref=$refs[$n];
@@ -3267,21 +3305,33 @@ function notify_user_resources_approved($refs)
 			$notifyusers[$contributed]["list"].=$htmlbreak . $url . "\n\n";
 			}		
 		}
-	
 	foreach($notifyusers as $key=>$notifyuser)	
 		{
 		$templatevars['list']=$notifyuser["list"];
 		$templatevars['url']=$notifyuser["url"];			
 		$message=$lang["userresourcesapproved"] . "\n\n". $templatevars['list'] . "\n\n" . $lang["viewcontributedsubittedl"] . "\n\n" . $notifyuser["url"];
+		$notificationmessage=$lang["userresourcesapproved"];
 		
-		$notify_user=sql_value("select email value from user where ref='$key'","");
-		if($notify_user!='')
+		// Does the user want these messages?
+		get_config_option($key,'user_pref_resource_notifications', $send_message);		  
+        if($send_message==false){continue;}		
+       
+		// Does the user want an email or notification?
+		get_config_option($key,'email_user_notifications', $send_email);    
+		if($send_email)
 			{
-			send_mail($notify_user,$applicationname . ": " . $lang["approved"],$message,"","","emailnotifyresourcesapproved",$templatevars);
+			$notify_user=sql_value("select email value from user where ref='$key'","");
+			if($notify_user!='')
+				{
+				send_mail($notify_user,$applicationname . ": " . $lang["approved"],$message,"","","emailnotifyresourcesapproved",$templatevars);
+				}
+			}        
+		else
+			{
+			global $userref;
+			message_add($key,$notificationmessage,$notifyuser["url"]);
 			}
 		}
-	
-	
 	}
 	
 		
