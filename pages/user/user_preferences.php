@@ -308,7 +308,7 @@ include "../../include/header.php";
 		$page_def[] = config_add_html('<h2 class="CollapsibleSectionHead">' . $lang['email'] . '</h2><div id="UserPreferenceEmailSection" class="CollapsibleSection">');
 		$page_def[] = config_add_boolean_select('cc_me', $lang['userpreference_cc_me_label'], $enable_disable_options, 300, '', true);
 		$page_def[] = config_add_boolean_select('email_user_notifications', $lang['userpreference_email_me_label'], $enable_disable_options, 300, '', true);
-		$page_def[] = config_add_boolean_select('email_user_daily_digest', $lang['userpreference_email_digest_label'], $enable_disable_options, 300, '', true);
+		//$page_def[] = config_add_boolean_select('email_user_daily_digest', $lang['userpreference_email_digest_label'], $enable_disable_options, 300, '', true);
 		$page_def[] = config_add_html('</div>');
 		}
 	
