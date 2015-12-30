@@ -1,7 +1,7 @@
 <?php
 $pagename = "home";
 include "../../include/db.php";
-include "../../include/general.php";
+include_once "../../include/general.php";
 include "../../include/authenticate.php";
 include "../../include/dash_functions.php";
 

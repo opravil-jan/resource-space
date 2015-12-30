@@ -15,11 +15,15 @@
 
 # ensure no caching (dynamic site)
 
+
+include_once 'general.php';
+
 # Functions used for debugging via System Console
 include_once "debug_functions.php";
 
 # Functions used for activity logging
 include_once "log_functions.php";
+
 
 # Switch on output buffering.
 ob_start(null,4096);
@@ -1284,22 +1288,6 @@ function get_ip()
 	return "???";
 	}
 
-
-function safe_file_name($name)
-	{
-	# Returns a file name stipped of all non alphanumeric values
-	# Spaces are replaced with underscores
-	$alphanum="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_-";
-	$name=str_replace(" ","_",$name);
-	$newname="";
-	for ($n=0;$n<strlen($name);$n++)
-		{
-		$c=substr($name,$n,1);
-		if (strpos($alphanum,$c)!==false) {$newname.=$c;}
-		}
-	$newname=substr($newname,0,30);
-	return $newname;
-	}
 
 if (!function_exists("daily_stat")){
 function daily_stat($activity_type,$object_ref)

@@ -2,7 +2,7 @@
 # Popup category tree for use with the simple search.
 
 include "../../include/db.php";
-include "../../include/general.php";
+include_once "../../include/general.php";
 include "../../include/authenticate.php";
 
 $field=getvalescaped("field","");

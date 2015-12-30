@@ -4,7 +4,7 @@
 # cron job.
 
 include "../../include/db.php";
-include "../../include/general.php";
+include_once "../../include/general.php";
 
 if(!isset($disk_quota_limit_size_warning_noupload) && !isset($disk_quota_notification_limit_percent_warning)){
 	die("Please set the disk quota limits in your configuration before running this script!");

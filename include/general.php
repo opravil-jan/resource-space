@@ -3593,20 +3593,8 @@ function decrypt_api_key($key){
 
 // alternative encryption using mcrypt extension
 //from http://php.net/manual/en/function.mcrypt-encrypt.php
-class Cipher {
-    private $securekey, $iv;
-    function __construct($textkey) {
-        $this->securekey = hash('sha256',$textkey,TRUE);
-        $this->iv = mcrypt_create_iv(32,MCRYPT_DEV_URANDOM);
-    }
-    function encrypt($input) {
-        return strtr(base64_encode(mcrypt_encrypt(MCRYPT_RIJNDAEL_256, $this->securekey, $input, MCRYPT_MODE_ECB, $this->iv)), '+/=', '-_,');
-    }
-    function decrypt($input) {
-        return trim(mcrypt_decrypt(MCRYPT_RIJNDAEL_256, $this->securekey, base64_decode(strtr($input, '-_,', '+/=')), MCRYPT_MODE_ECB, $this->iv));
-    }
-}
-    
+// IMPORTANT: temp fix to avoid redeclaring issues. An autoloader should be used instead (currently not available)
+include_once 'classes/Cipher.php';
 
 function purchase_set_size($collection,$resource,$size,$price)
 	{
@@ -4640,4 +4628,27 @@ function get_slideshow_files_data()
         }
 
     return $slideshow_files;
+    }
+
+
+/**
+ * Ensures the filename cannot leave the directory set.
+ *
+ * @param string $name
+ * @return string
+ */
+function safe_file_name($name)
+    {
+    # Returns a file name stipped of all non alphanumeric values
+    # Spaces are replaced with underscores
+    $alphanum="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_-";
+    $name=str_replace(" ","_",$name);
+    $newname="";
+    for ($n=0;$n<strlen($name);$n++)
+        {
+        $c=substr($name,$n,1);
+        if (strpos($alphanum,$c)!==false) {$newname.=$c;}
+        }
+    $newname=substr($newname,0,30);
+    return $newname;
     }

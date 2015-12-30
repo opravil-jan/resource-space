@@ -3,7 +3,7 @@
 $suppress_headers = true;
 
 include "../../include/db.php";
-include "../../include/general.php";
+include_once "../../include/general.php";
 
 $size = getvalescaped('size', '');
 $ref = getvalescaped('ref', 0, true);

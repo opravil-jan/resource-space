@@ -1,6 +1,6 @@
 <?php
 include "../../../include/db.php";
-include "../../../include/general.php";
+include_once "../../../include/general.php";
 
 
 if (array_key_exists("user",$_COOKIE))

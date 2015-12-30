@@ -2,7 +2,7 @@
 include '../../../include/db.php';
 include "../../../include/authenticate.php";
 if(!checkperm("t")){exit ("Access denied"); }
-include "../../../include/general.php";
+include_once "../../../include/general.php";
 include "../../../include/resource_functions.php";
 include "../include/tms_link_functions.php";
 

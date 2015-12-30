@@ -8,7 +8,7 @@
  * @author Brian Adams <wreality@gmail.com>
  */
 include "../../include/db.php";
-include "../../include/general.php";
+include_once "../../include/general.php";
 /**
  * Only accessable to users with 'a' permission.
  */

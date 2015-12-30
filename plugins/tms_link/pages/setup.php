@@ -5,7 +5,7 @@
 
 include '../../../include/db.php';
 include '../../../include/authenticate.php'; if (!checkperm('a')) {exit ($lang['error-permissiondenied']);}
-include '../../../include/general.php';
+include_once '../../../include/general.php';
 
 
 $tms_link_field_mappings=unserialize(base64_decode($tms_link_field_mappings_saved));

@@ -1,6 +1,6 @@
 <?php
 include "../../include/db.php";
-include "../../include/general.php";
+include_once "../../include/general.php";
 include "../../include/authenticate.php";
 if(!checkPermission_dashadmin()){exit($lang["error-permissiondenied"]);}
 include "../../include/dash_functions.php";

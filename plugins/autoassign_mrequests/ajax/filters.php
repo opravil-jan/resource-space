@@ -1,7 +1,7 @@
 <?php
 include dirname(__FILE__) . '/../../../include/db.php';
 include dirname(__FILE__) . '/../../../include/authenticate.php';
-include dirname(__FILE__) . '/../../../include/general.php';
+include_once dirname(__FILE__) . '/../../../include/general.php';
 
 $user_group_id = getvalescaped('user_group_id', '');
 

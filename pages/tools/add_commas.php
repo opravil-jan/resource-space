@@ -4,7 +4,7 @@
 # When some values have commas and others don't, sorting doesn't work correctly!!!
 
 include "../../include/db.php";
-include "../../include/general.php";
+include_once "../../include/general.php";
 include "../../include/authenticate.php"; if (!checkperm("a")) {exit("Permission denied");}
 include "../../include/resource_functions.php";
 

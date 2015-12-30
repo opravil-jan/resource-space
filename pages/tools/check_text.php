@@ -3,7 +3,7 @@
 # Quick script to check all site text entries are valid HTML and error for any that aren't.
 
 include "../../include/db.php";
-include "../../include/general.php";
+include_once "../../include/general.php";
 include "../../include/authenticate.php"; if (!checkperm("a")) {exit("Permission denied");}
 include "../../include/resource_functions.php";
 

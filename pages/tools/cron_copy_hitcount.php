@@ -1,6 +1,6 @@
 <?php
 include dirname(__FILE__) . "/../../include/db.php";
-include dirname(__FILE__) . "/../../include/general.php";
+include_once dirname(__FILE__) . "/../../include/general.php";
 include dirname(__FILE__) . "/../../include/reporting_functions.php";
 include dirname(__FILE__) . "/../../include/resource_functions.php";
 set_time_limit(60*30);

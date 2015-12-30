@@ -42,7 +42,7 @@ if($resetvalues!="")
     }
 
 
-include "../../include/general.php";
+include_once '../../include/general.php';
 if(!$password_reset_mode)
     {
     include "../../include/authenticate.php"; if (checkperm("p") || !$allow_password_change || (isset($anonymous_login) && $anonymous_login==$username)) {exit("Not allowed.");}

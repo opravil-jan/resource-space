@@ -6,7 +6,7 @@
 #
 
 require dirname(__FILE__) . "/../../include/db.php";
-require dirname(__FILE__) . "/../../include/general.php";
+require_once dirname(__FILE__) . "/../../include/general.php";
 
 $newline = (substr(php_sapi_name(), 0, 3) == 'cli') ? PHP_EOL : '<br /><br />';
 

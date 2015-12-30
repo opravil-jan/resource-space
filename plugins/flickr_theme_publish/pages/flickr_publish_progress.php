@@ -1,7 +1,7 @@
 <?php
 
 include "../../../include/db.php";
-include "../../../include/general.php";
+include_once "../../../include/general.php";
 include "../../../include/resource_functions.php";
 include "../inc/flickr_functions.php";
 

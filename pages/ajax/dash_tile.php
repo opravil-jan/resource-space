@@ -4,7 +4,7 @@
  * Requests from the dash interactions are processed here.
  */
 include "../../include/db.php";
-include "../../include/general.php";
+include_once "../../include/general.php";
 include "../../include/authenticate.php";
 include "../../include/search_functions.php";
 include_once "../../include/collections_functions.php";

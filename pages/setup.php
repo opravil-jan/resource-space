@@ -5,6 +5,8 @@
  * @package ResourceSpace
  * @subpackage Pages_Misc
  */
+include_once '../include/general.php';
+include_once '../include/collections_functions.php';
 if (!function_exists('filter_var')){  //If running on PHP without filter_var, define a do-fer function, otherwise use php's filter_var (PHP > 5.2.0)
 echo "!!!";
     define(FILTER_SANITIZE_STRING, 1);
@@ -165,28 +167,6 @@ function url_exists($url)
 }   
 
 /**
- * Ensures the filename cannot leave the directory set.
- *
- * @param string $name
- * @return string
- */
-function safe_file_name($name)
-	{
-	# Returns a file name stipped of all non alphanumeric values
-	# Spaces are replaced with underscores
-	$alphanum="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_-";
-	$name=str_replace(" ","_",$name);
-	$newname="";
-	for ($n=0;$n<strlen($name);$n++)
-		{
-		$c=substr($name,$n,1);
-		if (strpos($alphanum,$c)!==false) {$newname.=$c;}
-		}
-	$newname=substr($newname,0,30);
-	return $newname;
-	}
-
-/**
  * Sets the language to be used.
  *
  * @param string $defaultlanguage
@@ -230,10 +210,32 @@ $configstoragelocations=false;
 $storageurl="";
 $storagedir=""; # This variable is used in the language files.
 
-if (file_exists("../include/config.default.php")) {include "../include/config.default.php";}
+include '../include/config.default.php';
 $defaultlanguage = get_post('defaultlanguage');
 $lang = set_language($defaultlanguage);
 
+
+/* Process AJAX request to check password */
+if(get_post_bool('ajax'))
+    {
+    $response['success'] = false;
+    $response['error']   = '';
+
+    $admin_password             = get_post('admin_password');
+    $password_validation_result = check_password($admin_password);
+
+    if('' !== $admin_password && true === $password_validation_result)
+        {
+        $response['success'] = true;
+        }
+    else if('' !== $admin_password && is_string($password_validation_result) && '' !== $password_validation_result)
+        {
+        $response['error'] = $password_validation_result;
+        }
+
+    echo json_encode($response);
+    exit();
+    }
 ?>
 <html>
 <head>
@@ -344,6 +346,38 @@ $('.mysqlconn').keyup(function(){
 		}});
 	});
 });
+
+// Check admin password security requirements/ policy -- client side
+$('#admin_password').keyup(function() {
+    $('#admin_test').fadeIn('slow', function() {
+        var post_url  = 'setup.php';
+        var post_data = {
+            ajax: true,
+            admin_password: $('#admin_password').val()
+        };
+
+        $.post(post_url, post_data, function(response) {
+
+            $('#admin_password').removeClass('ok');
+            $('#admin_password').addClass('warn');
+
+            if(response.success === true)
+                {
+                $('#admin_password').addClass('ok');
+                $('#admin_password_error').hide();
+                }
+            else if(response.success === false && response.error !== '')
+                {
+                $('#admin_password_error').text(response.error);
+                $('#admin_password_error').show();
+                }
+
+            $('#admin_test').hide();
+
+        }, 'json');
+    });
+});
+
 $('a.iflink	').click(function(){
 	$('p.iteminfo').hide("slow");
 	var currentItemInfo = $(this).attr('href');
@@ -481,6 +515,9 @@ h2#dbaseconfig{  min-height: 32px;}
 			}
 		}
 
+        $admin_username = 'admin';
+        $admin_password = '';
+
 	}
 	else { //Form was submitted, lets do it!
 		//Generate config.php Header
@@ -601,7 +638,20 @@ h2#dbaseconfig{  min-height: 32px;}
 		else {
 			$errors['baseurl'] = true;
 		}
-		
+
+        $admin_username = get_post('admin_username');
+        $admin_password = get_post('admin_password');
+        // Check password
+        $password_validation_result = check_password($admin_password);
+        if('' === $admin_password)
+            {
+            $errors['admin_password'] = 'Super Admin password cannot be empty!';
+            }
+        else if('' !== $admin_password && is_string($password_validation_result) && '' !== $password_validation_result)
+            {
+            $errors['admin_password'] = $password_validation_result;
+            }
+
 		//Verify email addresses are valid
 		$config_output .= "# Email settings\r\n";
 		$email_from = get_post('email_from');
@@ -759,11 +809,16 @@ if ((isset($_REQUEST['submit'])) && (!isset($errors)))
 	$fhandle = fopen($outputfile, 'w') or die ("Error opening output file.  (This should never happen, we should have caught this before we got here)");
 	fwrite($fhandle, "<?php\r\n".$config_output); //NOTE: php opening tag is prepended to the output.
 	fclose($fhandle);
-	
+
+    // Check database structure now
+    $suppress_headers = true;
+	include_once '../include/db.php';
+	check_db_structs();
+
 	if(!empty($structural_plugin) && !$develmode)
 		{
 		$suppress_headers=true;
-		include "../include/db.php";
+		include_once "../include/db.php";
 		//BUILD Data from plugin
 		global $mysql_db, $resource_field_column_limit;
 	
@@ -841,7 +896,51 @@ if ((isset($_REQUEST['submit'])) && (!isset($errors)))
 			}
 		}
 
-	?>
+
+    // Copy slideshow images under filestore in order to avoid
+    // overwriting them when doing svn update
+    $homeanim_folder = 'gfx/homeanim';
+    $slideshow_files = get_slideshow_files_data();
+
+    foreach($slideshow_files as $id => $file_info)
+        {
+        $to_folder = $storagedir . '/system/slideshow';
+        $to_file   = $to_folder . '/' . basename($file_info['file_path']);
+
+        // Make sure there is a target location
+        if(!(file_exists($to_folder) && is_dir($to_folder)))
+            {
+            mkdir($to_folder, 0777, true);
+            }
+
+        if(file_exists($file_info['file_path']) && copy($file_info['file_path'], $to_file))
+            {
+            debug("AT SETUP: Copied slideshow image {$id} from \"{$file_info['file_path']}\" to \"{$to_file}\".");
+            }
+        }
+
+    // Create user
+    // Defaults in case creating user fails for some reason
+    $credentials_username = 'admin';
+    $credentials_password = 'admin';
+
+    $password_hash = hash('sha256', md5('RS' . $credentials_username . $credentials_password));
+    $sql_query     = "INSERT INTO user(username, password, usergroup) VALUES('" . $credentials_username . "', '" . $password_hash . "', 3)";
+
+    $user_count = sql_value("SELECT count(*) value FROM user WHERE username = '{$admin_username}'", 0);
+    if(0 == $user_count)
+        {
+        $password_hash = hash('sha256', md5('RS' . $admin_username . $admin_password));
+
+        // Note: First user should always be part of Super Admin, hence user group is set to 3
+        $sql_query = "INSERT INTO user(username, password, usergroup) VALUES('" . escape_check($admin_username) . "', '" . $password_hash . "', 3)";
+
+        $credentials_username = $admin_username;
+        $credentials_password = $admin_password;
+        }
+
+    sql_query($sql_query);
+	   ?>
 	<div id="intro">
 		<h1><?php echo $lang["setup-successheader"]; ?></h1>
 		<p><?php echo $lang["setup-successdetails"]; ?></p>
@@ -851,8 +950,8 @@ if ((isset($_REQUEST['submit'])) && (!isset($errors)))
 			<li><?php echo $lang["setup-visitwiki"]; ?></li>
 			<li><a href="<?php echo $baseurl;?>/login.php"><?php echo $lang["setup-login_to"] . " " . $applicationname; ?></a>
 				<ul>
-					<li><?php echo $lang["username"] . ": admin"; ?></li>
-					<li><?php echo $lang["password"] . ": admin"; ?></li>
+					<li><?php echo $lang["username"] . ': ' . $credentials_username; ?></li>
+					<li><?php echo $lang["password"] . ': ' . $credentials_password; ?></li>
 				</ul>
 			</li>
 		</ul>
@@ -885,14 +984,17 @@ else
 				<p class="<?php echo ($pass==true?'':'failure'); ?>"><?php echo str_replace("?", "PHP", $lang["softwareversion"]) . ": " . $phpversion . ($pass==false?'<br>':' ') . "(" . $result . ")"; ?></p>
 				<p><?php echo str_replace("%phpinifile", php_ini_loaded_file(), $lang["php-config-file"]); ?></p>
 				<?php
-					if (function_exists('gd_info'))
+					if(function_exists('gd_info'))
+                        {
 						$gdinfo = gd_info();
-					if (is_array($gdinfo))
-						{
-						$version = $gdinfo["GD Version"];
-						$result = $lang["status-ok"];
-						$pass = true;
-						}
+
+    					if (is_array($gdinfo))
+    						{
+    						$version = $gdinfo["GD Version"];
+    						$result = $lang["status-ok"];
+    						$pass = true;
+    						}
+                        }
 					else
 						{
 						$version = $lang["status-notinstalled"];
@@ -1139,7 +1241,7 @@ else
 				</div>
 			</p>
 			<p class="configsection">
-				<h2><?php echo $lang["setup-generalsettings"];?></h2>
+				<h2><?php echo $lang["setup-generalsettings"];?><img id="admin_test" class="starthidden ajloadicon" src="../gfx/ajax-loader.gif"/></h2>
 				<div class="configitem">
 					<label for="applicationname"><?php echo $lang["setup-applicationname"];?></label><input id="applicationname" type="text" name="applicationname" value="<?php echo $applicationname;?>"/><a class="iflink" href="#if-applicationname">?</a>
 					<p class="iteminfo" id="if-applicationname"><?php echo $lang["setup-if_applicationname"];?></p>
@@ -1154,6 +1256,17 @@ else
 					<label for="baseurl"><?php echo $lang["setup-baseurl"];?></label><input id="baseurl" type="text" name="baseurl" value="<?php echo $baseurl;?>"/><strong>*</strong><a class="iflink" href="#if-baseurl">?</a>
 					<p class="iteminfo" id="if-baseurl"><?php echo $lang["setup-if_baseurl"];?></p>
 				</div>
+                <div class="configitem">
+                    <label for="admin_username"><?php echo $lang['setup-admin_username']; ?></label>
+                    <input id="admin_username" class="admin_credentials" type="text" name="admin_username" value="<?php echo $admin_username; ?>"/><strong>*</strong><a class="iflink" href="#if-admin-username">?</a>
+                    <p id="if-admin-username" class="iteminfo"><?php echo $lang['setup-if_admin_username']; ?></p>
+                </div>
+                <div class="configitem">
+                    <div id="admin_password_error" class="erroritem" <?php echo !isset($errors['admin_password']) ? 'style="display: none;"' : ''; ?>><?php echo isset($errors['admin_password']) ? $errors['admin_password'] : ''; ?></div>
+                    <label for="admin_password"><?php echo $lang['setup-admin_password']; ?></label>
+                    <input id="admin_password" class="admin_credentials" type="password" name="admin_password" value="<?php echo $admin_password; ?>"/><strong>*</strong><a class="iflink" href="#if-admin-password">?</a>
+                    <p id="if-admin-password" class="iteminfo"><?php echo $lang['setup-if_admin_password']; ?></p>
+                </div>
 				<div class="configitem">
 					<?php if(isset($errors['email_from'])){?>
 						<div class="erroritem"><?php echo $lang["setup-emailerr"];?></div>

@@ -1,6 +1,6 @@
 <?php
 include "../include/db.php";
-include "../include/general.php";
+include_once "../include/general.php";
 include "../include/authenticate.php"; if (! (checkperm("c") || checkperm("d") || hook('upload_auth_override'))) {exit ("Permission denied.");}
 include "../include/image_processing.php";
 include "../include/resource_functions.php";

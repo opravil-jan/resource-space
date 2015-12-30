@@ -1,6 +1,6 @@
 <?php
 include "../include/db.php";
-include "../include/general.php";
+include_once "../include/general.php";
 include "../include/authenticate.php"; if (!checkperm("n")) {exit("Permission denied");}
 include "../include/resource_functions.php";
 

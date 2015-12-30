@@ -7,7 +7,7 @@
 #
 
 include "../../include/db.php";
-include "../../include/general.php";
+include_once "../../include/general.php";
 
 # Check database connectivity.
 $check=sql_value("select count(*) value from resource_type",0);
