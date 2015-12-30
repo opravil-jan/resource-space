@@ -2028,6 +2028,7 @@ function notify_user_contributed_submitted($refs)
 	$message=$lang["userresourcessubmitted"] . "\n\n". $templatevars['list'] . $lang["viewalluserpending"] . "\n\n" . $templatevars['url'];
 	$notificationmessage=$lang["userresourcessubmittednotification"];
 	$notify_users=get_notification_users(array("e-1","e0")); 
+	$message_users=array();
 	foreach($notify_users as $notify_user)
 			{
 			get_config_option($notify_user['ref'],'user_pref_resource_notifications', $send_message);		  
@@ -2040,12 +2041,14 @@ function notify_user_contributed_submitted($refs)
 				}        
 			else
 				{
-				global $userref;
-                message_add($notify_user["ref"],$notificationmessage,$baseurl . "/pages/search.php?search=!contributions" . $userref . "&archive=-1");
+				$message_users[]=$notify_user["ref"];
 				}
 			}
-			
-	
+	if (count($message_users)>0)
+		{
+		global $userref;
+        message_add($message_users,$notificationmessage,$baseurl . "/pages/search.php?search=!contributions" . $userref . "&archive=-1");
+		}
 	}
 function notify_user_contributed_unsubmitted($refs)
 	{
@@ -2087,6 +2090,7 @@ function notify_user_contributed_unsubmitted($refs)
 
 	$notificationmessage=$lang["userresourcessubmittednotification"];
 	$notify_users=get_notification_users(array("e-1","e0")); 
+	$message_users=array();
 	foreach($notify_users as $notify_user)
 			{
 			get_config_option($notify_user['ref'],'user_pref_resource_notifications', $send_message);		  
@@ -2099,10 +2103,14 @@ function notify_user_contributed_unsubmitted($refs)
 				}        
 			else
 				{
-				global $userref;
-                message_add($notify_user["ref"],$notificationmessage,$baseurl . "/pages/search.php?search=!contributions" . $userref . "&archive=-2");
+				$message_users[]=$notify_user["ref"];
 				}
 			}
+	if (count($message_users)>0)
+		{
+		global $userref;
+        message_add($message_users,$notificationmessage,$baseurl . "/pages/search.php?search=!contributions" . $userref . "&archive=-2");
+		}
 	}		
 	
 function get_fields_with_options()

@@ -1334,7 +1334,8 @@ function auto_create_user_account()
 	   // Need to global the usergroup so that we can find the appropriate admins
 	   global $usergroup;
        $approval_notify_users=get_notification_users("USER_ADMIN"); 
-       global $user_pref_user_management_notifications, $email_user_notifications;
+       $message_users=array();
+	   global $user_pref_user_management_notifications, $email_user_notifications;
 	   foreach($approval_notify_users as $approval_notify_user)
 			{
 			get_config_option($approval_notify_user['ref'],'user_pref_user_management_notifications', $send_message, $user_pref_user_management_notifications);
@@ -1347,9 +1348,13 @@ function auto_create_user_account()
 				}        
 			else
 				{
-				// Send a message with long timeout (30 days)
-                message_add($approval_notify_user["ref"],$notificationmessage,$templatevars['linktouser'],$new,MESSAGE_ENUM_NOTIFICATION_TYPE_SCREEN,60 * 60 *24 * 30);
+				$message_users[]=$approval_notify_user["ref"];
 				}
+			}
+		if (count($message_users)>0)
+			{
+			// Send a message with long timeout (30 days)
+			message_add($message_users,$notificationmessage,$templatevars['linktouser'],$new,MESSAGE_ENUM_NOTIFICATION_TYPE_SCREEN,60 * 60 *24 * 30);
 			}
 		}
 
@@ -1369,6 +1374,7 @@ function email_user_request()
 	$notificationmessage=$lang["userrequestnotification1"] . "\n" . $lang["name"] . ": " . getvalescaped("name","") . "\n" . $lang["email"] . ": " . getvalescaped("email","") . "\n" . $lang["comment"] . ": " . getvalescaped("userrequestcomment","") . "\n" . $lang["ipaddress"] . ": '" . $_SERVER["REMOTE_ADDR"] . "'\n" . escape_check($customContents) . "\n";
 	
 	$approval_notify_users=get_notification_users("USER_ADMIN"); 
+	$message_users=array();
 	foreach($approval_notify_users as $approval_notify_user)
 			{
 			get_config_option($approval_notify_user['ref'],'user_pref_user_management_notifications', $send_message);		  
@@ -1381,12 +1387,14 @@ function email_user_request()
 				}        
 			else
 				{
-				// Send a message with long timeout (30 days)
-                message_add($approval_notify_user["ref"],$notificationmessage,"",$approval_notify_user['ref'],MESSAGE_ENUM_NOTIFICATION_TYPE_SCREEN,60 * 60 *24 * 30);
+				$message_users[]=$approval_notify_user["ref"];
 				}
 			}
-	
-
+		if (count($message_users)>0)
+			{
+			// Send a message with long timeout (30 days)
+            message_add($message_users,$notificationmessage,"",$approval_notify_user['ref'],MESSAGE_ENUM_NOTIFICATION_TYPE_SCREEN,60 * 60 *24 * 30);
+			}
 	return true;
 	}
 
@@ -3664,6 +3672,7 @@ function payment_set_complete($collection,$emailconfirmation="")
 	$message=$lang["purchase_complete_email_admin_body"] . "<br>" . $lang["username"] . ": " . $username . "(" . $userfullname . ")<br>" . $summary . "<br><br>$baseurl/?c=" . $collection . "<br>";
 	$notificationmessage=$lang["purchase_complete_email_admin_body"] . "\r\n" . $lang["username"] . ": " . $username . "(" . $userfullname . ")";
 	$notify_users=get_notification_users("RESOURCE_ACCESS"); 
+	$message_users=array();
 	foreach($notify_users as $notify_user)
 			{
 			get_config_option($notify_user['ref'],'user_pref_resource_access_notifications', $send_message);		  
@@ -3676,11 +3685,14 @@ function payment_set_complete($collection,$emailconfirmation="")
 				}        
 			else
 				{
-                message_add($notify_user["ref"],$notificationmessage,$baseurl . "/?c=" . $collection,$userref);
+				$message_users[]=$notify_user["ref"];
 				}
 			}
-	
-	
+			
+	if (count($message_users)>0)
+		{		
+        message_add($message_users,$notificationmessage,$baseurl . "/?c=" . $collection,$userref);
+		}	
 	
 	// Send email to user (not a notification as may need to be kept for reference)
 	$confirmation_address=($emailconfirmation!="")?$emailconfirmation:$useremail;	
@@ -4429,7 +4441,7 @@ function notify_resource_change($resource)
 		
 	debug("notify_resource_change - checking for users that have downloaded this resource " . $resource);
 	$download_users=sql_query("select u.ref, u.email from resource_log rl left join user u on rl.user=u.ref where rl.type='d' and rl.resource=$resource and datediff(now(),date)<'$notify_on_resource_change_days'","");
-	
+	$message_users=array();
 	if(count($download_users>0))
 		{
 		global $applicationname, $lang, $baseurl;
@@ -4445,8 +4457,12 @@ function notify_resource_change($resource)
                 }
             else
                 {
-                message_add($download_user['ref'],str_replace(array("[days]","[url]"),array($notify_on_resource_change_days,$baseurl . "/?r=" . $resource),$lang["notify_resource_change_notification"]),$baseurl . "/?r=" . $resource);
+				$message_users[]=$download_user["ref"];
                 }
+			}
+		if (count($message_users)>0)
+			{
+            message_add($message_users,str_replace(array("[days]","[url]"),array($notify_on_resource_change_days,$baseurl . "/?r=" . $resource),$lang["notify_resource_change_notification"]),$baseurl . "/?r=" . $resource);
 			}
 		}
 	}
