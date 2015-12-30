@@ -297,43 +297,51 @@ function upload_file($ref,$no_exif=false,$revert=false,$autorotate=false)
 			}		
 		}
     
-   if (!$revert){
-    # Clear any existing FLV file or multi-page previews.
-	global $pdf_pages;
-	for ($n=2;$n<=$pdf_pages;$n++)
+   if (!$revert)
 		{
-		# Remove preview page.
-		$path=get_resource_path($ref,true,"scr",false,"jpg",-1,$n,false);
+		# Clear any existing FLV file or multi-page previews.
+		global $pdf_pages;
+		for ($n=2;$n<=$pdf_pages;$n++)
+			{
+			# Remove preview page.
+			$path=get_resource_path($ref,true,"scr",false,"jpg",-1,$n,false);
+			if (file_exists($path)) {unlink($path);}
+			# Also try the watermarked version.
+			$path=get_resource_path($ref,true,"scr",false,"jpg",-1,$n,true);
+			if (file_exists($path)) {unlink($path);}
+			}
+		
+		# Remove any FLV video preview (except if the actual resource is an FLV file).
+		global $ffmpeg_preview_extension;
+		if ($extension!=$ffmpeg_preview_extension)
+			{
+			$path=get_resource_path($ref,true,"",false,$ffmpeg_preview_extension);
+			if (file_exists($path)) {unlink($path);}
+			}
+		# Remove any FLV preview-only file
+		$path=get_resource_path($ref,true,"pre",false,$ffmpeg_preview_extension);
 		if (file_exists($path)) {unlink($path);}
-		# Also try the watermarked version.
-		$path=get_resource_path($ref,true,"scr",false,"jpg",-1,$n,true);
-		if (file_exists($path)) {unlink($path);}
-		}
 	
-	# Remove any FLV video preview (except if the actual resource is an FLV file).
-	global $ffmpeg_preview_extension;
-	if ($extension!=$ffmpeg_preview_extension)
-		{
-		$path=get_resource_path($ref,true,"",false,$ffmpeg_preview_extension);
-		if (file_exists($path)) {unlink($path);}
-		}
-	# Remove any FLV preview-only file
-	$path=get_resource_path($ref,true,"pre",false,$ffmpeg_preview_extension);
-	if (file_exists($path)) {unlink($path);}
-
-	
-	# Remove any MP3 (except if the actual resource is an MP3 file).
-	if ($extension!="mp3")
-		{
-		$path=get_resource_path($ref,true,"",false,"mp3");
-		if (file_exists($path)) {unlink($path);}
-		}	
-    
-	# Create previews
-		global $enable_thumbnail_creation_on_upload;
+		
+		# Remove any MP3 (except if the actual resource is an MP3 file).
+		if ($extension!="mp3")
+			{
+			$path=get_resource_path($ref,true,"",false,"mp3");
+			if (file_exists($path)) {unlink($path);}
+			}	
+		
+		# Create previews
+		global $enable_thumbnail_creation_on_upload,$file_upload_block_duplicates,$checksum;
+		# Checksums are also normally created at preview generation time, but we may already have a checksum if $file_upload_block_duplicates is enabled
+		$checksum_required=true;
+		if($file_upload_block_duplicates && isset($checksum))
+			{
+			sql_query("update resource set file_checksum='" . escape_check($checksum) . "' where ref='$ref'");
+			$checksum_required=false;
+			}
 		if ($enable_thumbnail_creation_on_upload)
 			{ 
-			create_previews($ref,false,$extension);
+			create_previews($ref,false,$extension,false,false,-1,false,false,$checksum_required);
 			}
 		else
 			{
@@ -866,7 +874,7 @@ function iptc_return_utf8($text)
 	return $text;
 	}
  
-function create_previews($ref,$thumbonly=false,$extension="jpg",$previewonly=false,$previewbased=false,$alternative=-1,$ignoremaxsize=false,$ingested=false)
+function create_previews($ref,$thumbonly=false,$extension="jpg",$previewonly=false,$previewbased=false,$alternative=-1,$ignoremaxsize=false,$ingested=false,$checksum_required=true)
 	{
     global $keep_for_hpr,$imagemagick_path, $preview_generate_max_file_size,$autorotate_no_ingest, $previews_allow_enlarge;
    
@@ -874,15 +882,16 @@ function create_previews($ref,$thumbonly=false,$extension="jpg",$previewonly=fal
     // otherwise when the file extension is a jpg it's assumed no hpr is needed.
 
 	# Debug
-	debug("create_previews(ref=$ref,thumbonly=$thumbonly,extension=$extension,previewonly=$previewonly,previewbased=$previewbased,alternative=$alternative,ingested=$ingested)");
+	debug("create_previews(ref=$ref,thumbonly=$thumbonly,extension=$extension,previewonly=$previewonly,previewbased=$previewbased,alternative=$alternative,ingested=$ingested,checksum_required=$checksum_required)");
 
 	if (!$previewonly) {
 		// make sure the extension is the same as the original so checksums aren't done for previews
 		$o_ext=sql_value("select file_extension value from resource where ref={$ref}","");
-		if($extension==$o_ext){
+		if($extension==$o_ext && $checksum_required)
+			{
 			debug("create_previews - generate checksum for $ref");
 			generate_file_checksum($ref,$extension);
-		}
+			}
 	}
 	# first reset preview tweaks to 0
 	sql_query("update resource set preview_tweaks = '0|1' where ref = '$ref'");
