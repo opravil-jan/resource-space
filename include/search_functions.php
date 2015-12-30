@@ -1218,7 +1218,7 @@ function render_search_field($field,$value="",$autoupdate,$class="stdwidth",$for
                 $newoptions=array();
                 foreach ($options as $option)
                     {
-                    if ($option!=="" && (count($limit_keywords)==0 || in_array(strval($option,$limit_keywords))))
+                    if ($option!=="" && (count($limit_keywords)==0 || in_array(strval($option), $limit_keywords)))
                         {
                         $newoptions[]=$option;
                         }
