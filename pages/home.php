@@ -87,7 +87,7 @@ if (!hook("replaceslideshow"))
 		?>
 		<script type="text/javascript">
 		var big_slideshow_timer = 0;
-		RegisterSlideshowImage('<?php echo $imagelink[$randomimage] ?>');
+		RegisterSlideshowImage('<?php echo $imagelink[$randomimage] ?>', undefined, true);
 		</script>
 	   <?php
 		}
