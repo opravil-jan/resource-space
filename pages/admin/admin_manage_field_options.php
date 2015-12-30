@@ -207,7 +207,6 @@ if('true' === $ajax && !(trim($submit_new_option)=="") && 'add_new' === $submit_
     exit();
     }
 
-
 include '../../include/header.php';
 
 if($ajax)
@@ -242,7 +241,14 @@ if($ajax)
             <tbody>
         <?php
         // Render existing nodes
-        foreach(get_nodes($field) as $node)
+		$nodes=get_nodes($field);
+		if(count($nodes)==0)
+			{
+			$fieldinfo=get_resource_type_field($field);
+			migrate_resource_type_field_check($fieldinfo);
+			$nodes=get_nodes($field);
+			}
+        foreach($nodes as $node)
             {
             ?>
             <tr id="node_<?php echo $node['ref']; ?>">
