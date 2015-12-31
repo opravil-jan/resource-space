@@ -1830,7 +1830,17 @@ function search_form_to_search_query($fields,$fromsearchbar=false)
             }
         }
 
-    return $search;
+        // Allow a single special search to be prepended to the search string.  For example, !contributions<user id>
+        foreach ($_POST as $key=>$value)
+            {
+            if ($key[0]=='!' && strlen($value) > 0)
+                {
+                $search=$key . $value . ',' . $search;
+                break;
+                }
+            }
+
+        return $search;
     }
 
 if (!function_exists("refine_searchstring")){
