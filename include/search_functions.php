@@ -57,17 +57,6 @@ function do_search($search,$restypes="",$order_by="relevance",$archive=0,$fetchr
 
     hook("modifyorderarray");
 
-    // ----- Work out if we need to restrict the search by contributions made by a specified user
-    $restrict_contributed_by = 0;
-    preg_match('/!contributedby(\d+)/', $search, $matches);
-    if (isset($matches[1]))
-        {
-        $restrict_contributed_by = $matches[1];
-        $search=preg_replace('/!contributedby\d+/','',$search);
-        }
-    unset($matches);
-    // ----- End of working out if restricting by specific user contribution
-
     # Recognise a quoted search, which is a search for an exact string
     global $quoted_string;
     $quoted_string=false;
@@ -92,7 +81,7 @@ function do_search($search,$restypes="",$order_by="relevance",$archive=0,$fetchr
         }
 
     # -- Build up filter SQL that will be used for all queries
-    $sql_filter=search_filter($search,$archive,$restypes,$starsearch,$recent_search_daylimit,$access_override,$return_disk_usage,$restrict_contributed_by);
+    $sql_filter=search_filter($search,$archive,$restypes,$starsearch,$recent_search_daylimit,$access_override,$return_disk_usage);
 
     # Initialise variables.
     $sql="";
@@ -1841,12 +1830,6 @@ function search_form_to_search_query($fields,$fromsearchbar=false)
             }
         }
 
-    $contributed_by=getval('!contributedby',"");
-    if ($contributed_by!="")
-        {
-        $search .= ",!contributedby{$contributed_by}";
-        }
-
     return $search;
     }
 
@@ -2091,7 +2074,7 @@ function compile_search_actions($top_actions)
     return $options;
     }
 
-function search_filter($search,$archive,$restypes,$starsearch,$recent_search_daylimit,$access_override,$return_disk_usage,$restrict_contributed_by=0)
+function search_filter($search,$archive,$restypes,$starsearch,$recent_search_daylimit,$access_override,$return_disk_usage)
 	{
 	# Convert the provided search parameters into appropriate SQL, ready for inclusion in the do_search() search query.
 	
@@ -2252,12 +2235,6 @@ function search_filter($search,$archive,$restypes,$starsearch,$recent_search_day
 	# append ref filter - never return the batch upload template (negative refs)
 	if ($sql_filter!="") {$sql_filter.=" and ";}
 	$sql_filter.="r.ref>0";
-
-    // Check if we only want to show results for a specific resource contributor
-    if ($restrict_contributed_by > 0)
-        {
-        $sql_filter .= ($sql_filter=='' ? '' : ' AND ') . "`created_by`={$restrict_contributed_by}";
-        }
 
 	return $sql_filter;
 	}
