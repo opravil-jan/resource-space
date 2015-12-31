@@ -570,7 +570,23 @@ else
 	<input type="hidden" name="archive" value="<?php echo htmlspecialchars($archive)?>">
 	<?php
 	}
-	
+?>
+
+<div class="Question">
+    <label><?php echo $lang["contributedby"]; ?></label>
+    <?php
+    preg_match('/^![a-zA-Z]+(\d+)/',getval('search',''),$matches);
+    $single_user_select_field_value=isset($matches[1]) ? $matches[1] : '';
+    $single_user_select_field_id='!contributions';
+    $single_user_select_field_onchange='UpdateResultCount();';
+    include "../include/user_select.php";
+    unset($single_user_select_field_value);
+    unset($single_user_select_field_id);
+    unset($single_user_select_field_onchange);
+    ?>
+</div>
+
+<?php
 render_advanced_search_buttons();
 
 // show result count as it stands ?>

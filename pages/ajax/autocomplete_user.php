@@ -7,6 +7,15 @@ include "../../include/authenticate.php";
 
 $find=getvalescaped("term","");
 $getrefs=(getvalescaped("getrefs","")!="")?true:false;
+
+$getuserref=(getvalescaped("getuserref",""));
+if (!empty($getuserref))
+    {
+    ob_clean();
+    echo sql_value("select max(ref) as value from user where username='" . escape_check($getuserref) . "'",'');
+    return;
+    }
+
 $ignoregroups=(getvalescaped("nogroups","")!="")?true:false;
 $first=true;
 ?> [ <?php
@@ -47,7 +56,7 @@ if(!$ignoregroups)
 			}
 		}
 	}
-if($attach_user_smart_groups)
+if($attach_user_smart_groups && !$ignoregroups)
 	{
 	if(!isset($groups))
 		{
