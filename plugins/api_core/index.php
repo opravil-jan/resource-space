@@ -7,7 +7,8 @@ include "../../include/header.php";
 
 ?>
 <div class="BasicsBox">
-<p><a  onClick="return CentralSpaceLoad(this,true);" href="<?php if (getvalescaped("back","")!=""){echo $baseurl_short.getvalescaped("back","");}else{ echo $baseurl_short."pages/user/user_change_password.php";}?>">&lt;&nbsp;<?php echo $lang["back"]?></a></p><h1><?php echo $lang["apiaccess"]?></h1>
+
+<h1><?php echo $lang["apiaccess"]?></h1>
 
 
 <?php if (!$enable_remote_apis || $api_scramble_key=="abcdef123"){echo $lang["remoteapisnotavailable"]; exit();}?>
@@ -78,4 +79,3 @@ foreach($plugins as $plugin){
 </div></div>
 <?php
 include "../../include/footer.php";
-?>
