@@ -1625,13 +1625,23 @@ function send_collection_feedback($collection,$comment)
 	
 	
 	$cc=getval("email","");
-	If (filter_var($cc, FILTER_VALIDATE_EMAIL)) {
+	get_config_option($user['ref'],'email_user_notifications', $send_email);
+	If (filter_var($cc, FILTER_VALIDATE_EMAIL))
+		{
+		// Always send a mail so they can see the CC'd email
 		send_mail($user["email"],$applicationname . ": " . $lang["collectionfeedback"] . " - " . $cinfo["name"],$body,"","","",NULL,"",$cc);
 		}
-	else
+	else if($send_email)
 		{
 		send_mail($user["email"],$applicationname . ": " . $lang["collectionfeedback"] . " - " . $cinfo["name"],$body);
 		}
+	if(!$send_email)
+		{
+		// Add a system notification message with long timeout (30 days)
+		global $userref;
+		message_add($user["ref"],$lang["collectionfeedback"] . " - " . $cinfo["name"] . "<br />" . $body,"",(isset($userref))?$userref:$user['ref'],MESSAGE_ENUM_NOTIFICATION_TYPE_SCREEN,60 * 60 *24 * 30);
+		}
+			
 	
 	# Cancel the feedback request for this resource.
 	/* - Commented out - as it may be useful to leave the feedback request in case the user wishes to leave
