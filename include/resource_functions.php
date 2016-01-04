@@ -3292,7 +3292,7 @@ function notify_user_resources_approved($refs)
 	
     if(!is_array($refs))
         {
-        $refs=array($ref);    
+        $refs=array($refs);    
         }
 	for ($n=0;$n<count($refs);$n++)
 		{
