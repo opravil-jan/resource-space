@@ -202,6 +202,15 @@ $fieldcolumns=array("title"=>array($lang["property-title"],"",0,1),
 					"onchange_macro"=>array($lang["property-onchange_macro"],$lang["information-onchange_macro"],2,1)				
 					);
 
+# Remove some items if $execution_lockout is set to prevent code execution
+if ($execution_lockout)
+	{
+	unset($fieldcolumns["autocomplete_macro"]);
+	unset($fieldcolumns["exiftool_filter"]);
+	unset($fieldcolumns["value_filter"]);
+	unset($fieldcolumns["onchange_macro"]);
+	}
+
 $modify_resource_type_field_columns=hook("modifyresourcetypefieldcolumns","",array($fieldcolumns));
 if($modify_resource_type_field_columns!=''){
         $fieldcolumns=$modify_resource_type_field_columns;

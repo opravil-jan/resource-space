@@ -2859,3 +2859,8 @@ $user_pref_system_management_notifications=true;
 
 # User preference - email_user_notifications. Option to receive emails instead of new style system notifications where appropriate. 
 $email_user_notifications=false;
+
+# Execution lockout mode - prevents entry of SQL and PHP even to admin users (e.g. config overrides and report SQL, and upload of new plugins) - useful on shared / multi-tennant systems.
+$execution_lockout=false;
+
+

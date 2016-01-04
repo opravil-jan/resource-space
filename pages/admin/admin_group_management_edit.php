@@ -108,7 +108,8 @@ if (getval("save",false))
 
 	foreach (array("name","permissions","fixed_theme","parent","search_filter","edit_filter","derestrict_filter",
 					"resource_defaults","config_options","welcome_message","ip_restrict","request_mode","allow_registration_selection") as $column)		
-		{		
+		
+		{
 		if ($column=="allow_registration_selection")
 			{
 			$val=getval($column,"0") ? "1" : "0";
@@ -125,6 +126,9 @@ if (getval("save",false))
 			{
 			$val=getvalescaped($column,"");
 			}
+			
+		if ($execution_lockout && $column=="config_options") {$val="";} # Do not allow config overrides if $execution_lockout is set.
+		
 		if (isset($sql))
 			{
 			$sql.=",";
@@ -285,6 +289,7 @@ include "../../include/header.php";
 			<div class="clearerleft"></div>
 		</div>
 
+		<?php if (!$execution_lockout) { ?>
 		<div class="Question">
 			<label for="config_options"><?php echo $lang["property-override_config_options"]; ?></label>
 			<textarea name="config_options" id="configOptionsBox" class="stdwidth" rows="12" cols="50"><?php echo $record['config_options']; ?></textarea>
@@ -317,6 +322,7 @@ include "../../include/header.php";
 <?php
 		}
 ?>		</div>
+		<?php } ?>
 
 		<div class="Question">
 			<label for="welcome_message"><?php echo $lang["property-email_welcome_message"]; ?></label>

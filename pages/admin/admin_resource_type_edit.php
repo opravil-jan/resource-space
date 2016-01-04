@@ -46,6 +46,8 @@ if (getval("save","")!="")
 	log_activity(null,LOG_CODE_EDITED,$allowed_extensions,'resource_type','allowed_extensions',$ref);
 	log_activity(null,LOG_CODE_EDITED,$tab,'resource_type','tab_name',$ref);
 
+        if ($execution_lockout) {$config_options="";} # Not allowed to save PHP if execution_lockout set.
+        
 	sql_query("update resource_type set name='" . $name . "',config_options='" . $config_options . "', allowed_extensions='" . $allowed_extensions . "',tab_name='" . $tab . "' where ref='$ref'");
 	
 	redirect(generateURL($baseurl_short . "pages/admin/admin_resource_types.php",$url_params));
@@ -198,7 +200,7 @@ else
     
     
     
-    
+    <?php if (!$execution_lockout) { ?>
     <div class="Question">
 	<label><?php echo $lang["property-override_config_options"] ?></label>
 	<textarea name="config_options" class="stdwidth" rows=5 cols=50><?php echo htmlspecialchars($restypedata["config_options"])?></textarea>
@@ -208,7 +210,8 @@ else
 	</div>
 	<div class="clearerleft"> </div>
     </div>
-    
+    <?php } ?>
+
     <div class="Question">
 	<label><?php echo $lang["property-tab_name"]?></label>
 	<input name="tab" type="text" class="stdwidth" value="<?php echo htmlspecialchars($restypedata["tab_name"])?>">
