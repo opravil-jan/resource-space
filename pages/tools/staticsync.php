@@ -188,12 +188,12 @@ function ProcessFolder($folder)
             if(array_search($extension, $banned_extensions)){continue;}
             /* Above Code Adapted from CMay's bug report */
             
-            $count++;
             if ($count > $staticsync_max_files) { return(true); }
 
             # Already exists?
             if (!isset($done[$shortpath]))
                 {
+                $count++;
                 echo "Processing file: $fullpath" . PHP_EOL;
                 
                 if ($collection == 0 && $staticsync_autotheme)
@@ -424,6 +424,7 @@ function ProcessFolder($folder)
                 $filemod = filemtime($fullpath);
                 if (array_key_exists($shortpath,$modtimes) && ($filemod > strtotime($modtimes[$shortpath])))
                     {
+                    $count++;
                     # File has been modified since we last created previews. Create again.
                     $rd = sql_query("SELECT ref, has_image, file_modified, file_extension FROM resource 
                                         WHERE file_path='" . escape_check($shortpath) . "'");
