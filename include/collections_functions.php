@@ -1626,18 +1626,19 @@ function send_collection_feedback($collection,$comment)
 	
 	$cc=getval("email","");
 	get_config_option($user['ref'],'email_user_notifications', $send_email);
-	If (filter_var($cc, FILTER_VALIDATE_EMAIL))
+	// Always send a mail for the feedback whatever the user preference, since the  feedback may be very long so can then refer to the CC'd email
+	if (filter_var($cc, FILTER_VALIDATE_EMAIL))
 		{
-		// Always send a mail so they can see the CC'd email
 		send_mail($user["email"],$applicationname . ": " . $lang["collectionfeedback"] . " - " . $cinfo["name"],$body,"","","",NULL,"",$cc);
 		}
-	else if($send_email)
+	else
 		{
 		send_mail($user["email"],$applicationname . ": " . $lang["collectionfeedback"] . " - " . $cinfo["name"],$body);
 		}
+		
 	if(!$send_email)
 		{
-		// Add a system notification message with long timeout (30 days)
+		// Add a system notification message as well if the user has not 'opted out'
 		global $userref;
 		message_add($user["ref"],$lang["collectionfeedback"] . " - " . $cinfo["name"] . "<br />" . $body,"",(isset($userref))?$userref:$user['ref'],MESSAGE_ENUM_NOTIFICATION_TYPE_SCREEN,60 * 60 *24 * 30);
 		}
