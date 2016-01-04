@@ -264,7 +264,7 @@ function render_actions(array $collection_data, $top_actions = true, $two_line =
 
                                 if(basename(document.URL).substr(0, 17) === 'collection_manage')
                                     {
-                                    CentralSpaceLoad('<?php echo $baseurl; ?>/pages/collection_manage.php');
+                                    CentralSpaceLoad(document.URL);
                                     }
                                 else
                                     {
