@@ -12,8 +12,6 @@ include_once dirname(__FILE__). '/../include/csv_functions.php';
 
 
 
-global $banned_extensions;
-
 // Init
 $fd                  = 'user_' . $userref . '_csv_user_batch_uploaded_data';
 $process_csv         = ('' !== getvalescaped('process_csv', ''));
@@ -126,16 +124,7 @@ else
             mkdir($csv_dir, 0777, true);
             }
 
-        $uploaded_file_pathinfo  = pathinfo($_FILES[$fd]['name']);
-        $uploaded_file_extension = $uploaded_file_pathinfo['extension'];
-
-        $extension_banned = false;
-        if(in_array($uploaded_file_extension, $banned_extensions))
-            {
-            $extension_banned = true;
-            }
-
-        if($extension_banned && move_uploaded_file($_FILES[$fd]['tmp_name'], $csv_file))
+        if(move_uploaded_file($_FILES[$fd]['tmp_name'], $csv_file))
             {
             ?>
             <form action="<?php echo $_SERVER["SCRIPT_NAME"]; ?>">
