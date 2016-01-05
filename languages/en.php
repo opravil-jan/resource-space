@@ -958,6 +958,7 @@ $lang["duplicateresourceupload"]="Upload failed. This file matches existing reso
 $lang["noresourcesfound"]="No resources found";
 $lang["userlog"]="User log";
 $lang["ipaddressrestriction"]="IP address restriction (optional)";
+$lang["searchfilteroverride"]="Search filter override";
 $lang["wildcardpermittedeg"]="Wildcard permitted e.g.";
 
 # New for 1.6

@@ -132,6 +132,8 @@ if (($user["login_tries"]>=$max_login_attempts_per_username) && (strtotime($user
 
 <div class="Question"><label><?php echo $lang["ipaddressrestriction"]?><br/><?php echo $lang["wildcardpermittedeg"]?> 194.128.*</label><input name="ip_restrict" type="text" class="stdwidth" value="<?php echo $user["ip_restrict"]?>"><div class="clearerleft"> </div></div>
 
+<div class="Question"><label><?php echo $lang["searchfilteroverride"]?></label><input name="search_filter_override" type="text" class="stdwidth" value="<?php echo $user["search_filter_override"]?>"><div class="clearerleft"> </div></div>
+
 <?php hook("additionaluserfields");?>
 <?php if (!hook("replacecomments")) { ?>
 <div class="Question"><label><?php echo $lang["comments"]?></label><textarea name="comments" class="stdwidth" rows=5 cols=50><?php echo htmlspecialchars($user["comments"])?></textarea><div class="clearerleft"> </div></div>

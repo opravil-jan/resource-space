@@ -1666,9 +1666,8 @@ function setup_user($userdata)
 			sql_query("update user set current_collection='$usercollection' where ref='$userref'");
 			}
 		}
-	
-        
-        $usersearchfilter=$userdata["search_filter"];
+
+        $usersearchfilter=isset($userdata["search_filter_override"]) && $userdata["search_filter_override"]!='' ? $userdata["search_filter_override"] : $userdata["search_filter"];
         $usereditfilter=$userdata["edit_filter"];
         $userderestrictfilter=$userdata["derestrict_filter"];
         $hidden_collections=explode(",",$userdata["hidden_collections"]);

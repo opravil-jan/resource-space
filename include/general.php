@@ -1006,8 +1006,8 @@ function get_user($ref)
         if (isset($udata_cache[$ref])){
           $return=$udata_cache[$ref];
         } else {
-	$udata_cache[$ref]=sql_query("select u.*, g.permissions, g.fixed_theme, g.parent, g.search_filter, g.edit_filter, g.ip_restrict ip_restrict_group, g.name groupname, u.ip_restrict ip_restrict_user, resource_defaults,g.config_options,g.request_mode, g.derestrict_filter from user u left join usergroup g on u.usergroup=g.ref where u.ref='$ref'");
-	}
+	$udata_cache[$ref]=sql_query("select u.*, g.permissions, g.fixed_theme, g.parent, g.search_filter, g.edit_filter, g.ip_restrict ip_restrict_group, g.name groupname, u.ip_restrict ip_restrict_user, u.search_filter_override, resource_defaults,g.config_options,g.request_mode, g.derestrict_filter from user u left join usergroup g on u.usergroup=g.ref where u.ref='$ref'");
+    }
     
 	# Return a user's credentials.
 	if (count($udata_cache[$ref])>0) {return $udata_cache[$ref][0];} else {return false;}
@@ -1066,7 +1066,8 @@ function save_user($ref)
 		log_activity(null,LOG_CODE_EDITED,trim(getvalescaped("fullname","")),'user','fullname',$ref);
 		log_activity(null,LOG_CODE_EDITED,trim(getvalescaped("email","")),'user','email',$ref);
 		log_activity(null,LOG_CODE_EDITED,trim(getvalescaped("usergroup","")),'user','usergroup',$ref);
-		log_activity(null,LOG_CODE_EDITED,getvalescaped("ip_restrict",""),'user','ip_restrict',$ref,null,'');
+        log_activity(null,LOG_CODE_EDITED,getvalescaped("ip_restrict",""),'user','ip_restrict',$ref,null,'');
+        log_activity(null,LOG_CODE_EDITED,getvalescaped("search_filter_override",""),'user','search_filter_override',$ref,null,'');
 		log_activity(null,LOG_CODE_EDITED,$expires,'user','account_expires',$ref);
 		log_activity(null,LOG_CODE_EDITED,getvalescaped("comments",""),'user','comments',$ref);
 		log_activity(null,LOG_CODE_EDITED,((getval("approved","")=="")?"0":"1"),'user','approved',$ref);
@@ -1078,6 +1079,7 @@ function save_user($ref)
 			usergroup='" . getvalescaped("usergroup","") . "',
 			account_expires=$expires,
 			ip_restrict='" . getvalescaped("ip_restrict","") . "',
+			search_filter_override='" . getvalescaped("search_filter_override","") . "',
 			comments='" . getvalescaped("comments","") . "',
 			approved='" . ((getval("approved","")=="")?"0":"1") . "' $additional_sql where ref='$ref'");
 		}
@@ -2948,12 +2950,16 @@ function check_access_key($resource,$key)
                     # Select the user group from the access key instead.
                     $groupjoin="g.ref='" . escape_check($keys[0]["usergroup"]) . "'";
                     }
-		$userinfo=sql_query("select g.ref usergroup,g.permissions,g.fixed_theme,g.search_filter from user u join usergroup g on $groupjoin where u.ref='$user'");
+		$userinfo=sql_query("select g.ref usergroup,g.permissions,g.fixed_theme,g.search_filter,u.search_filter_override from user u join usergroup g on $groupjoin where u.ref='$user'");
 		if (count($userinfo)>0)
 			{
                         $usergroup=$userinfo[0]["usergroup"]; # Older mode, where no user group was specified, find the user group out from the table.
 			$userpermissions=explode(",",$userinfo[0]["permissions"]);
 			$usersearchfilter=$userinfo[0]["search_filter"];
+
+            $usersearchfilter=isset($userinfo[0]["search_filter_override"]) && $userinfo[0]["search_filter_override"]!='' ? $userinfo[0]["search_filter_override"] : $userinfo[0]["search_filter"];
+
+
 			if (trim($userinfo[0]["fixed_theme"])!="") {$userfixedtheme=$userinfo[0]["fixed_theme"];} # Apply fixed theme also
 
 			if (hook("modifyuserpermissions")){$userpermissions=hook("modifyuserpermissions");}
