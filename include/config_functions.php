@@ -746,7 +746,7 @@ function config_generate_AutoSaveConfigOption_function($post_url)
 
 function config_process_file_input(array $page_def, $file_location, $redirect_location)
     {
-    global $baseurl, $storagedir, $storageurl;
+    global $baseurl, $storagedir, $storageurl, $banned_extensions;
 
     $file_server_location = $storagedir . '/' . $file_location;
 
@@ -808,6 +808,11 @@ function config_process_file_input(array $page_def, $file_location, $redirect_lo
                 // We add a placeholder for storage_url so we can reach the file easily 
                 // without storing the full path in the database
                 $saved_filename          = sprintf('[storage_url]/%s/%s.%s', $file_location, $config_name, $uploaded_file_extension);
+
+                if(in_array($uploaded_file_extension, $banned_extensions))
+                    {
+                    trigger_error('You are not allowed to upload "' . $uploaded_file_extension . '" files to the system!');
+                    }
 
                 if(!move_uploaded_file($_FILES[$config_name]['tmp_name'], $uploaded_filename))
                     {

@@ -1304,7 +1304,7 @@ $log_resource_views=false;
 
 # A list of file extentions of file types that cannot be uploaded for security reasons.
 # For example; uploading a PHP file may allow arbirtary execution of code, depending on server security settings.
-$banned_extensions=array("php","cgi","pl","exe","asp","jsp");
+$banned_extensions=array("php","cgi","pl","exe","asp","jsp", 'sh', 'bash');
 
 #Set a default access value for the upload page. This will override the default resource template value.
 #Change the value of this option to the access id number
