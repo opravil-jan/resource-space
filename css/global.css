@@ -1004,6 +1004,10 @@ div.video-js {margin:auto;}
 	border:none;
 	}
 
+#modal_dialog, .ui-dialog
+	{
+    z-index: 103;
+    }
 /* Dropdown Actions */
 #CollectionMenu .ActionsContainer {
 	margin: 10px 0px;

@@ -2369,8 +2369,11 @@ function search_special($search,$sql_join,$fetchrows,$sql_prefix,$sql_suffix,$or
                     }
                 }   
             }   
-
-        $result = sql_query($sql_prefix . "select distinct c.date_added,c.comment,c.purchase_size,c.purchase_complete,r.hit_count score,length(c.comment) commentset, $select from resource r  join collection_resource c on r.ref=c.resource $colcustperm  where c.collection='" . $collection . "' and $colcustfilter group by r.ref order by $order_by" . $sql_suffix,false,$fetchrows);
+        $searchsql = $sql_prefix . "select distinct c.date_added,c.comment,c.purchase_size,c.purchase_complete,r.hit_count score,length(c.comment) commentset, $select from resource r  join collection_resource c on r.ref=c.resource $colcustperm  where c.collection='" . $collection . "' and $colcustfilter group by r.ref order by $order_by" . $sql_suffix;
+        $collectionsearchsql=hook('modifycollectionsearchsql','',array($searchsql));
+        if($collectionsearchsql)
+            {$searchsql=$collectionsearchsql;}
+        $result = sql_query($searchsql,false,$fetchrows);
         hook('beforereturnresults', '', array($result, $archive)); 
         
         return $result;

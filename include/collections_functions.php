@@ -180,14 +180,15 @@ function add_resource_to_collection($resource,$collection,$smartadd=false,$size=
 			}
 		
 		hook("Addtocollectionsuccess", "", array( "resourceId" => $resource, "collectionId" => $collection ) );
-		sql_query("delete from collection_resource where resource='$resource' and collection='$collection'");
-		sql_query("insert into collection_resource(resource,collection,purchase_size) values ('$resource','$collection','$size')");
+		
+		if(!hook("addtocollectionsql", "", array( $resource,$collection, $size)))
+			{
+			sql_query("delete from collection_resource where resource='$resource' and collection='$collection'");
+			sql_query("insert into collection_resource(resource,collection,purchase_size) values ('$resource','$collection','$size')");
+			}
 		
 		#log this
 		collection_log($collection,"a",$resource);
-		
-		
-
 		return true;
 		}
 	else
