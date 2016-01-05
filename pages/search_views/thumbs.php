@@ -124,7 +124,7 @@ if (!hook("renderresultthumb"))
 				{
 				if ($result[$n]['user_rating']=="") {$result[$n]['user_rating']=0;}
 				$modified_user_rating=hook("modifyuserrating");
-				if ($modified_user_rating){$result[$n]['user_rating']=$modified_user_rating;}
+				if ($modified_user_rating!=''){$result[$n]['user_rating']=$modified_user_rating;}
 				?>
 				<div  class="RatingStars" onMouseOut="UserRatingDisplay(<?php echo $result[$n]['ref']?>,<?php echo $result[$n]['user_rating']?>,'StarCurrent');">&nbsp;<?php 
 				for ($z=1;$z<=5;$z++)

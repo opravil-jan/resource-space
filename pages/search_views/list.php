@@ -86,7 +86,7 @@ if (!hook("replacelistitem"))
 						{$result[$n]['user_rating']=0;}
 
 					$modified_user_rating=hook("modifyuserrating");
-					if ($modified_user_rating)
+					if ($modified_user_rating!='')
 						{$result[$n]['user_rating']=$modified_user_rating;}
 					?>
 					<div  
