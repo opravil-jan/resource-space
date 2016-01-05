@@ -94,6 +94,11 @@ if (getval("save",false))
 			$logo_extension=$logo_pathinfo['extension'];
 			$logo_filename="{$logo_dir}/group{$ref}.{$logo_extension}";
 
+            if(in_array($logo_extension, $banned_extensions))
+                {
+                trigger_error('You are not allowed to upload "' . $logo_extension . '" files to the system!');
+                }
+
 			if (!move_uploaded_file($_FILES['grouplogo']['tmp_name'], $logo_filename))		// this will overwrite if already existing
 				{
 				unset ($logo_extension);
