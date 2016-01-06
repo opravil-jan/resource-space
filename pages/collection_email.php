@@ -297,7 +297,9 @@ if(!$user_select_internal)
 	<div class="Question">
 	<label><?php echo $lang["externalselectresourceexpires"]?></label>
 	<select name="expires" class="stdwidth">
-		<option value=""><?php echo $lang["never"]?></option>
+		<?php 
+		global $collection_share_expire_days, $collection_share_expire_never;
+		if($collection_share_expire_never){?><option value=""><?php echo $lang["never"]?></option><?php }?>
 		<?php 
 		for ($n=1;$n<=150;$n++)
 			{
