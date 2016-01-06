@@ -20,14 +20,6 @@ $page_def[] = config_add_file_input(
 );
 $page_def[] = config_add_text_input('email_from', $lang['setup-emailfrom'], false, 300, false, '', true);
 $page_def[] = config_add_text_input('email_notify', $lang['setup-emailnotify'], false, 300, false, '', true);
-$page_def[] = config_add_boolean_select(
-    'metadata_read_default',
-    $lang['embedded_metadata'],
-    array($lang['embedded_metadata_donot_extract_option'], $lang['embedded_metadata_extract_option']),
-    300,
-    '',
-    true
-);
 $page_def[] = config_add_html('</div>');
 
 
@@ -109,6 +101,14 @@ $page_def[] = config_add_html('</div>');
 // Metadata section
 $page_def[] = config_add_html('<h3 class="CollapsibleSectionHead collapsed">' . $lang['metadata'] . '</h3><div id="SystemConfigMetadataSection" class="CollapsibleSection">');
 $page_def[] = config_add_boolean_select('metadata_report', $lang['metadata-report'], $enable_disable_options, 300, '', true);
+$page_def[] = config_add_boolean_select(
+    'metadata_read_default',
+    $lang['embedded_metadata'],
+    array($lang['embedded_metadata_donot_extract_option'], $lang['embedded_metadata_extract_option']),
+    300,
+    '',
+    true
+);
 $page_def[] = config_add_html('</div>');
 
 
