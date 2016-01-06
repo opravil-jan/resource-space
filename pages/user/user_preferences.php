@@ -340,11 +340,47 @@ include "../../include/header.php";
         $page_def = $plugin_specific_definition;
         }
 
+
+    // Process autosaving requests
+    // Note: $page_def must be defined by now in order to make sure we only save options that we've defined
+    if('true' === getval('ajax', '') && 'true' === getval('autosave', ''))
+        {
+        // Get rid of any output we have so far as we don't need to return it
+        ob_end_clean();
+
+        $response['success'] = true;
+        $response['message'] = '';
+
+        $autosave_option_name  = getvalescaped('autosave_option_name', '');
+        $autosave_option_value = getvalescaped('autosave_option_value', '');
+
+        // Search for the option name within our defined (allowed) options
+        // if it is not there, error and don't allow saving it
+        $page_def_option_index = array_search($autosave_option_name, array_column($page_def, 1));
+        if(false === $page_def_option_index)
+            {
+            $response['success'] = false;
+            $response['message'] = $lang['systemconfig_option_not_allowed_error'];
+
+            echo json_encode($response);
+            exit();
+            }
+
+        if(!set_config_option($userref, $autosave_option_name, $autosave_option_value))
+            {
+            $response['success'] = false;
+            }
+
+        echo json_encode($response);
+        exit();
+        }
+
+
     config_generate_html($page_def);
     ?>
 </div>
     <script>registerCollapsibleSections();</script>
-    <?php config_generate_AutoSaveConfigOption_function($baseurl . '/pages/ajax/user_preferences.php'); ?>
+    <?php config_generate_AutoSaveConfigOption_function($baseurl . '/pages/user/user_preferences.php'); ?>
 </div>
 
 <?php

@@ -4,23 +4,6 @@ include_once '../../include/general.php';
 include '../../include/authenticate.php'; if(!checkperm('a')) { exit('Permission denied.'); }
 include_once '../../include/config_functions.php';
 
-// Process autosaving requests
-if(getval('ajax', '') === 'true' && getval('autosave', '') === 'true')
-    {
-    $response['success'] = true;
-    $response['message'] = '';
-
-    $autosave_option_name  = getvalescaped('autosave_option_name', '');
-    $autosave_option_value = getvalescaped('autosave_option_value', '');
-
-    if(!set_config_option(null, $autosave_option_name, $autosave_option_value))
-        {
-        $response['success'] = false;
-        }
-
-    echo json_encode($response);
-    exit();
-    }
 
 $enable_disable_options = array($lang['userpreference_disable_option'], $lang['userpreference_enable_option']);
 $yes_no_options         = array($lang['no'], $lang['yes']);
@@ -239,6 +222,39 @@ if(is_array($plugin_specific_definition) && !empty($plugin_specific_definition))
     {
     $page_def = $plugin_specific_definition;
     }
+
+
+// Process autosaving requests
+// Note: $page_def must be defined by now in order to make sure we only save options that we've defined
+if('true' === getval('ajax', '') && 'true' === getval('autosave', ''))
+    {
+    $response['success'] = true;
+    $response['message'] = '';
+
+    $autosave_option_name  = getvalescaped('autosave_option_name', '');
+    $autosave_option_value = getvalescaped('autosave_option_value', '');
+
+    // Search for the option name within our defined (allowed) options
+    // if it is not there, error and don't allow saving it
+    $page_def_option_index = array_search($autosave_option_name, array_column($page_def, 1));
+    if(false === $page_def_option_index)
+        {
+        $response['success'] = false;
+        $response['message'] = $lang['systemconfig_option_not_allowed_error'];
+
+        echo json_encode($response);
+        exit();
+        }
+
+    if(!set_config_option(null, $autosave_option_name, $autosave_option_value))
+        {
+        $response['success'] = false;
+        }
+
+    echo json_encode($response);
+    exit();
+    }
+
 
 config_process_file_input($page_def, 'system/config', $baseurl . '/pages/admin/admin_system_config.php');
 process_config_options();
