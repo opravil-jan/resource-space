@@ -55,6 +55,8 @@ include "../include/header.php";
 	</div>
 
 	<?php 
+	hook('collectionrequestdetail','',array($cinfo['ref']));
+	
 	# Only ask for user details if this is an external share. Otherwise this is already known from the user record.
 	if ($k!="") { ?>
 	<div class="Question">

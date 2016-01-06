@@ -198,13 +198,17 @@ function add_resource_to_collection($resource,$collection,$smartadd=false,$size=
 		}
 	}
 
-function remove_resource_from_collection($resource,$collection,$smartadd=false)
+function remove_resource_from_collection($resource,$collection,$smartadd=false,$size="")
 	{
 	if (collection_writeable($collection)||$smartadd)
 		{	
 		hook("Removefromcollectionsuccess", "", array( "resourceId" => $resource, "collectionId" => $collection ) );
-		sql_query("delete from collection_resource where resource='$resource' and collection='$collection'");
-		sql_query("delete from external_access_keys where resource='$resource' and collection='$collection'");
+		
+		if(!hook("removefromcollectionsql", "", array( $resource,$collection, $size)))
+			{
+			sql_query("delete from collection_resource where resource='$resource' and collection='$collection'");
+			sql_query("delete from external_access_keys where resource='$resource' and collection='$collection'");
+			}
 		
 		#log this
 		collection_log($collection,"r",$resource);
