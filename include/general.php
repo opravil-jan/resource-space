@@ -4769,26 +4769,26 @@ function get_notification_users($userpermission="SYSTEM_ADMIN")
 			{
 			case "USER_ADMIN";
 			// Return all users in groups with u permissions AND either no 'U' restriction, or with 'U' but in appropriate group
-			$notification_users_cache[$userpermissionindex] = sql_query("select u.ref, u.email from usergroup ug left join user u on u.usergroup=ug.ref where find_in_set(binary 'u',ug.permissions) <> 0 and u.ref<>''" . (is_int($usergroup)?" and (find_in_set(binary 'U',ug.permissions) = 0 or ug.ref =(select parent from usergroup where ref=" . $usergroup . "))":""));	
+			$notification_users_cache[$userpermissionindex] = sql_query("select u.ref, u.email from usergroup ug join user u on u.usergroup=ug.ref where find_in_set(binary 'u',ug.permissions) <> 0 and u.ref<>''" . (is_int($usergroup)?" and (find_in_set(binary 'U',ug.permissions) = 0 or ug.ref =(select parent from usergroup where ref=" . $usergroup . "))":""));	
 			return $notification_users_cache[$userpermissionindex];
 			break;
 			
 			case "RESOURCE_ACCESS";
 			// Notify users who can grant access to resources, get all users in groups with R permissions
-			$notification_users_cache[$userpermissionindex] = sql_query("select u.ref, u.email from usergroup ug left join user u on u.usergroup=ug.ref where find_in_set(binary 'R',ug.permissions) <> 0");	
+			$notification_users_cache[$userpermissionindex] = sql_query("select u.ref, u.email from usergroup ug join user u on u.usergroup=ug.ref where find_in_set(binary 'R',ug.permissions) <> 0");	
 			return $notification_users_cache[$userpermissionindex];		
 			break;
 			
 			case "RESEARCH_ADMIN";
 			// Notify research admins, get all users in groups with r permissions
-			$notification_users_cache[$userpermissionindex] = sql_query("select u.ref, u.email from usergroup ug left join user u on u.usergroup=ug.ref where find_in_set(binary 'r',ug.permissions) <> 0");	
+			$notification_users_cache[$userpermissionindex] = sql_query("select u.ref, u.email from usergroup ug join user u on u.usergroup=ug.ref where find_in_set(binary 'r',ug.permissions) <> 0");	
 			return $notification_users_cache[$userpermissionindex];		
 			break;
 					
 			case "SYSTEM_ADMIN";
 			default;
 			// Get all users in groups with A permissions (default if incorrect admin type has been passed)
-			$notification_users_cache[$userpermissionindex] = sql_query("select u.ref, u.email from usergroup ug left join user u on u.usergroup=ug.ref where find_in_set(binary 'A',ug.permissions) <> 0");	
+			$notification_users_cache[$userpermissionindex] = sql_query("select u.ref, u.email from usergroup ug join user u on u.usergroup=ug.ref where find_in_set(binary 'A',ug.permissions) <> 0");	
 			return $notification_users_cache[$userpermissionindex];
 			break;
 		
@@ -4803,7 +4803,7 @@ function get_notification_users($userpermission="SYSTEM_ADMIN")
 			if($condition!=""){$condition.=" and ";}
 			$condition.="find_in_set(binary '" . $permission . "',ug.permissions) <> 0";
 			}
-		$notification_users_cache[$userpermissionindex] = sql_query("select u.ref, u.email from usergroup ug left join user u on u.usergroup=ug.ref where $condition");	
+		$notification_users_cache[$userpermissionindex] = sql_query("select u.ref, u.email from usergroup ug join user u on u.usergroup=ug.ref where $condition");	
 		return $notification_users_cache[$userpermissionindex];
 		}
 	}
