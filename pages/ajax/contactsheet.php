@@ -121,6 +121,7 @@ function contact_sheet_add_fields($resourcedata)
 			$raw_value = sql_query($query);
 
 			// Default value:
+			if (isset($raw_value[0])){
 			$value = $raw_value[0]['value'];
 			// When values have been saved using CKEditor make sure to remove html tags and decode html entitities:
 			if($raw_value[0]['field_type'] == '8')
@@ -129,6 +130,7 @@ function contact_sheet_add_fields($resourcedata)
 				$value = mb_convert_encoding($value, 'UTF-8', 'HTML-ENTITIES');
 				}
 			$pdf->MultiCell($pagewidth-2,0,$value,'','L',false,1);		
+			}
 			}
 			
 		}
