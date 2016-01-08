@@ -22,7 +22,7 @@ if ($modal)
 	<?php
 	}
 
-if (isset($anonymous_login) && $anon_login_modal && !$modal && getval("logout","")==false)
+if (isset($anonymous_login) && $anon_login_modal && !$modal && getval("logout","")==false && !array_key_exists("username",$_POST))
 	{
 	$anon_login_extras="loginmodal=true&url=".urlencode($url)."&api=".urlencode($api)."&error=".urlencode(getval("error",""))."&auto=".urlencode(getval("auto",""))."&nocookies=".urlencode(getval("nocookies",""));
 	
