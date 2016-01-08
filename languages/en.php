@@ -2382,6 +2382,7 @@ $lang["cpu_benchmark"]="CPU benchmark";
 $lang["disk_write_speed"]="Disk write speed";
 $lang["metadata_option_change_warning"]="Please note that at present, updating these options will not automatically alter stored parameters. Batch editing must be used to migrate existing stored values.";
 /* Manage slideshows */
+$lang["manage_slideshow"] = "Manage slideshow";
 $lang["action-add-new"] = "Add new";
 $lang["action-submit-button-label"] = "Submit";
 $lang["slideshow_use_static_image"] = "Use a single random image from the set (image will not change unless page is reloaded";
