@@ -371,9 +371,15 @@ function managed_collection_request($ref,$details,$ref_is_resource=false)
         }
     
     }
-
+    $amendedmessage=hook('amend_request_message','', array($userref, $ref, isset($collectiondata) ? $collectiondata : array(), $message, isset($collectiondata)));
+    if($amendedmessage)
+        {
+        $message=$amendedmessage;
+        }
+    
     // Manage collection requests:
     hook('autoassign_collection_requests', '', array($userref, isset($collectiondata) ? $collectiondata : array(), $message, isset($collectiondata)));
+    
     if(isset($manage_request_admin) && isset($collectiondata)) {
 
         $all_r_types = get_resource_types();
@@ -524,6 +530,7 @@ function managed_collection_request($ref,$details,$ref_is_resource=false)
     $userconfirmmessage = $lang["requestsenttext"] . "<br /><br />$message<br /><br />" . $lang["clicktoviewresource"] . "<br />$baseurl/?c=$ref";
     $message=$lang["user_made_request"]. "<br /><br />" . $lang["username"] . ": " . $username . "<br />$message<br /><br />";
     $message.=$lang["clicktoviewresource"] . "<br />$baseurl/?q=$request";
+    
     send_mail($admin_notify_email,$applicationname . ": " . $lang["requestcollection"] . " - $ref",$message,$useremail,$useremail,$admin_mail_template,$templatevars);
     if ($request_senduserupdates){send_mail($useremail,$applicationname . ": " . $lang["requestsent"] . " - $ref",$userconfirmmessage,$email_from,$email_notify,$user_mail_template,$templatevars);}    
     
