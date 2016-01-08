@@ -737,7 +737,6 @@ function SaveAndClearButtons($extraclass="")
 <?php hook("editbefresmetadata"); ?>
 <?php if (!hook("replaceedittype")) { ?>
 <?php
-if (!checkperm("F*")) {
 if(!$multiple)
     {
     ?>
@@ -785,7 +784,6 @@ else
     </div>
     <?php
     }
-}
 } # end hook("replaceedittype")
 
 $lastrt=-1;
