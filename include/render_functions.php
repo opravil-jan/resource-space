@@ -14,6 +14,7 @@ TO DO: add here other functions used for rendering such as:
 * Renders sort order functionality as a dropdown box
 *
 */
+if (!function_exists("render_sort_order")){
 function render_sort_order(array $order_fields)
     {
     global $order_by, $baseurl_short, $lang, $search, $archive, $restypes, $k, $sort;
@@ -92,11 +93,12 @@ function render_sort_order(array $order_fields)
     <?php
     return;
     }
-
+}
 /**
 * Renders a dropdown option
 * 
 */
+if (!function_exists("render_dropdown_option")){
 function render_dropdown_option($value, $label, array $data_attr = array(), $extra_tag_attributes  = '')
     {
     $result = '<option value="' . $value . '"';
@@ -119,12 +121,13 @@ function render_dropdown_option($value, $label, array $data_attr = array(), $ext
 
     return $result;
     }
-
+}
 
 /**
 * Renders search actions functionality as a dropdown box
 * 
 */
+if (!function_exists("render_actions")){
 function render_actions(array $collection_data, $top_actions = true, $two_line = true, $id = '')
     {
     if(hook('prevent_running_render_actions'))
@@ -391,7 +394,7 @@ function render_actions(array $collection_data, $top_actions = true, $two_line =
     <?php
     return;
     }
-
+}
 /**
 * @param string $name
 * @param array  $current  Current selected values (eg. array(1, 3) for Admins and Super admins user groups selected)
