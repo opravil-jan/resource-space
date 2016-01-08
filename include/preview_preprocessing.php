@@ -570,6 +570,11 @@ if (($ffmpeg_fullpath!=false) && in_array($extension, $ffmpeg_audio_extensions))
 	# Produce the MP3 preview.
 	$mp3file = get_resource_path($ref,true,"",false,"mp3"); 
 	$output = run_command($ffmpeg_fullpath . " -y -i " . escapeshellarg($file) . " " . $ffmpeg_audio_params . " " . escapeshellarg($mp3file));
+	if(!file_exists($mp3file))
+		{
+		sql_query("update resource set preview_attempts=ifnull(preview_attempts,0) + 1 where ref='$ref'");
+		echo debug("Failed to process resource " . $ref . " - MP3 creation failed.");
+		}	
 	}
 
 
