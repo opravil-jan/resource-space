@@ -13,7 +13,7 @@ function get_resource_path($ref,$getfilepath,$size,$generate=true,$extension="jp
 	if(!preg_match('/^[a-zA-Z0-9]+$/', $extension)){$extension="jpg";}
 //	if(preg_match('/\w/', $extension)){$extension="jpg";}
 
-	    $override=hook("get_resource_path_override","general",array($ref,$getfilepath,$size,$generate,$extension,$scramble,$page,$watermarked,$file_modified,$alternative,$includemodified));
+	    $override=hook("get_resource_path_override","",array($ref,$getfilepath,$size,$generate,$extension,$scramble,$page,$watermarked,$file_modified,$alternative,$includemodified));
 	    if (is_string($override)) {return $override;}
 
 	global $storagedir,$originals_separate_storage;
@@ -4717,27 +4717,6 @@ function get_slideshow_files_data()
     return $slideshow_files;
     }
 
-/**
- * Ensures the filename cannot leave the directory set.
- *
- * @param string $name
- * @return string
- */
-function safe_file_name($name)
-    {
-    # Returns a file name stipped of all non alphanumeric values
-    # Spaces are replaced with underscores
-    $alphanum="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_-";
-    $name=str_replace(" ","_",$name);
-    $newname="";
-    for ($n=0;$n<strlen($name);$n++)
-        {
-        $c=substr($name,$n,1);
-        if (strpos($alphanum,$c)!==false) {$newname.=$c;}
-        }
-    $newname=substr($newname,0,30);
-    return $newname;
-    }
 	
 	
 function get_notification_users($userpermission="SYSTEM_ADMIN")
