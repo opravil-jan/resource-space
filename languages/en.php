@@ -2372,19 +2372,20 @@ $lang["sendbulkmessage"]="Send bulk message";
 $lang["message_sent"]="Message sent";
 
 $lang["confirm_remove_custom_usergroup_access"]="This will revoke all custom user group access. Are you sure?";
-$lang['applogo_does_not_exists']="The uploaded logo is no longer available";
+$lang["applogo_does_not_exists"]="The uploaded logo is no longer available";
 
 /* Edit field options */
-$lang['manage_metadata_field_options'] = 'Manage metadata field options';
+$lang["manage_metadata_field_options"] = "Manage metadata field options";
 $lang["system_performance"]="System performance";
 $lang["mysql_throughput"]="MySQL throughput";
 $lang["cpu_benchmark"]="CPU benchmark";
 $lang["disk_write_speed"]="Disk write speed";
-
 $lang["metadata_option_change_warning"]="Please note that at present, updating these options will not automatically alter stored parameters. Batch editing must be used to migrate existing stored values.";
-
 /* Manage slideshows */
-$lang['manage_slideshow'] = 'Manage slideshow';
-$lang['action-add-new'] = 'Add new';
-$lang['action-submit-button-label'] = 'Submit';
+$lang["action-add-new"] = "Add new";
+$lang["action-submit-button-label"] = "Submit";
 $lang["slideshow_use_static_image"] = "Use a single random image from the set (image will not change unless page is reloaded";
+
+$lang["emailcollectionrequest"] = "[img_gfx/titles/title.gif]<br />The following user has made a request:<br />Username: [username]<br />User email: [useremail]<br /><br />Reason for request: [requestreason]<br /><br />Click the link below to view the request.<br /><a href='[requesturl]'>[requesturl]</a>";
+$lang["emailusercollectionrequest"] = "[img_gfx/titles/title.gif]<br />Your resource request has been submitted for approval and will be looked at shortly.:<br /><br />Reason for request: [requestreason]<br /><br />Click the link below to view the requested resources.<br /><a href='[url]'>[url]</a>";
+
