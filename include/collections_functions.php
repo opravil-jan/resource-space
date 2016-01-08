@@ -96,6 +96,7 @@ function get_user_collections($user,$find="",$order_by="name",$sort="ASC",$fetch
 	}
 }	
 
+if (!function_exists("get_collection")){
 function get_collection($ref)
 	{
 	# Returns all data for collection $ref
@@ -132,6 +133,7 @@ function get_collection($ref)
 		$return["request_feedback"]=$request_feedback;
 		return $return;}
 	}
+}
 
 function get_collection_resources($collection)
 	{
@@ -1987,7 +1989,8 @@ function update_collection_user($collection,$newuser)
 	sql_query("UPDATE collection SET user='$newuser' WHERE ref='$collection'");  
 	return true;	
 	}
-	
+
+if(!function_exists("compile_collection_actions")){	
 function compile_collection_actions(array $collection_data, $top_actions)
     {
     global $baseurl_short, $lang, $k, $userrequestmode, $zipcommand, $collection_download, $contact_sheet,
@@ -2397,3 +2400,4 @@ function compile_collection_actions(array $collection_data, $top_actions)
 
     return $options;
     }
+}
