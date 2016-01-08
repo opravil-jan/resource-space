@@ -40,7 +40,18 @@ if (getval("save","")!="")
 include "../include/header.php";
 ?>
 
-<div class="BasicsBox"> 
+<div class="BasicsBox">
+  <?php 
+  $backlink=getvalescaped("backlink","");
+  if($backlink!="")
+	{
+	?><p>
+	  <a href='<?php echo rawurldecode($backlink); ?>'>&lt;&nbsp;<?php echo $lang['back']; ?></a>
+	</p>
+	<?php
+	}?>
+		
+		
   <h1><?php echo $lang["requestcollection"]?></h1>
   <p><?php echo text("introtext")?></p>
   
