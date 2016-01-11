@@ -11,11 +11,13 @@ function save_proposed_changes($ref)
         
         for ($n=0;$n<count($fields);$n++)
             {
+            node_field_options_override($fields[$n]);
+
             if ($fields[$n]["type"]==2)
                 {
                 # construct the value from the ticked boxes
                 $val=","; # Note: it seems wrong to start with a comma, but this ensures it is treated as a comma separated list by split_keywords(), so if just one item is selected it still does individual word adding, so 'South Asia' is split to 'South Asia','South','Asia'.
-                $options=trim_array(explode(",",$fields[$n]["options"]));
+                $options = trim_array($fields[$n]['node_options']);
 
                 for ($m=0;$m<count($options);$m++)
                         {

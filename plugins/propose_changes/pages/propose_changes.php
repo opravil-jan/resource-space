@@ -89,6 +89,8 @@ if (getval("save","")!="")
 		$proposefields=get_resource_field_data($ref,false,true); // Get updated data after save so we can send email with values
 		for ($n=0;$n<count($proposefields);$n++)
 			{
+			node_field_options_override($proposefields[$n]);
+
 			# Has this field been accepted?
 			if (getval("accept_change_" . $proposefields[$n]["ref"],"")!="")
 				{	
@@ -523,6 +525,8 @@ if(!$editaccess)
 	$fieldcount=0;
 	for ($n=0;$n<count($proposefields);$n++)
 		{
+		node_field_options_override($proposefields[$n]);
+
 		if (is_field_displayed($proposefields[$n]))
 			{
 			$display_any_fields=true;
@@ -572,7 +576,8 @@ if(!$editaccess)
 
 	for ($n=0;$n<count($proposefields);$n++)
 		{
-		
+		node_field_options_override($proposefields[$n]);
+
 		# Should this field be displayed?
 		if (is_field_displayed($proposefields[$n]))
 			{	
