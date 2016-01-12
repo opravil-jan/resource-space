@@ -2386,7 +2386,7 @@ $lang["metadata_option_change_warning"]="Please note that at present, updating t
 $lang["manage_slideshow"] = "Manage slideshow";
 $lang["action-add-new"] = "Add new";
 $lang["action-submit-button-label"] = "Submit";
-$lang["slideshow_use_static_image"] = "Use a single random image from the set (image will not change unless page is reloaded";
+$lang["slideshow_use_static_image"] = "Use a single random image from the set (image will not change unless page is reloaded)";
 
 $lang["emailcollectionrequest"] = "[img_gfx/titles/title.gif]<br />The following user has made a request:<br />Username: [username]<br />User email: [useremail]<br /><br />Reason for request: [requestreason]<br /><br />Click the link below to view the request.<br /><a href='[requesturl]'>[requesturl]</a>";
 $lang["emailusercollectionrequest"] = "[img_gfx/titles/title.gif]<br />Your resource request has been submitted for approval and will be looked at shortly.:<br /><br />Reason for request: [requestreason]<br /><br />Click the link below to view the requested resources.<br /><a href='[url]'>[url]</a>";
