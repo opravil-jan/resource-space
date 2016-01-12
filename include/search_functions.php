@@ -2179,34 +2179,39 @@ function search_filter($search,$archive,$restypes,$starsearch,$recent_search_day
 	    $sql_filter.="(r.access<>'2' or (r.access=2 and ((rca.access is not null and rca.access<>2) or (rca2.access is not null and rca2.access<>2))))";
 	    }
 	    
-	# append archive searching (don't do this for collections or !listall, archived resources can still appear in these searches)
-	global $collections_omit_archived;
-	if (!$access_override && ((substr($search,0,8)!="!listall" && substr($search,0,11)!="!collection") || ($collections_omit_archived && !checkperm("e2"))))
+	# append archive searching. Updated Jan 2016 to apply to collections as resources in a pending state that are in a shared collection could bypass approval process
+	if (!checkperm("v") && !$access_override)
 	    {
-	    global $pending_review_visible_to_all,$search_all_workflow_states;
-	    if ($search_all_workflow_states)
-		{
-		# Nothing to append, as we're searching all states.
-		hook("search_all_workflow_states_filter");
+	    global $pending_review_visible_to_all,$search_all_workflow_states, $userref, $pending_submission_searchable_to_all;;
+	    if(substr($search,0,11)=="!collection")
+			{
+			# Resources in a collection may be in any archive state
+			global $collections_omit_archived;
+			if($collections_omit_archived && !checkperm("e2"))
+				{
+				$sql_filter.= (($sql_filter!="")?" and ":"") . "archive<>2";
+				}			
+			}		
+		elseif ($search_all_workflow_states)
+			{hook("search_all_workflow_states_filter");}   
+		elseif ($archive==0 && $pending_review_visible_to_all)
+            {
+            # If resources pending review are visible to all, when listing only active resources include
+            # pending review (-1) resources too.
+            if ($sql_filter!="") {$sql_filter.=" and ";}
+            $sql_filter.="archive in('0','-1')";
+            } 
+		else
+            {
+            # Append normal filtering - extended as advanced search now allows searching by archive state
+            if ($sql_filter!="") {$sql_filter.=" and ";}
+            $sql_filter.="archive = '$archive'";
+            }			
+        # Append standard filtering to hide resources in a pending state, whatever the search
+        if (!$pending_submission_searchable_to_all) {$sql_filter.= (($sql_filter!="")?" and ":"") . "(r.archive<>-2 or r.created_by='" . $userref . "')";}     
+		if (!$pending_review_visible_to_all){$sql_filter.=(($sql_filter!="")?" and ":"") . "(r.archive<>-1 or r.created_by='" . $userref . "')";}
 		}
-	    elseif ($archive==0 && $pending_review_visible_to_all)
-		{
-		# If resources pending review are visible to all, when listing only active resources include
-		# pending review (-1) resources too.
-		if ($sql_filter!="") {$sql_filter.=" and ";}
-		$sql_filter.="archive in('0','-1')";
-		}
-	    else
-		{
-		# Append normal filtering - extended as advanced search now allows searching by archive state
-		if ($sql_filter!="") {$sql_filter.=" and ";}
-		$sql_filter.="archive = '$archive'";
-		global $userref, $pending_submission_searchable_to_all;
-		if (!$pending_submission_searchable_to_all&&($archive=="-2")&&!((checkperm("e-2")&&checkperm("t"))||checkperm("v"))) $sql_filter.=" and created_by='" . $userref . "'";                     
-		if (!$pending_review_visible_to_all&&($archive=="-1")&&!((checkperm("e-1")&&checkperm("t"))||checkperm("v"))) $sql_filter.=" and created_by='" . $userref . "'";
-		}
-	    }
-	
+		
 	# Add code to filter out resoures in archive states that the user does not have access to due to a 'z' permission
 	$filterblockstates="";
 	for ($n=-2;$n<=3;$n++)
@@ -2322,7 +2327,8 @@ function search_special($search,$sql_join,$fetchrows,$sql_prefix,$sql_suffix,$or
 
         $colcustperm   = $sql_join;
         $colcustfilter = $sql_filter; // to avoid allowing this sql_filter to be modified by the $access_override search in the smart collection update below!!!
-
+        
+              
         # Special case if a key has been provided.
         if(getval('k', '') != '')
             {
