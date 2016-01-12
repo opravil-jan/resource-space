@@ -141,12 +141,14 @@ if(strpos($value, "\r\n") !== false)
 	    {
 	    $selected_values = explode(',', $value);
 	    }
+    $selected_values = trim_array($selected_values);
 
 	# Select all selected options
 	for ($m=0;$m<count($field['node_options']);$m++)
 		{
 		$trans=i18n_get_translated($field['node_options'][$m]);
-		if ($trans!="" && in_array($trans,$selected_values))
+			
+		if ($trans!="" && in_array(trim($trans),$selected_values))
 			{
 			?>
 			addKeyword_<?php echo $name ?>("<?php echo $trans ?>");
