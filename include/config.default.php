@@ -2863,4 +2863,6 @@ $email_user_notifications=false;
 # Execution lockout mode - prevents entry of SQL and PHP even to admin users (e.g. config overrides and report SQL, and upload of new plugins) - useful on shared / multi-tennant systems.
 $execution_lockout=false;
 
+# Load help page in a modal?
+$help_modal=true;
 

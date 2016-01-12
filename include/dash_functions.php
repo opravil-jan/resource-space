@@ -807,7 +807,7 @@ function get_user_available_tiles($user,$tile="null")
  */
 function get_user_dash($user)
 	{
-	global $baseurl,$baseurl_short,$lang,$dash_tile_shadows;
+	global $baseurl,$baseurl_short,$lang,$dash_tile_shadows,$help_modal;
 	#Build User Dash and recalculate order numbers on display
 	$user_tiles = sql_query("SELECT dash_tile.ref AS 'tile',dash_tile.title,dash_tile.all_users,dash_tile.url,dash_tile.reload_interval_secs,dash_tile.link,user_dash_tile.ref AS 'user_tile',user_dash_tile.order_by FROM user_dash_tile JOIN dash_tile ON user_dash_tile.dash_tile = dash_tile.ref WHERE user_dash_tile.user='".$user."' ORDER BY user_dash_tile.order_by");
 
@@ -832,7 +832,7 @@ function get_user_dash($user)
 				}
 			?>
 			href="<?php echo parse_dashtile_link($link)?>" <?php echo $newtab ? "target='_blank'" : "";?> 
-			onClick="if(dragging){dragging=false;e.defaultPrevented}<?php echo $newtab? "": "return CentralSpaceLoad(this,true);";?>" 
+			onClick="if(dragging){dragging=false;e.defaultPrevented}<?php echo $newtab? "": "return " . ($help_modal && strpos($link,"pages/help.php")!==false?"ModalLoad(this,true);":"CentralSpaceLoad(this,true);");?>" 
 			class="HomePanel DashTile DashTileDraggable <?php echo ($tile['all_users']==1)? 'allUsers':'';?>"
 			tile="<?php echo $tile['tile']; ?>"
 			id="user_tile<?php echo htmlspecialchars($tile["user_tile"]);?>"

@@ -435,7 +435,7 @@ if (!hook("replaceslideshow"))
 			}
 		else
 			{ ?>
-			<a href="<?php echo $baseurl_short?>pages/help.php" onClick="return CentralSpaceLoad(this,true);" class="HomePanel"><div class="HomePanelIN HomePanelHelp<?php if (count($home_collections)>0) { ?> HomePanelMatchPromotedHeight<?php } ?>">
+			<a href="<?php echo $baseurl_short?>pages/help.php" onClick="return <?php if (!$help_modal) { ?>CentralSpaceLoad(this,true);<?php } else { ?>ModalLoad(this,true);<?php } ?>" class="HomePanel"><div class="HomePanelIN HomePanelHelp<?php if (count($home_collections)>0) { ?> HomePanelMatchPromotedHeight<?php } ?>">
 			<h2><?php echo $lang["helpandadvice"]?></h2>
 			<span><?php echo text("help")?></span>
 			</div>

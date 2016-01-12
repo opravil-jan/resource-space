@@ -201,7 +201,7 @@ $lang["myrequests"]="My requests";
 $lang["collections"]="Collections";
 $lang["mycontributions"]="My contributions";
 $lang["researchrequest"]="Research request";
-$lang["helpandadvice"]="Help & advice";
+$lang["helpandadvice"]="Knowledge Base";
 $lang["teamcentre"]="Admin";
 
 # footer link
@@ -2121,7 +2121,8 @@ $lang["download_click__introtext"]="To download the resource file, right click t
 $lang["download_progress__introtext"]="Your download will start shortly. When your download completes, use the links below to continue.";
 $lang["edit__batch"]="";
 $lang["edit__multiple"]="Please select which fields you wish to overwrite. Fields you do not select will be left untouched.";
-$lang["help__introtext"]="<p>Get the most out of ResourceSpace. The Knowledge Base will help you use the system and the resources more effectively. </p>\n<p><a target=\"_blank\" href=\"http://www.resourcespace.org/knowledge-base/\">ResourceSpace Knowledge Base</a></p>";
+$lang["help__introtext"]='<iframe src="http://www.resourcespace.org/knowledge-base/?from_rs=true" style="width:1235px;height:600px;border:none;margin:-20px;"/>
+';
 $lang["home__help"]="Help and advice to get the most out of ResourceSpace.";
 $lang["home__mycollections"]="Organise, collaborate & share your resources. Use these tools to help you work more effectively.";
 $lang["home__restrictedtext"]="Please click on the link that you were e-mailed to access the resources selected for you.";
