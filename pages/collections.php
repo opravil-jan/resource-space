@@ -41,7 +41,7 @@ if(!isset($thumbs))
     if($thumbs == "unset")
         {
         $thumbs = $thumbs_default;
-        rs_setcookie("thumbs", $thumbs, 1000,"","",false,false);
+        rs_setcookie('thumbs', $thumbs, 1000, '', '', false, true);
         }
     }
 
