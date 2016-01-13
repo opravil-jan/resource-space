@@ -18,7 +18,7 @@ if($thumbs != "unset" && $thumbs != "hide")
     $saved_thumbs_state = "show";
     }
 $thumbs = "hide";
-rs_setcookie('thumbs', $thumbs, 1000, '', '', false, true);
+rs_setcookie("thumbs", $thumbs, 1000,"","",false,false);
 
 $ref=getvalescaped("ref","",true);
 $search=getvalescaped("search","");
