@@ -2180,7 +2180,7 @@ function search_filter($search,$archive,$restypes,$starsearch,$recent_search_day
 	    }
 	    
 	# append archive searching. Updated Jan 2016 to apply to collections as resources in a pending state that are in a shared collection could bypass approval process
-	if (!checkperm("v") && !$access_override)
+	if (!$access_override)
 	    {
 	    global $pending_review_visible_to_all,$search_all_workflow_states, $userref, $pending_submission_searchable_to_all;;
 	    if(substr($search,0,11)=="!collection")
@@ -2206,10 +2206,14 @@ function search_filter($search,$archive,$restypes,$starsearch,$recent_search_day
             # Append normal filtering - extended as advanced search now allows searching by archive state
             if ($sql_filter!="") {$sql_filter.=" and ";}
             $sql_filter.="archive = '$archive'";
-            }			
-        # Append standard filtering to hide resources in a pending state, whatever the search
-        if (!$pending_submission_searchable_to_all) {$sql_filter.= (($sql_filter!="")?" and ":"") . "(r.archive<>-2 or r.created_by='" . $userref . "')";}     
-		if (!$pending_review_visible_to_all){$sql_filter.=(($sql_filter!="")?" and ":"") . "(r.archive<>-1 or r.created_by='" . $userref . "')";}
+            }
+
+        if (!checkperm("v"))
+            {
+            # Append standard filtering to hide resources in a pending state, whatever the search
+            if (!$pending_submission_searchable_to_all) {$sql_filter.= (($sql_filter!="")?" and ":"") . "(r.archive<>-2 or r.created_by='" . $userref . "')";}
+            if (!$pending_review_visible_to_all){$sql_filter.=(($sql_filter!="")?" and ":"") . "(r.archive<>-1 or r.created_by='" . $userref . "')";}
+            }
 		}
 		
 	# Add code to filter out resoures in archive states that the user does not have access to due to a 'z' permission
