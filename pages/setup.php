@@ -5,6 +5,7 @@
  * @package ResourceSpace
  * @subpackage Pages_Misc
  */
+include_once '../include/file_functions.php';
 include_once '../include/general.php';
 include_once '../include/collections_functions.php';
 if (!function_exists('filter_var')){  //If running on PHP without filter_var, define a do-fer function, otherwise use php's filter_var (PHP > 5.2.0)
