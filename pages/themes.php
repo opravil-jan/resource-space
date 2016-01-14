@@ -8,9 +8,9 @@ include_once "../include/render_functions.php";
 include_once "../include/search_functions.php";
 
 global $default_perpage_list;
-$themes_order_by=getvalescaped("themes_order_by",getvalescaped("saved_themes_order_by","name"));setcookie("saved_themes_order_by",$themes_order_by, 0, '', '', false, true);
-$sort=getvalescaped("sort",getvalescaped("saved_themes_sort","ASC"));setcookie("saved_themes_sort",$sort, 0, '', '', false, true);
-$per_page=getvalescaped("per_page_list",$default_perpage_list,true);setcookie("per_page_list",$per_page, 0, '', '', false, true);
+$themes_order_by=getvalescaped("themes_order_by",getvalescaped("saved_themes_order_by","name"));rs_setcookie('saved_themes_order_by', $themes_order_by);
+$sort=getvalescaped("sort",getvalescaped("saved_themes_sort","ASC"));rs_setcookie('saved_themes_sort', $sort);
+$per_page=getvalescaped("per_page_list",$default_perpage_list,true);rs_setcookie('per_page_list', $per_page);
 $simpleview=$themes_simple_view || getval("simpleview","")=="true";
 
 hook("themeheader");

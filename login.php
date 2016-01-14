@@ -91,7 +91,7 @@ elseif (array_key_exists("username",$_POST) && getval("langupdate","")=="")
         rs_setcookie("user", $result['session_hash'], $expires, "", "", substr($baseurl,0,5)=="https", true);
 
         # Set default resource types
-        setcookie("restypes",$default_res_types, 0, '', '', false, true);
+        rs_setcookie('restypes', $default_res_types);
 
         $userpreferences = ($user_preferences) ? sql_query("SELECT user, `value` AS colour_theme FROM user_preferences WHERE user = " . $result['ref'] . " AND parameter = 'colour_theme';") : FALSE;
         $userpreferences = ($userpreferences && isset($userpreferences[0])) ? $userpreferences[0]: FALSE;
@@ -127,9 +127,9 @@ if ((getval("logout","")!="") && array_key_exists("user",$_COOKIE))
     rs_setcookie("user", "", time() - 3600);
 
     # Also blank search related cookies
-    setcookie("search","",0,'','',false,true);	
-    setcookie("saved_offset","",0,'','',false,true);
-    setcookie("saved_archive","",0,'','',false,true);
+    rs_setcookie('search', '');
+    rs_setcookie('saved_offset', '');
+    rs_setcookie('saved_archive', '');
     
     unset($username);
 	

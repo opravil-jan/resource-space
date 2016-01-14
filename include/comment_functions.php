@@ -52,7 +52,7 @@ function comments_submit()
 				// (preg_match ("/${regex_email}/", $comments_email_notification_address) === false)		// TODO: make this regex better
 			) ? $email_notify : $comments_email_notification_address;
 		
-		setcookie("comment${comment_flag_ref}flagged", "true");				
+		rs_setcookie("comment${comment_flag_ref}flagged", "true");				
 		$_POST["comment${comment_flag_ref}flagged"] = "true";		// we set this so that the subsequent getval() function will pick up this comment flagged in the show comments function (headers have already been sent before cookie set)
 		
 		send_mail ($email_to, $email_subject, $email_body);
