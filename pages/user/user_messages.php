@@ -70,8 +70,8 @@ for ($n=0;$n<count($messages);$n++)
 		<tr>
 			<td<?php echo $unread_css; ?>><?php echo nicedate($messages[$n]["created"],true); ?></td>
 			<td<?php echo $unread_css; ?>><?php echo $messages[$n]["owner"]; ?></td>
-			<td<?php echo $unread_css; ?>><a href="#Header" onclick="message_display('<?php echo $message; ?>','<?php
-				echo $url_encoded; ?>',<?php echo $messages[$n]["ref"]; ?>);"><?php
+			<td<?php echo $unread_css; ?>><a href="#Header" onclick="message_modal('<?php echo $message; ?>','<?php
+				echo $url_encoded; ?>',<?php echo $messages[$n]["ref"]; ?>,'<?php echo $messages[$n]["owner"] ?>');"><?php
 					echo nl2br(strip_tags($messages[$n]["message"],'<br><p>'));
 					?></a></td>
 			<td<?php echo $unread_css; ?>><?php echo nicedate($messages[$n]["expires"]); ?></td>

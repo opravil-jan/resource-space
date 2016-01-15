@@ -1008,6 +1008,11 @@ div.video-js {margin:auto;}
 	{
     z-index: 103;
     }
+		
+#modal_dialog .MessageText {
+	text-align:left;
+	}
+
 /* Dropdown Actions */
 #CollectionMenu .ActionsContainer {
 	margin: 10px 0px;
