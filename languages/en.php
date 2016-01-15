@@ -2391,5 +2391,5 @@ $lang["slideshow_use_static_image"] = "Use a single random image from the set (i
 
 $lang["emailcollectionrequest"] = "[img_gfx/titles/title.gif]<br />The following user has made a request:<br />Username: [username]<br />User email: [useremail]<br /><br />Reason for request: [requestreason]<br /><br />Click the link below to view the request.<br /><a href='[requesturl]'>[requesturl]</a>";
 $lang["emailusercollectionrequest"] = "[img_gfx/titles/title.gif]<br />Your resource request has been submitted for approval and will be looked at shortly.:<br /><br />Reason for request: [requestreason]<br /><br />Click the link below to view the requested resources.<br /><a href='[url]'>[url]</a>";
-$lang['user_pref_show_notifications'] = "Show me system notifications on screen as they are received. If set to false the counter will still update to indicate the presence of new messages";
+$lang['user_pref_show_notifications'] = "Show me system notifications on screen as they are received. If disabled, the counter will still update to indicate the presence of new messages";
 $lang['mymessages_introtext'] = "You can configure which messages appear here by changing your user preferences";
