@@ -1099,9 +1099,9 @@ function save_user($ref)
 
         // Full name checks
         if('' == $fullname && '' == $suggest)
-        {
-        return $lang['setup-admin_fullname_error'];
-        }
+            {
+            return $lang['setup-admin_fullname_error'];
+            }
 
         $additional_sql = hook('additionaluserfieldssave');
 
