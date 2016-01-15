@@ -1022,87 +1022,122 @@ function get_user($ref)
 	}
 }
 	
-if (!function_exists("save_user")){	
+if(!function_exists('save_user')){
+/**
+* Function used to update or delete a user.
+* Note: data is taken from the submitted form
+* 
+* @param string $ref ID of the user
+* 
+* @return boolean|string
+*/
 function save_user($ref)
-	{
-	global $lang, $allow_password_email;
-		
-	# Save user details, data is taken from the submitted form.
-	if (getval("deleteme","")!="")
-		{
-		sql_query("delete from user where ref='$ref'");
-		include dirname(__FILE__) ."/dash_functions.php";
-		empty_user_dash($ref);
-		log_activity(null,LOG_CODE_DELETED,null,'user',null,$ref);
-		return true;
-		}
-	else
-		{
-		# Username or e-mail address already exists?
-		$c=sql_value("select count(*) value from user where ref<>'$ref' and (username='" . getvalescaped("username","") . "' or email='" . getvalescaped("email","") . "')",0);
-		if (($c>0) && (getvalescaped("email","")!="")) {return false;}
-		
-		$password=getvalescaped("password","");
-		if (getval("suggest","")!="")
-			{
-			$password=make_password();
-			}
-		elseif ($password!=$lang["hidden"])	
-			{
-			$message=check_password($password);
-			if ($message!==true) {return $message;}
-			}
-		
-		$expires="'" . getvalescaped("account_expires","") . "'";
-		if ($expires=="''") {$expires="null";}
-		
-		$passsql="";
-		if ($password!=$lang["hidden"])	
-			{
-			# Save password.
-			if (getval("suggest","")=="")
-				{
-				$password = hash('sha256', md5('RS' . getvalescaped('username', '') . $password));
-				}
+    {
+    global $lang, $allow_password_email;
 
-			$passsql=",password='" . $password . "',password_last_change=now()";
-			}
-			
-		$additional_sql=hook("additionaluserfieldssave");
+    # Save user details, data is taken from the submitted form.
+    if(getval('deleteme', '') != '')
+        {
+        sql_query("DELETE FROM user WHERE ref='$ref'");
+        include dirname(__FILE__) ."/dash_functions.php";
+        empty_user_dash($ref);
+        log_activity(null, LOG_CODE_DELETED, null, 'user', null, $ref);
 
-		log_activity(null,LOG_CODE_EDITED,trim(getvalescaped("username","")),'user','username',$ref);
-		log_activity(null,LOG_CODE_EDITED,trim(getvalescaped("fullname","")),'user','fullname',$ref);
-		log_activity(null,LOG_CODE_EDITED,trim(getvalescaped("email","")),'user','email',$ref);
-		log_activity(null,LOG_CODE_EDITED,trim(getvalescaped("usergroup","")),'user','usergroup',$ref);
-        log_activity(null,LOG_CODE_EDITED,getvalescaped("ip_restrict",""),'user','ip_restrict',$ref,null,'');
-        log_activity(null,LOG_CODE_EDITED,getvalescaped("search_filter_override",""),'user','search_filter_override',$ref,null,'');
-		log_activity(null,LOG_CODE_EDITED,$expires,'user','account_expires',$ref);
-		log_activity(null,LOG_CODE_EDITED,getvalescaped("comments",""),'user','comments',$ref);
-		log_activity(null,LOG_CODE_EDITED,((getval("approved","")=="")?"0":"1"),'user','approved',$ref);
+        return true;
+        }
+    else
+        {
+        $username               = trim(getvalescaped('username', ''));
+        $password               = trim(getvalescaped('password', ''));
+        $fullname               = trim(getvalescaped('fullname', ''));
+        $email                  = trim(getvalescaped('email', ''));
+        $expires                = "'" . getvalescaped('account_expires', '') . "'";
+        $usergroup              = trim(getvalescaped('usergroup', ''));
+        $ip_restrict            = trim(getvalescaped('ip_restrict', ''));
+        $search_filter_override = trim(getvalescaped('search_filter_override', ''));
+        $comments               = trim(getvalescaped('comments', ''));
 
-		sql_query("update user set
-			username='" . trim(getvalescaped("username","")) . "'" . $passsql . ",
-			fullname='" . getvalescaped("fullname","") . "',
-			email='" . getvalescaped("email","") . "',
-			usergroup='" . getvalescaped("usergroup","") . "',
-			account_expires=$expires,
-			ip_restrict='" . getvalescaped("ip_restrict","") . "',
-			search_filter_override='" . getvalescaped("search_filter_override","") . "',
-			comments='" . getvalescaped("comments","") . "',
-			approved='" . ((getval("approved","")=="")?"0":"1") . "' $additional_sql where ref='$ref'");
-		}
+        $suggest = getval('suggest', '');
 
-	if ($allow_password_email && getval("emailme","")!="")
-		{
-		email_user_welcome(getval("email",""),getval("username",""),getval("password",""),getvalescaped("usergroup",""));
-		}
-	elseif (getval("emailresetlink","")!="")
-		{
-		email_reset_link(getvalescaped("email",""), true);
-		}	
-	
-	return true;
-	}
+        # Username or e-mail address already exists?
+        $c = sql_value("SELECT count(*) value FROM user WHERE ref <> '$ref' AND (username = '" . $username . "' OR email = '" . $email . "')", 0);
+        if($c > 0 && $email != '')
+            {
+            return false;
+            }
+
+        // Password checks:
+        if($suggest != '')
+            {
+            $password = make_password();
+            }
+        elseif($password != $lang['hidden'])	
+            {
+            $message = check_password($password);
+            if($message !== true)
+                {
+                return $message;
+                }
+            }
+
+        if($expires == "''")
+            {
+            $expires = 'null';
+            }
+
+        $passsql = '';
+        if($password != $lang['hidden'])
+            {
+            # Save password.
+            if($suggest == '')
+                {
+                $password = hash('sha256', md5('RS' . $username . $password));
+                }
+
+            $passsql = ",password='" . $password . "',password_last_change=now()";
+            }
+
+        // Full name checks
+        if('' == $fullname && '' == $suggest)
+        {
+        return $lang['setup-admin_fullname_error'];
+        }
+
+        $additional_sql = hook('additionaluserfieldssave');
+
+        log_activity(null, LOG_CODE_EDITED, $username, 'user', 'username', $ref);
+        log_activity(null, LOG_CODE_EDITED, $fullname, 'user', 'fullname', $ref);
+        log_activity(null, LOG_CODE_EDITED, $email, 'user', 'email', $ref);
+        log_activity(null, LOG_CODE_EDITED, $usergroup, 'user', 'usergroup', $ref);
+        log_activity(null, LOG_CODE_EDITED, $ip_restrict, 'user', 'ip_restrict', $ref, null, '');
+        log_activity(null, LOG_CODE_EDITED, $search_filter_override, 'user', 'search_filter_override', $ref, null, '');
+        log_activity(null, LOG_CODE_EDITED, $expires, 'user', 'account_expires', $ref);
+        log_activity(null, LOG_CODE_EDITED, $comments, 'user', 'comments', $ref);
+        log_activity(null, LOG_CODE_EDITED, ((getval('approved', '') == '') ? '0' : '1'), 'user', 'approved', $ref);
+
+        sql_query("update user set
+        username='" . $username . "'" . $passsql . ",
+        fullname='" . $fullname . "',
+        email='" . $email . "',
+        usergroup='" . $usergroup . "',
+        account_expires=$expires,
+        ip_restrict='" . $ip_restrict . "',
+        search_filter_override='" . $search_filter_override . "',
+        comments='" . $comments . "',
+        approved='" . ((getval('approved', '') == "") ? '0' : '1') . "' $additional_sql where ref='$ref'");
+        }
+
+    if($allow_password_email && getval('emailme', '') != '')
+        {
+        email_user_welcome(getval('email', ''), getval('username', ''), getval('password', ''), $usergroup);
+        }
+    elseif(getval('emailresetlink', '') != '')
+        {
+        email_reset_link($email, true);
+        }
+
+    return true;
+    }
 }
 
 function email_user_welcome($email,$username,$password,$usergroup)
