@@ -516,6 +516,8 @@ h2#dbaseconfig{  min-height: 32px;}
 			}
 		}
 
+        $admin_fullname = 'Admin user';
+        $admin_email    = '';
         $admin_username = 'admin';
         $admin_password = '';
 
@@ -640,8 +642,22 @@ h2#dbaseconfig{  min-height: 32px;}
 			$errors['baseurl'] = true;
 		}
 
+        $admin_fullname = get_post('admin_fullname');
+        $admin_email    = get_post('admin_email');
         $admin_username = get_post('admin_username');
         $admin_password = get_post('admin_password');
+
+        if('' === trim($admin_fullname))
+            {
+            $errors['admin_fullname'] = true;
+            }
+
+
+        if('' === trim($admin_email) || ('' !== trim($admin_email) && !filter_var($admin_email, FILTER_VALIDATE_EMAIL)))
+            {
+            $errors['admin_email'] = true;
+            }
+
         // Check password
         $password_validation_result = check_password($admin_password);
         if('' === $admin_password)
@@ -655,20 +671,40 @@ h2#dbaseconfig{  min-height: 32px;}
 
 		//Verify email addresses are valid
 		$config_output .= "# Email settings\r\n";
+
 		$email_from = get_post('email_from');
-		if ($email_from != ''){
-			if (filter_var($email_from, FILTER_VALIDATE_EMAIL) && ($email_from!='resourcespace@my.site'))
-				$config_output .= "\$email_from = '$email_from';\r\n";
-			else
-				$errors['email_from']=true;
-		}
-		$email_notify = get_post('email_notify');
-		if ($email_notify !=''){
-			if (filter_var($email_notify, FILTER_VALIDATE_EMAIL) && ($email_notify!='resourcespace@my.site'))
-				$config_output .= "\$email_notify = '$email_notify';\r\n\r\n";
-			else
-				$errors['email_notify']=true;
-		}
+        if('' != $email_from)
+            {
+            if(filter_var($email_from, FILTER_VALIDATE_EMAIL) && ('resourcespace@my.site' !== $email_from))
+                {
+                $config_output .= "\$email_from = '$email_from';\r\n";
+                }
+            else
+                {
+                $errors['email_from'] = true;
+                }
+            }
+        else
+            {
+            $errors['email_from'] = true;
+            }
+
+        $email_notify = get_post('email_notify');
+        if('' !== $email_notify)
+            {
+            if(filter_var($email_notify, FILTER_VALIDATE_EMAIL) && 'resourcespace@my.site' !== $email_notify)
+                {
+                $config_output .= "\$email_notify = '$email_notify';\r\n\r\n";
+                }
+            else
+                {
+                $errors['email_notify'] = true;
+                }
+            }
+        else
+            {
+            $errors['email_notify'] = true;
+            }
 		
 		//Check the spider_password (required) and scramble_key (optional)
 		$spider_password = get_post('spider_password');
@@ -926,7 +962,7 @@ if ((isset($_REQUEST['submit'])) && (!isset($errors)))
     $credentials_password = 'admin';
 
     $password_hash = hash('sha256', md5('RS' . $credentials_username . $credentials_password));
-    $sql_query     = "INSERT INTO user(username, password, usergroup) VALUES('" . $credentials_username . "', '" . $password_hash . "', 3)";
+    $sql_query     = "INSERT INTO user(username, password, fullname, email, usergroup) VALUES('" . $credentials_username . "', '" . $password_hash . "', '" . escape_check($admin_fullname) . "', '" . escape_check($admin_email) . "', 3)";
 
     $user_count = sql_value("SELECT count(*) value FROM user WHERE username = '{$admin_username}'", 0);
     if(0 == $user_count)
@@ -934,7 +970,7 @@ if ((isset($_REQUEST['submit'])) && (!isset($errors)))
         $password_hash = hash('sha256', md5('RS' . $admin_username . $admin_password));
 
         // Note: First user should always be part of Super Admin, hence user group is set to 3
-        $sql_query = "INSERT INTO user(username, password, usergroup) VALUES('" . escape_check($admin_username) . "', '" . $password_hash . "', 3)";
+        $sql_query = "INSERT INTO user(username, password, fullname, email, usergroup) VALUES('" . escape_check($admin_username) . "', '" . $password_hash . "', '" . escape_check($admin_fullname) . "', '" . escape_check($admin_email) . "', 3)";
 
         $credentials_username = $admin_username;
         $credentials_password = $admin_password;
@@ -1258,6 +1294,30 @@ else
 					<p class="iteminfo" id="if-baseurl"><?php echo $lang["setup-if_baseurl"];?></p>
 				</div>
                 <div class="configitem">
+                    <?php
+                if(isset($errors['admin_fullname']))
+                    {
+                    ?>
+                    <div class="erroritem"><?php echo $lang['setup-admin_fullname_error']; ?></div>
+                    <?php
+                    }
+                    ?>
+                    <label for="admin_fullname"><?php echo $lang['setup-admin_fullname']; ?></label>
+                    <input id="admin_fullname" class="admin_credentials" type="text" name="admin_fullname" value="<?php echo $admin_fullname; ?>"/>
+                </div>
+                <div class="configitem">
+                <?php
+                if(isset($errors['admin_email']))
+                    {
+                    ?>
+                    <div class="erroritem"><?php echo $lang['setup-emailerr']; ?></div>
+                    <?php
+                    }
+                    ?>
+                    <label for="admin_email"><?php echo $lang['setup-admin_email']; ?></label>
+                    <input id="admin_email" class="admin_credentials" type="text" name="admin_email" value="<?php echo $admin_email; ?>"/><strong>*</strong>
+                </div>
+                <div class="configitem">
                     <label for="admin_username"><?php echo $lang['setup-admin_username']; ?></label>
                     <input id="admin_username" class="admin_credentials" type="text" name="admin_username" value="<?php echo $admin_username; ?>"/><strong>*</strong><a class="iflink" href="#if-admin-username">?</a>
                     <p id="if-admin-username" class="iteminfo"><?php echo $lang['setup-if_admin_username']; ?></p>
@@ -1269,17 +1329,27 @@ else
                     <p id="if-admin-password" class="iteminfo"><?php echo $lang['setup-if_admin_password']; ?></p>
                 </div>
 				<div class="configitem">
-					<?php if(isset($errors['email_from'])){?>
-						<div class="erroritem"><?php echo $lang["setup-emailerr"];?></div>
-					<?php } ?>
-					<label for="emailfrom"><?php echo $lang["setup-emailfrom"];?></label><input id="emailfrom" type="text" name="email_from" value="<?php echo $email_from;?>"/><a class="iflink" href="#if-emailfrom">?</a>
+                <?php
+                if(isset($errors['email_from']))
+                    {
+                    ?>
+                    <div class="erroritem"><?php echo $lang["setup-emailerr"];?></div>
+                    <?php
+                    }
+                    ?>
+					<label for="emailfrom"><?php echo $lang["setup-emailfrom"];?></label><input id="emailfrom" type="text" name="email_from" value="<?php echo $email_from;?>"/><strong>*</strong><a class="iflink" href="#if-emailfrom">?</a>
 					<p id="if-emailfrom" class="iteminfo"><?php echo $lang["setup-if_emailfrom"];?></p>
 				</div>
 				<div class="configitem">
-					<?php if(isset($errors['email_notify'])){?>
-						<div class="erroritem"><?php echo $lang["setup-emailerr"];?></div>
-					<?php } ?>
-					<label for="emailnotify"><?php echo $lang["setup-emailnotify"];?></label><input id="emailnotify" type="text" name="email_notify" value="<?php echo $email_notify;?>"/><a class="iflink" href="#if-emailnotify">?</a>
+                <?php
+                if(isset($errors['email_notify']))
+                    {
+                    ?>
+                    <div class="erroritem"><?php echo $lang["setup-emailerr"];?></div>
+                    <?php
+                    }
+                    ?>
+					<label for="emailnotify"><?php echo $lang["setup-emailnotify"];?></label><input id="emailnotify" type="text" name="email_notify" value="<?php echo $email_notify;?>"/><strong>*</strong><a class="iflink" href="#if-emailnotify">?</a>
 					<p id="if-emailnotify" class="iteminfo"><?php echo $lang["setup-if_emailnotify"];?></p>
 				</div>
 				<div class="configitem">

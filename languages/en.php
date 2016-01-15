@@ -1100,6 +1100,8 @@ $lang["setup-mysqldb"]="MySQL database";
 $lang["setup-mysqlbinpath"]="MySQL binary path";
 $lang["setup-generalsettings"]="General settings";
 $lang["setup-baseurl"]="Base URL";
+$lang['setup-admin_fullname'] = 'Admin full name';
+$lang['setup-admin_email'] = 'Admin e-mail';
 $lang['setup-admin_username'] = 'Admin username';
 $lang['setup-admin_password'] = 'Admin password';
 
@@ -1134,6 +1136,7 @@ $lang["setup-err_scramblekey"]="If this is a public installation, setting the sc
 $lang["setup-err_apiscramblekey"]="If this is a public installation, setting the api scramble key is recommended.";
 $lang["setup-err_path"]="Unable to verify location of";
 $lang["setup-emailerr"]="Not a valid email address.";
+$lang['setup-admin_fullname_error'] = "A user's full name cannot be an empty string.";
 $lang["setup-rs_initial_configuration"]="ResourceSpace: Initial Configuration";
 $lang["setup-include_not_writable"]="'/include' not writable. Only required during setup.";
 $lang["setup-override_location_in_advanced"]="Override location in 'Advanced Settings'.";
