@@ -20,6 +20,11 @@ include "../../include/header.php";
 	$messages=array();
 	if (!message_get($messages,$userref,true,true))		// if no messages get out of here with a message
 		{
+		?>
+		</ul>
+		</div> <!-- End of VerticalNav -->
+		</div> <!-- End of BasicsBox -->
+		<?php
 		echo $lang['mymessages_youhavenomessages'];
 		include "../../include/footer.php";
 		return;
