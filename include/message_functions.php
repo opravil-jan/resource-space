@@ -71,6 +71,13 @@ function message_seen($message,$seen_type=MESSAGE_ENUM_NOTIFICATION_TYPE_SCREEN)
 	{
 	sql_query("UPDATE `user_message` SET seen=seen | {$seen_type} WHERE `ref`='{$message}'");
 	}
+    
+// ------------------------------------------------------------------------------------------------------------------------
+
+function message_unseen($message)
+	{
+	sql_query("UPDATE `user_message` SET seen='0' WHERE `ref`='{$message}'");
+	}
 
 // ------------------------------------------------------------------------------------------------------------------------
 

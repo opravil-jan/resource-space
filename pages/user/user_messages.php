@@ -8,9 +8,14 @@ include "../../include/header.php";
 ?>
 <div class="BasicsBox">
   <h1><?php echo $lang["mymessages"]?></h1>
-  <p><?php echo text("mymessages_introtext")?></p>
-</div>
+  <p><?php echo $lang["mymessages_introtext"] ?></p>
 
+
+<div class="VerticalNav">
+<ul>
+<li>
+<a href="<?php echo $baseurl_short?>pages/user/user_preferences.php" onClick="return CentralSpaceLoad(this,true);"><?php echo $lang["userpreferences"];?></a>
+</li>
 <?php
 	$messages=array();
 	if (!message_get($messages,$userref,true,true))		// if no messages get out of here with a message
@@ -19,7 +24,7 @@ include "../../include/header.php";
 		include "../../include/footer.php";
 		return;
 		}
-
+		
 	$unread = false;
 
 	foreach ($messages as $message)		// if there are unread messages show option to mark all as read
@@ -32,13 +37,19 @@ include "../../include/header.php";
 		}
 	if ($unread)
 		{
-?><a href="<?php echo $baseurl_short?>pages/user/user_messages.php" onclick="jQuery.get('<?php
+?><li>
+  <a href="<?php echo $baseurl_short?>pages/user/user_messages.php" onclick="jQuery.get('<?php
 		echo $baseurl; ?>/pages/ajax/message.php?allseen=<?php echo $userref; ?>', function(){
 			return CentralSpaceLoad(this,true);
-		});">&gt;&nbsp;<?php echo $lang['mymessages_markallread']; ?></a>
+		});"><?php echo $lang['mymessages_markallread']; ?></a>
+  </li>
 <?php
 		}
-?><div class="Listview" id="user_messages">
+?>
+</ul>
+</div> <!-- End of VerticalNav -->
+
+<div class="Listview" id="user_messages">
 	<table border="0" cellspacing="0" cellpadding="0" class="ListviewStyle">
 		<tr class="ListviewTitleStyle">
 			<td><?php echo $lang["created"]; ?></td>
@@ -68,21 +79,20 @@ for ($n=0;$n<count($messages);$n++)
 			<td>
 				<div class="ListTools">
 					<a href="<?php echo $messages[$n]["url"]; ?>">&gt;&nbsp;<?php echo $lang["link"]; ?></a>
-					<?php
-					if ($messages[$n]["seen"]==0)
-						{
-						?><a href="<?php echo $baseurl_short?>pages/user/user_messages.php" onclick="jQuery.get('<?php
-							echo $baseurl; ?>/pages/ajax/message.php?seen=<?php echo $messages[$n]['ref']; ?>',function() { message_poll(); });
+					<a href="<?php echo $baseurl_short?>pages/user/user_messages.php" onclick="jQuery.get('<?php
+							echo $baseurl; ?>/pages/ajax/message.php?<?php echo (($messages[$n]["seen"]==0)?"seen":"unseen") . "=" . $messages[$n]['ref'] ; ?>',function() { message_poll(); });
 							return CentralSpaceLoad(this,true);
-							">&gt;&nbsp;<?php echo $lang["mymessages_markread"]; ?></a><?php
-						}
-?>				</div>
+							">&gt;&nbsp;<?php echo (($messages[$n]["seen"]==0)?$lang["mymessages_markread"]:$lang["mymessages_markunread"]);?>
+					</a>
+						  
+				</div>
 			</td>
 		</tr>
 <?php
 	}
 ?></table>
 </div>
+</div> <!-- End of BasicsBox -->
 <?php
 
 include "../../include/footer.php";

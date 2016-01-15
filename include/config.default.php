@@ -2866,3 +2866,5 @@ $execution_lockout=false;
 # Load help page in a modal?
 $help_modal=true;
 
+# User preference - if set to false, hide the notification popups for new messages
+$user_pref_show_notifications=true;

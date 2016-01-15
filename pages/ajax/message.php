@@ -16,6 +16,12 @@
 			message_seen($_GET['seen']);
 			return;
 			}
+			
+		if (isset($_GET['unseen']))
+			{
+			message_unseen($_GET['unseen']);
+			return;
+			}
 
 		// Acknowledgement all messages then get out of here
 		if (isset($_GET['allseen']))
@@ -102,11 +108,18 @@
 							message_refs.push(ref);
 							var message = nl2br(messages[i]['message']);
 							var url = messages[i]['url'];
-							message_display(message, url, ref, function (ref) {
-								jQuery.get('<?php echo $baseurl; ?>/pages/ajax/message.php?seen=' + ref).done(function () {
+							<?php
+							if($user_pref_show_notifications)
+								{
+								?>
+								message_display(message, url, ref, function (ref) {
+									jQuery.get('<?php echo $baseurl; ?>/pages/ajax/message.php?seen=' + ref).done(function () {
 									message_poll();
+									});
 								});
-							});
+								<?php
+								}
+								?>
 						}
 					}
 				}

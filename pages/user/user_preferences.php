@@ -314,7 +314,8 @@ include "../../include/header.php";
 	
 	// System notifications section - used to disable system generated messages 
 	$page_def[] = config_add_html('<h2 class="CollapsibleSectionHead">' . $lang['mymessages'] . '</h2><div id="UserPreferenceAdminSection" class="CollapsibleSection">');
-	$page_def[] = config_add_boolean_select('user_pref_resource_notifications', $lang['userpreference_resource_notifications'], $enable_disable_options, 300, '', true);
+	$page_def[] = config_add_boolean_select('user_pref_show_notifications', $lang['user_pref_show_notifications'], $enable_disable_options, 300, '', true);
+    $page_def[] = config_add_boolean_select('user_pref_resource_notifications', $lang['userpreference_resource_notifications'], $enable_disable_options, 300, '', true);
 	if(checkperm("a"))
 		{
 		$page_def[] = config_add_boolean_select('user_pref_system_management_notifications', $lang['userpreference_system_management_notifications'], $enable_disable_options, 300, '', true);
