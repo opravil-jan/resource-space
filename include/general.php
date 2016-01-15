@@ -73,8 +73,16 @@ function get_resource_path($ref,$getfilepath,$size,$generate=true,$extension="jp
 	# Original separation support
 	if($originals_separate_storage && $size=="")
 		{
-		# Original file (core file or alternative)
-		$path_suffix="/original/";
+		# compare original file extension with the extension provided
+		$o_extension=sql_value("select file_extension value from resource where ref={$ref}","");
+		if($extension==$o_extension){
+			# Original file (core file or alternative)
+			$path_suffix="/original/";
+		}
+		else{
+			# Original jpeg preview
+			$path_suffix="/resized/";
+		}
 		}
 	elseif($originals_separate_storage)
 		{
