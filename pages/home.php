@@ -79,7 +79,7 @@ if (!hook("replaceslideshow"))
 			}
 	 	} 
 
-	if($static_slideshow_image)
+	if($static_slideshow_image && $filecount > 0)
 		{
 		$randomimage=rand(1,$filecount);
 		// We only want to use one of the available images	
