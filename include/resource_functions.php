@@ -835,37 +835,44 @@ function remove_keyword_from_resource($ref,$keyword,$resource_type_field,$option
 
 
 
-if (!function_exists("add_keyword_mappings")){		
+if(!function_exists('add_keyword_mappings')) {
 function add_keyword_mappings($ref,$string,$resource_type_field,$partial_index=false,$is_date=false,$optional_column='',$optional_value='',$is_html=false)
-	{
-	# For each instance of a keyword in $string, add a keyword->resource mapping.
-	# Create keywords that do not yet exist.
-	# Increase the hit count of each keyword that matches.
-	# Store the position and field the string was entered against for advanced searching.
-	if (trim($string)=="") {return false;}
-	$keywords=split_keywords($string,true,$partial_index,$is_date,$is_html);
+    {
+    /* For each instance of a keyword in $string, add a keyword->resource mapping.
+    * Create keywords that do not yet exist.
+    * Increase the hit count of each keyword that matches.
+    * Store the position and field the string was entered against for advanced searching.
+    */
+    if(trim($string) == '')
+        {
+        return false;
+        }
 
-	add_verbatim_keywords($keywords, $string, $resource_type_field);		// add in any verbatim keywords (found using regex).
+    $keywords = split_keywords($string, true, $partial_index, $is_date, $is_html);
 
-	db_begin_transaction();
+    add_verbatim_keywords($keywords, $string, $resource_type_field); // add in any verbatim keywords (found using regex).
 
-	for ($n=0;$n<count($keywords);$n++)
-		{
-			
-		unset ($kwpos);
-		if (is_array($keywords[$n])){
-			$kwpos=$keywords[$n]['position'];
-			$keywords[$n]=$keywords[$n]['keyword'];
-		}
+    db_begin_transaction();
+    for($n = 0; $n < count($keywords); $n++)
+        {
+        unset($kwpos);
+        if(is_array($keywords[$n]))
+            {
+            $kwpos        = $keywords[$n]['position'];
+            $keywords[$n] = $keywords[$n]['keyword'];
+            }
 
-		$kw=$keywords[$n]; 		
-		if (!isset($kwpos)){$kwpos=$n;}                                
-                add_keyword_to_resource($ref,$kw,$resource_type_field,$kwpos,$optional_column,$optional_value,false);		
-		}	
+        $kw = $keywords[$n];
+        if(!isset($kwpos))
+            {
+            $kwpos = $n;
+            }
 
-	db_end_transaction();
+        add_keyword_to_resource($ref, $kw, $resource_type_field, $kwpos, $optional_column, $optional_value, false);
+        }
+    db_end_transaction();
 
-	}
+    }
 }
 
 function add_keyword_to_resource($ref,$keyword,$resource_type_field,$position,$optional_column='',$optional_value='',$normalized=false)
