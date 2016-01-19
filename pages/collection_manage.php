@@ -383,7 +383,7 @@ if (!hook('collectionaccessmode')) {
 </div>
 
 <!--Create a collection-->
-<?php if ($collection_allow_creation) { ?>
+<?php if ($collection_allow_creation && !hook("replacecollectionmanagecreatenew")) { ?>
 	<div class="BasicsBox">
 		<h1><?php echo $lang["createnewcollection"]?></h1>
 		<p class="tight"><?php echo text("newcollection")?></p>
@@ -401,20 +401,23 @@ if (!hook('collectionaccessmode')) {
 <?php } ?>
  
 <!--Find a collection-->
-<?php if (!$public_collections_header_only){?>
-<?php if($enable_public_collections){?>
+<?php if (!$public_collections_header_only && $enable_public_collections && !hook('replacecollectionmanagepublic')){?>
 <div class="BasicsBox">
     <h1><?php echo $lang["findpubliccollection"]?></h1>
     <p class="tight"><?php echo text("findpublic")?></p>
     <p><a href="<?php echo $baseurl_short?>pages/collection_public.php" onClick="return CentralSpaceLoad(this,true);"><?php echo $lang["findpubliccollection"]?>&nbsp;&gt;</a></p>
 </div>
 <?php } ?>
-<?php } ?>
-<div class="BasicsBox">
-    <h1><?php echo $lang["view_shared_collections"]?></h1>
-    <p><a href="<?php echo $baseurl_short?>pages/view_shares.php" onClick="return CentralSpaceLoad(this,true);">&gt;&nbsp;<?php echo $lang["view_shared_collections"]?></a></p>
-</div>
-<?php
+
+<?php if(!hook('replacecollectionmanageshared'))
+	{
+	?>
+	<div class="BasicsBox">
+		<h1><?php echo $lang["view_shared_collections"]?></h1>
+		<p><a href="<?php echo $baseurl_short?>pages/view_shares.php" onClick="return CentralSpaceLoad(this,true);">&gt;&nbsp;<?php echo $lang["view_shared_collections"]?></a></p>
+	</div>
+	<?php
+	}
 
 include "../include/footer.php";
 ?>
