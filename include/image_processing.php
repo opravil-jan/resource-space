@@ -993,12 +993,18 @@ function create_previews($ref,$thumbonly=false,$extension="jpg",$previewonly=fal
                         }
                     }
 
+                $source_params = ' ';
+                if('' !== trim($image_alternatives[$n]['source_params']))
+                    {
+                    $source_params = ' ' . $image_alternatives[$n]['source_params'] . ' ';
+                    }
+
                 # Process the image
                 $version = get_imagemagick_version();
                 if($version[0] > 5 || ($version[0] == 5 && $version[1] > 5) || ($version[0] == 5 && $version[1] == 5 && $version[2] > 7 ))
                     {
                     // Use the new imagemagick command syntax (file then parameters)
-                    $command = $convert_fullpath . ' ' . escapeshellarg($file) . (($extension == 'psd') ? '[0] +matte' : '') . $source_profile . ' ' . $image_alternatives[$n]['params'] . ' ' . escapeshellarg($apath);
+                    $command = $convert_fullpath . $source_params . escapeshellarg($file) . (($extension == 'psd') ? '[0] +matte' : '') . $source_profile . ' ' . $image_alternatives[$n]['params'] . ' ' . escapeshellarg($apath);
                     }
                 else
                     {

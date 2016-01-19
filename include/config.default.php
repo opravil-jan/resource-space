@@ -1768,10 +1768,12 @@ $request_adds_to_collection=false;
 # The blocks must be numbered sequentially (0, 1, 2).
 # 'params' are any extra parameters to pass to ImageMagick for example DPI
 # 'source_extensions' is a comma-separated list of the files that will be processed, e.g. "eps,png,gif" (note no spaces).
+# 'source_params' are parameters for the source file (e.g. -density 1200)
 #
 # Example - automatically create a PNG file alternative when an EPS file is uploaded.
 # $image_alternatives[0]["name"]="PNG File";
 # $image_alternatives[0]["source_extensions"]="eps";
+# $image_alternatives[0]["source_params"]="";
 # $image_alternatives[0]["filename"]="alternative_png";
 # $image_alternatives[0]["target_extension"]="png";
 # $image_alternatives[0]["params"]="-density 300"; # 300 dpi
@@ -1779,6 +1781,7 @@ $request_adds_to_collection=false;
 
 # $image_alternatives[1]["name"]="CMYK JPEG";
 # $image_alternatives[1]["source_extensions"]="jpg,tif";
+# $image_alternatives[1]["source_params"]="";
 # $image_alternatives[1]["filename"]="cmyk";
 # $image_alternatives[1]["target_extension"]="jpg";
 # $image_alternatives[1]["params"]="-quality 100 -flatten $icc_preview_options -profile ".dirname(__FILE__) . "/../iccprofiles/name_of_cmyk_profile.icc"; # Quality 100 JPEG with specific CMYK ICC Profile
@@ -1787,6 +1790,7 @@ $request_adds_to_collection=false;
 # Example - automatically create a JPG2000 file alternative when an TIF file is uploaded
 # $image_alternatives[2]['name']              = 'JPG2000 File';
 # $image_alternatives[2]['source_extensions'] = 'tif';
+# $image_alternatives[2]["source_params"]="";
 # $image_alternatives[2]['filename']          = 'New JP2 Alternative';
 # $image_alternatives[2]['target_extension']  = 'jp2';
 # $image_alternatives[2]['params']            = '';
