@@ -47,6 +47,7 @@ $mysql_log_transactions=false;
 $baseurl="http://my.site/resourcespace"; # The 'base' web address for this installation. Note: no trailing slash
 $email_from="resourcespace@my.site"; # Where system e-mails appear to come from
 $email_notify="resourcespace@my.site"; # Where resource/research/user requests are sent
+$email_notify_usergroups=array(); # Use of email_notify is deprecated as system notifications are now sent to the appropriate users based on permissions and user preferences. This variable can be set to an array of usergroup references and will take precedence.
 
 # Indicates which users can update very low level configuration options for example debug_log.
 $system_architect_user_names = array('admin');		// Warning: this is for experienced technical users, typically ResourceSpace providers.
