@@ -155,7 +155,8 @@ foreach($slideshow_files as $slideshow_image => $slideshow_file_info)
                     onclick="ReorderSlideshowImage(<?php echo $slideshow_image; ?>, 'movedown');"
                     <?php if(count($slideshow_files) === $i) { echo 'disabled'; } ?>><?php echo $lang['action-move-down']; ?></button>
             <?php hook('render_replace_button_for_manage_slideshow', '', array($slideshow_image)); ?>
-            <button type="submit" onclick="DeleteSlideshowImage(<?php echo $slideshow_image; ?>);"><?php echo $lang['action-delete']; ?></button>
+            <button id="slideshow_<?php echo $slideshow_image; ?>_delete"
+                    type="submit" onclick="DeleteSlideshowImage(<?php echo $slideshow_image; ?>);"<?php if(count($slideshow_files)==1) { echo 'disabled'; } ?>><?php echo $lang['action-delete']; ?></button>
             <?php hook('render_replace_slideshow_form_for_manage_slideshow', '', array($slideshow_image, $slideshow_files)); ?>
         </span>
         <div class="clearerleft"></div>
@@ -243,6 +244,11 @@ function DeleteSlideshowImage(id)
             var slideshow_ids = jQuery('div[id*="slideshow_"].Question');
             slideshow_ids.first().find('button[id*="_moveup"').prop('disabled', true);
             slideshow_ids.last().find('button[id*="_movedown"').prop('disabled', true);
+            if (slideshow_ids.find('button[id*="_delete"').length==1)
+                {
+                slideshow_ids.find('button[id*="_delete"').prop('disabled', true);
+                }
+
             }
         }, 'json');
 
