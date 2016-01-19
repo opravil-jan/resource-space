@@ -45,11 +45,13 @@ if (!hook("replaceslideshow"))
 	$d = scandir($dir); 
 	sort($d, SORT_NUMERIC);
 	$reslinks=array();	
+	$login_image_skipped=false;
 	foreach ($d as $f) 
 		{ 
 		if(preg_match("/[0-9]+\.(jpg)$/",$f))
 		 	{ 
-		 	$filecount++;
+		 	if($login_background && $filecount==0 && !$login_image_skipped){$login_image_skipped=true;continue;}
+			$filecount++;
 
 			$checksum+=filemtime($dir . "/" . $f);
 			$linkfile=substr($f,0,(strlen($f)-4)) . ".txt";

@@ -353,3 +353,16 @@ div.MessageBox {
 div.MessageBox a {
     color: inherit !important;
 }
+
+#login_box {
+	background: rgba(30, 30, 30, 0.7);
+	border: 1px solid #B0B0B0;
+}
+
+#login_box, #login_box h1,  #login_box a{
+	color: #FFF;
+}
+
+.highlighted {
+	border: 3px solid #F00 !important;
+}

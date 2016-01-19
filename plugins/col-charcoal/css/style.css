@@ -206,9 +206,14 @@ a.ResourcePanel:visited, a.ResourcePanel:active, a.ResourcePanel:link {color:#E0
 	color:#FFF;
 }
 #HomeSiteText.dashtext,.HomePanelIN {
-	background: rgba(93, 173, 10, 0.75);
+	background: rgba(10, 10, 10, 0.75);
 	border: 1px solid #d0d0d0;
 	color:#FFF;
 }
 /* Search Anchor Highlighting */
 .search-anchor .ResourcePanel  {background-color:#999;}
+
+#login_box {
+	background: rgba(10, 10, 10, 0.75);
+	border: 1px solid #d0d0d0;
+}

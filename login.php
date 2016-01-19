@@ -157,6 +157,20 @@ if (getval("langupdate","")!="")
 
 
 include "include/header.php";
+
+if($login_background)
+	{
+	?>
+	<style>
+	#UICenter {
+		background-image: url('<?php echo $baseurl_short . $homeanim_folder . "/1.jpg"; ?>');
+		}
+	</style>
+	<div id="login_box">
+	<?php
+	}
+
+	
 if (!hook("replaceloginform")) {
 ?>
 
@@ -255,6 +269,12 @@ hook("afterlogin");
 hook("responsivescripts");
 //include_once "./include/footer.php"; AJAX Check Ignores Footer
 //Closing tags as the footer has not been included
+if($login_background)
+	{
+	?>
+	<div> <!-- end of login_box -->
+	<?php
+	}
 ?>
 </div>
 </div>

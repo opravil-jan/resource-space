@@ -2868,3 +2868,6 @@ $help_modal=true;
 
 # User preference - if set to false, hide the notification popups for new messages
 $user_pref_show_notifications=true;
+
+# login_background. If enabled this uses first slideshow image as a background for the login screen. This image will not then be used in the slideshow. If not using the manage slideshow tool this will look for a file named 1.jpg in the $homeanim_folder.
+$login_background=false;

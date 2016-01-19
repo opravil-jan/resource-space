@@ -187,3 +187,10 @@ input[readonly] {color: #FFFFFF;}
 	{
 	border:none;
 	}
+	
+#login_box {
+	background: rgba(68, 102, 153, 0.67);
+	border: 1px solid #D0D0D0;
+}
+	
+	

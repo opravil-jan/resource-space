@@ -50,3 +50,12 @@
 {color: #373737;}
 
 .CollectBack{background: #293340 linear-gradient(#41556C,#282C38);}
+
+#login_box {
+	background: rgba(238, 238, 238, 0.8);
+	border: 1px solid #d0d0d0;
+}
+
+#login_box, #login_box h1,  #login_box a{
+	color: #373737;
+}

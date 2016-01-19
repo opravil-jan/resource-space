@@ -5,5 +5,10 @@
 .SlimHeader #Header a:link, .SlimHeader #Header a:visited, .SlimHeader #Header a:active {color: #373737;}
 .HomePanelIN,#HomeSiteText.dashtext{background: rgba(244, 93, 24, 0.8);color: #fff;}
 #SearchBoxPanel, #ResearchBoxPanel{background: rgba(13, 164, 207, 0.8);color: #fff;}
-#SearchBoxPanel, #ResearchBoxPanel,#HomeSiteText,.HomePanelIN {border: none;}
+#SearchBoxPanel, #ResearchBoxPanel,#HomeSiteText,.HomePanelIN, #HomeSiteText.dashtext {border: none;}
 .CollectBack{background: #293340 linear-gradient(#41556C,#282C38);}
+
+#login_box {
+	background: rgba(244, 93, 24, 0.8);
+	border:  none;
+}

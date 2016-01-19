@@ -135,13 +135,16 @@ foreach($slideshow_files as $slideshow_image => $slideshow_file_info)
     {
     if(file_exists($slideshow_file_info['file_path']))
         {
+		$login_image=false;
+		if($login_background && $i==0){$login_image=true;}
         ++$i;
         $slideshow_image_src = $baseurl_short . $homeanim_folder . '/' . $slideshow_image . '.jpg' . '?nc=' . time();
         ?>
     <div id="slideshow_<?php echo $slideshow_image; ?>" class="Question">
         <label>
-            <img id="slideshow_img_<?php echo $slideshow_image; ?>" src="<?php echo $slideshow_image_src; ?>" alt="Slideshow Image <?php echo $slideshow_image; ?>" width="150" height="80">
+            <img id="slideshow_img_<?php echo $slideshow_image; ?>" <?php if($login_image){echo "class=\"highlighted\"";} ?> src="<?php echo $slideshow_image_src; ?>" alt="Slideshow Image <?php echo $slideshow_image; ?>" width="150" height="80">
         </label>
+		<?php if($login_image){echo $lang["login_slideshow_image_notes"] . "<br /><br />";} ?>
         <div class="AutoSaveStatus">
             <span id="AutoSaveStatus-<?php echo $slideshow_image; ?>" style="display:none;"></span>
         </div>
@@ -159,7 +162,7 @@ foreach($slideshow_files as $slideshow_image => $slideshow_file_info)
                     type="submit" onclick="DeleteSlideshowImage(<?php echo $slideshow_image; ?>);"<?php if(count($slideshow_files)==1) { echo 'disabled'; } ?>><?php echo $lang['action-delete']; ?></button>
             <?php hook('render_replace_slideshow_form_for_manage_slideshow', '', array($slideshow_image, $slideshow_files)); ?>
         </span>
-        <div class="clearerleft"></div>
+		<div class="clearerleft"></div>
     </div>
         <?php
         }
