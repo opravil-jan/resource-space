@@ -2856,6 +2856,9 @@ $user_pref_resource_notifications=true;
 # User preference - user_pref_resource_access_notifications. Option to receive notifications about resource access e.g. resource requests
 $user_pref_resource_access_notifications=true;
 
+# Administrator default for receiving notifications about resource access e.g. resource requests. Can't use user_pref_resource_access_notifications since this will pick up setting of requesting user
+$user_pref_resource_access_notifications=true;
+
 # User preference - user_pref_user_management_notifications (user admins only). Option to receive notifications about user management changes e.g. account requests
 $user_pref_user_management_notifications=true;
 # User preference - user_pref_system_management_notifications (System admins only). Option to receive notifications about system events e.g. low disk space

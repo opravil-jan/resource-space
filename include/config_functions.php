@@ -248,8 +248,9 @@ function set_config_option($user_id, $param_name, $param_value)
 * @param  string   $returned_value  If a value does exist it will be returned through
 *                                   this parameter which is passed by reference
 * @return boolean
+* @param  			default			Optionally used to set a default that may not be the current global setting e.g. for checking admin resource preferences
 */
-function get_config_option($user_id, $name, &$returned_value)
+function get_config_option($user_id, $name, &$returned_value, $default=null)
     {
     if(trim($name) === '')
         {
@@ -267,7 +268,7 @@ function get_config_option($user_id, $name, &$returned_value)
     );
     $config_option = sql_value($query, null);
 
-	 if(isset($GLOBALS[$name]))
+	 if(is_null($default) && isset($GLOBALS[$name]))
         {
         $default = $GLOBALS[$name];
         }
