@@ -956,64 +956,67 @@ function create_previews($ref,$thumbonly=false,$extension="jpg",$previewonly=fal
 
 	# Handle alternative image file generation.
 	global $image_alternatives;
-	if (isset($image_alternatives) && $alternative==-1){
-		for($n=0;$n<count($image_alternatives);$n++){
-			$exts=explode(",",$image_alternatives[$n]["source_extensions"]);
-			if (in_array($extension,$exts))
-				{
-				
-				# Remove any existing alternative file(s) with this name.
-				$existing=sql_query("select ref from resource_alt_files where resource='$ref' and name='" . escape_check($image_alternatives[$n]["name"]) . "'");
-				for ($m=0;$m<count($existing);$m++)
-					{
-					delete_alternative_file($ref,$existing[$m]["ref"]);
-					}
-					
-				# Create the alternative file.
-				$aref=add_alternative_file($ref,$image_alternatives[$n]["name"]);
-				$apath=get_resource_path($ref,true,"",true,$image_alternatives[$n]["target_extension"],-1,1,false,"",$aref);
-				
-				$source_profile = '';
-				if ($image_alternatives[$n]["icc"] === true)
-					{
-					$iccpath = get_resource_path($ref,true,'',false,$extension).'.icc';
-					global $icc_extraction;
-	                global $ffmpeg_supported_extensions;
-					if (!file_exists($iccpath) && $extension!="pdf" && !in_array($extension,$ffmpeg_supported_extensions))
-						{
-						// extracted profile doesn't exist. Try extracting.
-						extract_icc_profile($ref,$extension);
-						}
-					if (file_exists($iccpath))
-						{
-						$source_profile = ' -strip -profile ' . $iccpath;
-						}
-					}
+	if(isset($image_alternatives) && $alternative == -1)
+        {
+        for($n = 0; $n < count($image_alternatives); $n++)
+            {
+            $exts = explode(',', $image_alternatives[$n]['source_extensions']);
+            if(in_array($extension, $exts))
+                {
+                # Remove any existing alternative file(s) with this name.
+                $existing = sql_query("SELECT ref FROM resource_alt_files WHERE resource = '$ref' AND name = '" . escape_check($image_alternatives[$n]['name']) . "'");
+                for($m = 0; $m < count($existing); $m++)
+                    {
+                    delete_alternative_file($ref, $existing[$m]['ref']);
+                    }
 
-				# Process the image
-				$version=get_imagemagick_version();
-				if($version[0]>5 || ($version[0]==5 && $version[1]>5) || ($version[0]==5 && $version[1]==5 && $version[2]>7 ))
-					{
-					// Use the new imagemagick command syntax (file then parameters)
-					$command = $convert_fullpath . ' ' . escapeshellarg($file) . (($extension == 'psd') ? '[0] +matte' : '') . $source_profile . ' ' . $image_alternatives[$n]['params'] . ' ' . escapeshellarg($apath);
-					}
-				else
-					{
-					// Use the old imagemagick command syntax (parameters then file)
-					$command = $convert_fullpath . $source_profile . " " . $image_alternatives[$n]["params"] . " " . escapeshellarg($file) . " " . escapeshellarg($apath);
-					}
-			
-                
+                # Create the alternative file.
+                $aref  = add_alternative_file($ref, $image_alternatives[$n]['name']);
+                $apath = get_resource_path($ref, true, '', true, $image_alternatives[$n]['target_extension'], -1, 1, false, '', $aref);
+
+                $source_profile = '';
+                if($image_alternatives[$n]['icc'] === true)
+                    {
+                    $iccpath = get_resource_path($ref, true, '', false, $extension) . '.icc';
+                    
+                    global $icc_extraction, $ffmpeg_supported_extensions;
+                    
+                    if(!file_exists($iccpath) && $extension != 'pdf' && !in_array($extension, $ffmpeg_supported_extensions))
+                        {
+                        // extracted profile doesn't exist. Try extracting.
+                        extract_icc_profile($ref, $extension);
+                        }
+
+                    if(file_exists($iccpath))
+                        {
+                        $source_profile = ' -strip -profile ' . $iccpath;
+                        }
+                    }
+
+                # Process the image
+                $version = get_imagemagick_version();
+                if($version[0] > 5 || ($version[0] == 5 && $version[1] > 5) || ($version[0] == 5 && $version[1] == 5 && $version[2] > 7 ))
+                    {
+                    // Use the new imagemagick command syntax (file then parameters)
+                    $command = $convert_fullpath . ' ' . escapeshellarg($file) . (($extension == 'psd') ? '[0] +matte' : '') . $source_profile . ' ' . $image_alternatives[$n]['params'] . ' ' . escapeshellarg($apath);
+                    }
+                else
+                    {
+                    // Use the old imagemagick command syntax (parameters then file)
+                    $command = $convert_fullpath . $source_profile . ' ' . $image_alternatives[$n]['params'] . ' ' . escapeshellarg($file) . ' ' . escapeshellarg($apath);
+                    }
+
                 $output = run_command($command);
 
-				if (file_exists($apath)){
-					# Update the database with the new file details.
-					$file_size = filesize_unlimited($apath);
-					sql_query("update resource_alt_files set file_name='" . escape_check($image_alternatives[$n]["filename"] . "." . $image_alternatives[$n]["target_extension"]) . "',file_extension='" . escape_check($image_alternatives[$n]["target_extension"]) . "',file_size='" . $file_size . "',creation_date=now() where ref='$aref'");
-				}
-			}
-		}
-	}	
+                if(file_exists($apath))
+                    {
+                    # Update the database with the new file details.
+                    $file_size = filesize_unlimited($apath);
+                    sql_query("UPDATE resource_alt_files SET file_name = '" . escape_check($image_alternatives[$n]['filename'] . '.' . $image_alternatives[$n]['target_extension']) . "', file_extension = '" . escape_check($image_alternatives[$n]['target_extension']) . "', file_size = '" . $file_size . "',creation_date=now() WHERE ref = '$aref'");
+                    }
+                }
+            }
+        }	
 
 	
 		
