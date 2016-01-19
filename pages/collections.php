@@ -851,6 +851,9 @@ if ($count_result>0)
 		<?php
 		} # End of ResourceView hook
 	  } # End of loop through resources
+	?>
+	<div class="clearerleft"></div>
+	<?php
 	} # End of results condition
 
 	
