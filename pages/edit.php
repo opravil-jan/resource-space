@@ -954,7 +954,7 @@ function check_display_condition($n, $field)
             {
                 $scriptconditions[$condref]["field"] = $fields[$cf]["ref"];  # add new jQuery code to check value
                 $scriptconditions[$condref]['type'] = $fields[$cf]['type'];
-                $scriptconditions[$condref]['options'] = $fields[$cf]['options'];
+                $scriptconditions[$condref]['options'] = (in_array($fields[$cf]['type'],array(2, 3, 7, 9, 12))?implode(",",$fields[$cf]['node_options']):$fields[$cf]['options']);
 
                 $checkvalues=$s[1];
                 $validvalues=explode("|",mb_strtoupper($checkvalues));
@@ -978,7 +978,7 @@ function check_display_condition($n, $field)
                     {
                         # construct the value from the ticked boxes
                         # Note: it seems wrong to start with a comma, but this ensures it is treated as a comma separated list by split_keywords(), so if just one item is selected it still does individual word adding, so 'South Asia' is split to 'South Asia','South','Asia'.
-                     $options=trim_array(explode(",",$fields[$cf]["options"]));
+                     $options=trim_array($fields[$cf]["node_options"]);
                      ?><script type="text/javascript">
                      jQuery(document).ready(function() {<?php
                        for ($m=0;$m<count($options);$m++)
@@ -996,8 +996,8 @@ function check_display_condition($n, $field)
                         # add onChange event to each radio button
                   else if($fields[$cf]['type'] == 12) {
 
-                    $options = explode(',', $fields[$cf]['options']); ?>
-
+                    $options = $fields[$cf]['node_options'];?>
+					
                     <script type="text/javascript">
                     jQuery(document).ready(function() {
 
@@ -1241,7 +1241,7 @@ function display_field($n, $field, $newtab=false)
 
 $displaycondition=true;
 if ($field["display_condition"]!="")
-{
+{ 
         #Check if field has a display condition set
  $displaycondition=check_display_condition($n,$field);
 }
@@ -1373,7 +1373,6 @@ if ($multilingual_text_fields)
     if ($type=="") {$type=0;} # Default to text type.
     if (!hook("replacefield","",array($field["type"],$field["ref"],$n)))
     	{
-        node_field_options_override($field);
 		global $auto_order_checkbox,$auto_order_checkbox_case_insensitive;
 		include "edit_fields/" . $type . ".php";
 		}
@@ -1589,7 +1588,8 @@ function SelectTab(tab)
             }
             $tabname=$fields[$n]["tab_name"];
             $fieldcount++;
-
+            
+			node_field_options_override($fields[$n]);
             display_field($n, $fields[$n], $newtab);
          }
       }
