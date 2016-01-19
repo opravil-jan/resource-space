@@ -112,13 +112,13 @@ if ($collection_add!="")
  	refresh_collection_frame($collection_add);
  	}	
 
-if($send_collection_to_admin && $archive == -1 && getvalescaped('ajax' , 'false') == true && getvalescaped('ajax_action' , '') == 'send_collection_to_admin') {
-
+if($send_collection_to_admin && $archive == -1 && getvalescaped('ajax' , 'false') == true && getvalescaped('ajax_action' , '') == 'send_collection_to_admin') 
+	{
     $collection_id = getvalescaped('collection' , '');
-
-    if($collection_id == '') {
+	if($collection_id == '')
+		{
         exit();
-    }
+		}
 
     // Create a copy of the collection for admin:
     $admin_copy = create_collection(-1, $lang['send_collection_to_admin_emailedcollectionname']);
@@ -146,10 +146,37 @@ if($send_collection_to_admin && $archive == -1 && getvalescaped('ajax' , 'false'
     $message .= $lang['send_collection_to_admin_additionalinformation'] . "\n\n";
     $message .= $lang['send_collection_to_admin_collectionname'] . $collection_name . "\n\n";
     $message .= $lang['send_collection_to_admin_numberofresources'] . $resources_in_collection . "\n\n";
-
-    send_mail($email_notify, $subject, $message, '', '');
+	
+	$notification_message = $lang['send_collection_to_admin_emailsubject'] . " " . $user;
+	$notification_url = $baseurl . '/?c=' . $collection_id;
+	$notify_users=get_notification_users(array("e-1","e0")); 
+	foreach($notify_users as $notify_user)
+		{
+		get_config_option($notify_user['ref'],'user_pref_resource_access_notifications', $send_message, $admin_resource_access_notifications);		  
+		if($send_message==false){continue;}		
+		
+		get_config_option($notify_user['ref'],'email_user_notifications', $send_email);    
+		if($send_email && $notify_user["email"]!="")
+			{
+			$admin_notify_emails[] = $notify_user['email'];				
+			}        
+		else
+			{
+			$admin_notify_users[]=$notify_user["ref"];
+			}
+		}
+	foreach($admin_notify_emails as $admin_notify_email)
+		{
+		send_mail($admin_notify_email, $subject, $message, '', '');
+    	}
+	
+	if (count($admin_notify_users)>0)
+		{
+		global $userref;
+        message_add($admin_notify_users,$notification_message,$notification_url);
+		}
     exit();
-}
+	}
 global $php_path,$relate_on_upload,$enable_related_resources;
 if($relate_on_upload && $enable_related_resources && getval("uploaded_refs","")!=""){
     $resource_refs=getval("uploaded_refs","");
