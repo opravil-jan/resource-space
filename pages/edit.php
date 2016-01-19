@@ -1044,139 +1044,172 @@ function check_display_condition($n, $field)
         ?>
         <script type="text/javascript">
         function checkDisplayCondition<?php echo $field["ref"];?>()
-        {
-          <?php echo "field" . $field["ref"] . "status=jQuery('#question_" . $n . "').css('display');
-          ";
-          echo "newfield" . $field["ref"] . "status='none';
-          ";
-          echo "newfield" . $field["ref"] . "provisional=true;
-          ";
+			{
+			field<?php echo $field["ref"]?>status=jQuery('#question_<?php echo $n ?>').css('display');
+			newfield<?php echo $field["ref"]?>status='none';
+			newfield<?php echo $field["ref"]?>provisional=true;
+			
+			<?php
+			foreach ($scriptconditions as $scriptcondition)
+				{
+				?>
+				newfield<?php echo $field["ref"]?>provisionaltest=false;
+				if (jQuery('#field_<?php echo $scriptcondition["field"]?>').length!=0)
+					{
+					<?php
+					if($scriptcondition['type'] == 12) {
 
-          foreach ($scriptconditions as $scriptcondition)
-          {
-            echo "newfield" . $field["ref"] . "provisionaltest=false;
-            ";
-            echo "if (jQuery('#field_" . $scriptcondition["field"] . "').length!=0)
-            {";
-            echo "
-            fieldcheck" . $scriptcondition["field"] . "=jQuery('#field_" . $scriptcondition["field"] . "').val().toUpperCase();
-            ";
-            echo "fieldvalues" . $scriptcondition["field"] . "=fieldcheck" . $scriptcondition["field"] . ".split(',');
-                //alert(fieldvalues" . $scriptcondition["field"] . ");
-         }";
+						$scriptcondition["options"] = explode(',', $scriptcondition["options"]);
 
-         echo "
-         else
-         {
-           ";
+						foreach ($scriptcondition["options"] as $key => $value) 
+							{
+							$scriptcondition["options"][$key] = sha1($value);
+							}
 
-                # Handle Radio Buttons type:
-           if($scriptcondition['type'] == 12) {
+						$scriptcondition["options"] = implode(',', $scriptcondition["options"]);
+						?>
+						
+						var options_string = '<?php echo $scriptcondition["options"]; ?>';
+						var field<?php echo $scriptcondition["field"]; ?>_options = options_string.split(',');
+						var checked = null;
+						
+						for(var i=0; i < field<?php echo $scriptcondition["field"]; ?>_options.length; i++)
+							{
+							if(jQuery('#field_<?php echo $scriptcondition["field"]; ?>_' + field<?php echo $scriptcondition["field"]; ?>_options[i]).is(':checked')) 
+								{
+								checked = jQuery('#field_<?php echo $scriptcondition["field"]; ?>_' + field<?php echo $scriptcondition["field"]; ?>_options[i] + ':checked').val();
+								checked = checked.toUpperCase();
+								}
+							}
+						
+						fieldvalues<?php echo $scriptcondition["field"]?>=checked.split(',');
+						fieldokvalues<?php echo $scriptcondition["field"]; ?> = [<?php echo $scriptcondition["valid"]; ?>];
 
-             $scriptcondition["options"] = explode(',', $scriptcondition["options"]);
+						if(checked !== null && jQuery.inArray(checked, fieldokvalues<?php echo $scriptcondition["field"]; ?>) > -1) 
+							{
+							newfield<?php echo $field["ref"]; ?>provisionaltest = true;
+							}
+						<?php
+						}
+					else
+						{
+						?>
+						fieldcheck<?php echo $scriptcondition["field"]?>=jQuery('#field_<?php echo $scriptcondition["field"]?>').val().toUpperCase();
+						fieldvalues<?php echo $scriptcondition["field"]?>=fieldcheck<?php echo $scriptcondition["field"]?>.split(',');
+						//alert(fieldvalues<?php echo $scriptcondition["field"]?>);
+						<?php
+						}
+					?>
+					}
+				else
+					{
+					<?php
 
-             foreach ($scriptcondition["options"] as $key => $value) {
-               $scriptcondition["options"][$key] = sha1($value);
-            }
+					# Handle Radio Buttons type: not sure if this is needed here anymore
+					if($scriptcondition['type'] == 12) {
 
-            $scriptcondition["options"] = implode(',', $scriptcondition["options"]);
-            ?>
+						$scriptcondition["options"] = explode(',', $scriptcondition["options"]);
 
-            var options_string = '<?php echo $scriptcondition["options"]; ?>';
+						foreach ($scriptcondition["options"] as $key => $value) 
+							{
+							$scriptcondition["options"][$key] = sha1($value);
+							}
 
-            var field<?php echo $scriptcondition["field"]; ?>_options = options_string.split(',');
+						$scriptcondition["options"] = implode(',', $scriptcondition["options"]);
+						?>
+						
+						var options_string = '<?php echo $scriptcondition["options"]; ?>';
+						var field<?php echo $scriptcondition["field"]; ?>_options = options_string.split(',');
+						var checked = null;
+						
+						for(var i=0; i < field<?php echo $scriptcondition["field"]; ?>_options.length; i++)
+							{
+							if(jQuery('#field_<?php echo $scriptcondition["field"]; ?>_' + field<?php echo $scriptcondition["field"]; ?>_options[i]).is(':checked')) 
+								{
+								checked = jQuery('#field_<?php echo $scriptcondition["field"]; ?>_' + field<?php echo $scriptcondition["field"]; ?>_options[i] + ':checked').val();
+								checked = checked.toUpperCase();
+								}
+							}
 
-            var checked = null;
+						fieldokvalues<?php echo $scriptcondition["field"]; ?> = [<?php echo $scriptcondition["valid"]; ?>];
 
-            for(var i=0; i < field<?php echo $scriptcondition["field"]; ?>_options.length; i++){
+						if(checked !== null && jQuery.inArray(checked, fieldokvalues<?php echo $scriptcondition["field"]; ?>) > -1) 
+							{
+							newfield<?php echo $field["ref"]; ?>provisionaltest = true;
+							}
+						<?php
+						}
+					?>
+					fieldvalues<?php echo $scriptcondition["field"]?>=new Array();
+					checkedvals<?php echo $scriptcondition["field"]?>=jQuery('input[name^=<?php echo $scriptcondition["field"]?>_]');
+      
+					jQuery.each(checkedvals<?php echo $scriptcondition["field"]?>,function()
+						{
+						if (jQuery(this).is(':checked'))
+							{
+							checktext<?php echo $scriptcondition["field"]?>=jQuery(this).parent().next().text().toUpperCase();
+							checktext<?php echo $scriptcondition["field"]?> = jQuery.trim(checktext<?php echo $scriptcondition["field"]?>);
+							fieldvalues<?php echo $scriptcondition["field"]?>.push(checktext<?php echo $scriptcondition["field"]?>);
+							//alert(fieldvalues<?php echo $scriptcondition["field"]?>);
+							}
+						});
+					}
+		
+				fieldokvalues<?php echo $scriptcondition["field"]?>=new Array();
+				fieldokvalues<?php echo $scriptcondition["field"]?>=[<?php echo $scriptcondition["valid"]?>];
+		
+				jQuery.each(fieldvalues<?php echo $scriptcondition["field"]?>,function(f,v)
+					{
+					//alert("checking value " + fieldvalues<?php echo $scriptcondition["field"]?> + " against " + fieldokvalues<?php echo $scriptcondition["field"]?>);
+					//alert(jQuery.inArray(fieldvalues<?php echo $scriptcondition["field"]?>,fieldokvalues<?php echo $scriptcondition["field"]?>));
+					if ((jQuery.inArray(v,fieldokvalues<?php echo $scriptcondition["field"]?>))>-1 || (fieldvalues<?php echo $scriptcondition["field"]?> ==fieldokvalues<?php echo  $scriptcondition["field"]?>))
+						{
+						newfield<?php echo $field["ref"]?>provisionaltest=true;
+						}
+					});
 
-               if(jQuery('#field_<?php echo $scriptcondition["field"]; ?>_' + field<?php echo $scriptcondition["field"]; ?>_options[i]).is(':checked')) {
-                 checked = jQuery('#field_<?php echo $scriptcondition["field"]; ?>_' + field<?php echo $scriptcondition["field"]; ?>_options[i] + ':checked').val();
-                 checked = checked.toUpperCase();
-              }
+				if (newfield<?php echo $field["ref"]?>provisionaltest==false)
+					{
+					newfield<?php echo $field["ref"]?>provisional=false;
+					}
+				<?php
+				}
+			?>
+			exemptfieldsval=jQuery('#exemptfields').val();
+			exemptfieldsarr=exemptfieldsval.split(',');
+			
+			if (newfield<?php echo $field["ref"]?>provisional==true)
+				{
+				if (jQuery.inArray(<?php echo $field["ref"]?>,exemptfieldsarr))
+					{
+					exemptfieldsarr.splice(jQuery.inArray(<?php echo $field["ref"]?>, exemptfieldsarr), 1 );
+					}
+				newfield<?php echo $field["ref"]?>status='block';
+				}
+			else
+				{
+				if ((jQuery.inArray(<?php echo $field["ref"]?>,exemptfieldsarr))==-1)
+					{
+					exemptfieldsarr.push(<?php echo $field["ref"]?>);
+					}
+				}
+			jQuery('#exemptfields').val(exemptfieldsarr.join(","));
 
-           }
-
-           fieldokvalues<?php echo $scriptcondition["field"]; ?> = [<?php echo $scriptcondition["valid"]; ?>];
-
-           if(checked !== null && jQuery.inArray(checked, fieldokvalues<?php echo $scriptcondition["field"]; ?>) > -1) {
-            newfield<?php echo $field["ref"]; ?>provisionaltest = true;
-         }
-
-         <?php
-      }
-
-      echo "fieldvalues" . $scriptcondition["field"] . "=new Array();
-      ";
-      echo "checkedvals" . $scriptcondition["field"] . "=jQuery('input[name^=" . $scriptcondition["field"] . "_]')
-      ";
-      echo "jQuery.each(checkedvals" . $scriptcondition["field"] . ",function(){
-       if (jQuery(this).is(':checked'))
-       {
-         checktext" . $scriptcondition["field"] . "=jQuery(this).parent().next().text().toUpperCase();
-         checktext" . $scriptcondition["field"] . " = jQuery.trim(checktext" . $scriptcondition["field"] . ");
-         fieldvalues" . $scriptcondition["field"] . ".push(checktext" . $scriptcondition["field"] . ");
-                        //alert(fieldvalues" . $scriptcondition["field"] . ");
-      }
-   })
-}";
-
-echo "fieldokvalues" . $scriptcondition["field"] . "=new Array();
-";
-echo "fieldokvalues" . $scriptcondition["field"] . "=[" . $scriptcondition["valid"] . "];
-";
-echo "jQuery.each(fieldvalues" . $scriptcondition["field"] . ",function(f,v){
-                    //alert(\"checking value \" + fieldvalues" . $scriptcondition["field"] . " + \" against \" + fieldokvalues" . $scriptcondition["field"] . ");
-                    //alert(jQuery.inArray(fieldvalues" . $scriptcondition["field"] . ",fieldokvalues" . $scriptcondition["field"] . "));
- if ((jQuery.inArray(v,fieldokvalues" . $scriptcondition["field"] . "))>-1 || (fieldvalues" . $scriptcondition["field"] . " ==fieldokvalues" . $scriptcondition["field"] ." ))
- {
-   newfield" . $field["ref"] . "provisionaltest=true;
-}
-});
-
-if (newfield" . $field["ref"] . "provisionaltest==false)
- {newfield" . $field["ref"] . "provisional=false;}
-";
-}
-
-echo "
-exemptfieldsval=jQuery('#exemptfields').val();
-exemptfieldsarr=exemptfieldsval.split(',');
-if (newfield" . $field["ref"] . "provisional==true)
-{
-  if (jQuery.inArray(" . $field["ref"] . ",exemptfieldsarr))
-  {
-    exemptfieldsarr.splice(jQuery.inArray(" . $field["ref"] . ", exemptfieldsarr), 1 );
- }
- newfield" . $field["ref"] . "status='block'
-}
-else
-{
-
-
-  if ((jQuery.inArray(" . $field["ref"] . ",exemptfieldsarr))==-1)
-  {
-    exemptfieldsarr.push(" . $field["ref"] . ")
- }
-}
-jQuery('#exemptfields').val(exemptfieldsarr.join(","));
-
-
-";
-
-echo "if (newfield" . $field["ref"] . "status!=field" . $field["ref"] . "status)
-{
-  jQuery('#question_" . $n . "').slideToggle();
-  if (jQuery('#question_" . $n . "').css('display')=='block')
-    {jQuery('#question_" . $n . "').css('border-top','');}
- else
-    {jQuery('#question_" . $n . "').css('border-top','none');}
-}
-
-";
-?>}
-</script>
-<?php
+			if (newfield<?php echo $field["ref"]?>status!=field<?php echo $field["ref"]?>status)
+				{
+				jQuery('#question_<?php echo $n ?>').slideToggle();
+				if (jQuery('#question_<?php echo $n ?>').css('display')=='block')
+					{
+					jQuery('#question_<?php echo $n ?>').css('border-top','');
+					}
+				else
+					{
+					jQuery('#question_<?php echo $n ?>').css('border-top','none');
+					}
+				}
+			}
+		</script>
+		<?php
 return $displaycondition;
 }
 
