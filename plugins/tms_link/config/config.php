@@ -1,15 +1,15 @@
 <?php
 $tms_link_test_mode=false;
-$tms_link_email_notify="neil@montala.com";
+$tms_link_email_notify="";
 $tms_link_test_count=500;
 // Number of resources to retrieve from TMS in each query - can be tweaked for performance
 $tms_link_query_chunk_size=50;
 
 // SQL Server connection settings
 $tms_link_dsn_name='TMS SQL Server';
-$tms_link_user='RS_Admin';
-$tms_link_password='W@lt$rs';
-$tms_link_table_name='wam_DAMS_Extract';
+$tms_link_user='';
+$tms_link_password='';
+$tms_link_table_name='';
 
 $tms_link_resource_types=array(12);
 
@@ -55,7 +55,7 @@ $tms_link_field_mappings_saved=base64_encode(serialize(array(
 "ObjectNumber"=>0,
 "CuratorRevISODate"=>0,
 "Dated"=>0,
-"RowChecksum"=>168
+"RowChecksum"=>0
 )));
 
 $tms_link_log_directory="";
