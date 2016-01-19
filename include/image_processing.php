@@ -994,7 +994,7 @@ function create_previews($ref,$thumbonly=false,$extension="jpg",$previewonly=fal
                     }
 
                 $source_params = ' ';
-                if('' !== trim($image_alternatives[$n]['source_params']))
+                if(isset($image_alternatives[$n]['source_params']) && '' !== trim($image_alternatives[$n]['source_params']))
                     {
                     $source_params = ' ' . $image_alternatives[$n]['source_params'] . ' ';
                     }
