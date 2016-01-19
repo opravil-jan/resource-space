@@ -8,7 +8,7 @@ include "../include/search_functions.php";
 include "../include/resource_functions.php";
 
 $offset=getvalescaped("offset",0);
-$per_page=getvalescaped("per_page_list",$default_perpage_list,true);setcookie("per_page_list",$per_page, 0, '', '', false, true);
+$per_page=getvalescaped("per_page_list",$default_perpage_list,true);rs_setcookie('per_page_list', $per_page);
 
 include "../include/header.php";
 

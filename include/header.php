@@ -104,7 +104,7 @@ if(!isset($thumbs) && ($pagename!="login") && ($pagename!="user_password") && ($
         }
     }
 // blank starsearch cookie in case $star_search was turned off
-setcookie("starsearch","",0,'','',false,true);
+rs_setcookie('starsearch', '');
 if ($display_user_rating_stars && $star_search)
     {
 	# if seardch is not a special search (ie. !recent), use starsearchvalue.
@@ -115,7 +115,7 @@ if ($display_user_rating_stars && $star_search)
 	else
 		{
 		$starsearch=getvalescaped("starsearch","");	
-		setcookie("starsearch",$starsearch,0,'','',false,true);
+		rs_setcookie('starsearch', $starsearch);
 	    }
 	}
 	

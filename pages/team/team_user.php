@@ -16,7 +16,7 @@ $order_by=getvalescaped("order_by","u.username");
 $group=getvalescaped("group",0);
 
 # Pager
-$per_page=getvalescaped("per_page_list",$default_perpage_list);setcookie("per_page_list",$per_page, 0, '', '', false, true);
+$per_page=getvalescaped("per_page_list",$default_perpage_list);rs_setcookie('per_page_list', $per_page);
 
 
 if (array_key_exists("find",$_POST)) {$offset=0;} # reset page counter when posting
