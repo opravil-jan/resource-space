@@ -4771,6 +4771,7 @@ function get_notification_users($userpermission="SYSTEM_ADMIN")
 	// RESOURCE_ACCESS
 	// RESEARCH_ADMIN
 	// USER_ADMIN
+    // RESOURCE_ADMIN
 	
     global $notification_users_cache, $usergroup,$email_notify_usergroups;
 	$userpermissionindex=is_array($userpermission)?implode("_",$userpermission):$userpermission;
@@ -4807,9 +4808,15 @@ function get_notification_users($userpermission="SYSTEM_ADMIN")
 			return $notification_users_cache[$userpermissionindex];		
 			break;
 					
-			case "SYSTEM_ADMIN";
+			case "RESOURCE_ADMIN";
+			// Get all users in groups with t and e0 permissions
+			$notification_users_cache[$userpermissionindex] = sql_query("select u.ref, u.email from usergroup ug join user u on u.usergroup=ug.ref where find_in_set(binary 't',ug.permissions) <> 0 and find_in_set(binary 'e0',ug.permissions)");	
+			return $notification_users_cache[$userpermissionindex];
+			break;
+            
+            case "SYSTEM_ADMIN";
 			default;
-			// Get all users in groups with A permissions (default if incorrect admin type has been passed)
+			// Get all users in groups with a permission (default if incorrect admin type has been passed)
 			$notification_users_cache[$userpermissionindex] = sql_query("select u.ref, u.email from usergroup ug join user u on u.usergroup=ug.ref where find_in_set(binary 'a',ug.permissions) <> 0");	
 			return $notification_users_cache[$userpermissionindex];
 			break;

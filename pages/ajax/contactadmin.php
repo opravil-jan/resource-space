@@ -49,7 +49,7 @@ if (getval("send","")!="")
 	$notify_users=get_notification_users("SYSTEM_ADMIN");
 	foreach($notify_users as $notify_user)
 		{
-		get_config_option($notify_user['ref'],'user_pref_system_management_notifications', $send_message);		  
+		get_config_option($notify_user['ref'],'user_pref_resource_notifications', $send_message);		  
 		if($send_message==false){$continue;}		
 		get_config_option($notify_user['ref'],'email_user_notifications', $send_email);    
 		if($send_email && $notify_user["email"]!="")
