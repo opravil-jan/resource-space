@@ -2183,15 +2183,15 @@ function search_filter($search,$archive,$restypes,$starsearch,$recent_search_day
 	if (!$access_override)
 	    {
 	    global $pending_review_visible_to_all,$search_all_workflow_states, $userref, $pending_submission_searchable_to_all;;
-	    if(substr($search,0,11)=="!collection")
+	    if(substr($search,0,11)=="!collection" || substr($search,0,5)=="!list")
 			{
-			# Resources in a collection may be in any archive state
+			# Resources in a collection or list may be in any archive state
 			global $collections_omit_archived;
-			if($collections_omit_archived && !checkperm("e2"))
+			if(substr($search,0,11)=="!collection" && $collections_omit_archived && !checkperm("e2"))
 				{
 				$sql_filter.= (($sql_filter!="")?" and ":"") . "archive<>2";
 				}			
-			}		
+			}
 		elseif ($search_all_workflow_states)
 			{hook("search_all_workflow_states_filter");}   
 		elseif ($archive==0 && $pending_review_visible_to_all)
