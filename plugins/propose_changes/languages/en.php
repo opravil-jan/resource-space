@@ -5,7 +5,7 @@
 #
 
 $lang['propose_changes_configuration']="Propose changes - plugin configuration - allow users to propose metadata changes";
-$lang['propose_changes_notify_admin']="Notify system email when proposed changes are submitted";
+$lang['propose_changes_notify_admin']="Notify resource adminsitrators when proposed changes are submitted";
 $lang['propose_changes_notify_contributor']="Notify resource contributor when proposed changes are submitted";
 $lang['propose_changes_notify_addresses']="Other addresses to notify when proposed changes are submitted (comma separated)";
 
