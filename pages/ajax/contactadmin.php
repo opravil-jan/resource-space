@@ -46,7 +46,7 @@ if (getval("send","")!="")
 	# Build message and send.	
 	$admin_notify_emails = array();
 	$admin_notify_users = array();
-	$notify_users=get_notification_users("SYSTEM_ADMIN");
+	$notify_users=get_notification_users("RESOURCE_ADMIN");
 	foreach($notify_users as $notify_user)
 		{
 		get_config_option($notify_user['ref'],'user_pref_resource_notifications', $send_message);		  

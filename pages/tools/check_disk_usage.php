@@ -36,24 +36,30 @@ else{
 
 	echo $lang["diskusage"].": ".$used_percent."%\n".$lang["available"].": ".$avail_format."\n".$lang["used"].": ".$used_format."\n".$lang["free"].": ".$free_format."<br/><br/>";
 	
-	if(isset($disk_quota_notification_limit_percent_warning)){
+	if(isset($disk_quota_notification_limit_percent_warning))
+		{
 		$send_email=false;
-		if($used_percent>=$disk_quota_notification_limit_percent_warning){
+		if($used_percent>=$disk_quota_notification_limit_percent_warning)
+			{
 			// Check the last time this notice was sent
 			echo "Percentage used is greater than or equal to ".$disk_quota_notification_limit_percent_warning."%.";
-			if(!isset($disk_quota_notification_interval)){
+			if(!isset($disk_quota_notification_interval))
+				{
 				$send_email=true;
-			}
-			else{
+				}
+			else
+				{
 				$last_sent=sql_value("select value from sysvars where name='last_sent_disk_quota'","");
 				echo "Last Sent:".strtotime($last_sent)." - ".$last_sent."<br/>";
 				echo "Now:".time()." - ".date("Y-m-d H:i:s")."<br/>";
 				echo "Interval:".($disk_quota_notification_interval*60*60)."<br/>";
-				if($last_sent=='' || (time()-strtotime($last_sent))>($disk_quota_notification_interval*60*60)){
+				if($last_sent=='' || (time()-strtotime($last_sent))>($disk_quota_notification_interval*60*60))
+					{
 					$send_email=true;
+					}
 				}
-			}
-			if($send_email){
+			if($send_email)
+				{
 				# Send notifications
 				$subject="Space used has reached or exceeded " . $disk_quota_notification_limit_percent_warning . "%!";
 				$body="Space used has reached or exceeded ".$disk_quota_notification_limit_percent_warning."%!\n".$lang["diskusage"].": ".$used_percent."%\n".$lang["available"].": ".$avail_format."\n".$lang["used"].": ".$used_format."\n".$lang["free"].": ".$free_format;
@@ -64,12 +70,13 @@ else{
 				// update last sent
 				sql_query("delete from sysvars where name='last_sent_disk_quota'");
 				sql_query("insert into sysvars(name,value) values ('last_sent_disk_quota',now())");
+				}
+			}
+		else
+			{
+			echo "Percentage used is less than ".$disk_quota_notification_limit_percent_warning."%.<br/>";
 			}
 		}
-		else{
-			echo "Percentage used is less than ".$disk_quota_notification_limit_percent_warning."%.<br/>";
-		}
-	}
 	if(isset($disk_quota_limit_size_warning_noupload)){
 		# convert limit
 		$limit=$disk_quota_limit_size_warning_noupload*1024*1024*1024;
