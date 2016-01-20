@@ -4810,7 +4810,7 @@ function get_notification_users($userpermission="SYSTEM_ADMIN")
 			case "SYSTEM_ADMIN";
 			default;
 			// Get all users in groups with A permissions (default if incorrect admin type has been passed)
-			$notification_users_cache[$userpermissionindex] = sql_query("select u.ref, u.email from usergroup ug join user u on u.usergroup=ug.ref where find_in_set(binary 'A',ug.permissions) <> 0");	
+			$notification_users_cache[$userpermissionindex] = sql_query("select u.ref, u.email from usergroup ug join user u on u.usergroup=ug.ref where find_in_set(binary 'a',ug.permissions) <> 0");	
 			return $notification_users_cache[$userpermissionindex];
 			break;
 		
