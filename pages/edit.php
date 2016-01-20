@@ -2006,22 +2006,25 @@ if (!$edit_upload_options_at_top){include '../include/edit_upload_options.php';}
 
 
 </div>
-
-<?php if (!hook('replacesubmitbuttons')) 
-   { ?>
-   <div class="QuestionSubmit">
-      <?php
-      global $clearbutton_on_upload;
-      if(($clearbutton_on_upload && $ref<0 && !$multiple) || ($ref>0 && $clearbutton_on_edit)) 
-         { ?>
-         <input name="resetform" class="resetform" type="submit" value="<?php echo $lang["clearbutton"]?>" />&nbsp;
-         <?php
-         } ?>
-         <input <?php if ($multiple) { ?>onclick="return confirm('<?php echo $lang["confirmeditall"]?>');"<?php } ?> name="save" class="editsave" type="submit" value="&nbsp;&nbsp;<?php echo ($ref>0)?$lang["save"]:$lang["next"]?>&nbsp;&nbsp;" /><br><br>
-      <div class="clearerleft"> </div>
-   </div>
-   <?php 
-   }
+<?php
+if(!hook('replacesubmitbuttons'))
+    {
+    ?>
+    <div class="QuestionSubmit">
+    <?php
+    global $clearbutton_on_upload;
+    if(($clearbutton_on_upload && $ref < 0 && !$multiple) || ($ref > 0 && $clearbutton_on_edit))
+        {
+        ?>
+        <input name="resetform" class="resetform" type="submit" value="<?php echo $lang["clearbutton"]?>" />&nbsp;
+        <?php
+        }
+        ?>
+        <input <?php if ($multiple) { ?>onclick="return confirm('<?php echo $lang["confirmeditall"]?>');"<?php } ?> name="save" class="editsave" type="submit" value="&nbsp;&nbsp;<?php echo ($ref>0)?$lang["save"]:$lang["next"]?>&nbsp;&nbsp;" /><br><br>
+        <div class="clearerleft"> </div>
+    </div>
+    <?php 
+    }
    
 # Duplicate navigation
 if (!$multiple && !$modal && $ref>0 &&!hook("dontshoweditnav")) {EditNav();}
