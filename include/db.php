@@ -1392,7 +1392,7 @@ function get_plugin_path($plugin,$url=false)
     
     # Standard location    
     $pluginpath=dirname(__FILE__) . "/../plugins/" . $plugin;
-    if (file_exists($pluginpath)) {return ($url?$baseurl_short . "/plugins/" . $plugin:$pluginpath);}
+    if (file_exists($pluginpath)) {return ($url?$baseurl_short . "plugins/" . $plugin:$pluginpath);}
 
     # Filestore location
     $pluginpath=$storagedir . "/plugins/" . $plugin;
