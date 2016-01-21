@@ -185,7 +185,7 @@ if ($use_plugins_manager)
 				{
 				# Installed plugin isn't marked as installed in the DB.  Update it now.
 				# Check if there's a plugin.yaml file to get version and author info.
-				$plugin_yaml_path = dirname(__FILE__)."/../plugins/{$plugin_name}/{$plugin_name}.yaml";
+				$plugin_yaml_path = get_plugin_path($plugin_name) . "/{$plugin_name}.yaml";
 				$p_y = get_plugin_yaml($plugin_yaml_path, false);
 				# Write what information we have to the plugin DB.
 				sql_query("REPLACE plugins(inst_version, author, descrip, name, info_url, update_url, config_url, priority) ".
@@ -201,19 +201,19 @@ if ($use_plugins_manager)
     $mysql_verbatim_queries = $mysql_vq;
 
     $active_yaml = array();
-	$plugins = array();
-	foreach($active_plugins as $plugin)
-		{
-		# Check group access && YAML, only enable for global access at this point
-		$plugin_yaml_path = dirname(__FILE__)."/../plugins/".$plugin["name"]."/".$plugin["name"].".yaml";
-		$py = get_plugin_yaml($plugin_yaml_path, false);
-		array_push($active_yaml,$py);
-		if ($plugin['enabled_groups']=='' && !isset($py["userpreferencegroup"]))
-			{
-			# Add to the plugins array if not already present which is what we are working with
-			$plugins[]=$plugin['name'];
-			}
-		}
+    $plugins = array();
+    foreach($active_plugins as $plugin)
+	    {
+	    # Check group access && YAML, only enable for global access at this point
+	    $plugin_yaml_path = get_plugin_path($plugin["name"])."/".$plugin["name"].".yaml";
+	    $py = get_plugin_yaml($plugin_yaml_path, false);
+	    array_push($active_yaml,$py);
+	    if ($plugin['enabled_groups']=='' && !isset($py["userpreferencegroup"]))
+		    {
+		    # Add to the plugins array if not already present which is what we are working with
+		    $plugins[]=$plugin['name'];
+		    }
+	    }
 
 	for ($n=count($active_plugins)-1;$n>=0;$n--)
 		{
@@ -1327,14 +1327,15 @@ function daily_stat($activity_type,$object_ref)
 }
 
 function include_plugin_config($plugin_name,$config="",$config_json="")
-	{
+    {
     global $mysql_charset;
-	$configpath = dirname(__FILE__)."/../plugins/" . $plugin_name . "/config/config.default.php";
-	if (file_exists($configpath)) {include $configpath;}
-
-	$configpath2 = dirname(__FILE__)."/../plugins/" . $plugin_name . "/config/config.php";
-	if (file_exists($configpath2)) {include $configpath2;}
-
+    
+    $pluginpath=get_plugin_path($plugin_name);
+    
+    $configpath = $pluginpath . "/config/config.default.php";
+    if (file_exists($configpath)) {include $configpath;}
+    $configpath = $pluginpath . "/config/config.php";
+    if (file_exists($configpath)) {include $configpath;}
 
     if ($config_json != "" && function_exists('json_decode'))
         {
@@ -1372,7 +1373,8 @@ function register_plugin_language($plugin)
     global $plugins,$language,$pagename,$lang,$applicationname;
     
     	# Include language file
-    	$langpath=dirname(__FILE__)."/../plugins/" . $plugin . "/languages/";
+    	$langpath=get_plugin_path($plugin) . "/languages/";
+	
     	if (file_exists($langpath . "en.php")) {include $langpath . "en.php";}
     	if ($language!="en")
     		{
@@ -1381,17 +1383,36 @@ function register_plugin_language($plugin)
     		@include $langpath . safe_file_name($language) . ".php";
     		}
     }
+    
+function get_plugin_path($plugin,$url=false)
+    {
+    # For the given plugin shortname, return the path on disk
+    # Supports plugins being in the filestore folder (for user uploaded plugins)
+    global $baseurl_short;
+    
+    # Standard location    
+    $pluginpath=dirname(__FILE__) . "/../plugins/" . $plugin;
+    if (file_exists($pluginpath)) {return ($url?$baseurl_short . "/plugins/" . $plugin:$pluginpath);}
+
+    # Filestore location
+    $pluginpath=dirname(__FILE__) . "/../filestore/plugins/" . $plugin;
+    if (file_exists($pluginpath)) {return ($url?$baseurl_short . "/filestore/plugins/" . $plugin:$pluginpath);}
+    }
+    
 function register_plugin($plugin)
 	{
 	global $plugins,$language,$pagename,$lang,$applicationname;
 
 	# Also include plugin hook file for this page.
 	if ($pagename=="collections_frameless_loader"){$pagename="collections";}
-	$hookpath=dirname(__FILE__)."/../plugins/" . $plugin . "/hooks/" . $pagename . ".php";
+	
+	$pluginpath=get_plugin_path($plugin);
+	    
+	$hookpath=$pluginpath . "/hooks/" . $pagename . ".php";
 	if (file_exists($hookpath)) {include_once $hookpath;}
 	
 	# Support an 'all' hook
-	$hookpath=dirname(__FILE__)."/../plugins/" . $plugin . "/hooks/all.php";
+	$hookpath=$pluginpath . "/hooks/all.php";
 	if (file_exists($hookpath)) {include_once $hookpath;}
 	
 	return true;	

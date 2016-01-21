@@ -19,8 +19,7 @@
  */
 function activate_plugin($name)
     {
-    $plugins_dir = dirname(__FILE__).'/../plugins/';
-    $plugin_dir = $plugins_dir.$name;
+    $plugin_dir = get_plugin_path($name);
     if (file_exists($plugin_dir))
         {
         $plugin_yaml = get_plugin_yaml("$plugin_dir/$name.yaml", false);
@@ -1320,29 +1319,28 @@ function get_plugin_css($theme){
 	$plugincss="";
 	for ($n=count($plugins)-1;$n>=0;$n--)
 	{
-	$csspath=dirname(__FILE__)."/../plugins/" . $plugins[$n] . "/css/style.css";
+	$csspath=get_plugin_path($plugins[$n]) . "/css/style.css";
 	if (file_exists($csspath))
 		{
-		$plugincss.='<link href="'.$baseurl.'/plugins/'.$plugins[$n].'/css/style.css?css_reload_key='.$css_reload_key.'" rel="stylesheet" type="text/css" media="screen,projection,print" class="plugincss" />
+		$plugincss.='<link href="'.get_plugin_path($plugins[$n],true).'/css/style.css?css_reload_key='.$css_reload_key.'" rel="stylesheet" type="text/css" media="screen,projection,print" class="plugincss" />
 		';
 		}	
 
 	# Allow language specific CSS files
-	$csspath=dirname(__FILE__)."/../plugins/" . $plugins[$n] . "/css/style-" . $language . ".css";
+	$csspath=get_plugin_path($plugins[$n]) . "/css/style-" . $language . ".css";
 	if (file_exists($csspath))
 		{
-		$plugincss.='<link href="'.$baseurl.'/plugins/'.$plugins[$n].'/css/style-' . $language . '.css?css_reload_key='.$css_reload_key.'" rel="stylesheet" type="text/css" media="screen,projection,print" class="plugincss" />
+		$plugincss.='<link href="' . get_plugin_path($plugins[$n],true) . '/css/style-' . $language . '.css?css_reload_key='.$css_reload_key.'" rel="stylesheet" type="text/css" media="screen,projection,print" class="plugincss" />
 		';
 		}	
-
 
 	# Allow colour theme specific styles
-	$csspath=dirname(__FILE__)."/../plugins/" . $plugins[$n] . "/css/Col-".$theme.".css";	
+	$csspath=get_plugin_path($plugins[$n]) . "/css/Col-".$theme.".css";	
 	if (file_exists($csspath))
 		{
-		$plugincss.='<link href="'.$baseurl.'/plugins/'.$plugins[$n].'/css/Col-'.$theme.'.css?css_reload_key='.$css_reload_key.'" rel="stylesheet" type="text/css" media="screen,projection,print" class="plugincss" />
+		$plugincss.='<link href="' . get_plugin_path($plugins[$n],true) . '/css/Col-'.$theme.'.css?css_reload_key='.$css_reload_key.'" rel="stylesheet" type="text/css" media="screen,projection,print" class="plugincss" />
 		';
-		}	
+		}
 	}
 	return $plugincss;
 }

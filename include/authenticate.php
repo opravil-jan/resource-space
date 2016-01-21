@@ -352,7 +352,7 @@ switch($ctheme)
 foreach($active_plugins as $plugin)
 	{
 	#Get Yaml
-	$plugin_yaml_path = dirname(__FILE__)."/../plugins/".$plugin["name"]."/".$plugin["name"].".yaml";
+	$plugin_yaml_path = get_plugin_path($plugin["name"]) ."/".$plugin["name"].".yaml";
 	$py="";
 	$py = get_plugin_yaml($plugin_yaml_path, false);
 

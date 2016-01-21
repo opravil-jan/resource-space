@@ -13,8 +13,6 @@ include "../../include/db.php";
 include_once "../../include/general.php";
 include "../../include/authenticate.php";if (!checkperm("a")) {exit ("Permission denied.");}
 
-$plugins_dir = dirname(__FILE__)."/../../plugins/";
-
 if (isset($_REQUEST['activate']))
    {
    $inst_name = trim(getvalescaped('activate',''), '#');
@@ -154,38 +152,47 @@ function legacy_check(&$i_plugin, $key)
    }
 array_walk($inst_plugins, 'legacy_check');
 # Build an array of available plugins.
-$dirh = opendir($plugins_dir);
 $plugins_avail = array();
 
-while (false !== ($file = readdir($dirh))) 
-   {
-   if (is_dir($plugins_dir.$file)&&$file[0]!='.')
-      {
-      #Check if the plugin is already activated.
-      $status = sql_query('SELECT inst_version, config FROM plugins WHERE name="'.$file.'"');
-      if ((count($status)==0) || ($status[0]['inst_version']==null))
-         {
-         # Look for a <pluginname>.yaml file.
-         $plugin_yaml = get_plugin_yaml($plugins_dir.$file.'/'.$file.'.yaml', false);
-         foreach ($plugin_yaml as $key=>$value)
-            {
-            $plugins_avail[$file][$key] = $value ;
-            }
-         $plugins_avail[$file]['config']=(sql_value("SELECT config AS value FROM plugins WHERE name='$file'",'') != '');
-         # If no yaml, or yaml file but no description present, 
-         # attempt to read an 'about.txt' file
-         if ($plugins_avail[$file]["desc"]=="")
-            {
-            $about=$plugins_dir.$file.'/about.txt';
-            if (file_exists($about)) 
-               {
-               $plugins_avail[$file]["desc"]=substr(file_get_contents($about),0,95) . "...";
-               }
-            }
-         }        
-      }
-   }
-closedir($dirh);
+function load_plugins($plugins_dir)
+ {
+ global $plugins_avail;
+ 
+ $dirh = opendir($plugins_dir);
+ while (false !== ($file = readdir($dirh))) 
+    {
+    if (is_dir($plugins_dir.$file)&&$file[0]!='.')
+       {
+       #Check if the plugin is already activated.
+       $status = sql_query('SELECT inst_version, config FROM plugins WHERE name="'.$file.'"');
+       if ((count($status)==0) || ($status[0]['inst_version']==null))
+          {
+          # Look for a <pluginname>.yaml file.
+          $plugin_yaml = get_plugin_yaml($plugins_dir.$file.'/'.$file.'.yaml', false);
+          foreach ($plugin_yaml as $key=>$value)
+             {
+             $plugins_avail[$file][$key] = $value ;
+             }
+          $plugins_avail[$file]['config']=(sql_value("SELECT config AS value FROM plugins WHERE name='$file'",'') != '');
+          # If no yaml, or yaml file but no description present, 
+          # attempt to read an 'about.txt' file
+          if ($plugins_avail[$file]["desc"]=="")
+             {
+             $about=$plugins_dir.$file.'/about.txt';
+             if (file_exists($about)) 
+                {
+                $plugins_avail[$file]["desc"]=substr(file_get_contents($about),0,95) . "...";
+                }
+             }
+          }        
+       }
+    }
+ closedir($dirh);
+ }
+
+load_plugins(dirname(__FILE__)."/../../plugins/");
+load_plugins(dirname(__FILE__)."/../../filestore/plugins/");
+
 ksort ($plugins_avail);
 
 
