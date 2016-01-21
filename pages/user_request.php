@@ -99,6 +99,30 @@ if (getval("save","")!="")
 		}
 	}
 include "../include/header.php";
+
+if($login_background)
+	{
+    $backimageurl = "";
+    $dir = dirname(__FILE__) . "/../" . $homeanim_folder;
+    $d = scandir($dir);    
+	sort($d, SORT_NUMERIC);
+    foreach ($d as $f) 
+		{ 
+		if(preg_match("/[0-9]+\.(jpg)$/",$f))
+            {
+            $backimageurl= $baseurl_short . $homeanim_folder . "/" . $f;  
+            break;    
+            }
+        }
+	?>
+	<style>
+	#UICenter {
+		background-image: url('<?php echo $backimageurl; ?>');
+		}
+	</style>
+	<div id="login_box">
+	<?php
+	}
 ?>
 
 <h1><?php echo $lang["requestuserlogin"]?></h1>
@@ -292,6 +316,13 @@ if(!hook("replace_user_request_required_key"))
 	{
 	?>
 	<p><sup>*</sup> <?php echo $lang["requiredfield"] ?></p>
+	<?php
+	}
+    
+if($login_background)
+	{
+	?>
+	<div> <!-- end of login_box -->
 	<?php
 	}
 
