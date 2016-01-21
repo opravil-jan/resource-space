@@ -106,13 +106,19 @@ elseif ($enable_plugin_upload && isset($_REQUEST['submit']))
                   }
                if (!$rejected)
                   {
-                  if (!(is_array(PclTarExtract($tmp_file, '../../plugins/'))))
+                  # Uploaded plugins live in the filestore folder.
+                  if (!(is_array(PclTarExtract($tmp_file, $storagedir . "/plugins/"))))
                      {
-                   	#TODO: If the new plugin is already activated we should update the DB with the new yaml info.
+                     #TODO: If the new plugin is already activated we should update the DB with the new yaml info.
                      $rejected = true;
                      $rej_reason = $lang['plugins-rejarchprob'].' '.PclErrorString(PclErrorCode());
                      }
-                  }   	         
+                  else
+                     {
+                     activate_plugin($u_plugin_name);
+                     redirect($baseurl_short.'pages/team/team_plugins.php');
+                     }
+                  }
                }
             }
          else 
@@ -191,6 +197,7 @@ function load_plugins($plugins_dir)
  }
 
 load_plugins(dirname(__FILE__)."/../../plugins/");
+if (!file_exists($storagedir . "/plugins/")) {mkdir($storagedir . "/plugins/");}
 load_plugins(dirname(__FILE__)."/../../filestore/plugins/");
 
 ksort ($plugins_avail);
