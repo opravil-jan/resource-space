@@ -3454,7 +3454,7 @@ function get_nopreview_icon($resource_type,$extension,$col_size,$deprecated1=fal
 		}
 	# Try a plugin
 	$try=hook('plugin_nopreview_icon','',array($resource_type,$col));
-	if (file_exists($folder . $try))
+	if (false !== $try && file_exists($folder . $try))
 		{
 		return $try;
 		}
