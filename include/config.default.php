@@ -1666,7 +1666,7 @@ $no_preview_extensions=array("icm","icc");
 
 # If set, send a notification when resources expire to this e-mail address.
 # This requires batch/expiry_notification.php to be executed periodically via a cron job or similar.
-# $expiry_notification_mail="myaddress@mydomain.example";
+# If this is not set and the script is executed notifications will be sent to resource admins, or users in groups specified in $email_notify_usergroups $expiry_notification_mail="myaddress@mydomain.example";
 
 # What is the default display mode for search results? (smallthumbs/thumbs/list)
 $default_display="thumbs";
@@ -2876,6 +2876,11 @@ $help_modal=true;
 
 # User preference - if set to false, hide the notification popups for new messages
 $user_pref_show_notifications=true;
+
+# User preference - daily digest. Sets the default setting for a daily email digest of unread system notifications.
+$user_pref_daily_digest=true; 
+# Option to set the messages as read once the email is sent
+$user_pref_daily_digest_mark_read=false;
 
 # login_background. If enabled this uses first slideshow image as a background for the login screen. This image will not then be used in the slideshow. If not using the manage slideshow tool this will look for a file named 1.jpg in the $homeanim_folder.
 $login_background=false;

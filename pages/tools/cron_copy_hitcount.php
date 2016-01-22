@@ -25,6 +25,9 @@ Relevance matching hitcount: copy done - <?php echo date("d M Y")?>
 # Update disk quota column on resource table.
 update_disk_usage_cron();
 
+# Send daily digest of notifications
+message_send_unread_emails();
+
 #Perform any plugin cron tasks
 hook("addplugincronjob");
 

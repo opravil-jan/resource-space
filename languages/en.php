@@ -2395,5 +2395,9 @@ $lang["slideshow_use_static_image"] = "Use a single random image from the set (i
 $lang["emailcollectionrequest"] = "[img_gfx/titles/title.gif]<br />The following user has made a request:<br />Username: [username]<br />User email: [useremail]<br /><br />Reason for request: [requestreason]<br /><br />Click the link below to view the request.<br /><a href='[requesturl]'>[requesturl]</a>";
 $lang["emailusercollectionrequest"] = "[img_gfx/titles/title.gif]<br />Your resource request has been submitted for approval and will be looked at shortly.:<br /><br />Reason for request: [requestreason]<br /><br />Click the link below to view the requested resources.<br /><a href='[url]'>[url]</a>";
 $lang['user_pref_show_notifications'] = "Show me system notifications on screen as they are received. If disabled, the counter will still update to indicate the presence of new messages";
+$lang['user_pref_daily_digest'] = "Send me a daily email with all unread notifications from the last 24 hours";
+$lang['email_daily_digest_subject'] = "Notification summary";
+$lang['email_daily_digest_text'] = "This is a summary of your unread messages from the last 24 hours";
+$lang['user_pref_daily_digest_mark_read'] = "Mark messages as read once I have been sent the summary email";
 $lang['mymessages_introtext'] = "You can configure which messages appear here by changing your user preferences";
 $lang["login_slideshow_image_notes"] = "This image will be used for the login page background only";
