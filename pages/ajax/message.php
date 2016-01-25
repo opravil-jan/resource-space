@@ -229,7 +229,7 @@
 			}
 		if (typeof owner==="undefined" || owner=='')
 			{
-			owner = '<?php echo $applicationname?>';
+			owner = '<?php echo htmlspecialchars($applicationname, ENT_QUOTES); ?>';
 			}
 		jQuery("#modal_dialog").html("<div class='MessageText'>" + nl2br(message) + "</div><br />" + url);
 		jQuery("#modal_dialog").addClass('message_dialog');
