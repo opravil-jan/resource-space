@@ -1,29 +1,40 @@
 <?php
+include '../include/db.php';
+include_once '../include/general.php';
+include '../include/authenticate.php';
+include '../include/resource_functions.php';
+include_once '../include/collections_functions.php';
+include_once '../include/pdf_functions.php';
 
+$ref      = getvalescaped('ref', '', true);
+$resource = get_resource_data($ref);
 
-include "../include/db.php";
-include_once "../include/general.php";
-include "../include/authenticate.php";
-include "../include/resource_functions.php";
-include_once "../include/collections_functions.php";
+// fetch the current search (for finding similar matches)
+$search   = getvalescaped('search', '');
+$order_by = getvalescaped('order_by', 'relevance');
+$offset   = getvalescaped('offset', 0, true);
+$restypes = getvalescaped('restypes', '');
+if(strpos($search, '!') !== false)
+    {
+    $restypes='';
+    }
 
-$ref=getvalescaped ("ref","",true);
-# fetch the current search (for finding similar matches)
-$search=getvalescaped("search","");
-$order_by=getvalescaped("order_by","relevance");
-$offset=getvalescaped("offset",0,true);
-$restypes=getvalescaped("restypes","");
-if (strpos($search,"!")!==false) {$restypes="";}
-$archive=getvalescaped("archive",0,true);
-$starsearch=getvalescaped("starsearch","");
-$default_sort="DESC";
-if (substr($order_by,0,5)=="field"){$default_sort="ASC";}
-$sort=getval("sort",$default_sort);
-$metadata=get_resource_field_data($ref, false,true,-1,getval("k","")!=""); 
-$filename=$ref;
-$download=getval("download","")!="";
+$archive      = getvalescaped('archive', 0, true);
+$starsearch   = getvalescaped('starsearch', '');
+$default_sort = 'DESC';
+if(substr($order_by, 0, 5) == 'field')
+    {
+    $default_sort = 'ASC';
+    }
+
+$sort               = getval('sort', $default_sort);
+$metadata           = get_resource_field_data($ref, false, true, -1, getval('k', '') != ''); 
+$filename           = $ref;
+$download           = getval('download', '') != '';
 $download_file_type = getval('fileType_option', '');
-$language = getval('language', 'en');
+$language           = getval('language', 'en');
+$data_only          = 'true' === trim(getval('data_only', ''));
+$pdf_template       = getvalescaped('pdf_template', '');
 
 // Process text file download
 if ($download && $download_file_type == 'text')
@@ -130,7 +141,37 @@ if($download && $download_file_type === 'pdf') {
 	$html2pdf->WriteHTML($content);
 	$html2pdf->Output($PDF_filename);
 }
-	
+
+/*
+Data only PDFs generation
+These PDFs will be based on templates found on the server which will be interpreted and then rendered
+*/
+if($download && $data_only)
+    {
+    $pdf_template_path = get_pdf_template_path($resource['resource_type'], $pdf_template);
+    $PDF_filename      = 'data_only_resource_' . $ref . '.pdf';
+
+    // Go through fields and decide which ones we add to the template
+    $placeholders = array(
+        'resource_type_name' => get_resource_type_name($resource['resource_type'])
+    );
+    foreach($metadata as $metadata_field)
+        {
+        $metadata_field_value = trim(tidylist(i18n_get_translated($metadata_field['value'])));
+
+        // Skip if empty
+        if('' == $metadata_field_value)
+            {
+            continue;
+            }
+
+        $placeholders['metadatafield-' . $metadata_field['ref'] . ':title'] = $metadata_field['title'];
+        $placeholders['metadatafield-' . $metadata_field['ref'] . ':value'] = $metadata_field_value;
+        }
+
+    generate_pdf($pdf_template_path, $PDF_filename, $placeholders);
+    }
+
 include "../include/header.php";
 ?>
 

@@ -1031,30 +1031,57 @@ else
 	$nodownloads=true;
 	}
 	
-if (($nodownloads || $counter==0) && !checkperm("T" . $resource["resource_type"] . "_"))
+if(($nodownloads || $counter == 0) && !checkperm('T' . $resource['resource_type'] . '_'))
 	{
-	hook("beforenodownloadresult");
-	# No file. Link to request form.
+	hook('beforenodownloadresult');
+
+    $generate_data_only_pdf_file = false;
+    $download_file_name          = (0 == $counter) ? $lang['offlineresource'] : $lang['access1'];
+
+    if(in_array($resource['resource_type'], $data_only_resource_types) && array_key_exists($resource['resource_type'], $pdf_resource_type_templates))
+        {
+        $download_file_name          = get_resource_type_name($resource['resource_type']);
+        $generate_data_only_pdf_file = true;
+        }
 	?>
 	<tr class="DownloadDBlend">
-	<td class="DownloadFileName"><h2><?php echo ($counter==0)?$lang["offlineresource"]:$lang["access1"]?></h2></td>
+	<td class="DownloadFileName"><h2><?php echo $download_file_name; ?></h2></td>
 	<td class="DownloadFileSize"><?php echo $lang["notavailableshort"]?></td>
 
-	<?php if (checkperm("q"))
+	<?php
+    if($generate_data_only_pdf_file)
+        {
+        $generate_data_only_url_params = array(
+            'ref'             => $ref,
+            'download'        => 'true',
+            'data_only'       => 'true',
+            'k'               => $k
+        );
+        ?>
+        <td class="DownloadButton">
+            <a href="<?php echo generateURL($baseurl_short . 'pages/metadata_download.php', $generate_data_only_url_params); ?>"><?php echo $lang['action-generate_pdf']; ?></a>
+        </td>
+        <?php
+        }
+    // No file. Link to request form.
+	else if(checkperm('q'))
 		{
-		?>
-		<?php if(!hook("resourcerequest")){?>
-		<td class="DownloadButton"><a href="<?php echo $baseurl_short?>pages/resource_request.php?ref=<?php echo urlencode($ref)?>&k=<?php echo urlencode($k) ?>"  onClick="return CentralSpaceLoad(this,true);"><?php echo $lang["action-request"]?></a></td>
-		<?php } ?>
-		<?php
+		if(!hook('resourcerequest'))
+            {
+            ?>
+            <td class="DownloadButton">
+                <a href="<?php echo $baseurl_short?>pages/resource_request.php?ref=<?php echo urlencode($ref)?>&k=<?php echo urlencode($k) ?>"  onClick="return CentralSpaceLoad(this,true);"><?php echo $lang["action-request"]?></a>
+            </td>
+            <?php
+            }
 		}
-	else
+    else
 		{
 		?>
 		<td class="DownloadButton DownloadDisabled"><?php echo $lang["access1"]?></td>
 		<?php
 		}
-	?>
+        ?>
 	</tr>
 	<?php
 	}

@@ -2884,3 +2884,26 @@ $user_pref_daily_digest_mark_read=false;
 
 # login_background. If enabled this uses first slideshow image as a background for the login screen. This image will not then be used in the slideshow. If not using the manage slideshow tool this will look for a file named 1.jpg in the $homeanim_folder.
 $login_background=false;
+
+/*
+Resource types that cannot upload files. They are only being used to store information. Use resource type ID as values for this array.
+By default the preview will default to "No preview" icon. In order to get a resource type specific one, make sure you add it to gfx/no_preview/resource_type/
+Note: its intended use is with $pdf_resource_type_templates
+*/
+$data_only_resource_types = array();
+
+/*
+Resource type templates are stored in /filestore/system/pdf_templates
+A resource type can have more than one template. When generating PDFs, if there is no request for a specific template,
+the first one will be used so make sure the the most generic template is the first one.
+
+IMPORTANT: you cannot use <html>, <head>, <body> tags in these templates as they are supposed
+           to work with HTML2PDF library. For more information, please visit: http://html2pdf.fr/en/default
+           You also cannot have an empty array of templates for a resource type.
+
+Setup example:
+$pdf_resource_type_templates = array(
+    2 => array('case_studies', 'admins_case_studies')
+);
+*/
+$pdf_resource_type_templates = array();

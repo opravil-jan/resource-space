@@ -7,6 +7,7 @@ $k=getvalescaped("k","");if (($k=="") || (!check_access_key_collection(getvalesc
 include "../include/search_functions.php";
 include "../include/resource_functions.php";
 include_once '../include/csv_export_functions.php';
+include_once '../include/pdf_functions.php';
 ob_end_clean();
 $uniqid="";$id="";
 $collection=getvalescaped("collection","",true);  if ($k!=""){$usercollection=$collection;}
@@ -228,6 +229,49 @@ if ($submitted != "")
 		# Only download resources with proper access level
 		if ($access==0 || $access=1)
 			{
+            // Data-only type of resources should be generated and added in the archive
+            if(in_array($result[$n]['resource_type'], $data_only_resource_types))
+                {
+                $template_path = get_pdf_template_path($result[$n]['resource_type']);
+                $pdf_filename = 'RS_' . $result[$n]['ref'] . '_data_only.pdf';
+                $pdf_file_path = get_temp_dir(false, $id) . '/' . $pdf_filename;
+
+                // Go through fields and decide which ones we add to the template
+                $placeholders = array(
+                    'resource_type_name' => get_resource_type_name($result[$n]['resource_type'])
+                );
+
+                $metadata = get_resource_field_data($result[$n]['ref'], false, true, -1, '' != getval('k', ''));
+
+                foreach($metadata as $metadata_field)
+                    {
+                    $metadata_field_value = trim(tidylist(i18n_get_translated($metadata_field['value'])));
+
+                    // Skip if empty
+                    if('' == $metadata_field_value)
+                        {
+                        continue;
+                        }
+
+                    $placeholders['metadatafield-' . $metadata_field['ref'] . ':title'] = $metadata_field['title'];
+                    $placeholders['metadatafield-' . $metadata_field['ref'] . ':value'] = $metadata_field_value;
+                    }
+                generate_pdf($template_path, $pdf_file_path, $placeholders, true);
+
+                // Go and add file to archive
+                if($use_zip_extension)
+                    {
+                    $zip->addFile($pdf_file_path, $pdf_filename);
+                    }
+                else
+                    {
+                    $path .= $pdf_file_path . "\r\n";
+                    }
+                $deletion_array[] = $pdf_file_path;
+
+                continue;
+                }
+
 			$pextension = get_extension($result[$n], $size);
 			$usesize = ($size == 'original') ? "" : $usesize=$size;
 			$p=get_resource_path($ref,true,$usesize,false,$pextension,-1,1,$use_watermark);
