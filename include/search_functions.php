@@ -221,10 +221,15 @@ function do_search($search,$restypes="",$order_by="relevance",$archive=0,$fetchr
                         if ($sql_filter!="") {$sql_filter.=" and ";}
                         $sql_filter.="r.field$date_field like '____-" . $kw[1] . "%' ";
                         }
-                    elseif ($kw[0]=="year")
+                    else if('year' == $kw[0])
                         {
-                        if ($sql_filter!="") {$sql_filter.=" and ";}
-                        $sql_filter.="r.field$date_field like '" . $kw[1] . "%' ";
+                        if('' != $sql_filter)
+                            {
+                            $sql_filter .= ' AND ';
+                            }
+                        $sql_filter.= "rd{$c}.resource_type_field = {$date_field} AND rd{$c}.value LIKE '{$kw[1]}%' ";
+
+                        $sql_join .= " INNER JOIN resource_data rd{$c} ON rd{$c}.resource = r.ref AND rd{$c}.resource_type_field = '{$date_field}'";
                         }
                     elseif ($kw[0]=="startdate")
                         {
