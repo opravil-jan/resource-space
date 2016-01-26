@@ -18,6 +18,10 @@ if (!function_exists("render_sort_order")){
 function render_sort_order(array $order_fields)
     {
     global $order_by, $baseurl_short, $lang, $search, $archive, $restypes, $k, $sort;
+
+    // use query strings here as this is used to render elements and sometimes it
+    // can depend on other params
+    $modal  = ('true' == getval('modal', ''));
     ?>
 
     <select id="sort_order_selection">
@@ -77,7 +81,7 @@ function render_sort_order(array $order_fields)
             option_url += '&sort=ASC';
             }
 
-        CentralSpaceLoad(option_url);
+         <?php echo $modal ? 'Modal' : 'CentralSpace'; ?>Load(option_url);
     });
 
     jQuery('#sort_selection').change(function() {
@@ -87,7 +91,7 @@ function render_sort_order(array $order_fields)
 
         selected_sort_order_option_url += '&sort=' + selected_option;
 
-        CentralSpaceLoad(selected_sort_order_option_url);
+        <?php echo $modal ? 'Modal' : 'CentralSpace'; ?>Load(selected_sort_order_option_url);
     });
     </script>
     <?php

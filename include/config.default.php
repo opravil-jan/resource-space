@@ -2812,6 +2812,9 @@ $password_reset_link_expiry =1;
 # Show the resource view in a modal when accessed from search results.
 $resource_view_modal=true;
 
+# Show geographical search results in a modal
+$geo_search_modal_results = true;
+
 # Show an edit icon/link in the search results.
 $search_results_edit_icon=true;
 

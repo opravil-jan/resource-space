@@ -34,7 +34,8 @@ if ($k=="")
 # Disable checkboxes for external users.
 if ($k!="") {$use_checkboxes_for_selection=false;}
 
-$search=getvalescaped("search","");
+$search = getvalescaped('search', '');
+$modal  = ('true' == getval('modal', ''));
 
 hook("moresearchcriteria");
 
@@ -682,7 +683,7 @@ if (!hook("replacesearchheader")) # Always show search header now.
 			else
 				{
 				?>
-				<a href="<?php echo $url?>&amp;display=xlthumbs&amp;k=<?php echo urlencode($k) ?>" title='<?php echo $lang["xlthumbstitle"] ?>' onClick="return CentralSpaceLoad(this);">
+				<a href="<?php echo $url?>&amp;display=xlthumbs&amp;k=<?php echo urlencode($k) ?>" title='<?php echo $lang["xlthumbstitle"] ?>' onClick="return <?php echo $modal ? 'Modal' : 'CentralSpace'; ?>Load(this);">
 					<span class="xlthumbsicon">&nbsp;</span>
 				</a>
 				<?php
@@ -700,7 +701,7 @@ if (!hook("replacesearchheader")) # Always show search header now.
 		else
 			{
 			?>
-			<a href="<?php echo $url?>&amp;display=thumbs&amp;k=<?php echo urlencode($k) ?>" title='<?php echo $lang["largethumbstitle"] ?>' onClick="return CentralSpaceLoad(this);">
+			<a href="<?php echo $url?>&amp;display=thumbs&amp;k=<?php echo urlencode($k) ?>" title='<?php echo $lang["largethumbstitle"] ?>' onClick="return <?php echo $modal ? 'Modal' : 'CentralSpace'; ?>Load(this);">
 				<span class="largethumbsicon">&nbsp;</span>
 			</a>
 			<?php
@@ -717,7 +718,7 @@ if (!hook("replacesearchheader")) # Always show search header now.
 			else
 				{
 				?>
-				<a href="<?php echo $url?>&amp;display=smallthumbs&amp;k=<?php echo urlencode($k)?>" title='<?php echo $lang["smallthumbstitle"] ?>' onClick="return CentralSpaceLoad(this);">
+				<a href="<?php echo $url?>&amp;display=smallthumbs&amp;k=<?php echo urlencode($k)?>" title='<?php echo $lang["smallthumbstitle"] ?>' onClick="return <?php echo $modal ? 'Modal' : 'CentralSpace'; ?>Load(this);">
 					<span class="smallthumbsicon">&nbsp;</span>
 				</a>
 				<?php
@@ -734,7 +735,7 @@ if (!hook("replacesearchheader")) # Always show search header now.
 			else
 				{
 				?>
-				<a href="<?php echo $url?>&amp;display=list&amp;k=<?php echo urlencode($k) ?>" title='<?php echo $lang["listtitle"] ?>' onClick="return CentralSpaceLoad(this);">
+				<a href="<?php echo $url?>&amp;display=list&amp;k=<?php echo urlencode($k) ?>" title='<?php echo $lang["listtitle"] ?>' onClick="return <?php echo $modal ? 'Modal' : 'CentralSpace'; ?>Load(this);">
 					<span class="smalllisticon">&nbsp;</span>
 				</a>
 				<?php
@@ -828,7 +829,7 @@ if (!hook("replacesearchheader")) # Always show search header now.
 			?>
 			<div class="InpageNavLeftBlock"><?php echo ucfirst($lang['perpage']); ?>:
 				<br />
-				<select id="resultsdisplay" class="medcomplementwidth ListDropdown" style="width:auto" name="resultsdisplay" onchange="CentralSpaceLoad(this.value,true);">
+				<select id="resultsdisplay" class="medcomplementwidth ListDropdown" style="width:auto" name="resultsdisplay" onchange="<?php echo $modal ? 'Modal' : 'CentralSpace'; ?>Load(this.value,true);">
 			<?php
 			for($n = 0; $n < count($results_display_array); $n++)
 				{
@@ -1148,17 +1149,23 @@ if (!hook("replacesearchheader")) # Always show search header now.
 $url=$baseurl_short."pages/search.php?search=" . urlencode($search) . "&amp;order_by=" . urlencode($order_by) . "&amp;sort=" . urlencode($sort) . "&amp;archive=" . urlencode($archive) . "&amp;daylimit=" . urlencode($daylimit) . "&amp;k=" . urlencode($k) . "&amp;restypes=" . urlencode($restypes);	
 ?>
 </div> <!-- end of CentralSpaceResources -->
-<!--Bottom Navigation - Archive, Saved Search plus Collection-->
-<div class="BottomInpageNav">
-	<?php hook('add_bottom_in_page_nav_left'); ?>
-	<div class="BottomInpageNavRight">	
-	<?php 
-	if (isset($draw_pager)) {pager(false);} 
-	?>
-	</div>
-	<div class="clearerleft"></div>
-</div>
+
+<?php
+if(!$modal)
+    {
+    ?>
+    <!--Bottom Navigation - Archive, Saved Search plus Collection-->
+    <div class="BottomInpageNav">
+        <?php hook('add_bottom_in_page_nav_left'); ?>
+        <div class="BottomInpageNavRight">	
+        <?php 
+        if (isset($draw_pager)) {pager(false);} 
+        ?>
+        </div>
+        <div class="clearerleft"></div>
+    </div>
 	<?php
+	}
 } # End of replace all results hook conditional
 
 hook("endofsearchpage");

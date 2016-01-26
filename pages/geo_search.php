@@ -50,8 +50,19 @@ notice: function (bounds) {
     
     // Specially encoded search string to avoid keyword splitting
     var url="<?php echo $baseurl_short?>pages/search.php?search=!geo" + (bl.lat + "b" + bl.lon + "t" + tr.lat + "b" + tr.lon).replace(/\-/gi,'m').replace(/\./gi,'p');
-	
-    // ModalLoad(url); // Load via a Modal (experimental)
+
+<?php
+// Show results in a modal
+if($geo_search_modal_results)
+    {
+    ?>
+    ModalClose();
+    ModalLoad(url);
+
+    return;
+    <?php
+    }
+    ?>
     window.location.href=url;
 	
 }

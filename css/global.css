@@ -1013,6 +1013,15 @@ div.video-js {margin:auto;}
 	text-align:left;
 	}
 
+#modal .TopInpageNav {
+    margin: 0;
+    padding: 14px 20px 10px 20px;
+}
+
+#modal .TopInpageNav .TopInpageNavRight {
+    padding: 14px 20px 10px 20px;
+}
+
 /* Dropdown Actions */
 #CollectionMenu .ActionsContainer {
 	margin: 10px 0px;
