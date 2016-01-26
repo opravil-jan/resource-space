@@ -51,11 +51,12 @@ function get_pdf_template_path($resource_type, $template_name = '')
 /**
 * Takes an HTML template suitable for HTML2PDF library and generates a PDF file if successfull
 *
-* @param  string  $html_template_path  HTML template path
-* @param  string  $filename            The file name of the generated PDF file. If this is an actual path,
-*                                      and $save_on_server = true, it will be save on the server
-* @param  array   $bind_placeholders   A map of all the values that are meant to replace any 
-*                                      placeholders found in the HTML template
+* @param  string   $html_template_path  HTML template path
+* @param  string   $filename            The file name of the generated PDF file. If this is an actual path,
+*                                       and $save_on_server = true, it will be save on the server
+* @param  array    $bind_placeholders   A map of all the values that are meant to replace any 
+*                                       placeholders found in the HTML template
+* @param  boolean  $save_on_server      If true, PDF file will be saved to the filename path
 *
 * @return boolean
 */
