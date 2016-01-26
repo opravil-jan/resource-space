@@ -731,7 +731,7 @@ $lang["key"]="Key:"; # e.g. explanation of icons on search page
 $lang["default"]="Default";
 $lang["languageselection"]="Language selection";
 $lang["language"]="Language";
-$lang["changeyourpassword"]="Change your password";
+$lang["changeyourpassword"]="Change my password";
 $lang["yourpassword"]="Your password";
 $lang["currentpassword"]="Current password";
 $lang["newpassword"]="New password";
@@ -1862,7 +1862,7 @@ $lang["caps-lock-on"]="Warning! Caps Lock is on";
 $lang["collectionnames"]="Collection names";
 $lang["findcollectionthemes"]="Featured collections";
 $lang["upload-options"]="Upload options";
-$lang["user-preferences"]="User preferences";
+$lang["user-preferences"]="My preferences";
 $lang["allresources"]="All Resources";
 
 $lang["smart_collection_result_limit"]="Smart collection: result count limit";
@@ -2214,7 +2214,7 @@ $lang["tilebin"]="Remove";
 $lang["last"]="Last";
 $lang["managedefaultdash"]="Manage all user tiles";
 $lang["dashtile"]="Dash tile";
-$lang["manage_own_dash"]="Manage my dash";
+$lang["manage_own_dash"]="My dash";
 $lang["manage_all_dash_h"]="Manage default dash / all user tiles (Requires h permission)";
 $lang["manage_all_dash"]="Manage default dash / all user tiles";
 $lang["dashtiledeleteaction"]="What delete action would you like to take?";
@@ -2288,7 +2288,7 @@ $lang['trash_bin_delete_dialog_title'] = 'Remove resource from current collectio
 /* My Account Strings */
 $lang["managecontent_defaulttextused"]="!! The text for the default language (?) is currently being used. Edit the text below to create an alternative version for this language / user group selection !!";
 $lang["myaccount"]="My account";
-$lang["userpreferences"]="User preferences";
+$lang["userpreferences"]="My preferences";
 $lang["modifyuserpreferencesintro"]="Options on this page allow you to make changes to some of the functionality  and interface that are available to you.";
 
 /* User preferences*/
