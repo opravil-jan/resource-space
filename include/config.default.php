@@ -1666,7 +1666,8 @@ $no_preview_extensions=array("icm","icc");
 
 # If set, send a notification when resources expire to this e-mail address.
 # This requires batch/expiry_notification.php to be executed periodically via a cron job or similar.
-# If this is not set and the script is executed notifications will be sent to resource admins, or users in groups specified in $email_notify_usergroups $expiry_notification_mail="myaddress@mydomain.example";
+# If this is not set and the script is executed notifications will be sent to resource admins, or users in groups specified in $email_notify_usergroups 
+# $expiry_notification_mail="myaddress@mydomain.example";
 
 # What is the default display mode for search results? (smallthumbs/thumbs/list)
 $default_display="thumbs";
@@ -2858,7 +2859,7 @@ $user_pref_resource_notifications=true;
 $user_pref_resource_access_notifications=true;
 
 # Administrator default for receiving notifications about resource access e.g. resource requests. Can't use user_pref_resource_access_notifications since this will pick up setting of requesting user
-$user_pref_resource_access_notifications=true;
+$admin_resource_access_notifications=true;
 
 # User preference - user_pref_user_management_notifications (user admins only). Option to receive notifications about user management changes e.g. account requests
 $user_pref_user_management_notifications=true;
