@@ -78,6 +78,8 @@ function get_extension($resource, $size)
 	return $pextension;
 	}
 
+$count_data_only_types = 0;
+
 #build the available sizes array
 for ($n=0;$n<count($result);$n++)
 	{
@@ -109,10 +111,15 @@ for ($n=0;$n<count($result);$n++)
 				$available_sizes[$size_id][]=$ref;
 			}
 		}
-	}
+
+    if(in_array($result[$n]['resource_type'], $data_only_resource_types))
+        {
+        $count_data_only_types++;
+        }
+    }
 
 #print_r($available_sizes);
-if(count($available_sizes)==0)
+if(0 == count($available_sizes) && 0 === $count_data_only_types)
 	{
 	?>
 	<script type="text/javascript">
@@ -229,49 +236,6 @@ if ($submitted != "")
 		# Only download resources with proper access level
 		if ($access==0 || $access=1)
 			{
-            // Data-only type of resources should be generated and added in the archive
-            if(in_array($result[$n]['resource_type'], $data_only_resource_types))
-                {
-                $template_path = get_pdf_template_path($result[$n]['resource_type']);
-                $pdf_filename = 'RS_' . $result[$n]['ref'] . '_data_only.pdf';
-                $pdf_file_path = get_temp_dir(false, $id) . '/' . $pdf_filename;
-
-                // Go through fields and decide which ones we add to the template
-                $placeholders = array(
-                    'resource_type_name' => get_resource_type_name($result[$n]['resource_type'])
-                );
-
-                $metadata = get_resource_field_data($result[$n]['ref'], false, true, -1, '' != getval('k', ''));
-
-                foreach($metadata as $metadata_field)
-                    {
-                    $metadata_field_value = trim(tidylist(i18n_get_translated($metadata_field['value'])));
-
-                    // Skip if empty
-                    if('' == $metadata_field_value)
-                        {
-                        continue;
-                        }
-
-                    $placeholders['metadatafield-' . $metadata_field['ref'] . ':title'] = $metadata_field['title'];
-                    $placeholders['metadatafield-' . $metadata_field['ref'] . ':value'] = $metadata_field_value;
-                    }
-                generate_pdf($template_path, $pdf_file_path, $placeholders, true);
-
-                // Go and add file to archive
-                if($use_zip_extension)
-                    {
-                    $zip->addFile($pdf_file_path, $pdf_filename);
-                    }
-                else
-                    {
-                    $path .= $pdf_file_path . "\r\n";
-                    }
-                $deletion_array[] = $pdf_file_path;
-
-                continue;
-                }
-
 			$pextension = get_extension($result[$n], $size);
 			$usesize = ($size == 'original') ? "" : $usesize=$size;
 			$p=get_resource_path($ref,true,$usesize,false,$pextension,-1,1,$use_watermark);
@@ -437,8 +401,69 @@ if ($submitted != "")
 			}
 
 		}
-    if ($path=="") {exit($lang["nothing_to_download"]);}	
+    // Collection contains data_only resource types
+    if(0 < $count_data_only_types)
+        {
+        for($n = 0; $n < count($result); $n++)
+            {
+            // Data-only type of resources should be generated and added in the archive
+            if(in_array($result[$n]['resource_type'], $data_only_resource_types))
+                {
+                $template_path = get_pdf_template_path($result[$n]['resource_type']);
+                $pdf_filename = 'RS_' . $result[$n]['ref'] . '_data_only.pdf';
+                $pdf_file_path = get_temp_dir(false, $id) . '/' . $pdf_filename;
 
+                // Go through fields and decide which ones we add to the template
+                $placeholders = array(
+                    'resource_type_name' => get_resource_type_name($result[$n]['resource_type'])
+                );
+
+                $metadata = get_resource_field_data($result[$n]['ref'], false, true, -1, '' != getval('k', ''));
+
+                foreach($metadata as $metadata_field)
+                    {
+                    $metadata_field_value = trim(tidylist(i18n_get_translated($metadata_field['value'])));
+
+                    // Skip if empty
+                    if('' == $metadata_field_value)
+                        {
+                        continue;
+                        }
+
+                    $placeholders['metadatafield-' . $metadata_field['ref'] . ':title'] = $metadata_field['title'];
+                    $placeholders['metadatafield-' . $metadata_field['ref'] . ':value'] = $metadata_field_value;
+                    }
+                generate_pdf($template_path, $pdf_file_path, $placeholders, true);
+
+                // Go and add file to archive
+                if($use_zip_extension)
+                    {
+                    $zip->addFile($pdf_file_path, $pdf_filename);
+                    }
+                else
+                    {
+                    $path .= $pdf_file_path . "\r\n";
+                    }
+                $deletion_array[] = $pdf_file_path;
+
+                continue;
+                }
+
+            daily_stat('Resource download', $result[$n]['ref']);
+            resource_log($result[$n]['ref'], 'd', 0, $usagecomment, '', '', $usage);
+
+            if($resource_hit_count_on_downloads)
+                { 
+                /*greatest() is used so the value is taken from the hit_count column in the event that new_hit_count is zero
+                to support installations that did not previously have a new_hit_count column (i.e. upgrade compatability).*/
+                sql_query("UPDATE resource SET new_hit_count = greatest(hit_count, new_hit_count) + 1 WHERE ref = '{$result[$n]['ref']}'");
+                }
+            }
+        }
+    else if('' == $path)
+        {
+        exit($lang['nothing_to_download']);
+        }
 
     # Append summary notes about the completeness of the package, write the text file, add to archive, and schedule for deletion
     if (($zipped_collection_textfile==true)&&($includetext=="true")){
@@ -711,12 +736,13 @@ hook("collectiondownloadmessage");
 
 if (!hook('replacesizeoptions'))
 	{
-?>
-<div class="Question">
-<label for="downloadsize"><?php echo $lang["downloadsize"]?></label>
-<div class="tickset">
-<?php
-
+    if($count_data_only_types !== count($result))
+        {
+        ?>
+        <div class="Question">
+        <label for="downloadsize"><?php echo $lang["downloadsize"]?></label>
+        <div class="tickset">
+    <?php
 	$maxaccess=collection_max_access($collection);
 	$sizes=get_all_image_sizes(false,$maxaccess>=1);
 
@@ -783,17 +809,22 @@ foreach ($available_sizes as $key=>$value)
 
 <div class="clearerleft"> </div></div>
 <div class="clearerleft"> </div></div><?php
-	}
+	   }
+    }
 if (!hook('replaceuseoriginal'))
 	{
-?><div class="Question">
-<label for="use_original"><?php echo $lang['use_original_if_size']; ?> <br /><?php
+    if($count_data_only_types !== count($result))
+        {
+        ?>
+        <div class="Question">
+        <label for="use_original"><?php echo $lang['use_original_if_size']; ?> <br /><?php
 
-display_size_option('original', $lang['original'], false);
-?></label><input type=checkbox id="use_original" name="use_original" value="yes" >
-<div class="clearerleft"> </div></div>
-<?php
-	}
+        display_size_option('original', $lang['original'], false);
+        ?></label><input type=checkbox id="use_original" name="use_original" value="yes" >
+        <div class="clearerleft"> </div></div>
+        <?php
+	   }
+    }
 
 if ($zipped_collection_textfile=="true") { ?>
 <div class="Question">
