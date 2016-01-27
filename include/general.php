@@ -1438,7 +1438,7 @@ function email_user_request()
 		if (count($message_users)>0)
 			{
 			// Send a message with long timeout (30 days)
-            message_add($message_users,$notificationmessage,"",$approval_notify_user['ref'],MESSAGE_ENUM_NOTIFICATION_TYPE_SCREEN,60 * 60 *24 * 30);
+            message_add($message_users,$notificationmessage,"",0,MESSAGE_ENUM_NOTIFICATION_TYPE_SCREEN,60 * 60 *24 * 30);
 			}
 	return true;
 	}
