@@ -48,4 +48,8 @@ if($debug_log)
         }        
     }
 
+// Check that the cron process executed within the last 5 days (allows for a window of downtime, for migration, etc.).
+$last_cron=strtotime(sql_value("select value from sysvars where name='last_cron'",""));
+$diff_days=(time()-$last_cron) / (60 * 60 * 24);
+if ($diff_days>5) {exit("FAIL - cron was executed " . round($diff_days,0) . " days ago.");}
 exit("OK");
