@@ -120,11 +120,10 @@ if($login_background)
 		background-image: url('<?php echo $backimageurl; ?>');
 		}
 	</style>
-	<div id="login_box">
 	<?php
 	}
 ?>
-
+<div id="login_box">
 <h1><?php echo $lang["requestuserlogin"]?></h1>
 <p><?php echo text("introtext")?></p>
 
@@ -319,13 +318,6 @@ if(!hook("replace_user_request_required_key"))
 	<?php
 	}
     
-if($login_background)
-	{
-	?>
-	<div> <!-- end of login_box -->
-	<?php
-	}
-
 include "../include/footer.php";
 ?>
-
+</div><!-- end of login_box -->
