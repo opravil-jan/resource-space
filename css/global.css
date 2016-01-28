@@ -1130,7 +1130,10 @@ a.FeaturedSimpleLink:hover {
 }
 
 #login_box {
-	padding: 10px 15px 0px 15px;
+	padding: 0px 15px 0px 15px;
 	border-radius: 5px;
+	position: absolute;
+	top: -300px;
+    
 }
 
