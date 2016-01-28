@@ -114,12 +114,12 @@
 								?>
 								message_display(message, url, ref, function (ref) {
 									jQuery.get('<?php echo $baseurl; ?>/pages/ajax/message.php?seen=' + ref).done(function () {
-									message_poll();
 									});
 								});
 								<?php
 								}
 								?>
+								message_poll();
 						}
 					}
 				}
