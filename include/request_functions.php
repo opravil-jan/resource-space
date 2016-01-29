@@ -189,7 +189,7 @@ function email_collection_request($ref,$details)
     {
     # Request mode 0
     # E-mails a collection request (posted) to the team
-    global $applicationname,$email_from,$baseurl,$email_notify,$username,$useremail,$lang,$request_senduserupdates,$userref,$resource_type_request_emails,$resource_request_reason_required;
+    global $applicationname,$email_from,$baseurl,$email_notify,$username,$useremail,$lang,$request_senduserupdates,$userref,$resource_type_request_emails,$resource_request_reason_required,$admin_resource_access_notifications, $always_email_from_user;
     
     $message="";
     #if (isset($username) && trim($username)!="") {$message.=$lang["username"] . ": " . $username . "\n";}
@@ -289,7 +289,7 @@ function email_collection_request($ref,$details)
         }
     foreach($admin_notify_emails as $admin_notify_email)
 		{
-        send_mail($admin_notify_email,$applicationname . ": " . $lang["requestcollection"] . " - $ref",$message,$useremail,$useremail,"emailcollectionrequest",$templatevars);
+        send_mail($admin_notify_email,$applicationname . ": " . $lang["requestcollection"] . " - $ref",$message,($always_email_from_user)?$useremail:$email_from,($always_email_from_user)?$useremail:$email_from,"emailcollectionrequest",$templatevars);
     	}
 	
 	if (count($admin_notify_users)>0)
@@ -325,7 +325,7 @@ function managed_collection_request($ref,$details,$ref_is_resource=false)
     # Managed via the administrative interface
     
     # An e-mail is still sent.
-    global $applicationname,$email_from,$baseurl,$email_notify,$username,$useremail,$userref,$lang,$request_senduserupdates,$watermark,$filename_field,$view_title_field,$access,$resource_type_request_emails, $manage_request_admin, $resource_request_reason_required;
+    global $applicationname,$email_from,$baseurl,$email_notify,$username,$useremail,$userref,$lang,$request_senduserupdates,$watermark,$filename_field,$view_title_field,$access,$resource_type_request_emails, $manage_request_admin, $resource_request_reason_required, $admin_resource_access_notifications, $always_email_from_user;
 
     # Has a resource reference (instead of a collection reference) been passed?
     # Manage requests only work with collections. Create a collection containing only this resource.
@@ -696,7 +696,7 @@ function managed_collection_request($ref,$details,$ref_is_resource=false)
 	$admin_notify_message.=$lang["clicktoviewresource"] . "<br />" . $templatevars["requesturl"];
 	foreach($admin_notify_emails as $admin_notify_email)
 		{
-        send_mail($admin_notify_email,$applicationname . ": " . $lang["requestcollection"] . " - $ref",$admin_notify_message,$useremail,$useremail,$admin_mail_template,$templatevars);
+        send_mail($admin_notify_email,$applicationname . ": " . $lang["requestcollection"] . " - $ref",$admin_notify_message,($always_email_from_user)?$useremail:$email_from,($always_email_from_user)?$useremail:$email_from,$admin_mail_template,$templatevars);
     	}
 	if (count($admin_notify_users)>0)
 		{
