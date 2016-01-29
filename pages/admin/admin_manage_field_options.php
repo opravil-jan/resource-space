@@ -241,15 +241,20 @@ if($ajax)
             <tbody>
         <?php
         // Render existing nodes
-		$nodes=get_nodes($field);
-		if(count($nodes)==0)
-			{
-			$fieldinfo=get_resource_type_field($field);
-			migrate_resource_type_field_check($fieldinfo);
-			$nodes=get_nodes($field);
-			}
+		$nodes = get_nodes($field);
+
+        if(0 == count($nodes))
+            {
+            $fieldinfo = get_resource_type_field($field);
+
+            migrate_resource_type_field_check($fieldinfo);
+
+            $nodes = get_nodes($field);
+            }
+
         foreach($nodes as $node)
             {
+            check_node_indexed($node, $field_data['partial_index']);
             ?>
             <tr id="node_<?php echo $node['ref']; ?>">
                 <td>
@@ -290,6 +295,8 @@ if($field_data['type'] == 7 && !($tree_nodes==""))
 
     foreach($tree_nodes as $node)
         {
+        check_node_indexed($node, $field_data['partial_index']);
+
         $last_node = false;
         if(++$i === $nodes_counter)
             {

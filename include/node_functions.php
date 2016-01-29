@@ -86,6 +86,9 @@ function set_node($ref, $resource_type_field, $name, $parent, $order_by)
             escape_check($ref)
         );
 
+        // Handle node indexing for existing nodes
+        remove_node_keyword_mappings(array('ref' => $current_node['ref'], 'resource_type_field' => $current_node['resource_type_field'], 'name' => $current_node['name']), NULL);
+        add_node_keyword_mappings(array('ref' => $ref, 'resource_type_field' => $resource_type_field, 'name' => $name), NULL);
         }
 
     sql_query($query);
@@ -103,6 +106,9 @@ function set_node($ref, $resource_type_field, $name, $parent, $order_by)
 		}
 	else
 		{
+        // Handle node indexing for new nodes
+        add_node_keyword_mappings(array('ref' => $new_ref, 'resource_type_field' => $resource_type_field, 'name' => $name), NULL);
+
 		return $new_ref;
 		}
 
@@ -126,6 +132,8 @@ function delete_node($ref)
 
     $query = "DELETE FROM node WHERE ref = '" . escape_check($ref) . "';";
     sql_query($query);
+
+    remove_all_node_keyword_mappings($ref);
 
     return;
     }
@@ -635,4 +643,281 @@ function node_field_options_override(&$field,$resource_type_field=null)
             }
         }
     return true;
+    }
+
+
+/**
+* Adds node keyword for indexing purposes
+*
+* @param  integer  $node        ID of the node (from node table) the keyword should be linked to
+* @param  string   $keyword     Keyword to index
+* @param  integer  $position    The position of the keyword in the string that was indexed
+* @param  boolean  $normalized  If this keyword is normalized by the time we add it, set as true
+*  
+* @return boolean
+*/
+function add_node_keyword($node, $keyword, $position, $normalized = false)
+    {
+    global $unnormalized_index, $noadd;
+
+    if(!$normalized)
+        {
+        $original_keyword = $keyword;
+        $keyword          = normalize_keyword($keyword);
+
+        // if $keyword has changed after normalizing it, then index the original value as well
+        if($keyword != $original_keyword && $unnormalized_index)
+            {
+            add_node_keyword($node, $original_keyword, $position, true);
+            }
+        }
+
+    // $keyword should not be indexed if it can be found in the $noadd array, no need to continue
+    if(in_array($keyword, $noadd))
+        {
+        debug('Ignored keyword "' . $keyword . '" as it is in the $noadd array. Triggered in ' . __FUNCTION__ . '() on line ' . __LINE__);
+        return false;
+        }
+
+    $keyword_ref = resolve_keyword($keyword, true);
+
+    sql_query("INSERT INTO node_keyword (node, keyword, position) VALUES ('" . escape_check($node) . "', '" . escape_check($keyword_ref) . "', '" . escape_check($position) . "')");
+    sql_query("UPDATE keyword SET hit_count = hit_count + 1 WHERE ref = '" . escape_check($keyword_ref) . "'");
+
+    daily_stat('Keyword ' . $keyword_ref . ' added for node ID #' . $node, $keyword_ref);
+
+    return true;
+    }
+
+
+/**
+* Removes node keyword for indexing purposes
+*
+* @param  integer  $node        ID of the node (from node table) the keyword should be linked to
+* @param  string   $keyword     Keyword to index
+* @param  integer  $position    The position of the keyword in the string that was indexed
+* @param  boolean  $normalized  If this keyword is normalized by the time we add it, set as true
+*  
+* @return void
+*/
+function remove_node_keyword($node, $keyword, $position, $normalized = false)
+    {
+    global $unnormalized_index, $noadd;
+
+    if(!$normalized)
+        {
+        $original_keyword = $keyword;
+        $keyword          = normalize_keyword($keyword);
+
+        // if $keyword has changed after normalizing it, then remove the original value as well
+        if($keyword != $original_keyword && $unnormalized_index)
+            {
+            remove_node_keyword($node, $original_keyword, $position, true);
+            }
+        }
+
+    $keyword_ref = resolve_keyword($keyword, true);
+
+    $position_sql = '';
+    if('' != trim($position))
+        {
+        $position_sql = " AND position = '" . escape_check($position) . "'";
+        }
+
+    sql_query("DELETE FROM node_keyword WHERE node = '" . escape_check($node) . "' AND keyword = '" . escape_check($keyword_ref) . "' $position_sql");
+    sql_query("UPDATE keyword SET hit_count = hit_count - 1 WHERE ref = '" . escape_check($keyword_ref) . "'");
+
+    daily_stat('Keyword ID: ' . $keyword_ref . ' removed for node ID #' . $node, $keyword_ref);
+
+    return;
+    }
+
+
+/**
+* Removes all indexed keywords for a specific node ID
+*
+* @param  integer  $node  Node ID
+*  
+* @return void
+*/
+function remove_all_node_keyword_mappings($node)
+    {
+    sql_query("DELETE FROM node_keyword WHERE node = '" . escape_check($node) . "'");
+
+    return;
+    }
+
+
+/**
+* Function used to check if a fields' node needs (re-)indexing
+*
+* @param  array    $node           Individual node for a field ( as returned by get_nodes() )
+* @param  boolean  $partial_index  Partially index flag for node keywords
+*  
+* @return void
+*/
+function check_node_indexed(array $node, $partial_index = false)
+    {
+    if('' === trim($node['name']))
+        {
+        return;
+        }
+
+    $count_indexed_node_keywords = sql_value("SELECT count(node) AS 'value' FROM node_keyword WHERE node = '" . escape_check($node['ref']) . "'", 0);
+    $keywords                    = split_keywords($node['name'], true, $partial_index);
+
+    if($count_indexed_node_keywords == count($keywords))
+        {
+        // node has already been indexed
+        return;
+        }
+
+    // (re-)index node
+    remove_all_node_keyword_mappings($node['ref']);
+    add_node_keyword_mappings($node, $partial_index);
+
+    return;
+    }
+
+
+/**
+* Function used to index node keywords
+*
+* @param  array         $node           Individual node for a field ( as returned by get_nodes() )
+* @param  boolean|null  $partial_index  Partially index flag for node keywords. Use NULL if code doesn't
+*                                       have access to the fields' data
+*  
+* @return boolean
+*/
+function add_node_keyword_mappings(array $node, $partial_index = false)
+    {
+    if('' == trim($node['ref']) && '' == trim($node['name']) && '' == trim($node['resource_type_field']))
+        {
+        return false;
+        }
+
+    // Client code does not know whether field is partially indexed or not
+    if(is_null($partial_index))
+        {
+        $field_data = get_field($node['resource_type_field']);
+
+        if(isset($field_data['partial_index']) && '' != trim($field_data['partial_index']))
+            {
+            $partial_index = $field_data['partial_index'];
+            }
+        }
+
+    $keywords = split_keywords($node['name'], true, $partial_index);
+    add_verbatim_keywords($keywords, $node['name'], $node['resource_type_field']);
+
+    db_begin_transaction();
+    for($n = 0; $n < count($keywords); $n++)
+        {
+        unset($keyword_position);
+
+        if(is_array($keywords[$n]))
+            {
+            $keyword_position = $keywords[$n]['position'];
+            $keywords[$n]     = $keywords[$n]['keyword'];
+            }
+
+        if(!isset($keyword_position))
+            {
+            $keyword_position = $n;
+            }
+
+        add_node_keyword($node['ref'], $keywords[$n], $keyword_position);
+        }
+    db_end_transaction();
+
+    return true;
+    }
+
+
+/**
+* Function used to un-index node keywords
+*
+* @param  array         $node           Individual node for a field ( as returned by get_nodes() )
+* @param  boolean|null  $partial_index  Partially index flag for node keywords. Use NULL if code doesn't
+*                                       have access to the fields' data
+*  
+* @return boolean
+*/
+function remove_node_keyword_mappings(array $node, $partial_index = false)
+    {
+    if('' == trim($node['ref']) && '' == trim($node['name']) && '' == trim($node['resource_type_field']))
+        {
+        return false;
+        }
+
+    // Client code does not know whether field is partially indexed or not
+    if(is_null($partial_index))
+        {
+        $field_data = get_field($node['resource_type_field']);
+
+        if(isset($field_data['partial_index']) && '' != trim($field_data['partial_index']))
+            {
+            $partial_index = $field_data['partial_index'];
+            }
+        }
+
+    $keywords = split_keywords($node['name'], true, $partial_index);
+    add_verbatim_keywords($keywords, $node['name'], $node['resource_type_field']);
+
+    for($n = 0; $n < count($keywords); $n++)
+        {
+        unset($keyword_position);
+
+        if(is_array($keywords[$n]))
+            {
+            $keyword_position = $keywords[$n]['position'];
+            $keywords[$n]     = $keywords[$n]['keyword'];
+            }
+
+        if(!isset($keyword_position))
+            {
+            $keyword_position = $n;
+            }
+
+        remove_node_keyword($node['ref'], $keywords[$n], $keyword_position);
+        }
+
+    return true;
+    }
+    
+function add_resource_nodes($resourceid,$nodes=array())
+	{
+	if(!is_array($nodes))
+		{$nodes=array($nodes);}
+	sql_query("insert into resource_node (resource, node) values ('" . $resourceid . "','" . implode("'),('" . $resourceid . "','",$nodes) . "')");	
+	}
+
+function delete_resource_nodes($resourceid,$nodes=array())
+	{
+	if(!is_array($nodes))
+		{$nodes=array($nodes);}
+	sql_query("delete from resource_node where resource ='$resourceid' and node in ('" . implode("','",$nodes) . "')");	
+	}
+
+function delete_all_resource_nodes($resourceid)
+	{
+	sql_query("delete from resource_node where resource ='$resourceid';");	
+	}
+    
+function copy_resource_nodes($resourcefrom,$resourceto)
+	{
+	sql_query("insert into resource_node (resource,node, hit_count, new_hit_count) select '" . $resourceto . "', node, 0, 0 from resource_node where resource ='" . $resourcefrom . "';");	
+	}
+    
+function get_nodes_from_keywords($keywords=array())
+	{
+    if(!is_array($keywords)){$keywords=array($keywords);}
+	return sql_array("select node value from node_keyword where keyword in (" . implode(",",$keywords) . ");");	
+	}
+    
+function update_resource_node_hitcount($resource,$nodes)
+	{
+	# For the specified $resource, increment the hitcount for each node in array
+    if(!is_array($nodes)){$nodes=array($nodes);}
+	if (count($nodes)>0) {sql_query("update resource_node set new_hit_count=new_hit_count+1 where resource='$resource' and node in (" . implode(",",$nodes) . ")",false,-1,true,0);}
     }

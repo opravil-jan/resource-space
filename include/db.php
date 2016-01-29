@@ -334,6 +334,14 @@ if (file_exists($stemming_file)) {include ($stemming_file);}
 $hook_cache = array();
 $hook_cache_hits = 0;
 
+# Load the sysvars into an array. Useful so we can check migration status etc.
+$systemvars = sql_query("SELECT name, value FROM sysvars");
+$sysvars = array();
+foreach($systemvars as $systemvar)
+	{
+	$sysvars[$systemvar["name"]] = $systemvar["value"];
+	}
+
 function hook($name,$pagename="",$params=array(),$last_hook_value_wins=false)
 	{
 	# Plugin architecture.  Look for hooks with this name (and corresponding page, if applicable) and run them sequentially.

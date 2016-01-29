@@ -603,7 +603,13 @@ function update_resource_keyword_hitcount($resource,$search)
 		$found=resolve_keyword($keyword);
 		if ($found!==false) {$keys[]=resolve_keyword($keyword);}
 		}	
-	if (count($keys)>0) {sql_query("update resource_keyword set new_hit_count=new_hit_count+1 where resource='$resource' and keyword in (" . join(",",$keys) . ")",false,-1,true,0);}
+	if (count($keys)>0)
+        {
+        // Get all nodes matching these keywords
+		$nodes = get_nodes_from_keywords($keys);
+        update_resource_node_hitcount($resource,$nodes);
+        sql_query("update resource_keyword set new_hit_count=new_hit_count+1 where resource='$resource' and keyword in (" . join(",",$keys) . ")",false,-1,true,0);
+        }
 	}
 }
 	
@@ -616,6 +622,9 @@ function copy_hitcount_to_live()
 	# Also update the resource table
 	# greatest() is used so the value is taken from the hit_count column in the event that new_hit_count is zero to support installations that did not previously have a new_hit_count column (i.e. upgrade compatability)
 	sql_query("update resource set hit_count=greatest(hit_count,new_hit_count)");
+    
+	# Also now update resource_node_hitcount())
+	sql_query("update resource_node set hit_count=new_hit_count");
 	}
 if(!function_exists("get_image_sizes")){
 function get_image_sizes($ref,$internal=false,$extension="jpg",$onlyifexists=true)
@@ -4839,3 +4848,4 @@ function get_notification_users($userpermission="SYSTEM_ADMIN")
 		return $notification_users_cache[$userpermissionindex];
 		}
 	}
+

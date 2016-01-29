@@ -91,4 +91,51 @@ function migrate_category_tree_to_nodes($resource_type_field_ref,$category_tree_
         }
     }
 
-?>
+
+function populate_resource_nodes($startingref=0)
+	{
+	global $use_mysqli,$mysql_server,$mysql_username,$mysql_password,$mysql_db;
+	
+	// Populate resource_node with all resources that have resource_data matching 
+	// Also get hit count from resource_keyword if the normalised keyword matches
+	
+	if (is_process_lock("resource_node_migration"))
+		{
+		return false;
+		}
+		
+	debug("resource_node_migration starting from node ID: " . $startingref);
+	$nodes=sql_query("select n.ref, n.name, n.resource_type_field, f.partial_index from node n join resource_type_field f on n.resource_type_field=f.ref order by resource_type_field;");
+	$count=count($nodes);	
+	set_process_lock("resource_node_migration");
+	
+	for($n=$startingref;$n<$count;$n++)
+		{
+		// Populate node_keyword table
+		check_node_indexed($nodes[$n], $nodes[$n]["partial_index"]);
+		
+		// Get all resources with this node string, adding a union with the resource_keyword table to get hit count.
+		// Resource keyword may give false positives for substrings so also make sure we have a hit
+		$nodekeyword = normalize_keyword(cleanse_string($nodes[$n]['name'],false));
+		sql_query("insert into resource_node (resource, node, hit_count, new_hit_count)
+				  select resource,'" . $nodes[$n]['ref'] . "', max(hit_count), max(new_hit_count)
+				  from
+						(select rk.resource, '" . $nodes[$n]['ref'] . "', rk.hit_count, rk.new_hit_count, 0 found from keyword k
+						join resource_keyword rk on rk.keyword=k.ref and rk.resource_type_field='" . $nodes[$n]['resource_type_field'] . "' and rk.resource>0
+						where
+						k.keyword='" . $nodekeyword  . "'
+					union
+						select resource, '" . $nodes[$n]['ref'] . "','1' hit_count, '1' new_hit_count, 1 found from resource_data
+						where 
+						resource_type_field='" . $nodes[$n]['resource_type_field'] . "' and resource>0 and find_in_set('" . escape_check($nodes[$n]['name']) . "',value))
+					fn where fn.found=1 group by fn.resource;");
+		
+		sql_query("delete from sysvars where name='resource_node_migration_state'");
+		sql_query("insert into sysvars (name, value) values ('resource_node_migration_state', '$n')");
+		}
+	
+	clear_process_lock("resource_node_migration");
+	sql_query("delete from sysvars where name='resource_node_migration_state'");
+	sql_query("insert into sysvars (name, value) values ('resource_node_migration_state', 'COMPLETE')");
+	return true;
+	}

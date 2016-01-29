@@ -75,9 +75,13 @@ function save_resource_data($ref,$multi,$autosave_field="")
 	$expiry_field_edited=false;
 	$resource_data=get_resource_data($ref);
 		
-        # Load the configuration for the selected resource type. Allows for alternative notification addresses, etc.
-        resource_type_config_override($resource_data["resource_type"]);                
-                
+	# Load the configuration for the selected resource type. Allows for alternative notification addresses, etc.
+	resource_type_config_override($resource_data["resource_type"]);                
+    
+	# Set up arrays of node ids to add/remove. We can't remove all nodes as user may not have access
+	$nodes_to_add=array();
+	$nodes_to_remove=array();
+		
 	for ($n=0;$n<count($fields);$n++)
 		{
 		if (!(
@@ -93,14 +97,29 @@ function save_resource_data($ref,$multi,$autosave_field="")
 			{
 
             node_field_options_override($fields[$n]);
-
+			//print_r($fields[$n]["nodes"]);
 			if ($fields[$n]["type"]==2)
 				{
 				# construct the value from the ticked boxes
 				$val=","; # Note: it seems wrong to start with a comma, but this ensures it is treated as a comma separated list by split_keywords(), so if just one item is selected it still does individual word adding, so 'South Asia' is split to 'South Asia','South','Asia'.
 				//$options=trim_array(explode(",",$fields[$n]["options"]));
-
-				for ($m=0;$m<count($fields[$n]['node_options']);$m++)
+				
+				foreach($fields[$n]["nodes"] as $noderef => $nodedata)
+					{
+					$name=$fields[$n]["ref"] . "_" . md5($nodedata['name']);
+					if (getval($name,"")=="yes")
+						{
+						if ($val!=",") {$val .= ",";}
+						$val .= $nodedata['name'];
+						$nodes_to_add[] = $noderef;
+						}
+					else
+						{
+						$nodes_to_remove[] = $noderef;
+						}
+					}
+				
+				/*for ($m=0;$m<count($fields[$n]['node_options']);$m++)
 					{
 					$name=$fields[$n]["ref"] . "_" . md5($fields[$n]['node_options'][$m]);
 					if (getval($name,"")=="yes")
@@ -109,6 +128,7 @@ function save_resource_data($ref,$multi,$autosave_field="")
 						$val.=$fields[$n]['node_options'][$m];
 						}
 					}
+				*/
 				}
 			elseif ($fields[$n]["type"]==4 || $fields[$n]["type"]==6 || $fields[$n]["type"]==10)
 				{
@@ -155,12 +175,23 @@ function save_resource_data($ref,$multi,$autosave_field="")
 				}
 			elseif ($fields[$n]["type"] == 3 || $fields[$n]["type"] == 12)
 				{
-				$val=getvalescaped("field_" . $fields[$n]["ref"],"");				
+				$val=getvalescaped("field_" . $fields[$n]["ref"],"");	
+				foreach($fields[$n]["nodes"] as $noderef => $nodedata)
+					{
+					if (strip_leading_comma($val) == $nodedata['name'])
+						{
+						$nodes_to_add[] = $noderef;
+						}
+					else
+						{
+						$nodes_to_remove[] = $noderef;
+						}
+					}							
 				// if it doesn't already start with a comma, add one
 				if (substr($val,0,1) != ',')
 					{
 					$val = ','.$val;
-					}
+					}				
 				}
 			else
 				{
@@ -221,8 +252,7 @@ function save_resource_data($ref,$multi,$autosave_field="")
 				
 				# Insert new data and keyword mappings, increase keyword hitcounts.
 				sql_query("insert into resource_data(resource,resource_type_field,value) values('$ref','" . $fields[$n]["ref"] . "','" . escape_check($val) ."')");
-	
-				
+								
 				if ($fields[$n]["type"]==3 && substr($oldval,0,1) != ',')
 					{
 					# Prepend a comma when indexing dropdowns
@@ -299,6 +329,11 @@ function save_resource_data($ref,$multi,$autosave_field="")
 
 	# Autocomplete any blank fields.
 	autocomplete_blank_fields($ref);
+	
+	# Update resource_node table
+	delete_resource_nodes($ref,$nodes_to_remove);
+	if(count($nodes_to_add)>0)
+		{add_resource_nodes($ref,$nodes_to_add);}
             
 	# Expiry field(s) edited? Reset the notification flag so that warnings are sent again when the date is reached.
 	$expirysql="";
@@ -1263,6 +1298,7 @@ function delete_resource($ref)
 	sql_query("delete from resource_custom_access where resource='$ref'");
 	sql_query("delete from external_access_keys where resource='$ref'");
 	sql_query("delete from resource_alt_files where resource='$ref'");
+    delete_all_resource_nodes($ref);
 		
 	hook("afterdeleteresource");
 	
@@ -1349,6 +1385,9 @@ function copy_resource($from,$resource_type=-1)
 
 	# Now copy all data
 	sql_query("insert into resource_data(resource,resource_type_field,value) select '$to',rd.resource_type_field,rd.value from resource_data rd join resource r on rd.resource=r.ref join resource_type_field rtf on rd.resource_type_field=rtf.ref and (rtf.resource_type=r.resource_type or rtf.resource_type=999 or rtf.resource_type=0) where rd.resource='$from'");
+    
+    # Copy nodes
+    copy_resource_nodes($from,$to);
 	
 	# Copy relationships
 	sql_query("insert into resource_related(resource,related) select '$to',related from resource_related where resource='$from'");
@@ -2127,7 +2166,7 @@ function get_fields_with_options()
     # Used for 'manage field options' page.
 
     # Executes query.
-    $fields = sql_query("select ref, name, title, type, order_by, keywords_index, partial_index, resource_type, resource_column, display_field, use_for_similar, iptc_equiv, display_template, tab_name, required, smart_theme_name, exiftool_field, advanced_search, simple_search, help_text, display_as_dropdown from resource_type_field where type in (2,3,9) order by resource_type,order_by");
+    $fields = sql_query("select ref, name, title, type, order_by, keywords_index, partial_index, resource_type, resource_column, display_field, use_for_similar, iptc_equiv, display_template, tab_name, required, smart_theme_name, exiftool_field, advanced_search, simple_search, help_text, display_as_dropdown from resource_type_field where type in (2,3,9,12) order by resource_type,order_by");
 
     # Applies permissions and translates field titles in the newly created array.
     $return = array();
@@ -3604,3 +3643,5 @@ function delete_resource_custom_access_usergroups($ref)
         # delete all usergroup specific access to resource $ref
         sql_query("delete from resource_custom_access where resource='" . escape_check($ref) . "' and usergroup is not null");
         }
+
+
