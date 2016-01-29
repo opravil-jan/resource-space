@@ -879,128 +879,92 @@ function get_themes($themes=array(""),$subthemes=false)
 function get_smart_theme_headers()
 	{
 	# Returns a list of smart theme headers, which are basically fields with a 'smart theme name' set.
-	return sql_query("select ref,name,smart_theme_name,type from resource_type_field where length(smart_theme_name)>0 order by smart_theme_name");
+	return sql_query("SELECT ref, name, smart_theme_name, type FROM resource_type_field WHERE length(smart_theme_name) > 0 ORDER BY smart_theme_name");
 	}
 
-if (!function_exists("get_smart_themes")){	
-function get_smart_themes($field,$node=0,$themebar=false)
-	{
-	# Returns a list of smart themes (which are really field options).
-	# The results are filtered so that only field options that are in use are returned.
-	
-	# Fetch field info
-	$fielddata=sql_query("select * from resource_type_field where ref='$field'");
-	if (count($fielddata)>0) {$fielddata=$fielddata[0];} else {return false;}
-					
-	# Return a list of keywords that are in use for this field
-    global $smart_themes_omit_archived;
-	
-	$inuse=sql_array("SELECT k.keyword value FROM keyword k JOIN resource_keyword rk ON k.ref = rk.keyword " .
-		(($smart_themes_omit_archived) ? "JOIN resource r ON rk.resource = r.ref" : "") .
-		" WHERE resource_type_field = '$field' AND resource > 0 " .
-		(($smart_themes_omit_archived) ? "AND archive= 0 " : "") .
-		" GROUP BY MD5(k.keyword)"
-	);
-	
-	if ($fielddata["type"]==7)
-		{
-		# Category tree style view
-		$tree=explode("\n",$fielddata["options"]);
+function get_smart_themes_nodes($field, $is_category_tree, $parent = null)
+    {
+    global $smart_themes_omit_archived, $themes_category_split_pages;
 
-		$return=array();	
-		
-		global $themes_category_split_pages;
-		if ($themes_category_split_pages && !$themebar)
-			{
-			# Return one level only, unless grabbing for themebar
-			$levels=1;
-			}
-		else
-			{
-			# Return an infinite number of levels
-			$levels=-1;
-			}
-		$return=populate_smart_theme_tree_node($tree,$node,$return,0,$levels);
-		
-		# For each option, if it is in use, add it to the return list.
-		$out=array();
-		for ($n=0;$n<count($return);$n++)
-			{
-			# Prepare a 'tidied' local language version of the name to use for the comparison
-			# Only return items that are in use.
-			$tidy=escape_check(cleanse_string(trim(mb_strtolower(str_replace("-"," ",htmlspecialchars_decode(i18n_get_collection_name($return[$n]))))),false));
-			if (in_array($tidy,$inuse))
-				{
-				$c=count($out);
-				$out[$c]["indent"]=$return[$n]["indent"];
-				$out[$c]["name"]=trim(htmlspecialchars_decode(i18n_get_collection_name($return[$n])));
-				$out[$c]["node"]=$return[$n]["node"];
-				$out[$c]["children"]=$return[$n]["children"];
-				}
-			}
-		return $out;
-		}
-	else
-		{
-		# Standard checkbox list or drop-down box
-		
-		# Fetch raw options list
-		$options=explode(",",$fielddata["options"]);
-		
-		# Tidy list so it matches the storage format used for keywords.
-		# The translated version is fetched as each option will be indexed in the local language version of each option.
-		$options_base=array();
-		for ($n=0;$n<count($options);$n++) {$options_base[$n]=escape_check(trim(mb_convert_case(i18n_get_translated($options[$n]), MB_CASE_LOWER, "UTF-8")));}
-		
-		# For each option, if it is in use, add it to the return list.
-		$return=array();
-		for ($n=0;$n<count($options);$n++)
-			{
-			#echo "<li>Looking for " . $options_base[$n] . " in " . join (",",$inuse);
-			if (in_array(str_replace("-"," ",$options_base[$n]),$inuse)) 		
-				{
-				$c=count($return);
-				$return[$c]["name"]=trim(i18n_get_translated($options[$n]));
-				$return[$c]["indent"]=0;
-				$return[$c]["node"]=0;
-				$return[$c]["children"]=0;
-				}
-			}
-		return $return;
-		}
-	}
-}
+    $return = array();
 
-function populate_smart_theme_tree_node($tree,$node,$return,$indent,$levels)
-	{
-	
-	# When displaying category trees as smart themes, this function is used to recursively
-	# parse each node adding items sequentially with an appropriate indent level.
-	for ($n=0;$n<count($tree);$n++)
-		{
-		$s=explode(",",$tree[$n]);
-		if (isset($s[1]) && $s[1]==$node)
-			{
-			# Add this node
-			$c=count($return);
-			$return[$c]["indent"]=$indent;
-			$return[$c]["name"]=$s[2];
-			$return[$c]["node"]=$n+1;
-			
-			# Add child count
-			$children=populate_smart_theme_tree_node($tree,$n+1,array(),0,1);
-			$return[$c]["children"]=count($children);
-			
-			if ($levels>0) {$levels--;}
-			if ($levels>0 || $levels==-1)
-				{
-				# Cascade
-				$return=populate_smart_theme_tree_node($tree,$n+1,$return,$indent+1,$levels);
-				}
-			}
-		}
-	return $return;
-	}
+    // Determine if this should cascade onto children for category tree type
+    $recursive = false;
+    if($is_category_tree && !$themes_category_split_pages)
+        {
+        $recursive = true;
+        }
+
+    $nodes = get_nodes($field, ((0 == $parent) ? null : $parent), $recursive);
+
+    if(0 === count($nodes))
+        {
+        return $return;
+        }
+
+    // Return a list of keywords that are in use for this field
+    $keywords_in_use_sql = 'SELECT k.keyword AS `value` FROM keyword k JOIN resource_keyword rk ON k.ref = rk.keyword';
+    if($smart_themes_omit_archived)
+        {
+        $keywords_in_use_sql .= ' JOIN resource r ON rk.resource = r.ref';
+        }
+    $keywords_in_use_sql .= " WHERE resource_type_field = '{$field}' AND resource > 0";
+    if($smart_themes_omit_archived)
+        {
+        $keywords_in_use_sql .= " AND archive = 0";
+        }
+    $keywords_in_use_sql .= ' GROUP BY MD5(k.keyword)';
+    $keywords_in_use = sql_array($keywords_in_use_sql);
+
+    /*
+    Tidy list so it matches the storage format used for keywords
+    The translated version is fetched as each option will be indexed in the local language version of each option
+    */
+    $options_base = array();
+    for($n = 0; $n < count($nodes); $n++)
+        {
+        $options_base[$n] = escape_check(trim(mb_convert_case(i18n_get_translated($nodes[$n]['name']), MB_CASE_LOWER, 'UTF-8')));
+        }
+    
+    // For each option, if it is in use, add it to the return list
+    for($n = 0; $n < count($nodes); $n++)
+        {
+        $cleaned_option_base = str_replace('-', ' ', $options_base[$n]);
+
+        if(!in_array($cleaned_option_base, $keywords_in_use))
+            {
+            continue;
+            }
+
+        $tree_node_depth    = 0;
+        $parent_node_to_use = 0;
+        $is_parent          = false;
+
+        if($is_category_tree)
+            {
+            if(is_parent_node($nodes[$n]['ref']))
+                {
+                $parent_node_to_use = $nodes[$n]['ref'];
+                $is_parent          = true;
+                }
+
+            $tree_node_depth = get_tree_node_level($nodes[$n]['ref']);
+
+            if(!is_null($parent) && is_parent_node($parent))
+                {
+                $tree_node_depth--;
+                }
+            }
+
+        $c                       = count($return);
+        $return[$c]['name']      = trim(i18n_get_translated($nodes[$n]['name']));
+        $return[$c]['indent']    = $tree_node_depth;
+        $return[$c]['node']      = $parent_node_to_use;
+        $return[$c]['is_parent'] = $is_parent;
+        }
+
+    return $return;
+    }
 
 if (!function_exists("email_collection")){
 function email_collection($colrefs,$collectionname,$fromusername,$userlist,$message,$feedback,$access=-1,$expires="",$useremail="",$from_name="",$cc="",$themeshare=false,$themename="",$themeurlsuffix="",$list_recipients=false, $add_internal_access=false,$group="")

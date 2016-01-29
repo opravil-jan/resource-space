@@ -666,11 +666,11 @@ if ($header=="" && !isset($themes[0]))
 				{
 				if (getval("smart_theme","")!="") // We are in the smart theme already
 					{
-					$themes=get_smart_themes($headers[$n]["ref"],$node);
+                    $themes = get_smart_themes_nodes($headers[$n]['ref'], (7 == $headers[$n]['type']), $node);
 					for ($m=0;$m<count($themes);$m++)
 						{
 						$s=$headers[$n]["name"] . ":" . $themes[$m]["name"];
-						if ($themes[$m]["children"]>0)
+						if ($themes[$m]['is_parent'])
 							{
 							?>
 							<a href="<?php echo $baseurl_short?>pages/themes.php?smart_theme=<?php echo $headers[$n]["ref"] ?>&node=<?php echo $themes[$m]["node"] ?>&parentnode=<?php echo urlencode($node) ?>&parentnodename=<?php echo urlencode(getval("nodename","")) ?>&nodename=<?php echo urlencode($themes[$m]["name"]) ?>&simpleview=true" onclick="return CentralSpaceLoad(this,true);" class="FeaturedSimplePanel HomePanel DashTile FeaturedSimpleLink" id="advertising_tile_smart<?php echo $n ;?>">
@@ -715,19 +715,24 @@ if ($header=="" && !isset($themes[0]))
 				</tr>
 	
 				<?php
-				$themes=get_smart_themes($headers[$n]["ref"],$node);
+				$themes = get_smart_themes_nodes($headers[$n]['ref'], (7 == $headers[$n]['type']), $node);
 				for ($m=0;$m<count($themes);$m++)
 					{
 					$s=$headers[$n]["name"] . ":" . $themes[$m]["name"];
-	
+
 					# Indent this item?
-					$indent=str_pad("",$themes[$m]["indent"]*5," ") . ($themes[$m]["indent"]==0?"":"&#746;") . "&nbsp;";
-					$indent=str_replace(" ","&nbsp;",$indent);
+					$indent = str_pad('', $themes[$m]['indent'] * 5, ' ');
+                    if(0 < $themes[$m]['indent'])
+                        {
+                        $indent .= '&#746;';
+                        }
+                    $indent .= '&nbsp;';
+					$indent = str_replace(" ","&nbsp;",$indent);
 	
 					?>
 					<tr>
 					<td><div class="ListTitle"><?php echo $indent?>
-					<?php if ($themes[$m]["children"]>0 && $themes_category_navigate_levels)
+					<?php if($themes[$m]['is_parent'] && $themes_category_navigate_levels)
 						{
 						# Has children. Default action is to navigate to a deeper level.
 						?>
@@ -748,10 +753,16 @@ if ($header=="" && !isset($themes[0]))
 					<?php hook("beforecollectiontoolscolumn");?>
 					<td><div class="ListTools">
 					<a href="<?php echo $baseurl_short?>pages/search.php?search=<?php echo urlencode($s)?>&resetrestypes=true" onClick="return CentralSpaceLoad(this,true);">&gt;&nbsp;<?php echo $themes_category_split_pages?$lang["action-viewmatchingresources"]:$lang["viewall"]?></a>
-					<?php if ($themes_category_split_pages && $headers[$n]['type']==7) { ?>
-					<a href="<?php echo $baseurl_short?>pages/themes.php?smart_theme=<?php echo $headers[$n]["ref"] ?>&node=<?php echo $themes[$m]["node"] ?>&parentnode=<?php echo urlencode($node) ?>&parentnodename=<?php echo urlencode(getval("nodename","")) ?>&nodename=<?php echo urlencode($themes[$m]["name"]) ?>" onClick="return CentralSpaceLoad(this,true);">&gt;&nbsp;<?php echo $lang["action-expand"]?></a>
-					<?php }
-					hook("additionalsmartthemetool");?>
+					<?php
+                    if($themes_category_split_pages && 7 == $headers[$n]['type'] && $themes[$m]['is_parent'])
+                        {
+                        ?>
+                        <a href="<?php echo $baseurl_short?>pages/themes.php?smart_theme=<?php echo $headers[$n]["ref"] ?>&node=<?php echo $themes[$m]["node"] ?>&parentnode=<?php echo urlencode($node) ?>&parentnodename=<?php echo urlencode(getval("nodename","")) ?>&nodename=<?php echo urlencode($themes[$m]["name"]) ?>" onClick="return CentralSpaceLoad(this,true);">&gt;&nbsp;<?php echo $lang["action-expand"]?></a>
+                        <?php
+                        }
+
+                    hook('additionalsmartthemetool');
+                    ?>
 					</div></td>
 					</tr>
 					<?php
@@ -765,9 +776,9 @@ if ($header=="" && !isset($themes[0]))
 				</div>
 				<?php
 				}
-			}
-		}
-	}
+			} //end of if ((checkperm("f*") || checkperm("f" . $headers[$n]["ref"])) && !checkperm("f-" . $headers[$n]["ref"]) && ($smart_theme=="" || $smart_theme==$headers[$n]["ref"]))
+		} // end of for ($n=0;$n<count($headers);$n++)
+	} // end of if ($header=="" && !isset($themes[0]))
 
 if($simpleview)
 	{
