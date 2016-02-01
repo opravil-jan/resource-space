@@ -149,6 +149,8 @@ if($send_collection_to_admin && $archive == -1 && getvalescaped('ajax' , 'false'
 	
 	$notification_message = $lang['send_collection_to_admin_emailsubject'] . " " . $user;
 	$notification_url = $baseurl . '/?c=' . $collection_id;
+	$admin_notify_emails = array();
+	$admin_notify_users = array();
 	$notify_users=get_notification_users(array("e-1","e0")); 
 	foreach($notify_users as $notify_user)
 		{
