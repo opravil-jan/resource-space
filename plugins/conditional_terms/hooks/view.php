@@ -6,7 +6,7 @@ function HookConditional_termsViewDownloadlink($baseparams)
     $showterms=false;
     foreach($fields as $field)
         {
-        if($field['fref']==$conditional_terms_field && trim(strip_leading_comma($field['value']))==$conditional_terms_value)
+        if($field['fref']==$conditional_terms_field && (trim($field['value'])==$conditional_terms_value || trim($field['value'])=="," . $conditional_terms_value))
             {$showterms=true;}
         }
     
