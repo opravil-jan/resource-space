@@ -4212,7 +4212,7 @@ function get_utility_path($utilityname, &$checked_path = null)
             if ($return===false)
                 {
                 # Support 'avconv' also
-                return get_executable_path($ffmpeg_path, array("unix"=>"avconv", "win"=>"avconv.exe"), $checked_path);
+                return get_executable_path($ffmpeg_path, array("unix"=>"avprobe", "win"=>"avprobe.exe"), $checked_path);
                 }
             else { return $return; }
             break;        
