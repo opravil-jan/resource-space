@@ -61,7 +61,7 @@ function save_resource_data($ref,$multi,$autosave_field="")
 	# Save all submitted data for resource $ref.
 	# Also re-index all keywords from indexable fields.
 		
-	global $auto_order_checkbox,$userresourcedefaults,$multilingual_text_fields,$languages,$language,$user_resources_approved_email;
+	global $lang, $auto_order_checkbox,$userresourcedefaults,$multilingual_text_fields,$languages,$language,$user_resources_approved_email;
 
 	hook("befsaveresourcedata", "", array($ref));
 
@@ -228,6 +228,21 @@ function save_resource_data($ref,$multi,$autosave_field="")
 			    $errors[$fields[$n]["ref"]]=$error;
 			    continue;
 			    }
+
+		    // Required fields cannot have empty values
+		    if(1 == $fields[$n]['required'] && '' == strip_leading_comma($val) && '' == $autosave_field)
+                {
+                $errors[$fields[$n]['ref']] = i18n_get_translated($fields[$n]['title']) . ': ' . $lang['requiredfield'];
+
+                continue;
+                }
+            else if(1 == $fields[$n]['required'] && '' == strip_leading_comma($val) && '' != $autosave_field)
+                {
+                echo $lang['requiredfield'];
+
+                exit();
+                }
+
 			if (str_replace("\r\n","\n",$fields[$n]["value"])!== str_replace("\r\n","\n",unescape($val)))
 				{
 				//$testvalue=$fields[$n]["value"];var_dump($testvalue);$val=unescape($val);var_dump($val);
