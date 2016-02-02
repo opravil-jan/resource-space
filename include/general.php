@@ -1144,6 +1144,12 @@ function save_user($ref)
         {
         email_reset_link($email, true);
         }
+		
+	if(getval('approved', '')!='')
+		{
+		# Clear any user request messages
+	    message_remove_related(USER_REQUEST,$ref);
+		}
 
     return true;
     }
@@ -1408,7 +1414,7 @@ function auto_create_user_account()
 		if (count($message_users)>0)
 			{
 			// Send a message with long timeout (30 days)
-			message_add($message_users,$notificationmessage,$templatevars['linktouser'],$new,MESSAGE_ENUM_NOTIFICATION_TYPE_SCREEN,60 * 60 *24 * 30);
+			message_add($message_users,$notificationmessage,$templatevars['linktouser'],$new,MESSAGE_ENUM_NOTIFICATION_TYPE_SCREEN,60 * 60 *24 * 30, USER_REQUEST,$new );
 			}
 		}
 
