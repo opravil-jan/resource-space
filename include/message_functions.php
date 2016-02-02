@@ -29,7 +29,7 @@ function message_get(&$messages,$user,$get_all=false,$sort_desc=false)
 // ------------------------------------------------------------------------------------------------------------------------
 
 // add a message.
-function message_add($users,$text,$url="",$owner=null,$notification_type=MESSAGE_ENUM_NOTIFICATION_TYPE_SCREEN,$ttl_seconds=MESSAGE_DEFAULT_TTL_SECONDS)
+function message_add($users,$text,$url="",$owner=null,$notification_type=MESSAGE_ENUM_NOTIFICATION_TYPE_SCREEN,$ttl_seconds=MESSAGE_DEFAULT_TTL_SECONDS, $related_activity=0, $related_ref=0)
 	{
 	global $userref;
 
@@ -46,7 +46,7 @@ function message_add($users,$text,$url="",$owner=null,$notification_type=MESSAGE
 		$owner=$userref;
 		}
 
-	sql_query("INSERT INTO `message` (`owner`, `created`, `expires`, `message`, `url`) VALUES ({$owner}, NOW(), DATE_ADD(NOW(), INTERVAL {$ttl_seconds} SECOND), '{$text}', '{$url}')");
+	sql_query("INSERT INTO `message` (`owner`, `created`, `expires`, `message`, `url`, `related_activity`, `related_ref`) VALUES ({$owner}, NOW(), DATE_ADD(NOW(), INTERVAL {$ttl_seconds} SECOND), '{$text}', '{$url}', '{$related_activity}', '{$related_ref}' )");
 	$message_ref = sql_insert_id();
 
 	foreach($users as $user)
@@ -160,4 +160,19 @@ function message_send_unread_emails()
 		
 	sql_query("delete from sysvars where name='daily_digest'");
 	sql_query("insert into sysvars(name,value) values ('daily_digest',now())");
+	}
+
+    
+// ------------------------------------------------------------------------------------------------------------------------
+// Remove all messages related to a certain activity (e.g. resource request or resource submission) matching the given ref(s)
+function message_remove_related($remote_activity=0,$remote_refs=array())
+	{
+	if($remote_activity==0 || $remote_refs==0){return false;}
+	if(!is_array($remote_refs)){$remote_refs=array($remote_refs);}
+    $relatedmessages = sql_array("select ref value from message where related_activity='$remote_activity' and related_ref in (" . implode(',',$remote_refs) . ");","");
+    if(count($relatedmessages)>0)
+        {            
+        sql_query("DELETE FROM message WHERE ref in (" . implode(',',$relatedmessages) . ");");
+        sql_query("DELETE FROM user_message WHERE message in (" . implode(',',$relatedmessages) . ");");
+        }
 	}

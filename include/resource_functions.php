@@ -299,8 +299,7 @@ function save_resource_data($ref,$multi,$autosave_field="")
 				$errors[$fields[$n]["ref"]]=i18n_get_translated($fields[$n]["title"]).": ".$lang["requiredfield"];
 				}
 			}
-		}
-    //die();	   
+		}	   
     
         if ($autosave_field=="")
             {
@@ -372,6 +371,10 @@ function save_resource_data($ref,$multi,$autosave_field="")
                                     delete_resource_custom_access_usergroups($ref);
                                     }
 				}
+			
+			
+			# Clear any outstanding notifications relating to submission of this resource
+			message_remove_related(SUBMITTED_RESOURCE,$ref);
 			
 			// Notify the resources team ($email_notify) if moving from pending submission -> review.
 			if ($oldarchive==-2 && $setarchivestate==-1 && $ref>0)
@@ -680,27 +683,32 @@ function save_resource_data_multi($collection)
                                 }
                             }                                                			
 			}
-                        
+        
+		if (($oldarchive==-2 || $oldarchive==-1) && $setarchivestate==0) # Clear any outstanding notifications relating to submission of this collection/resource
+			{
+			message_remove_related(SUBMITTED_COLLECTION,$collection);
+			message_remove_related(SUBMITTED_RESOURCE,$notifyrefs);
+			}		
 		if (count($notifyrefs)>0)
 			{
 			if ($user_resources_approved_email && ($oldarchive==-2 || $oldarchive==-1) && $setarchivestate==0) # Notify the  users that their resources have been approved	
 				{
 				debug("Emailing approval notification for submitted resources to users");
-				notify_user_resources_approved($notifyrefs);
+				notify_user_resources_approved($notifyrefs);			
 				}
 			
 			if ($oldarchive==-2 && $setarchivestate==-1) # Notify the resources team ($email_notify) if moving from pending submission->pending review
 				{
 				debug("Emailing notification of submitted resources to " . $email_notify);
-				notify_user_contributed_submitted($notifyrefs);
+				notify_user_contributed_submitted($notifyrefs, $collection);
 				}
 			
 			if ($oldarchive==-1 && $setarchivestate==-2) # Notify the admin users of any submitted resources.
 				{
 				debug("Emailing notification of unsubmitted resources to " . $email_notify);
-				notify_user_contributed_unsubmitted($notifyrefs);
-				}			
-			}		
+				notify_user_contributed_unsubmitted($notifyrefs, $collection);
+				}	
+			}	
 		}
 	
 	# Expiry field(s) edited? Reset the notification flag so that warnings are sent again when the date is reached.
@@ -2044,12 +2052,11 @@ function process_notify_user_contributed_submitted($ref,$htmlbreak)
 	return $htmlbreak . $user . ': ' . $url;
 	}
 
-function notify_user_contributed_submitted($refs)
+function notify_user_contributed_submitted($refs,$collection=0)
 	{
 	// Send a notification mail to the administrators when resources are moved from "User Contributed - Pending Submission" to "User Contributed - Pending Review"
 	global $notify_user_contributed_submitted,$applicationname,$email_notify,$baseurl,$lang,$use_phpmailer;
 	if (!$notify_user_contributed_submitted) {return false;} # Only if configured.
-	
 	$htmlbreak="";
 	if ($use_phpmailer){$htmlbreak="<br><br>";}
 	
@@ -2093,10 +2100,17 @@ function notify_user_contributed_submitted($refs)
 	if (count($message_users)>0)
 		{
 		global $userref;
-        message_add($message_users,$notificationmessage,$baseurl . "/pages/search.php?search=!contributions" . $userref . "&archive=-1");
+		if($collection!=0)
+			{
+			message_add($message_users,$notificationmessage,$baseurl . "/pages/search.php?search=!contributions" . $userref . "&archive=-1",MESSAGE_ENUM_NOTIFICATION_TYPE_SCREEN,MESSAGE_DEFAULT_TTL_SECONDS,SUBMITTED_COLLECTION,$collection);
+			}
+		else
+			{
+			message_add($message_users,$notificationmessage,$baseurl . "/pages/search.php?search=!contributions" . $userref . "&archive=-1",MESSAGE_ENUM_NOTIFICATION_TYPE_SCREEN,MESSAGE_DEFAULT_TTL_SECONDS,SUBMITTED_RESOURCE,(is_array($refs)?$refs[0]:$refs));
+			}
 		}
 	}
-function notify_user_contributed_unsubmitted($refs)
+function notify_user_contributed_unsubmitted($refs,$collection=0)
 	{
 	// Send a notification mail to the administrators when resources are moved from "User Contributed - Pending Submission" to "User Contributed - Pending Review"
 	
@@ -2156,6 +2170,13 @@ function notify_user_contributed_unsubmitted($refs)
 		{
 		global $userref;
         message_add($message_users,$notificationmessage,$baseurl . "/pages/search.php?search=!contributions" . $userref . "&archive=-2");
+		}
+	
+	# Clear any outstanding notifications relating to submission of these resources
+	message_remove_related(SUBMITTED_RESOURCE,$refs);
+	if($collection!=0)
+		{
+		message_remove_related(SUBMITTED_COLLECTION,$collection);
 		}
 	}		
 	

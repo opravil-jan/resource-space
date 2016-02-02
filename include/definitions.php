@@ -68,3 +68,11 @@ function definitions_get_by_prefix($prefix)
 		}
 	return $return_definitions;
 	}
+
+
+// ------------------------- SYSTEM NOTIFICATION TYPES -------------------------
+define ('MANAGED_REQUEST',		1);
+define ('COLLECTION_REQUEST',	2);
+define ('USER_REQUEST',			3);
+define ('SUBMITTED_RESOURCE',	4);
+define ('SUBMITTED_COLLECTION',	5);

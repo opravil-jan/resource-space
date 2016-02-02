@@ -175,7 +175,7 @@ if($send_collection_to_admin && $archive == -1 && getvalescaped('ajax' , 'false'
 	if (count($admin_notify_users)>0)
 		{
 		global $userref;
-        message_add($admin_notify_users,$notification_message,$notification_url);
+        message_add($admin_notify_users,$notification_message,$notification_url, $userref, MESSAGE_ENUM_NOTIFICATION_TYPE_SCREEN,MESSAGE_DEFAULT_TTL_SECONDS,SUBMITTED_COLLECTION, $collection_id);
 		}
     exit();
 	}

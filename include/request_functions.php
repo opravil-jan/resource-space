@@ -120,7 +120,10 @@ function save_request($request)
             {
             open_access_to_user($currentrequest["user"],$resource,$expires);
             }
-        }
+			
+		# Clear any outstanding notifications about this request that may have been sent to other admins
+	    message_remove_related(MANAGED_REQUEST,$request);
+		}
 
     if ($oldstatus!=$status && $status==2)  
         {
@@ -146,7 +149,9 @@ function save_request($request)
             {
             remove_access_to_user($currentrequest["user"],$resource);
             }
-
+			
+		# Clear any outstanding notifications about this request that may have been sent to other admins
+	    message_remove_related(MANAGED_REQUEST,$request);
         }
 
     if ($oldstatus!=$status && $status==0)
@@ -170,7 +175,11 @@ function save_request($request)
         {
         # Delete the request - this is done AFTER any e-mails have been sent out so this can be used on approval.
         sql_query("delete from request where ref='$request'");
-        return true;        
+		
+		# Clear any outstanding notifications about this request that may have been sent to other admins
+	    message_remove_related(MANAGED_REQUEST,$request);
+        
+		return true;        
         }
 
     }
@@ -295,7 +304,7 @@ function email_collection_request($ref,$details)
 	if (count($admin_notify_users)>0)
 		{
 		global $userref;
-        message_add($admin_notify_users,$notification_message,$templatevars["requesturl"]);
+        message_add($admin_notify_users,$notification_message,$templatevars["requesturl"],$userref, MESSAGE_ENUM_NOTIFICATION_TYPE_SCREEN,MESSAGE_DEFAULT_TTL_SECONDS,COLLECTION_REQUEST, $ref);
 		}
               
     if ($request_senduserupdates)
@@ -500,8 +509,8 @@ function managed_collection_request($ref,$details,$ref_is_resource=false)
         
         if(isset($collections) && count($collections) > 1)
             {
-            foreach ($collections as $request_resource_type => $collection_id) {
-                
+            foreach ($collections as $request_resource_type => $collection_id)
+				{
                 $assigned_to = '';
                 $assigned_to_users=array();
                 $assigned_to_user_emails=array();
@@ -615,10 +624,10 @@ function managed_collection_request($ref,$details,$ref_is_resource=false)
                     }
                 if (count($assigned_to_notify_users) > 0)
                     {
-                    message_add($assigned_to_notify_users,$lang['requestassignedtoyou'],$baseurl . "/?q=" . $request);
+					message_add($assigned_to_notify_users,$lang['requestassignedtoyou'],$baseurl . "/?q=" . $request,$userref,MESSAGE_ENUM_NOTIFICATION_TYPE_SCREEN,MESSAGE_DEFAULT_TTL_SECONDS,MANAGED_REQUEST, $request);
                     }    
                 unset($email_message);
-            }
+				}
 
             $notify_manage_request_admin = false;
 			$notification_sent = true;
@@ -655,7 +664,7 @@ function managed_collection_request($ref,$details,$ref_is_resource=false)
             }        
         else
             {   
-            message_add($admin_notify_user,$notification_message, $request_url);
+            message_add($admin_notify_user,$notification_message, $request_url,$userref,MESSAGE_ENUM_NOTIFICATION_TYPE_SCREEN,MESSAGE_DEFAULT_TTL_SECONDS,MANAGED_REQUEST, $request);
             }
 		$notification_sent = true;
         }
@@ -700,8 +709,8 @@ function managed_collection_request($ref,$details,$ref_is_resource=false)
     	}
 	if (count($admin_notify_users)>0)
 		{
-		global $userref;
-        message_add($admin_notify_users,$notification_message,$templatevars["requesturl"]);
+		global $userref;		
+        message_add($admin_notify_users,$notification_message,$templatevars["requesturl"],$userref,MESSAGE_ENUM_NOTIFICATION_TYPE_SCREEN,MESSAGE_DEFAULT_TTL_SECONDS,MANAGED_REQUEST,$request);
 		}
 		
     
