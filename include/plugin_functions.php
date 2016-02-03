@@ -24,10 +24,13 @@ function activate_plugin($name)
         {
         $plugin_yaml = get_plugin_yaml("$plugin_dir/$name.yaml", false);
         # If no yaml, or yaml file but no description present, attempt to read an 'about.txt' file
-        if ($plugin_yaml['desc']=='')
+        if ('' == $plugin_yaml['desc'])
             {
-            $about=$plugins_dir . $name.'/about.txt';
-            if (file_exists($about)) {$plugin_yaml['desc']=substr(file_get_contents($about),0,95) . '...';}
+            $about = $plugin_dir . $name . '/about.txt';
+            if(file_exists($about))
+                {
+                $plugin_yaml['desc'] = substr(file_get_contents($about), 0, 95) . '...';
+                }
             }
     # escape the plugin information
     $plugin_yaml_esc = array();
