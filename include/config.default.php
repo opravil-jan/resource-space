@@ -2882,7 +2882,7 @@ $help_modal=true;
 $user_pref_show_notifications=true;
 
 # User preference - daily digest. Sets the default setting for a daily email digest of unread system notifications.
-$user_pref_daily_digest=true; 
+$user_pref_daily_digest=false; 
 # Option to set the messages as read once the email is sent
 $user_pref_daily_digest_mark_read=false;
 
