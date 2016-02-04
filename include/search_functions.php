@@ -2273,9 +2273,16 @@ function search_special($search,$sql_join,$fetchrows,$sql_prefix,$sql_suffix,$or
     if (substr($search,0,5)=="!last") 
         {
         # Replace r2.ref with r.ref for the alternative query used here.
-        $order_by=str_replace("r.ref","r2.ref",$order_by);
-        if ($orig_order=="relevance") {$order_by="r2.ref desc";}
 
+        $order_by=str_replace("r.ref","r2.ref",$order_by);
+        if ($orig_order=="relevance")
+            {
+            # Special case for ordering by relevance for this query.
+            $direction=((strpos($order_by,"DESC")===false)?"ASC":"DESC");
+            $order_by="r2.ref " . $direction;
+            }
+       
+        
         # Extract the number of records to produce
         $last=explode(",",$search);
         $last=str_replace("!last","",$last[0]);
