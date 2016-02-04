@@ -2911,3 +2911,6 @@ $pdf_resource_type_templates = array(
 );
 */
 $pdf_resource_type_templates = array();
+
+#Option to display year in a four digit format
+$date_yyyy = false;
