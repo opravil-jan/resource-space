@@ -93,7 +93,7 @@ elseif (array_key_exists("username",$_POST) && getval("langupdate","")=="")
         # Set default resource types
         rs_setcookie('restypes', $default_res_types);
 
-        $userpreferences = ($user_preferences) ? sql_query("SELECT user, `value` AS colour_theme FROM user_preferences WHERE user = " . $result['ref'] . " AND parameter = 'colour_theme';") : FALSE;
+        $userpreferences = ($user_preferences) ? sql_query("SELECT user, `value` AS colour_theme FROM user_preferences WHERE user = '" . $result['ref'] . "' AND parameter = 'colour_theme';") : FALSE;
         $userpreferences = ($userpreferences && isset($userpreferences[0])) ? $userpreferences[0]: FALSE;
         if($userpreferences && isset($userpreferences["colour_theme"]) && $userpreferences["colour_theme"]!="" && (!isset($_COOKIE["colour_theme"]) || $userpreferences["colour_theme"]!=$_COOKIE["colour_theme"]))
             {
@@ -104,8 +104,8 @@ elseif (array_key_exists("username",$_POST) && getval("langupdate","")=="")
 		# the collection frame to appear full screen.
 		if (strpos($url,"pages/collections.php")!==false) {$url="index.php";}
 
-        $accepted=sql_value("select accepted_terms value from user where username='$username' and (password='$password' or password='".$result['password_hash']."')",0);
-		if (($accepted==0) && ($terms_login) && !checkperm("p")) {redirect ("pages/terms.php?noredir=true&url=" . urlencode("pages/user/user_change_password.php"));} else {redirect($url);}
+        $accepted=sql_value("select accepted_terms value from user where ref='" . $result["ref"] . "'",0);
+	if (($accepted==0) && ($terms_login) && !checkperm("p")) {redirect ("pages/terms.php?noredir=true&url=" . urlencode("pages/user/user_change_password.php"));} else {redirect($url);}
         }
     else
         {
