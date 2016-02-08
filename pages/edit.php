@@ -23,59 +23,34 @@ $sort=getval("sort",$default_sort);
 $modal=(getval("modal","")=="true");
 
 $archive=getvalescaped("archive",0,true); // This is the archive state for searching, NOT the archive state to be set from the form POST which we get later
+  
+$uploadparams="";
+$uploadparams.="&relateto=" . urlencode(getval("relateto",""));
+$uploadparams.="&redirecturl=" . urlencode(getval("redirecturl",""));
 
 $collection     = getvalescaped('collection', '', true);
 $collection_add = getvalescaped('collection_add', '');
 
-/*
-Set the main form action URL query strings
-IMPORTANT: $form_action_url_params are the most general used.
-           Use $extra_url_params to set extra params used for a specific action
-           or to override an existing parameter.
-See general.php -> generateURL() for more information on how it works
-*/
-$form_action_url_params = array(
-    'ref'              => $ref,
-    'uploader'         => getvalescaped('uploader', ''),
-    'single'           => getvalescaped('single', ''),
-    'local'            => getvalescaped('local', ''),
-    'search'           => $search,
-    'offset'           => $offset,
-    'order_by'         => $order_by,
-    'sort'             => $sort,
-    'archive'          => $archive,
-    'collection'       => $collection,
-    'metadatatemplate' => getval('metadatatemplate', ''),
-    'modal'            => getval('modal', '')
-);
-$extra_url_params = array();
-
-
-$extra_url_params['relateto']    = getval('relateto', '');
-$extra_url_params['redirecturl'] = getval('redirecturl', '');
-
 global $merge_filename_with_title;
-if($merge_filename_with_title && $ref < 0)
-    {
-    $merge_filename_with_title_option = urlencode(getval('merge_filename_with_title_option', ''));
-    $merge_filename_with_title_include_extensions = urlencode(getval('merge_filename_with_title_include_extensions', ''));
-    $merge_filename_with_title_spacer = urlencode(getval('merge_filename_with_title_spacer', ''));
+if($merge_filename_with_title && $ref < 0) {
 
-    if($merge_filename_with_title_option != '')
-        {
-        $extra_url_params['merge_filename_with_title_option'] = $merge_filename_with_title_option;
-        }
+  $merge_filename_with_title_option = urlencode(getval('merge_filename_with_title_option', ''));
+  $merge_filename_with_title_include_extensions = urlencode(getval('merge_filename_with_title_include_extensions', ''));
+  $merge_filename_with_title_spacer = urlencode(getval('merge_filename_with_title_spacer', ''));
 
-    if($merge_filename_with_title_include_extensions != '')
-        {
-        $extra_url_params['merge_filename_with_title_include_extensions'] = $merge_filename_with_title_include_extensions;
-        }
+  if($merge_filename_with_title_option != '') {
+    $uploadparams .= '&merge_filename_with_title_option=' . $merge_filename_with_title_option;
+ }
 
-    if($merge_filename_with_title_spacer != '')
-        {
-        $extra_url_params['merge_filename_with_title_spacer'] = $merge_filename_with_title_spacer;
-        }
-    }
+ if($merge_filename_with_title_include_extensions != '') {
+    $uploadparams .= '&merge_filename_with_title_include_extensions=' . $merge_filename_with_title_include_extensions;
+ }
+
+ if($merge_filename_with_title_spacer != '') {
+    $uploadparams .= '&merge_filename_with_title_spacer=' . $merge_filename_with_title_spacer;
+ }
+
+}
 
 global $tabs_on_edit;
 $collapsible_sections=true;
@@ -121,6 +96,7 @@ if ($go!="")
       }
    }
 
+   $collection=getvalescaped("collection","",true);
    if ($collection!="") 
    {
     # If editing multiple items, use the first resource as the template
@@ -227,24 +203,23 @@ hook("editbeforeheader");
 
 if ((getval("autosave","")!="") || (getval("tweak","")=="" && getval("submitted","")!="" && getval("resetform","")=="" && getval("copyfrom","")==""))
 {
-    if(($embedded_data_user_select && getval("exif_option","")=="custom") || isset($embedded_data_user_select_fields))  
+
+  if(($embedded_data_user_select && getval("exif_option","")=="custom") || isset($embedded_data_user_select_fields))  
+  {
+    $exif_override=false;
+    foreach($_POST as $postname=>$postvar)
     {
-    $exif_override = false;
-
-    foreach($_POST as $postname => $postvar)
-        {
-        if(false !== strpos($postname, 'exif_option_'))
-            {
-            $extra_url_params[urlencode($postname)] = $postvar;
-            $exif_override = true;
-            }
-        }
-
-    if($exif_override)
-        {
-        $extra_url_params['exif_override'] = 'true';
-        }
-    }
+      if (strpos($postname,"exif_option_")!==false)
+      {
+        $uploadparams.="&" . urlencode($postname) . "=" . urlencode($postvar);
+        $exif_override=true;
+     }
+  }
+  if($exif_override)
+  {
+   $uploadparams.="&exif_override=true";
+}
+}
 
 hook("editbeforesave");         
 
@@ -277,7 +252,7 @@ if (!$multiple)
          }
 
          if($relate_on_upload && $enable_related_resources && getval("relateonupload","")!="") {
-            $extra_url_params['relateonupload'] = 'yes';
+            $uploadparams.="&relateonupload=yes";
          }
 
          $autorotate = getval("autorotate","");
@@ -300,74 +275,31 @@ if (!$multiple)
              redirect($baseurl_short."pages/view.php?ref=" . urlencode($ref) . "&search=" . urlencode($search) . "&offset=" . urlencode($offset) . "&order_by=" . urlencode($order_by) . "&sort=" . urlencode($sort) . "&archive=" . urlencode($archive) . "&refreshcollectionframe=true");
           }
        }
-    else
+       else
+       {
+        if ((getval("uploader","")!="")&&(getval("uploader","")!="local"))
         {
-        $upload_url_params = array(
-            'collection_add' => $collection_add,
-            'entercolname'   => getvalescaped('entercolname', ''),
-            'resource_type'  => $resource_type,
-            'status'         => $setarchivestate,
-            'no_exif'        => $no_exif,
-            'autorotate'     => $autorotate,
-            'themestring'    => getval('themestring', ''),
-            'public'         => getval('public', ''),
-            'archive'        => $archive,
-        );
-
-        $modified_upload_url_params = hook('addtouploadurl', '', array($upload_url_params));
-        if(is_array($modified_upload_url_params) && !empty($modified_upload_url_params))
-            {
-            $upload_url_params = $modified_upload_url_params;
-            }
-
-        if(getval('uploader', '') != '' && getval('uploader', '') != 'local')
-            {
-            // Save button pressed? Move to next step.
-            if(getval("save", "") != "")
+                    # Save button pressed? Move to next step.
+          if (getval("save","")!="") {redirect($baseurl_short."pages/upload_" . getval("uploader","") . ".php?collection_add=" . getval("collection_add","")."&entercolname=".urlencode(getvalescaped("entercolname",""))."&resource_type=" . urlencode($resource_type) . "&status=" . $setarchivestate .  "&no_exif=" . urlencode($no_exif) . "&autorotate=" . urlencode($autorotate) . "&themestring=" . urlencode(getval('themestring','')) . "&public=" . urlencode(getval('public','')) . "&archive=" . urlencode($archive) . $uploadparams . hook("addtouploadurl"));}
+       }
+                elseif ((getval("local","")!="")||(getval("uploader","")=="local")) // Test if fetching resource from local upload folder.
                 {
-                redirect(generateURL($baseurl_short . 'pages/upload_' . getval('uploader', '') . '.php', $upload_url_params, $extra_url_params));
+                    # Save button pressed? Move to next step.
+                   if (getval("save","")!="") {redirect($baseurl_short."pages/team/team_batch_select.php?use_local=yes&collection_add=" . getval("collection_add","")."&entercolname=".urlencode(getvalescaped("entercolname",""))."&resource_type=". urlencode($resource_type) . "&status=" . $setarchivestate .  "&no_exif=" . $no_exif . "&autorotate=" . $autorotate . $uploadparams );}
                 }
-            }
-        elseif(getval("local", "") != "" || getval("uploader", "") == "local") // Test if fetching resource from local upload folder.
-            {
-            // Save button pressed? Move to next step.
-            if(getval("save", "") != "")
+                elseif (getval("single","")!="") // Test if single upload (archived or not).
                 {
-                $extra_url_params['use_local'] = 'yes';
+                    # Save button pressed? Move to next step. if noupload is set - create resource without uploading stage
+                   if ((getval("noupload","")!="")&&(getval("save","")!="")) {$ref=copy_resource(0-$userref);redirect($baseurl_short."pages/view.php?ref=". urlencode($ref));}
 
-                redirect(generateURL($baseurl_short . 'pages/team/team_batch_select.php', $upload_url_params, $extra_url_params));
-                }
-            }
-        elseif('' != getval('single', '')) // Test if single upload (archived or not).
-            {
-            // Save button pressed? Move to next step. if noupload is set - create resource without uploading stage
-            if('' != getval('noupload', '') && '' != getval('save', ''))
+                   if (getval("save","")!="") {redirect($baseurl_short."pages/upload.php?resource_type=". urlencode($resource_type) . "&status=" . $setarchivestate .  "&no_exif=" . $no_exif . "&autorotate=" . urlencode($autorotate) . "&archive=" . urlencode($archive) . $uploadparams );}
+                }    
+                else // Hence fetching from ftp.
                 {
-                $ref = copy_resource(0 - $userref);
-
-                // Add to collection?
-                if('' != $collection_add)
-                    {
-                    add_resource_to_collection($ref, $collection_add);
-                    }
-
-                redirect(generateURL($baseurl_short . 'pages/view.php', array('ref' => $ref)));
+                    # Save button pressed? Move to next step.
+                   if (getval("save","")!="") {redirect($baseurl_short."pages/team/team_batch.php?collection_add=" . getval("collection_add","")."&entercolname=".urlencode(getvalescaped("entercolname","")). "&resource_type=". urlencode($resource_type) . "&status=" . $setarchivestate .  "&no_exif=" . $no_exif . "&autorotate=" . urlencode($autorotate) . $uploadparams );}
                 }
-
-            if('' != getval('save', ''))
-                {
-                redirect(generateURL($baseurl_short . 'pages/upload.php', $upload_url_params, $extra_url_params));
-                }
-            }
-        else // Hence fetching from ftp.
-            {
-            // Save button pressed? Move to next step.
-            if(getval("save", "") != "")
-                {
-                redirect(generateURL($baseurl_short . 'pages/team/team_batch.php', $upload_url_params, $extra_url_params));
-                }
-            }
-        }
+             }
           }
           elseif (getval("save","")!="")
           {           
@@ -597,24 +529,18 @@ function SaveAndClearButtons($extraclass="")
 
 ?>
 </script>
+
 <?php
+$form_action = $baseurl_short . 'pages/edit.php?ref=' . urlencode($ref) . '&amp;uploader=' . urlencode(getvalescaped("uploader","")) . '&amp;single=' . urlencode(getvalescaped("single","")) . '&amp;local=' . urlencode(getvalescaped("local","")) . '&amp;search=' . urlencode($search) . '&amp;offset=' . urlencode($offset) . '&amp;order_by=' . urlencode($order_by) . '&amp;sort=' . urlencode($sort) . '&amp;archive=' . urlencode($archive) . '&amp;collection=' . $collection . '&amp;metadatatemplate=' . getval("metadatatemplate","")  . $uploadparams . '&modal=' . getval("modal","");
 // If resource type is set as a data only, don't reach upload stage (step 2)
 if(0 > $ref && in_array($resource['resource_type'], $data_only_resource_types))
     {
-    $extra_url_params['single']   = 'true';
-    $extra_url_params['noupload'] = 'true';
-
-    if(isset($form_action_url_params['uploader']))
-        {
-        unset($form_action_url_params['uploader']);
-        }
-    if(isset($extra_url_params['uploader']))
-        {
-        unset($extra_url_params['uploader']);
-        }
+    $uploadparams .= '&single=true&noupload=true';
+    $form_action = $baseurl_short . 'pages/edit.php?ref=' . urlencode($ref) . '&amp;local=' . urlencode(getvalescaped("local","")) . '&amp;search=' . urlencode($search) . '&amp;offset=' . urlencode($offset) . '&amp;order_by=' . urlencode($order_by) . '&amp;sort=' . urlencode($sort) . '&amp;archive=' . urlencode($archive) . '&amp;collection=' . $collection . '&amp;metadatatemplate=' . getval("metadatatemplate","")  . $uploadparams . '&modal=' . getval("modal","");
     }
 ?>
-<form method="post" action="<?php echo generateURL($baseurl_short . 'pages/edit.php', $form_action_url_params, $extra_url_params); ?>" id="mainform" onsubmit="return <?php echo ($modal ? 'Modal' : 'CentralSpace'); ?>Post(this, true);">
+
+<form method="post" action="<?php echo $form_action; ?>" id="mainform" onsubmit="return <?php echo ($modal?"Modal":"CentralSpace") ?>Post(this,true);">
 
    <div class="BasicsBox">
       <input type="hidden" name="submitted" value="true">
@@ -709,15 +635,9 @@ if(0 > $ref && in_array($resource['resource_type'], $data_only_resource_types))
             { $replace_upload_type="plupload"; } 
          else 
             { $replace_upload_type=$top_nav_upload_type; }
-
-        // Do not show an upload link or replace file link if resource is part of data only resource types
-        if(0 < $ref && !in_array($resource['resource_type'], $data_only_resource_types))
-            {
-            ?>
-            <a href="<?php echo $baseurl_short?>pages/upload_<?php echo $replace_upload_type ?>.php?ref=<?php echo urlencode($ref) ?>&search=<?php echo urlencode($search)?>&offset=<?php echo urlencode($offset) ?>&order_by=<?php echo urlencode($order_by) ?>&sort=<?php echo urlencode($sort) ?>&archive=<?php echo urlencode($archive) ?>&replace_resource=<?php echo urlencode($ref)  ?>&resource_type=<?php echo $resource['resource_type']?>" onClick="return CentralSpaceLoad(this,true);">&gt;&nbsp;<?php echo (($resource["file_extension"]!="")?$lang["replacefile"]:$lang["uploadafile"]) ?></a>
-            <?php
-            }
-
+         ?>
+         <a href="<?php echo $baseurl_short?>pages/upload_<?php echo $replace_upload_type ?>.php?ref=<?php echo urlencode($ref) ?>&search=<?php echo urlencode($search)?>&offset=<?php echo urlencode($offset) ?>&order_by=<?php echo urlencode($order_by) ?>&sort=<?php echo urlencode($sort) ?>&archive=<?php echo urlencode($archive) ?>&replace_resource=<?php echo urlencode($ref)  ?>&resource_type=<?php echo $resource['resource_type']?>" onClick="return CentralSpaceLoad(this,true);">&gt;&nbsp;<?php echo (($resource["file_extension"]!="")?$lang["replacefile"]:$lang["uploadafile"]) ?></a>
+         <?php 
          if ($resource["file_extension"]!="") 
             {hook("afterreplacefile");} 
          else 
@@ -814,80 +734,77 @@ if(0 > $ref && in_array($resource['resource_type'], $data_only_resource_types))
    # Upload template: Show the save / clear buttons at the top too, to avoid unnecessary scrolling.
    ?>
 <div class="QuestionSubmit">
-    <?php
-    global $clearbutton_on_upload;
-
-    if(($clearbutton_on_upload && $ref < 0 && !$multiple) || ($ref > 0 && $clearbutton_on_edit))
-        {
-        ?>
-        <input name="resetform" class="resetform" type="submit" value="<?php echo $lang['clearbutton']; ?>" />&nbsp;
-        <?php
-        }
+   <?php
+   global $clearbutton_on_upload;
+   if(($clearbutton_on_upload && $ref<0 && !$multiple) || ($ref>0 && $clearbutton_on_edit)) 
+     { ?>
+  <input name="resetform" class="resetform" type="submit" value="<?php echo $lang["clearbutton"]?>" />&nbsp;
+  <?php
+    }
 
     $save_btn_value = $lang['next'];
     if(0 > $ref && in_array($resource['resource_type'], $data_only_resource_types))
         {
         $save_btn_value = $lang['create'];
         }
-        ?>
-    <input name="save" class="editsave" type="submit" value="&nbsp;&nbsp;<?php echo $save_btn_value; ?>&nbsp;&nbsp;" /><br />
-    <div class="clearerleft"></div>
+?>
+<input name="save" class="editsave" type="submit" value="&nbsp;&nbsp;<?php echo $save_btn_value; ?>&nbsp;&nbsp;" /><br />
+<div class="clearerleft"> </div>
 </div>
+
+<?php } ?>
+
+<?php hook("editbefresmetadata"); ?>
+<?php if (!hook("replaceedittype")) { ?>
 <?php
-}
-
-hook('editbefresmetadata');
-
-if(!hook('replaceedittype'))
+if(!$multiple)
     {
-    if(!$multiple)
-        {
-        ?>
-        <div class="Question" id="question_resourcetype">
-            <label for="resourcetype"><?php echo $lang["resourcetype"]?></label>
-            <select name="resource_type" id="resourcetype" class="stdwidth" 
-                    onChange="<?php if ($ref>0) { ?>if (confirm('<?php echo $lang["editresourcetypewarning"]; ?>')){<?php } ?><?php echo ($modal?"Modal":"CentralSpace") ?>Post(document.getElementById('mainform'),true);<?php if ($ref>0) { ?>}else {return}<?php } ?>">
+    ?>
+    <div class="Question" id="question_resourcetype">
+        <label for="resourcetype"><?php echo $lang["resourcetype"]?></label>
+        <select name="resource_type" id="resourcetype" class="stdwidth" 
+                onChange="<?php if ($ref>0) { ?>if (confirm('<?php echo $lang["editresourcetypewarning"]; ?>')){<?php } ?><?php echo ($modal?"Modal":"CentralSpace") ?>Post(document.getElementById('mainform'),true);<?php if ($ref>0) { ?>}else {return}<?php } ?>">
+        <?php
+        $types = get_resource_types();
+        for($n = 0; $n < count($types); $n++)
+            {
+            if((checkperm("XU{$types[$n]["ref"]}") || in_array($types[$n]['ref'], $hide_resource_types)) && $resource["resource_type"]!=$types[$n]["ref"]) continue;   // skip showing a resource type that we do not to have permission to change to (unless it is currently set to that)
+            ?><option value="<?php echo $types[$n]["ref"]?>" <?php if ($resource["resource_type"]==$types[$n]["ref"]) {?>selected<?php } ?>><?php echo htmlspecialchars($types[$n]["name"])?></option><?php
+            }
+            ?>
+        </select>
+        <div class="clearerleft"></div>
+    </div>
+    <?php
+    }
+else
+    {
+    # Multiple method of changing resource type.
+    ?>
+    <h2 <?php echo ($collapsible_sections)?"class=\"CollapsibleSectionHead\"":""?>><?php echo $lang["resourcetype"] ?></h2>
+    <div <?php echo ($collapsible_sections)?"class=\"CollapsibleSection\"":""?> id="ResourceTypeSection<?php if ($ref==-1) echo "Upload"; ?>"><input name="editresourcetype" id="editresourcetype" type="checkbox" value="yes" onClick="var q=document.getElementById('editresourcetype_question');if (this.checked) {q.style.display='block';alert('<?php echo $lang["editallresourcetypewarning"] ?>');} else {q.style.display='none';}">&nbsp;<label for="editresourcetype"><?php echo $lang["resourcetype"] ?></label>
+    <div class="Question" style="display:none;" id="editresourcetype_question">
+        <label for="resourcetype"><?php echo $lang["resourcetype"]?></label>
+        <select name="resource_type" id="resourcetype" class="stdwidth">
             <?php
             $types = get_resource_types();
             for($n = 0; $n < count($types); $n++)
                 {
-                if((checkperm("XU{$types[$n]["ref"]}") || in_array($types[$n]['ref'], $hide_resource_types)) && $resource["resource_type"]!=$types[$n]["ref"]) continue;   // skip showing a resource type that we do not to have permission to change to (unless it is currently set to that)
-                ?><option value="<?php echo $types[$n]["ref"]?>" <?php if ($resource["resource_type"]==$types[$n]["ref"]) {?>selected<?php } ?>><?php echo htmlspecialchars($types[$n]["name"])?></option><?php
-                }
-                ?>
-            </select>
-            <div class="clearerleft"></div>
-        </div>
-        <?php
-        }
-    else
-        {
-        # Multiple method of changing resource type.
-        ?>
-        <h2 <?php echo ($collapsible_sections)?"class=\"CollapsibleSectionHead\"":""?>><?php echo $lang["resourcetype"] ?></h2>
-        <div <?php echo ($collapsible_sections)?"class=\"CollapsibleSection\"":""?> id="ResourceTypeSection<?php if ($ref==-1) echo "Upload"; ?>"><input name="editresourcetype" id="editresourcetype" type="checkbox" value="yes" onClick="var q=document.getElementById('editresourcetype_question');if (this.checked) {q.style.display='block';alert('<?php echo $lang["editallresourcetypewarning"] ?>');} else {q.style.display='none';}">&nbsp;<label for="editresourcetype"><?php echo $lang["resourcetype"] ?></label>
-        <div class="Question" style="display:none;" id="editresourcetype_question">
-            <label for="resourcetype"><?php echo $lang["resourcetype"]?></label>
-            <select name="resource_type" id="resourcetype" class="stdwidth">
-                <?php
-                $types = get_resource_types();
-                for($n = 0; $n < count($types); $n++)
+                if(in_array($types[$n]['ref'], $hide_resource_types))
                     {
-                    if(in_array($types[$n]['ref'], $hide_resource_types))
-                        {
-                        continue;
-                        }
-                    ?>
-                    <option value="<?php echo $types[$n]["ref"]?>" <?php if ($resource["resource_type"]==$types[$n]["ref"]) {?>selected<?php } ?>><?php echo htmlspecialchars($types[$n]["name"])?></option>
-                    <?php
+                    continue;
                     }
                 ?>
-            </select>
-            <div class="clearerleft"></div>
-        </div>
-        <?php
-        }
-    } # end hook("replaceedittype")
+                <option value="<?php echo $types[$n]["ref"]?>" <?php if ($resource["resource_type"]==$types[$n]["ref"]) {?>selected<?php } ?>><?php echo htmlspecialchars($types[$n]["name"])?></option>
+                <?php
+                }
+            ?>
+        </select>
+        <div class="clearerleft"></div>
+    </div>
+    <?php
+    }
+} # end hook("replaceedittype")
 
 $lastrt=-1;
 
@@ -1627,7 +1544,7 @@ if($collapsible_sections)
     <label for="copyfrom"><?php echo $lang["batchcopyfrom"]?></label>
     <input class="stdwidth" type="text" name="copyfrom" id="copyfrom" value="" style="width:80px;">
     <input type="submit" id="copyfromsubmit" name="copyfromsubmit" value="<?php echo $lang["copy"]?>" onClick="event.preventDefault();CentralSpacePost(document.getElementById('mainform'),true);">
-    <input type="submit" name="save" value="<?php echo $lang["save"];?>">
+    <input type="submit" name="save" value="Save">
  </div><!-- end of question_copyfrom -->
  <?php
 }
@@ -2116,7 +2033,6 @@ if(!hook('replacesubmitbuttons'))
     <div class="QuestionSubmit">
     <?php
     global $clearbutton_on_upload;
-
     if(($clearbutton_on_upload && $ref < 0 && !$multiple) || ($ref > 0 && $clearbutton_on_edit))
         {
         ?>
@@ -2124,13 +2040,13 @@ if(!hook('replacesubmitbuttons'))
         <?php
         }
 
-    $save_btn_value = (0 < $ref) ? $lang['save'] : $lang['next'];
-    if(0 > $ref && in_array($resource['resource_type'], $data_only_resource_types))
-        {
-        $save_btn_value = $lang['create'];
-        }
+        $save_btn_value = (0 < $ref) ? $lang['save'] : $lang['next'];
+        if(0 > $ref && in_array($resource['resource_type'], $data_only_resource_types))
+            {
+            $save_btn_value = $lang['create'];
+            }
         ?>
-        <input <?php if($multiple) { ?>onclick="return confirm('<?php echo $lang['confirmeditall']; ?>');"<?php } ?> name="save" class="editsave" type="submit" value="&nbsp;&nbsp;<?php echo $save_btn_value; ?>&nbsp;&nbsp;" /><br><br>
+        <input <?php if ($multiple) { ?>onclick="return confirm('<?php echo $lang["confirmeditall"]?>');"<?php } ?> name="save" class="editsave" type="submit" value="&nbsp;&nbsp;<?php echo $save_btn_value; ?>&nbsp;&nbsp;" /><br><br>
         <div class="clearerleft"> </div>
     </div>
     <?php 

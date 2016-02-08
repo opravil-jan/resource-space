@@ -44,14 +44,14 @@ function HookMeta_appendAlleditbeforesave()
 		}
 	}
 	
-function HookMeta_appendAllAddtouploadurl(array $url_params)
-    {
-    global $found_meta_append_field_ref;
-
-    if($found_meta_append_field_ref)
-        {
-        $url_params['metaappend'] = $found_meta_append_field_ref;
-
-        return $url_params; // pass on to uploader via URL
-        }
-    }
+function HookMeta_appendAllAddtouploadurl()
+	{
+	global $found_meta_append_field_ref;
+	if ($found_meta_append_field_ref)
+		{
+		return ("&metaappend=" . $found_meta_append_field_ref);		// pass on to uploader via URL
+		}
+	}
+	
+	
+	
