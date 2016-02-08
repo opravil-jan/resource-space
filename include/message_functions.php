@@ -85,10 +85,10 @@ function message_unseen($message)
 function message_seen_all($user,$seen_type=MESSAGE_ENUM_NOTIFICATION_TYPE_SCREEN)
 	{
 	$messages = array();
-	if (message_get($messages,$user))
+	if (message_get($messages,$user,true))
 		{
 		foreach($messages as $message)
-			{
+			{             
 			message_seen($message['ref']);
 			}
 		}

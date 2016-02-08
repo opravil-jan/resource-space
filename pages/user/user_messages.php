@@ -5,6 +5,11 @@ include_once "../../include/general.php";
 include "../../include/authenticate.php";
 include "../../include/header.php";
 
+if (getval("allseen","")!="")
+  {
+  // Acknowledgement all messages
+  message_seen_all($userref);
+  }
 ?>
 <div class="BasicsBox">
   <h1><?php echo $lang["mymessages"]?></h1>
@@ -14,7 +19,7 @@ include "../../include/header.php";
 <div class="VerticalNav">
 <ul>
 <li>
-<a href="<?php echo $baseurl_short?>pages/user/user_preferences.php" onClick="return CentralSpaceLoad(this,true);"><?php echo $lang["userpreferences"];?></a>
+<a href="<?php echo $baseurl_short?>/pages/user/user_preferences.php" onClick="return CentralSpaceLoad(this,true);"><?php echo $lang["userpreferences"];?></a>
 </li>
 <?php
 	$messages=array();
@@ -43,10 +48,7 @@ include "../../include/header.php";
 	if ($unread)
 		{
 ?><li>
-  <a href="<?php echo $baseurl_short?>pages/user/user_messages.php" onclick="jQuery.get('<?php
-		echo $baseurl; ?>/pages/ajax/message.php?allseen=<?php echo $userref; ?>', function(){
-			return CentralSpaceLoad(this,true);
-		});"><?php echo $lang['mymessages_markallread']; ?></a>
+  <a href="<?php echo $baseurl_short?>pages/user/user_messages.php?allseen=<?php echo $userref; ?>" onclick="return CentralSpaceLoad(this,true);"><?php echo $lang['mymessages_markallread']; ?></a>
   </li>
 <?php
 		}
