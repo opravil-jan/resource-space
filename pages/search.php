@@ -809,7 +809,7 @@ if (!hook("replacesearchheader")) # Always show search header now.
 		if ($modifiedFields)
 			$orderFields = $modifiedFields;
 		?>
-		<div class="InpageNavLeftBlock ">
+		<div id="searchSortOrderContainer" class="InpageNavLeftBlock ">
 		<?php
 		echo $lang["sortorder"] . ':<br />';
 
