@@ -230,13 +230,13 @@ function save_resource_data($ref,$multi,$autosave_field="")
 			    }
 
 		    // Required fields cannot have empty values
-		    if(1 == $fields[$n]['required'] && '' == strip_leading_comma($val) && '' == $autosave_field)
+		    if(1 == $fields[$n]['required'] && '' == $fields[$n]['display_condition'] && '' == strip_leading_comma($val) && '' == $autosave_field)
                 {
                 $errors[$fields[$n]['ref']] = i18n_get_translated($fields[$n]['title']) . ': ' . $lang['requiredfield'];
 
                 continue;
                 }
-            else if(1 == $fields[$n]['required'] && '' == strip_leading_comma($val) && '' != $autosave_field)
+            else if(1 == $fields[$n]['required'] && '' == $fields[$n]['display_condition'] && '' == strip_leading_comma($val) && '' != $autosave_field)
                 {
                 echo $lang['requiredfield'];
 
