@@ -732,7 +732,7 @@ function extract_exif_comment($ref,$extension="")
 						$amended_filename = $uploadedfilename;
 					}
 
-					if(strpos($amended_filename, $extension) === FALSE) {
+					if(strpos(strtolower($amended_filename), $extension) === FALSE) {
 						$amended_filename .= '.' . $extension;
 					}
 
