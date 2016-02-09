@@ -847,7 +847,7 @@ if($embedded_data_user_select && $ref<0 && !$multiple)
 
 
       <td width="10" valign="middle">
-         <input type="radio" id="no_exif" name="exif_option" value="no" onClick="jQuery('.ExifOptions').hide();" <?php if(!$metadata_read_default) echo "checked" ?>>
+         <input type="radio" id="no_exif" name="exif_option" value="yes" onClick="jQuery('.ExifOptions').hide();" <?php if(!$metadata_read_default) echo "checked" ?>>
       </td>
       <td align="left" valign="middle">
          <label class="customFieldLabel" for="no_exif"><?php echo $lang["embedded_metadata_donot_extract_option"] ?></label>
