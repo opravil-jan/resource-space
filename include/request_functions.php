@@ -67,7 +67,7 @@ function save_request($request)
                     }
                 }
             
-            get_config_option($currentrequest["user"],'user_pref_resource_access_notifications', $send_message);		  
+            get_config_option($currentrequest["user"],'user_pref_resource_access_notifications', $send_message, $admin_resource_access_notifications);		  
             if($send_message)
                 {
                 $userconfirmmessage=str_replace("%",$assigned_to_user["fullname"] . " (" . $assigned_to_user["email"] . ")" ,$lang["requestassignedtouser"]);
@@ -685,10 +685,10 @@ function managed_collection_request($ref,$details,$ref_is_resource=false)
         $notify_users=get_notification_users("RESOURCE_ACCESS");
 		foreach($notify_users as $notify_user)
 			{
-			get_config_option($notify_user['ref'],'user_pref_resource_access_notifications', $send_message);		  
+			get_config_option($notify_user['ref'],'user_pref_resource_access_notifications', $send_message, $admin_resource_access_notifications);		  
             if($send_message==false){continue;}		
 			
-			get_config_option($notify_user['ref'],'email_user_notifications', $send_email, $admin_resource_access_notifications);    
+			get_config_option($notify_user['ref'],'email_user_notifications', $send_email);    
 			if($send_email && $notify_user["email"]!="")
 				{
                 $admin_notify_emails[] = $notify_user['email'];	
