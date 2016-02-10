@@ -99,6 +99,9 @@ function generate_pdf($html_template_path, $filename, array $bind_placeholders =
         $html = str_replace('[%' . $param . '%]', $param_value, $html);
         }
 
+    // Last resort to clean up PDF templates by searching for all remaining placeholders
+    $html = preg_replace('/\[%.*%\]/', '', $html);
+
     $html2pdf = new HTML2PDF('P', 'A4', 'en');
     $html2pdf->WriteHTML($html);
 
