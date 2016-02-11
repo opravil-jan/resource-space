@@ -3,6 +3,7 @@ include "../include/db.php";
 include_once "../include/general.php";
 include "../include/authenticate.php"; if (!checkperm("s")) {exit ("Permission denied.");}
 include "../include/search_functions.php";
+include_once "../include/resource_functions.php";
 include_once "../include/collections_functions.php";
 
 $archive=getvalescaped("archive",0,true);
