@@ -129,11 +129,15 @@ while ($tmspointer<$tmscount && $tmspointer<$tms_link_test_count)
 		}
 		
 				
-	//exit(print_r($tms_query_ids));
 	fwrite($logfile,"Retrieving data from TMS system\r\n");
 	$tmsresults=tms_link_get_tms_data("", $tms_query_ids);	
 	
-	//exit(print_r($tmsresults));
+	if(!is_array($tmsresults) || count($tmsresults)==0)
+		{
+		echo "No TMS data received, continuing" . PHP_EOL;
+		$tmspointer = $tmspointer+$tms_link_query_chunk_size;
+		continue;
+		}
 	
 	// Go through this set of resources and update db/show data/do something else
 	for($ri=$tmspointer;$ri<($tmspointer + $tms_link_query_chunk_size) && (($tmspointer + $ri)<$tms_link_test_count) && $ri<$tmscount;$ri++)
