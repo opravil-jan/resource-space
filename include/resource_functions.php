@@ -3467,7 +3467,6 @@ function get_original_imagesize($ref="",$path="", $extension="jpg")
 		if ($identify_fullpath==false) {exit("Could not find ImageMagick 'identify' utility at location '$imagemagick_path'.");}	
 		# Get image's dimensions.
 		$identcommand = $identify_fullpath . ' -format %wx%h '. escapeshellarg($prefix . $file) .'[0]';
-		echo "command:$identcommand<br/>";
 		$identoutput=run_command($identcommand);
 		preg_match('/^([0-9]+)x([0-9]+)$/ims',$identoutput,$smatches);
 		@list(,$sw,$sh) = $smatches;
