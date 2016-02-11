@@ -3434,6 +3434,25 @@ function get_original_imagesize($ref="",$path="", $extension="jpg")
 	$file=$path;
 	$filesize=filesize_unlimited($file);
 	
+	$o_size=sql_query("select * from resource_dimensions where resource={$ref}");
+	if(!empty($o_size))
+		{
+		if(count($o_size)>1)
+			{
+			# delete all the records and start fresh. This is a band-aid should there be multiple records as a result of using api_search
+			sql_query("delete from resource_dimensions where resource={$ref}");
+			$o_size=false;
+			}
+		else
+			{
+			$o_size=$o_size[0];
+			}
+		}
+	else
+		{
+		$o_size=false;
+		}
+	
 	# imagemagick_calculate_sizes is normally turned off 
 	if (isset($imagemagick_path) && $imagemagick_calculate_sizes)
 		{
@@ -3448,12 +3467,20 @@ function get_original_imagesize($ref="",$path="", $extension="jpg")
 		if ($identify_fullpath==false) {exit("Could not find ImageMagick 'identify' utility at location '$imagemagick_path'.");}	
 		# Get image's dimensions.
 		$identcommand = $identify_fullpath . ' -format %wx%h '. escapeshellarg($prefix . $file) .'[0]';
+		echo "command:$identcommand<br/>";
 		$identoutput=run_command($identcommand);
 		preg_match('/^([0-9]+)x([0-9]+)$/ims',$identoutput,$smatches);
 		@list(,$sw,$sh) = $smatches;
 		if (($sw!='') && ($sh!=''))
-		  {
-			sql_query("insert into resource_dimensions (resource, width, height, file_size) values('". $ref ."', '". $sw ."', '". $sh ."', '" . $filesize . "')");
+			{
+			if(!$o_size)
+				{
+				sql_query("insert into resource_dimensions (resource, width, height, file_size) values('". $ref ."', '". $sw ."', '". $sh ."', '" . $filesize . "')");
+				}
+			else
+				{
+				sql_query("update resource_dimensions set width='". $sw ."', height='". $sh ."', file_size='" . $filesize . "' where resource={$ref}");
+				}
 			}
 		}	
 	else 
@@ -3464,8 +3491,15 @@ function get_original_imagesize($ref="",$path="", $extension="jpg")
 			
 		# Use GD to calculate the size
 		if (!((@list($sw,$sh) = @getimagesize($file))===false)&& !$rawfile)
-			{		
-			sql_query("insert into resource_dimensions (resource, width, height, file_size) values('". $ref ."', '". $sw ."', '". $sh ."', '" . $filesize . "')");
+			{
+			if(!$o_size)
+				{	
+				sql_query("insert into resource_dimensions (resource, width, height, file_size) values('". $ref ."', '". $sw ."', '". $sh ."', '" . $filesize . "')");
+				}
+			else
+				{
+				sql_query("update resource_dimensions set width='". $sw ."', height='". $sh ."', file_size='" . $filesize . "' where resource={$ref}");
+				}
 			}
 		else
 			{
@@ -3485,41 +3519,54 @@ function get_original_imagesize($ref="",$path="", $extension="jpg")
 			    if (!empty($ffprobe_array['width'] )) { $sw = intval($ffprobe_array['width']);  }
 			    if (!empty($ffprobe_array['height'])) { $sh = intval($ffprobe_array['height']); }
 			    if (isset($ffprobe_array['streams']) && is_array($ffprobe_array['streams']))
-				{
-				foreach( $ffprobe_array['streams'] as $stream )
-				    {
-				    if (!empty($stream['codec_type']) && $stream['codec_type'] === 'video')
 					{
-					$sw = intval($stream['width']);
-					$sh = intval($stream['height']);
-					break;
+					foreach( $ffprobe_array['streams'] as $stream )
+						{
+						if (!empty($stream['codec_type']) && $stream['codec_type'] === 'video')
+							{
+							$sw = intval($stream['width']);
+							$sh = intval($stream['height']);
+							break;
+							}
+						}
 					}
-				    }
 				}
-			    }
 
 			if ($sw!=='?' && $sh!=='?')
 			    {
 			    # Size could be calculated after all
-			    sql_query("insert into resource_dimensions (resource, width, height, file_size) values('". $ref ."', '". $sw ."', '". $sh ."', '" . $filesize . "')");
+			    if(!$o_size)
+					{
+					sql_query("insert into resource_dimensions (resource, width, height, file_size) values('". $ref ."', '". $sw ."', '". $sh ."', '" . $filesize . "')");
+					}
+				else
+					{
+					sql_query("update resource_dimensions set width='". $sw ."', height='". $sh ."', file_size='" . $filesize . "' where resource={$ref}");
+					}
 			    }
 			else
 			    {
 
 			    # Size cannot be calculated.
 			    $sw="?";$sh="?";
-
-			    # Insert a dummy row to prevent recalculation on every view.
-			    sql_query("insert into resource_dimensions (resource, width, height, file_size) values('". $ref ."','0', '0', '" . $filesize . "')");
-			    }
+				if(!$o_size)
+					{
+					# Insert a dummy row to prevent recalculation on every view.
+					sql_query("insert into resource_dimensions (resource, width, height, file_size) values('". $ref ."','0', '0', '" . $filesize . "')");
+					}
+				else
+					{
+					sql_query("update resource_dimensions set width='0', height='0', file_size='" . $filesize . "' where resource={$ref}");
+					}
+				}
 			}
 		}
-
-
-	$fileinfo[0]=$filesize;
-	$fileinfo[1]=$sw;
-	$fileinfo[2]=$sh;
-	return $fileinfo;
+		
+		
+		$fileinfo[0]=$filesize;
+		$fileinfo[1]=$sw;
+		$fileinfo[2]=$sh;
+		return $fileinfo;
 	
 	}
         
