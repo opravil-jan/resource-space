@@ -160,7 +160,7 @@ if ($include_rs_header_info)
 <script type="text/javascript" src="<?php echo $baseurl?>/lib/js/jquery-periodical-updater.js"></script>
 
 <?php 
-if (!$small_slideshow || $slideshow_big) 
+if ($slideshow_big) 
     { ?>
     <script type="text/javascript" src="<?php echo $baseurl?>/lib/js/slideshow_big.js"></script>
     <link type="text/css" href="<?php echo $baseurl?>/css/slideshow_big.css?css_reload_key=<?php echo $css_reload_key?>" rel="stylesheet" />
