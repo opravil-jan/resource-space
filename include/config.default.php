@@ -1977,8 +1977,8 @@ $multilingual_text_fields=false;
 $upload_methods = array(
 		'single_upload' => true,
 		'in_browser_upload' => true,
-		'fetch_from_ftp' => true,
-		'fetch_from_local_folder' => true,
+		'fetch_from_ftp' => false,
+		'fetch_from_local_folder' => false,
 	);
 
 # Allow to change the location of the upload folder, so that it is not in the
