@@ -12,7 +12,7 @@ set_time_limit(0);
 
 echo "<pre>";
 
-$resources=sql_query("select ref,field".$view_title_field.",file_extension from resource where ref>0 and file_extension is not null and length(file_extension)>0 order by ref");
+$resources=sql_query("select ref,field".$view_title_field.",file_extension from resource where ref>0 and file_extension is not null and length(file_extension)>0 and archive<>3 order by ref");
 foreach($resources as $resource)
 	{
 	echo "\n Checking " . $resource["ref"] . " ... ";
