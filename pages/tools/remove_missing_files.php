@@ -1,6 +1,7 @@
 <?php
-#
-# Script to update resource_dimensions table for all resources.
+
+# Remove all resource records where the file on disk is missing.
+# Useful for cleaning up databases where the files on disk have been lost (intentionally or otherwise!)
 
 include "../../include/db.php";
 include_once "../../include/general.php";
@@ -8,8 +9,6 @@ if (php_sapi_name() != "cli") {include "../../include/authenticate.php"; if (!ch
 
 set_time_limit(0);
 
-# Remove all resource records where the file on disk is missing.
-# Useful for cleaning up databases where the files on disk have been lost (intentionally or otherwise!)
 
 echo "<pre>";
 
