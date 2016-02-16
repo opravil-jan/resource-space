@@ -980,6 +980,7 @@ function check_display_condition($n, $field)
        $s=explode("=",$condition);
         for ($cf=0;$cf<count($fields);$cf++) # Check each field to see if needs to be checked
         {
+            node_field_options_override($fields[$cf]);
             if ($s[0]==$fields[$cf]["name"]) # this field needs to be checked
             {
                 $scriptconditions[$condref]["field"] = $fields[$cf]["ref"];  # add new jQuery code to check value
