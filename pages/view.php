@@ -14,6 +14,9 @@ include_once "../include/resource_functions.php";
 include_once "../include/collections_functions.php";
 include_once "../include/image_processing.php";
 
+// Set a flag for logged in users if $external_share_view_as_internal is set and logged on user is accessing an external share
+$internal_share_access = ($k!="" && $external_share_view_as_internal && isset($is_authenticated) && $is_authenticated);
+
 $ref=getvalescaped("ref","",true);
 
 # Update hit count
@@ -80,7 +83,7 @@ if ($go!="")
     if (is_string($newkey)) {$k = $newkey;}
 
     # Check access permissions for this new resource, if an external user.
-    if ($k!="" && !check_access_key($ref, $k)) {$ref = $origref;} # Cancel the move.
+    if ($k!="" && !$internal_share_access && !check_access_key($ref, $k)) {$ref = $origref;} # Cancel the move.
 	}
 
 hook("chgffmpegpreviewext", "", array($ref));
@@ -181,7 +184,7 @@ if ($direct_download && !$save_as){
 <iframe id="dlIFrm" frameborder=0 scrolling="auto" <?php if ($debug_direct_download){?>width="600" height="200" style="display:block;"<?php } else { ?>style="display:none"<?php } ?>> This browser can not use IFRAME. </iframe>
 <?php }
 
-if($resource_contact_link && $k=="")
+if($resource_contact_link && ($k=="" || $internal_share_access))
 		{?>
 		<script>
 		function showContactBox(){
@@ -217,7 +220,7 @@ if(isset($related_type_show_with_data)) {
 	$multi_fields = TRUE;
 }
 
-$fields=get_resource_field_data($ref,$multi_fields,!hook("customgetresourceperms"),-1,$k!="",$use_order_by_tab_view);
+$fields=get_resource_field_data($ref,$multi_fields,!hook("customgetresourceperms"),-1,($k!="" && !$internal_share_access),$use_order_by_tab_view);
 $modified_view_fields=hook("modified_view_fields","",array($ref,$fields));if($modified_view_fields){$fields=$modified_view_fields;}
 // Get tab names and order from fields in order to know which one is the last tab
 $fields_tab_names = array();
@@ -284,7 +287,7 @@ if(isset($display_field_below_preview) && is_int($display_field_below_preview))
 
 # Load edit access level (checking edit permissions - e0,e-1 etc. and also the group 'edit filter')
 $edit_access=get_edit_access($ref,$resource["archive"],$fields,$resource);
-if ($k!="") {$edit_access=0;}
+if ($k!="" && !$internal_share_access) {$edit_access=0;}
 
 function check_view_display_condition($fields,$n)	
 	{
@@ -427,7 +430,7 @@ function display_field_data($field,$valueonly=false,$fixedwidth=452)
 	}
 
 // Add custom CSS for external users: 
-if($k !='' && $custom_stylesheet_external_share) {
+if($k !='' && !$internal_share_access && $custom_stylesheet_external_share) {
     $css_path = dirname(__FILE__) . '/..' . $custom_stylesheet_external_share_path;
     if(file_exists($css_path)) {
         echo '<link href="' . $baseurl . $custom_stylesheet_external_share_path . '" rel="stylesheet" type="text/css" media="screen,projection,print" />';
@@ -885,7 +888,7 @@ function add_download_column($ref, $size_info, $downloadthissize)
 		if (!hook("resourcerequest"))
 			{
 			?><td class="DownloadButton"><?php
-			if ($request_adds_to_collection && ($k=="" || isset($_COOKIE['user'])) && !checkperm('b')) // We can't add to a collection if we are accessing an external share, unless we are a logged in user
+			if ($request_adds_to_collection && ($k=="" || $internal_share_access) && !checkperm('b')) // We can't add to a collection if we are accessing an external share, unless we are a logged in user
 				{
 				echo add_to_collection_link($ref,$search,"alert('" . addslashes($lang["requestaddedtocollection"]) . "');",$size_info["id"]);
 				}
@@ -1216,7 +1219,7 @@ if(!hook("replaceactionslistopen")){?>
 
 # ----------------------------- Resource Actions -------------------------------------
 hook ("resourceactions") ?>
-<?php if ($k=="") { ?>
+<?php if ($k=="" || $internal_share_access) { ?>
 <?php if (!hook("replaceresourceactions")) {
 	global $resourcetoolsGT;
 	hook("resourceactionstitle");
@@ -1339,7 +1342,7 @@ if(!hook('replaceactionslistclose')){
 <?php
 if (!hook("replaceuserratingsbox")){
 # Include user rating box, if enabled and the user is not external.
-if ($user_rating && $k=="") { include "../include/user_rating.php"; }
+if ($user_rating && ($k=="" || $internal_share_access)) { include "../include/user_rating.php"; }
 } /* end hook replaceuserratingsbox */
 
 
@@ -1622,7 +1625,7 @@ if (!$disable_geocoding) {
 ?>
 
 <?php 
-	if ($comments_resource_enable && $k=="") include_once ("../include/comment_resources.php");
+	if ($comments_resource_enable && ($k=="" || $internal_share_access)) include_once ("../include/comment_resources.php");
 ?>
 	  	  
 <?php hook("w2pspawn");?>
@@ -1664,7 +1667,7 @@ if ($view_resource_collections && !checkperm('b')){ ?>
 	<?php }
 
 // include optional ajax metadata report
-if ($metadata_report && isset($exiftool_path) && $k==""){?>
+if ($metadata_report && isset($exiftool_path) && ($k=="" || $internal_share_access)){?>
         <div class="RecordBox">
         <div class="RecordPanel">  
         <div class="Title"><?php echo $lang['metadata-report']?></div>
@@ -1681,7 +1684,7 @@ if ($metadata_report && isset($exiftool_path) && $k==""){?>
 
 
 # -------- Related Resources (must be able to search for this to work)
-if (isset($relatedresources) && (count($relatedresources) > $related_resources_shown)&& checkperm("s") && ($k=="")) {
+if (isset($relatedresources) && (count($relatedresources) > $related_resources_shown)&& checkperm("s") && ($k=="" || $internal_share_access)) {
 $result=$relatedresources;
 if (count($result)>0) 
 	{
@@ -1900,7 +1903,7 @@ if (count($result)>0)
 	}} 
 
 
-if($enable_find_similar && checkperm('s') && ($k == '')) { ?>
+if($enable_find_similar && checkperm('s') && ($k == '' || $internal_share_access)) { ?>
 <!--Panel for search for similar resources-->
 <div class="RecordBox">
 <div class="RecordPanel"> 

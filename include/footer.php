@@ -55,7 +55,7 @@ if(!in_array($pagename,$omit_footer_pages) && ($loginterms==false))
 <!--Global Footer-->
 <div id="Footer">
 
-<?php if (getval("k","")=="") 
+<?php if ($k=="" || (isset($internal_share_access) && $internal_share_access)) 
 	{ ?>
 	<div id="FooterNavLeft" class="">
 	<span id="FooterLanguages">

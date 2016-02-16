@@ -2914,3 +2914,6 @@ $pdf_resource_type_templates = array();
 
 #Option to display year in a four digit format
 $date_yyyy = false;
+
+# Option to display external shares in standard internal collection view when accessed by a logged in user
+$external_share_view_as_internal=false;

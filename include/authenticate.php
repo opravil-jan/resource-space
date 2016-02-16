@@ -4,6 +4,7 @@
 $valid=true;
 $autologgedout=false;
 $nocookies=false;
+$is_authenticated=false;
 
 if (!function_exists("ip_matches")){
 function ip_matches($ip, $ip_restrict)
@@ -395,3 +396,8 @@ if (($userpassword=="b58d18f375f68d13587ce8a520a87919" || $userpassword== "b975f
 	top.location.href="<?php echo $baseurl_short?>pages/user/user_change_password.php";
 </script>
 <?php }
+
+$is_authenticated=true;
+
+
+

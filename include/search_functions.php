@@ -1934,12 +1934,15 @@ function compile_search_actions($top_actions)
 
     global $baseurl_short, $lang, $k, $search, $restypes, $order_by, $archive, $sort, $daylimit, $home_dash, $url,
            $allow_smart_collections, $resources_count, $show_searchitemsdiskusage, $offset, $allow_save_search,
-           $collection, $usercollection;
+           $collection, $usercollection, $internal_share_access;
+
+	if(!isset($internal_share_access)){$internal_share_access=false;}
+	
 
     // globals that could also be passed as a reference
     global $starsearch;
 
-    if(!checkperm('b') && $k == '') 
+    if(!checkperm('b') && ($k == '' || $internal_share_access)) 
         {
         if($top_actions && $allow_save_search && $usercollection != $collection)
             {
@@ -2077,7 +2080,7 @@ function compile_search_actions($top_actions)
             }
         }
 
-    if($top_actions && $k == '')
+    if($top_actions && ($k == '' || $internal_share_access))
         {
         $options[$o]['value']            = 'csv_export_results_metadata';
 		$options[$o]['label']            = $lang['csvExportResultsMetadata'];

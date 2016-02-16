@@ -89,6 +89,14 @@ if($lastresorttheme)
     }
 hook ("preheaderoutput");
  
+$k=getval("k","");
+if(!isset($internal_share_access))
+	{
+	// Set a flag for logged in users if $external_share_view_as_internal is set and logged on user is accessing an external share
+	$internal_share_access = ($k!="" && $external_share_view_as_internal && isset($is_authenticated) && $is_authenticated);
+	}
+
+
 # Do not display header / footer when dynamically loading CentralSpace contents.
 $ajax=getval("ajax","");
 
@@ -313,7 +321,7 @@ if($slimheader)
     <?php hook("responsiveheader");
     if($header_text_title) 
         {?>
-        <div id="TextHeader"><?php if (getval("k","")==""){?><a href="<?php echo $homepage_url?>"  onClick="return CentralSpaceLoad(this,true);"><?php } ?><?php echo $applicationname;?><?php if (getval("k","")==""){?></a><?php } ?></div>
+        <div id="TextHeader"><?php if ($k=="" || $internal_share_access){?><a href="<?php echo $homepage_url?>"  onClick="return CentralSpaceLoad(this,true);"><?php } ?><?php echo $applicationname;?><?php if ($k=="" || $internal_share_access){?></a><?php } ?></div>
         <?php if ($applicationdesc!="")
             {?>
             <div id="TextDesc"><?php echo i18n_get_translated($applicationdesc);?></div>
@@ -349,7 +357,7 @@ if($slimheader)
             {
             $header_img_src = $baseurl.'/gfx/titles/title.png';
             }
-        if($header_link && getval("k","")=="")
+        if($header_link && ($k=="" || $internal_share_access))
 	    {?>
 	    <a href="<?php echo $linkUrl; ?>" onClick="return CentralSpaceLoad(this,true);" class="HeaderImgLink"><img src="<?php echo $header_img_src; ?>" id="HeaderImg"></img></a>
 	    <?php
@@ -366,7 +374,7 @@ else
     ?>
     <div id="Header" <?php if ($header_text_title){?>style="background-image:none;"<?php } ?>>
     <?php hook("responsiveheader");
-    if ($header_link && !$header_text_title && getval("k","")=="") 
+    if ($header_link && !$header_text_title && ($k=="" || $internal_share_access)) 
         {
        if(isset($header_link_height) || isset($header_link_width))
             {
@@ -380,7 +388,7 @@ else
         }
     if ($header_text_title)
         {?>
-        <div id="TextHeader"><?php if (getval("k","")==""){?><a href="<?php echo $homepage_url?>"  onClick="return CentralSpaceLoad(this,true);"><?php } ?><?php echo $applicationname;?><?php if (getval("k","")==""){?></a><?php } ?></div>
+        <div id="TextHeader"><?php if ($k=="" || $internal_share_access){?><a href="<?php echo $homepage_url?>"  onClick="return CentralSpaceLoad(this,true);"><?php } ?><?php echo $applicationname;?><?php if ($k=="" || $internal_share_access){?></a><?php } ?></div>
         <?php if ($applicationdesc!="")
             {?>
             <div id="TextDesc"><?php echo i18n_get_translated($applicationdesc);?></div>
@@ -393,7 +401,7 @@ hook("headertop");
 
 if (!isset($allow_password_change)) {$allow_password_change=true;}
 
-if (isset($username) && ($pagename!="login") && ($loginterms==false) && getval("k","")=="") { ?>
+if (isset($username) && ($pagename!="login") && ($loginterms==false) && ($k=="" || $internal_share_access)) { ?>
 <div id="HeaderNav1" class="HorizontalNav ">
 
 <?php
@@ -472,7 +480,7 @@ include (dirname(__FILE__) . "/header_links.php");
 $omit_searchbar_pages=array("index","preview_all","search_advanced","preview","admin_header","login");
 $modified_omit_searchbar_pages=hook("modifyomitsearchbarpages");
 if ($modified_omit_searchbar_pages){$omit_searchbar_pages=$modified_omit_searchbar_pages;}
-if (!in_array($pagename,$omit_searchbar_pages) && ($loginterms==false) && getvalescaped('k', '') == '' && !hook("replace_searchbarcontainer")) 	
+if (!in_array($pagename,$omit_searchbar_pages) && ($loginterms==false) && ($k == '' || $internal_share_access) && !hook("replace_searchbarcontainer")) 	
 	{
 	?>
     <div id="SearchBarContainer">
@@ -522,7 +530,7 @@ jQuery(document).ready(function()
 hook("start_centralspace");
 
 # Include theme bar?
-if ($use_theme_bar && (getval("k","")=="") && !in_array($pagename,array("themes","preview_all","done","search_advanced","login","preview","admin_header","user_password","user_request")) && ($pagename!="terms") && (getval("url","")!="index.php"))
+if ($use_theme_bar && ($k=="" || $internal_share_access) && !in_array($pagename,array("themes","preview_all","done","search_advanced","login","preview","admin_header","user_password","user_request")) && ($pagename!="terms") && (getval("url","")!="index.php"))
     {
     # Tables seem to be the only solution to having a left AND right side bar, due to the way the clear CSS attribute works.
     ?>
@@ -535,7 +543,7 @@ if ($use_theme_bar && (getval("k","")=="") && !in_array($pagename,array("themes"
     }
 	
 
-if (getval("k","")!="") { ?>
+if ($k!="" && !$internal_share_access) { ?>
 <style>
 #CentralSpaceContainer  {padding-right:0;margin: 0px 10px 20px 25px;}
 </style>

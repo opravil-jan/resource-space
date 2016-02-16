@@ -16,6 +16,12 @@ else
 
 include_once("search_functions.php");
 
+if(!isset($internal_share_access))
+	{
+	// Set a flag for logged in users if $external_share_view_as_internal is set and logged on user is accessing an external share
+	$internal_share_access = (isset($k) && $k!="" && $external_share_view_as_internal && isset($is_authenticated) && $is_authenticated);
+	}
+
 # Load the basic search fields, so we know which to strip from the search string
 $fields=get_simple_search_fields();
 $simple_fields=array();
@@ -115,7 +121,7 @@ if ($display_user_rating_stars && $star_search){ ?>
 
 <?php hook("searchbarbeforeboxpanel"); ?>
 
-<?php if (checkperm("s") && (!isset($k) || $k=="")) { ?>
+<?php if (checkperm("s") && (!isset($k) || $k=="" || $internal_share_access)) { ?>
 <div id="SearchBoxPanel">
 
 <?php hook("searchbartoptoolbar"); ?>
