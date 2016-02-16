@@ -2921,3 +2921,6 @@ $external_share_view_as_internal=false;
 /*When sharing externally as a specific user group (permission x), limit the user groups shown only if
 they are allowed*/
 $allowed_external_share_groups = array();
+
+// CSV Download - add original URL column
+$csv_export_add_original_size_url_column = false;
