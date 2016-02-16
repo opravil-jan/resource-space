@@ -2402,3 +2402,7 @@ $lang['email_daily_digest_text'] = "This is a summary of your unread messages fr
 $lang['user_pref_daily_digest_mark_read'] = "Mark messages as read once I have been sent the summary email";
 $lang['mymessages_introtext'] = "You can configure which messages appear here by changing your user preferences";
 $lang["login_slideshow_image_notes"] = "This image will be used for the login page background only";
+$lang['media'] = "Media";
+$lang["pixel_height"]="Pixel height";
+$lang["pixel_width"]="Pixel width";
+$lang["file_extension_label"]="File extension";

@@ -212,7 +212,7 @@ if ((!is_numeric($offset)) || ($offset<0)) {$offset=0;}
 // Is this a collection search?
 $collectionsearch = substr($search,0,11)=="!collection"; // We want the default collection order to be applied
 
-$order_by=getvalescaped("order_by","");if (strpos($search,"!")===false) {rs_setcookie('saved_order_by', $order_by);}
+$order_by=getvalescaped("order_by","");if (strpos($search,"!")===false || substr($search,0,11)=="!properties") {rs_setcookie('saved_order_by', $order_by);}
 if ($order_by=="")
 	{
 	if ($collectionsearch) // We want the default collection order to be applied
@@ -293,7 +293,7 @@ else
 	rs_setcookie('starsearch', $starsearch);
 }
 
-# If returning to an old search, restore the page/order by
+# If returning to an old search, restore the page/order by and other non search string parameters
 if (!array_key_exists("search",$_GET) && !array_key_exists("search",$_POST))
 	{
 	$offset=getvalescaped("saved_offset",0,true);rs_setcookie('saved_offset', $offset);
@@ -314,11 +314,11 @@ if (getvalescaped("refreshcollectionframe","")!="")
 $refs=array();
 
 # Special query? Ignore restypes
-if (strpos($search,"!")!==false) {$restypes="";}
+if (strpos($search,"!")!==false &&  substr($search,0,11)!="!properties") {$restypes="";}
 
 # Do the search!
 $search=refine_searchstring($search);
-if (strpos($search,"!")===false) {rs_setcookie('search', $search);}
+if (strpos($search,"!")===false || substr($search,0,11)=="!properties") {rs_setcookie('search', $search);}
 hook('searchaftersearchcookie');
 if (!hook("replacesearch")) {
 	$result=do_search($search,$restypes,$order_by,$archive,$per_page+$offset,$sort,false,$starsearch,false,false,$daylimit, getvalescaped("go",""));
@@ -776,7 +776,7 @@ if (!hook("replacesearchheader")) # Always show search header now.
 		if(!hook("replaceasadded"))
 			{
 			if (isset($collection)){$rel=$lang["collection_order_description"];}
-			elseif (strpos($search,"!")!==false) {$rel=$lang["asadded"];}
+			elseif (strpos($search,"!")!==false && substr($search,0,11)!="!properties") {$rel=$lang["asadded"];}
 			}
 
 		$orderFields = array('relevance' => $rel);
@@ -931,7 +931,6 @@ if (!hook("replacesearchheader")) # Always show search header now.
 	<div id="CentralSpaceResources">
 	<?php
 	
-	//exit("HERE" . print_r($result));
 	if ((!is_array($result) || count($result)<1) && empty($collections))
 		{
 			// No matches found? Log this in

@@ -736,8 +736,7 @@ function do_search($search,$restypes="",$order_by="relevance",$archive=0,$fetchr
         {
         $sql_join=" join collection_resource jcr on jcr.resource=r.ref join collection jc on jcr.collection=jc.ref and length(jc.theme)>0 " . $sql_join;
         }
-     
-        
+ 	   
     # --------------------------------------------------------------------------------
     # Special Searches (start with an exclamation mark)
     # --------------------------------------------------------------------------------
@@ -1835,17 +1834,32 @@ function search_form_to_search_query($fields,$fromsearchbar=false)
             break;
             }
         }
-
-        // Allow a single special search to be prepended to the search string.  For example, !contributions<user id>
-        foreach ($_POST as $key=>$value)
+		
+        $propertysearchcodes=array();
+        global $advanced_search_properties;
+        foreach($advanced_search_properties as $advanced_search_property=>$code)
             {
-            if ($key[0]=='!' && strlen($value) > 0)
+            $propval=getvalescaped($advanced_search_property,"");
+            if($propval!="")
+                {$propertysearchcodes[] =$code . ":" . $propval;}
+            }
+        if(count($propertysearchcodes)>0)
+            {
+            $search.="!properties" . implode(";",$propertysearchcodes);
+            }
+        else
+            {
+            // Allow a single special search to be prepended to the search string.  For example, !contributions<user id>
+            foreach ($_POST as $key=>$value)
                 {
-                $search=$key . $value . ',' . $search;
-                break;
+                if ($key[0]=='!' && strlen($value) > 0)
+                    {
+                    $search=$key . $value . ',' . $search;
+                    //break;
+                    }
                 }
             }
-
+            
         return $search;
     }
 
@@ -2257,6 +2271,17 @@ function search_filter($search,$archive,$restypes,$starsearch,$recent_search_day
 		}
 	    }
 	
+	
+	# Append media restrictions
+	global $heightmin,$heightmax,$widthmin,$widthmax,$filesizemin,$filesizemax,$fileextension,$haspreviewimage;
+	
+	if ($heightmin!='')
+		{		
+		if ($sql_filter!="") {$sql_filter.=" and ";}
+		$sql_filter.= "dim.height>='$heightmin'";
+		}
+		
+		
 	# append ref filter - never return the batch upload template (negative refs)
 	if ($sql_filter!="") {$sql_filter.=" and ";}
 	$sql_filter.="r.ref>0";
@@ -2551,6 +2576,69 @@ function search_special($search,$sql_join,$fetchrows,$sql_prefix,$sql_suffix,$or
         $fieldref=intval(trim(substr($search,8)));
         $sql_join.=" join resource_data on r.ref=resource_data.resource and resource_data.resource_type_field=$fieldref and resource_data.value<>'' ";
         return sql_query($sql_prefix . "select distinct r.hit_count score, $select from resource r $sql_join and r.ref > 0 and $sql_filter group by r.ref order by $order_by" . $sql_suffix,false,$fetchrows);
+        }
+        
+    # Search for resource properties
+    if (substr($search,0,11)=="!properties")
+        {
+        $properties=explode(";",substr($search,11));
+        $sql_join.=" left join resource_dimensions rdim on r.ref=rdim.resource";
+        
+        foreach ($properties as $property)
+            {
+            $propertycheck=explode(":",$property);
+            if(count($propertycheck)==2)
+                {
+                $propertyname=$propertycheck[0];
+                $propertyval=escape_check($propertycheck[1]);
+                if($sql_filter==""){$sql_filter .= " where ";}else{$sql_filter .= " and ";}
+                switch($propertyname)
+                    {
+                    case "hmin":
+                        $sql_filter.=" rdim.height>='".  intval($propertyval) . "'";
+                    break;
+                    case "hmax":
+                        $sql_filter.=" rdim.height<='".  intval($propertyval) . "'";
+                    break;
+                    case "wmin":
+                        $sql_filter.=" rdim.width>='".  intval($propertyval) . "'";
+                    break;
+                    case "wmax":
+                        $sql_filter.=" rdim.width<='".  intval($propertyval) . "'";
+                    break;
+                    case "fmin":
+                        // Need to convert MB value to bytes
+                        $sql_filter.=" r.file_size>='".  (floatval($propertyval) * 1024 * 1024) . "'";
+                    break;
+                    case "fmax":
+                        // Need to convert MB value to bytes
+                        $sql_filter.=" r.file_size<='". (floatval($propertyval) * 1024 * 1024) . "'";
+                    break;
+                    case "fext":
+                        $propertyval=str_replace("*","%",$propertyval);
+                        $sql_filter.=" r.file_extension ";
+                        if(substr($propertyval,0,1)=="-")
+                            {
+                            $propertyval = substr($propertyval,1);
+                            $sql_filter.=" not ";                            
+                            }
+                        if(substr($propertyval,0,1)==".")
+                            {
+                            $propertyval = substr($propertyval,1);
+                            }
+                        $sql_filter.=" like '". escape_check($propertyval) . "'";
+                    break;
+                    case "pi":
+                        $sql_filter.=" r.has_image='".  intval($propertyval) . "'";
+                    break;
+                    case "cu":
+                        $sql_filter.=" r.created_by='".  intval($propertyval) . "'";
+                    break;
+                    }
+                }
+            }
+            
+        return sql_query($sql_prefix . "select distinct r.hit_count score, $select from resource r $sql_join  where r.ref > 0 and $sql_filter group by r.ref order by $order_by" . $sql_suffix,false,$fetchrows);
         }
 
     # Within this hook implementation, set the value of the global $sql variable:

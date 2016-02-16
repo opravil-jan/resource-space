@@ -45,14 +45,14 @@ if (substr($quicksearch,0,1)=="\"" && substr($quicksearch,-1,1)=="\"") {$quoted_
 
 $quicksearch=refine_searchstring($quicksearch);
 $keywords=split_keywords($quicksearch);
-
 $set_fields=array();
 $simple=array();
+
 for ($n=0;$n<count($keywords);$n++)
 	{
 	if (trim($keywords[$n])!="")
 		{
-		if (strpos($keywords[$n],":")!==false)
+		if (strpos($keywords[$n],":")!==false && substr($keywords[$n],0,11)!="!properties")
 			{
 			$s=explode(":",$keywords[$n]);
 			if (isset($set_fields[$s[0]])){$set_fields[$s[0]].=" ".$s[1];}
