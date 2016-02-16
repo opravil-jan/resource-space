@@ -128,7 +128,7 @@ if ($display_user_rating_stars && $star_search){ ?>
 
 	<label for="ssearchbox"><?php echo text("searchpanel")?></label>
 	
-	<form id="form1" method="post" action="<?php echo $baseurl?>/pages/search.php" onSubmit="return CentralSpacePost(this,true);">
+	<form id="simple_search_form" method="post" action="<?php echo $baseurl?>/pages/search.php" onSubmit="return CentralSpacePost(this,true);">
 	<?php if (!hook("replacesearchbox")){ ?>
 		<div class="ui-widget">
         <input id="ssearchbox" <?php if ($hide_main_simple_search){?>type="hidden"<?php } ?> name="search" type="text" class="SearchWidth" value="<?php echo htmlspecialchars(stripslashes(@$quicksearch))?>">
@@ -164,7 +164,7 @@ if (!$basic_simple_search)
 		var checkcount=0;
 		// set tickall to false, then check if it should be set to true.
 		jQuery('#rttickallres').attr('checked',false);
-		var tickboxes=jQuery('#form1 .tickbox');
+		var tickboxes=jQuery('#simple_search_form .tickbox');
 			jQuery(tickboxes).each(function (elem) {
                 if( tickboxes[elem].checked){checkcount=checkcount+1;}
             });
@@ -174,14 +174,14 @@ if (!$basic_simple_search)
 		var checkcount=0;
 		// set tickall to false, then check if it should be set to true.
 		jQuery('#rttickallcoll').attr('checked',false);
-		var tickboxes=jQuery('#form1 .tickboxcoll');
+		var tickboxes=jQuery('#simple_search_form .tickboxcoll');
 			jQuery(tickboxes).each(function (elem) {
 				if( tickboxes[elem].checked){checkcount=checkcount+1;}
 			});
 		if (checkcount==tickboxes.length){jQuery('#rttickallcoll').attr('checked',true);}	
 	}
 	</script>
-	<div class="tick"><input type='checkbox' id='rttickallres' name='rttickallres' checked onclick='jQuery("#form1 .tickbox").each (function(index,Element) {jQuery(Element).attr("checked",(jQuery("#rttickallres").attr("checked")=="checked"));}); HideInapplicableSimpleSearchFields(true); '/>&nbsp;<?php echo $lang['allresourcessearchbar']?></div>
+	<div class="tick"><input type='checkbox' id='rttickallres' name='rttickallres' checked onclick='jQuery("#simple_search_form .tickbox").each (function(index,Element) {jQuery(Element).attr("checked",(jQuery("#rttickallres").attr("checked")=="checked"));}); HideInapplicableSimpleSearchFields(true); '/>&nbsp;<?php echo $lang['allresourcessearchbar']?></div>
 	<?php }?>
 	<?php
 	$rt=explode(",",@$restypes);
@@ -196,7 +196,7 @@ if (!$basic_simple_search)
 		}
 		?><div class="spacer"></div>
 		<?php if ($searchbar_selectall && ($search_includes_user_collections || $search_includes_public_collections || $search_includes_themes)) { ?>
-		<div class="tick"><input type='checkbox' id='rttickallcoll' name='rttickallcoll' checked onclick='jQuery("#form1 .tickboxcoll").each (function(index,Element) {jQuery(Element).attr("checked",(jQuery("#rttickallcoll").attr("checked")=="checked"));}); HideInapplicableSimpleSearchFields(true); '/>&nbsp;<?php echo $lang['allcollectionssearchbar']?></div>
+		<div class="tick"><input type='checkbox' id='rttickallcoll' name='rttickallcoll' checked onclick='jQuery("#simple_search_form .tickboxcoll").each (function(index,Element) {jQuery(Element).attr("checked",(jQuery("#rttickallcoll").attr("checked")=="checked"));}); HideInapplicableSimpleSearchFields(true); '/>&nbsp;<?php echo $lang['allcollectionssearchbar']?></div>
 		<?php }?>
 		<?php if ($clear_button_unchecks_collections){$colcheck="false";}else {$colcheck="true";}
 		if ($search_includes_user_collections) 
@@ -648,7 +648,7 @@ if (!$basic_simple_search)
 	  <h2><?php echo $lang["login"]?></h2>
 
   
-  <form id="form1" method="post" action="<?php echo $baseurl?>/login.php">
+  <form id="simple_search_form" method="post" action="<?php echo $baseurl?>/login.php">
   <div class="SearchItem"><?php echo $lang["username"]?><br/><input type="text" name="username" id="name" class="SearchWidth" /></div>
   
   <div class="SearchItem"><?php echo $lang["password"]?><br/><input type="password" name="password" id="name" class="SearchWidth" /></div>
