@@ -226,16 +226,25 @@ if (!$basic_simple_search)
 	   
 
 	}
-	?>	
-	<?php if ($searchbar_selectall){?><script type="text/javascript">resetTickAll();resetTickAllColl();</script><?php }?>
-	<?php if (!$basic_simple_search) {?>
-	</div>
-	<?php }
-	
-	hook("searchfiltertop");
-	?>
 
-	<?php $searchbuttons="<div class=\"SearchItem\" id=\"simplesearchbuttons\">";
+    if($searchbar_selectall)
+        {
+        ?>
+        <script type="text/javascript">resetTickAll();resetTickAllColl();</script>
+        <?php
+        }
+
+    if(!$basic_simple_search)
+        {
+        ?>
+        </div>
+        <?php
+        hook('after_simple_search_resource_types');
+        }
+
+	hook("searchfiltertop");
+
+    $searchbuttons="<div class=\"SearchItem\" id=\"simplesearchbuttons\">";
 	
 	$cleardate="";
 	if ($simple_search_date){$cleardate.=" document.getElementById('basicyear').value='';document.getElementById('basicmonth').value='';" ;}
