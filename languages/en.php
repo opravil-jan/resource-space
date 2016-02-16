@@ -884,6 +884,7 @@ $lang["externalshareexpired"]="Sorry, this share has expired and is no longer av
 $lang["notapprovedsharecollection"]="One or more resources in this collection are not active and therefore sharing is prohibited.";
 $lang["notapprovedsharetheme"]="Sharing is prohibited for at least one collection, because one or more resources is not active.";
 $lang["notapprovedresources"]="The following resources are not active and cannot be added to a shared collection: ";
+$lang['error_generating_access_key'] = 'Could not generate an access key';
 
 
 # New for 1.3

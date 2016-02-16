@@ -2917,3 +2917,7 @@ $date_yyyy = false;
 
 # Option to display external shares in standard internal collection view when accessed by a logged in user
 $external_share_view_as_internal=false;
+
+/*When sharing externally as a specific user group (permission x), limit the user groups shown only if
+they are allowed*/
+$allowed_external_share_groups = array();
