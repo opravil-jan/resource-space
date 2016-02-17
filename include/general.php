@@ -3628,7 +3628,7 @@ function filesize_unlimited($path)
     	
 	if(!is_int($bytesize))
 		{
-		return @filesize($path); # Bomb out, the output wasn't as we expected. Return the filesize() output.
+		$bytesize= @filesize($path); # Bomb out, the output wasn't as we expected. Return the filesize() output.
 		}
 		
 	hook("afterfilesize_unlimited","",array($path));
