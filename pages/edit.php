@@ -641,8 +641,8 @@ if(0 > $ref && in_array($resource['resource_type'], $data_only_resource_types))
             $replace_upload_type=$top_nav_upload_type;
             }
 
-        // Allow to upload only resource is not a data only type
-        if(0 > $ref && !in_array($resource['resource_type'], $data_only_resource_types))
+        // Allow to upload only if resource is not a data only type
+        if(0 < $ref && !in_array($resource['resource_type'], $data_only_resource_types))
             {
             ?>
             <a href="<?php echo $baseurl_short?>pages/upload_<?php echo $replace_upload_type ?>.php?ref=<?php echo urlencode($ref) ?>&search=<?php echo urlencode($search)?>&offset=<?php echo urlencode($offset) ?>&order_by=<?php echo urlencode($order_by) ?>&sort=<?php echo urlencode($sort) ?>&archive=<?php echo urlencode($archive) ?>&replace_resource=<?php echo urlencode($ref)  ?>&resource_type=<?php echo $resource['resource_type']?>" onClick="return CentralSpaceLoad(this,true);">&gt;&nbsp;<?php echo (($resource["file_extension"]!="")?$lang["replacefile"]:$lang["uploadafile"]) ?></a>
