@@ -1954,6 +1954,9 @@ function delete_alternative_file($resource,$ref)
 	# Delete the database row
 	sql_query("delete from resource_alt_files where resource='$resource' and ref='$ref'");
 	
+	# Log the deletion
+	resource_log($resource,'y','');
+	
 	# Update disk usage
 	update_disk_usage($resource);
 	}
