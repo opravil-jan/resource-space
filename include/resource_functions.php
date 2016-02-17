@@ -3435,7 +3435,6 @@ function get_original_imagesize($ref="",$path="", $extension="jpg", $forcefromfi
 	if($ref=="" || $path==""){return false;}
 	global $imagemagick_path, $imagemagick_calculate_sizes;
 	$file=$path;
-	$filesize=filesize_unlimited($file);
 	
 	$o_size=sql_query("select * from resource_dimensions where resource={$ref}");
 	if(!empty($o_size))
@@ -3464,6 +3463,8 @@ function get_original_imagesize($ref="",$path="", $extension="jpg", $forcefromfi
 		$fileinfo[2]=$o_size['height'];
 		return $fileinfo;
 	}
+	
+	$filesize=filesize_unlimited($file);
 	
 	# imagemagick_calculate_sizes is normally turned off 
 	if (isset($imagemagick_path) && $imagemagick_calculate_sizes)
