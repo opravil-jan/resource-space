@@ -3594,9 +3594,11 @@ function user_email_exists($email)
 	}
 
 function filesize_unlimited($path)
-    {
+    { 
     # A resolution for PHP's issue with large files and filesize().
-
+	
+	hook("beforefilesize_unlimited","",array($path));
+	
     if (PHP_OS=='WINNT')
         {
 		if (class_exists("COM"))
@@ -3623,11 +3625,14 @@ function filesize_unlimited($path)
     	{
 		$bytesize = exec("stat -c '%s' " . escapeshellarg($path));
     	}
-
+    	
 	if(!is_int($bytesize))
 		{
 		return @filesize($path); # Bomb out, the output wasn't as we expected. Return the filesize() output.
 		}
+		
+	hook("afterfilesize_unlimited","",array($path));
+	
 	return $bytesize;
     }
 
