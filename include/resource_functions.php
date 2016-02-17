@@ -3426,7 +3426,7 @@ function notify_user_resources_approved($refs)
 	
 		
 
-function get_original_imagesize($ref="",$path="", $extension="jpg")
+function get_original_imagesize($ref="",$path="", $extension="jpg", $forcefromfile=false)
 	{
 	$fileinfo=array();
 	if($ref=="" || $path==""){return false;}
@@ -3442,6 +3442,7 @@ function get_original_imagesize($ref="",$path="", $extension="jpg")
 			# delete all the records and start fresh. This is a band-aid should there be multiple records as a result of using api_search
 			sql_query("delete from resource_dimensions where resource={$ref}");
 			$o_size=false;
+			$forcefromfile=true;
 			}
 		else
 			{
@@ -3452,6 +3453,14 @@ function get_original_imagesize($ref="",$path="", $extension="jpg")
 		{
 		$o_size=false;
 		}
+		
+	if($o_size!==false && !$forcefromfile){
+		
+		$fileinfo[0]=$o_size['file_size'];
+		$fileinfo[1]=$o_size['width'];
+		$fileinfo[2]=$o_size['height'];
+		return $fileinfo;
+	}
 	
 	# imagemagick_calculate_sizes is normally turned off 
 	if (isset($imagemagick_path) && $imagemagick_calculate_sizes)
