@@ -629,24 +629,23 @@ if($advanced_search_contributed_by)
     </div>
     <?php
     }
+
+if($advanced_search_media_section)
+    {
     ?>
+    <h1 class="AdvancedSectionHead CollapsibleSectionHead" id="AdvancedSearchMediaSectionHead" ><?php echo $lang["media"]; ?></h1>
+    <div class="AdvancedSection" id="AdvancedSearchMediaSection">
+    <?php 
+    render_split_text_question($lang["pixel_height"], array('media_heightmin'=>'From','media_heightmax'=>'To'),$lang["pixels"], true, " class=\"stdWidth\" OnChange=\"UpdateResultCount();\"", array('media_heightmin'=>$media_heightmin,'media_heightmax'=>$media_heightmax));
+    render_split_text_question($lang["pixel_width"], array('media_widthmin'=>'From','media_widthmax'=>'To'),$lang["pixels"], true, " class=\"stdWidth\" OnChange=\"UpdateResultCount();\"", array('media_widthmin'=>$media_widthmin,'media_widthmax'=>$media_widthmax));
+    render_split_text_question($lang["filesize"], array('media_filesizemin'=>'From','media_filesizemax'=>'To'),$lang["megabyte-symbol"], false, " class=\"stdWidth\" OnChange=\"UpdateResultCount();\"", array('media_filesizemin'=>$media_filesizemin,'media_filesizemax'=>$media_filesizemax));
+    render_text_question($lang["file_extension_label"], "media_fileextension", "",false," class=\"SearchWidth\" OnChange=\"UpdateResultCount();\"",$media_fileextension);
+    render_dropdown_question($lang["previewimage"], "properties_haspreviewimage", array(""=>"","1"=>$lang["yes"],"0"=>$lang["no"]), $properties_haspreviewimage, " class=\"SearchWidth\" OnChange=\"UpdateResultCount();\"");
+    ?>
+    </div><!-- End of AdvancedSearchMediaSection -->
+    <?php
+    }
 
-<h1 class="AdvancedSectionHead CollapsibleSectionHead" id="AdvancedSearchMediaSectionHead" ><?php echo $lang["media"]; ?></h1>
-<div class="AdvancedSection" id="AdvancedSearchMediaSection" >
-
-<?php 
-render_split_text_question($lang["pixel_height"], array('media_heightmin'=>'From','media_heightmax'=>'To'),$lang["pixels"], true, " class=\"stdWidth\" OnChange=\"UpdateResultCount();\"", array('media_heightmin'=>$media_heightmin,'media_heightmax'=>$media_heightmax));
-render_split_text_question($lang["pixel_width"], array('media_widthmin'=>'From','media_widthmax'=>'To'),$lang["pixels"], true, " class=\"stdWidth\" OnChange=\"UpdateResultCount();\"", array('media_widthmin'=>$media_widthmin,'media_widthmax'=>$media_widthmax));
-render_split_text_question($lang["filesize"], array('media_filesizemin'=>'From','media_filesizemax'=>'To'),$lang["megabyte-symbol"], false, " class=\"stdWidth\" OnChange=\"UpdateResultCount();\"", array('media_filesizemin'=>$media_filesizemin,'media_filesizemax'=>$media_filesizemax));
-render_text_question($lang["file_extension_label"], "media_fileextension", "",false," class=\"SearchWidth\" OnChange=\"UpdateResultCount();\"",$media_fileextension);
-render_dropdown_question($lang["previewimage"], "properties_haspreviewimage", array(""=>"","1"=>$lang["yes"],"0"=>$lang["no"]), $properties_haspreviewimage, " class=\"SearchWidth\" OnChange=\"UpdateResultCount();\"");
-?>
-		
-</div><!-- End of AdvancedSearchMediaSection -->
-
-
-
-<?php
 render_advanced_search_buttons();
 
 // show result count as it stands ?>
