@@ -604,29 +604,32 @@ else
 	<input type="hidden" name="archive" value="<?php echo htmlspecialchars($archive)?>">
 	<?php
 	}
-?>
-		
-<div class="Question">
-    <label><?php echo $lang["contributedby"]; ?></label>
-    <?php
-    preg_match('/^![a-zA-Z]+(\d+)/',getval('search',''),$matches);
-    $single_user_select_field_value=isset($matches[1]) ? $matches[1] : '';
-    $single_user_select_field_id='properties_contributor';
-    $single_user_select_field_onchange='UpdateResultCount();';
-	$userselectclass="searchWidth";
-    include "../include/user_select.php";
-	?>
-    <script>
-	jQuery('#properties_contributor').change(function(){UpdateResultCount();});
-	</script>
-	<?php
-    unset($single_user_select_field_value);
-    unset($single_user_select_field_id);
-    unset($single_user_select_field_onchange);
+
+if($advanced_search_contributed_by)
+    {
     ?>
-</div>
-
-
+    <div class="Question">
+        <label><?php echo $lang["contributedby"]; ?></label>
+        <?php
+        preg_match('/^![a-zA-Z]+(\d+)/',getval('search',''),$matches);
+        $single_user_select_field_value=isset($matches[1]) ? $matches[1] : '';
+        $single_user_select_field_id='properties_contributor';
+        $single_user_select_field_onchange='UpdateResultCount();';
+    	$userselectclass="searchWidth";
+        include "../include/user_select.php";
+    	?>
+        <script>
+    	jQuery('#properties_contributor').change(function(){UpdateResultCount();});
+    	</script>
+    	<?php
+        unset($single_user_select_field_value);
+        unset($single_user_select_field_id);
+        unset($single_user_select_field_onchange);
+        ?>
+    </div>
+    <?php
+    }
+    ?>
 
 <h1 class="AdvancedSectionHead CollapsibleSectionHead" id="AdvancedSearchMediaSectionHead" ><?php echo $lang["media"]; ?></h1>
 <div class="AdvancedSection" id="AdvancedSearchMediaSection" >
