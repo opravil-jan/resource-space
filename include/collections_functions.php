@@ -343,7 +343,7 @@ function delete_collection($ref)
 	# Deletes the collection with reference $ref
 	global $home_dash;
 	
-	hook("beforedeletecollection");
+	hook("beforedeletecollection","",array($ref));
 	sql_query("delete from collection where ref='$ref'");
 	sql_query("delete from collection_resource where collection='$ref'");
 	sql_query("delete from collection_keyword where collection='$ref'");
