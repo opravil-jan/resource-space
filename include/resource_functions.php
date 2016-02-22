@@ -2496,7 +2496,8 @@ function get_resource_access($resource)
 		}
 	}
 
-	if ($access == 1 && get_edit_access($ref,$resourcedata['archive'],false,$resourcedata))
+	global $prevent_open_access_on_edit_for_active;
+	if ($access == 1 && get_edit_access($ref,$resourcedata['archive'],false,$resourcedata) && !$prevent_open_access_on_edit_for_active)
 		{
 		# If access is restricted and user has edit access, grant open access.
 		$access = 0;

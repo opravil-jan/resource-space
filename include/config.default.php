@@ -1034,6 +1034,9 @@ $open_access_for_contributor=false;
 # Should a user that has contributed a resource always have edit access to it? (even if the resource is live)
 $edit_access_for_contributor=false;
 
+# Pevent granting of open access if a user has edit permissions. Setting to true will allow group permissions ('e*' and 'ea*') to determine editability.
+$prevent_open_access_on_edit_for_active=false;
+
 # Auto-completion of search (quick search only)
 $autocomplete_search=true;
 $autocomplete_search_items=15;
