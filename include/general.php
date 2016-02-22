@@ -3638,7 +3638,7 @@ function filesize_unlimited($path)
 
 function strip_leading_comma($val)
     {
-    return str_replace(',', '', $val);
+    return preg_replace('/^\,/','',$val);
     }
 
 // String EnCrypt + DeCrypt function
