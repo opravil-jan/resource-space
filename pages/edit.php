@@ -739,10 +739,15 @@ if(0 > $ref && in_array($resource['resource_type'], $data_only_resource_types))
     <?php
  }
 // Upload template: Show the required fields note at the top of the form.
- if (!$is_template) { ?><p class="greyText noPadding"><sup>*</sup> <?php echo $lang["requiredfield"]?></p><?php }
+if(!$is_template && $show_required_field_label)
+    {
+    ?>
+    <p class="greyText noPadding"><sup>*</sup> <?php echo $lang['requiredfield']; ?></p>
+    <?php
+    }
 
-   # Upload template: Show the save / clear buttons at the top too, to avoid unnecessary scrolling.
-   ?>
+# Upload template: Show the save / clear buttons at the top too, to avoid unnecessary scrolling.
+?>
 <div class="QuestionSubmit">
    <?php
    global $clearbutton_on_upload;
@@ -2066,7 +2071,12 @@ if(!hook('replacesubmitbuttons'))
 # Duplicate navigation
 if (!$multiple && !$modal && $ref>0 &&!hook("dontshoweditnav")) {EditNav();}
 
-if (!$is_template) { ?><p><sup>*</sup> <?php echo $lang["requiredfield"]?></p><?php } 
+if(!$is_template && $show_required_field_label)
+    {
+    ?>
+    <p><sup>*</sup> <?php echo $lang['requiredfield']; ?></p>
+    <?php
+    } 
 
 if($collapsible_sections)
 {

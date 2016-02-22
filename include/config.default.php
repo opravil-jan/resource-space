@@ -2933,3 +2933,6 @@ $allowed_external_share_groups = array();
 
 // CSV Download - add original URL column
 $csv_export_add_original_size_url_column = false;
+
+// Show required field legend on upload
+$show_required_field_label = true;
