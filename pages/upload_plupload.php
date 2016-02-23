@@ -43,17 +43,17 @@ if ($collection_add==-1)
 	
 	
 $uploadparams= array(
-						"replace"=>$replace,
-						"alternative"=>$alternative,
-						"collection_add"=>$collection_add,
-						"resource_type"=>$resource_type,
-						"no_exif"=>getval("no_exif",""),
-						"autorotate"=>getval("autorotate",""),
-						"replace_resource"=>$replace_resource,
-						"archive"=>$archive,
-						"relateto"=>getval("relateto",""),
-						"filename_field"=>getval("filename_field","")
-					);
+    'replace'          => $replace,
+    'alternative'      => $alternative,
+    'collection_add'   => $collection_add,
+    'resource_type'    => $resource_type,
+    'no_exif'          => getval('no_exif', ''),
+    'autorotate'       => getval('autorotate', ''),
+    'replace_resource' => $replace_resource,
+    'archive'          => $archive,
+    'relateto'         => getval('relateto', ''),
+    'filename_field'   => getval('filename_field', '')
+);
 
 
 global $merge_filename_with_title;
