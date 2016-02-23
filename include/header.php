@@ -532,18 +532,6 @@ jQuery(document).ready(function()
 // Non-ajax specific hook 
 hook("start_centralspace");
 
-# Include theme bar?
-if ($use_theme_bar && ($k=="" || $internal_share_access) && !in_array($pagename,array("themes","preview_all","done","search_advanced","login","preview","admin_header","user_password","user_request")) && ($pagename!="terms") && (getval("url","")!="index.php"))
-    {
-    # Tables seem to be the only solution to having a left AND right side bar, due to the way the clear CSS attribute works.
-    ?>
-    <table width="100%" style="margin:0;padding:0;"><tr><td width="185" valign="top" align="left" style="margin:0;padding:0;">
-    <?php
-    include "themebar.php";
-    ?>
-    </td><td valign="top" style="margin:0;padding:0;">
-    <?php
-    }
 	
 
 if ($k!="" && !$internal_share_access) { ?>

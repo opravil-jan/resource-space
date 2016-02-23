@@ -2027,9 +2027,6 @@ $allow_save_search=true;
 # Use the collection name in the downloaded zip filename when downloading collections as a zip file?
 $use_collection_name_in_zip_name=false;
 
-# Enable a permanently visible 'themes bar' on the left hand side of the screen for quick access to themes.
-$use_theme_bar=false;
-
 # Default DPI setting for the view page if no resolution is stored in the db.
 $view_default_dpi=300;
 
