@@ -588,7 +588,7 @@ function save_resource_data_multi($collection)
                 $hookval=hook("save_resource_data_multi_extra_modes","",array($ref,$fields[$n]));
                 if ($hookval!==false) {$val=$hookval;}
 
-				$val=strip_leading_comma($val);		
+				//$val=strip_leading_comma($val);
 				#echo "<li>existing=$existing, new=$val";
 				if ($existing!==str_replace("\\","",$val))
 					{
@@ -615,11 +615,11 @@ function save_resource_data_multi($collection)
 					$oldval=$existing;
 					$newval=$val;
 					
-					if ($fields[$n]["type"]==3)
+					if ($fields[$n]["type"]==3 || $fields[$n]["type"]==2)
 						{
-						# Prepend a comma when indexing dropdowns
-						$newval="," . $val;
-						$oldval="," . $oldval;
+						# Prepend a comma when indexing dropdowns and checkboxes
+						$newval=  strlen($val)>0 && $val[0]==',' ? $val : ',' . $val;
+                        $oldval=  strlen($oldval)>0 && $oldval[0]==',' ? $oldval : ',' . $oldval;
 						}
 					
 					if ($fields[$n]["keywords_index"]==1)
@@ -1056,7 +1056,7 @@ function update_field($resource,$field,$value)
 			$value = ','.$value;
 		}
 		
-		$value=strip_leading_comma($value);	
+		//$value=strip_leading_comma($value);
 		
 		# Index the new value
 		add_keyword_mappings($resource,i18n_get_indexable($value),$field,$fieldinfo["partial_index"],false,'','',$is_html);
