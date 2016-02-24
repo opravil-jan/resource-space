@@ -76,10 +76,7 @@ function render_sort_order(array $order_fields)
         var selected_sort_option = jQuery('#sort_selection option:selected').val();
         var option_url           = selected_option.data('url');
 
-        if('ASC' === selected_sort_option)
-            {
-            option_url += '&sort=ASC';
-            }
+        option_url += '&sort=' + selected_sort_option;
 
          <?php echo $modal ? 'Modal' : 'CentralSpace'; ?>Load(option_url);
     });
