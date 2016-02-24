@@ -4854,4 +4854,11 @@ function get_notification_users($userpermission="SYSTEM_ADMIN")
 		return $notification_users_cache[$userpermissionindex];
 		}
 	}
+        
+function form_value_display($row,$name,$default="")
+    {
+    # Returns a sanitised row from the table in a safe form for use in a form value, suitable overwritten by POSTed data if it has been supplied.
+    if (array_key_exists($name,$row)) {$default=$row[$name];}
+    return htmlspecialchars(getval($name,$default));
+    }
 
