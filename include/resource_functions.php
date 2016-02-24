@@ -460,7 +460,7 @@ function save_resource_data_multi($collection)
 
 	$ref=$list[0];
 	$fields=get_resource_field_data($ref,true);
-	global $auto_order_checkbox,$auto_order_checkbox_case_insensitive;
+	global $auto_order_checkbox,$auto_order_checkbox_case_insensitive, $FIXED_LIST_FIELD_TYPES;
 	$expiry_field_edited=false;
 
 	for ($n=0;$n<count($fields);$n++)
@@ -615,7 +615,7 @@ function save_resource_data_multi($collection)
 					$oldval=$existing;
 					$newval=$val;
 					
-					if ($fields[$n]["type"]==3 || $fields[$n]["type"]==2)
+					if (in_array($fields[$n]["type"],$FIXED_LIST_FIELD_TYPES))
 						{
 						# Prepend a comma when indexing dropdowns and checkboxes
 						$newval=  strlen($val)>0 && $val[0]==',' ? $val : ',' . $val;
@@ -977,6 +977,9 @@ function remove_all_keyword_mappings_for_field($resource,$resource_type_field)
                     
 function update_field($resource,$field,$value)
 	{
+
+    global $FIXED_LIST_FIELD_TYPES;
+
 	# Updates a field. Works out the previous value, so this is not efficient if we already know what this previous value is (hence it is not used for edit where multiple fields are saved)
 
 	# accept shortnames in addition to field refs
@@ -1052,7 +1055,7 @@ function update_field($resource,$field,$value)
 			remove_keyword_mappings($resource,i18n_get_indexable($existing),$field,$fieldinfo["partial_index"],false,'','',$is_html);
 			}
 		
-		if (in_array($fieldinfo['type'], array(2,3,7,9,12)) && substr($value,0,1) <> ','){
+		if (in_array($fieldinfo['type'], $FIXED_LIST_FIELD_TYPES) && substr($value,0,1) <> ','){
 			$value = ','.$value;
 		}
 		

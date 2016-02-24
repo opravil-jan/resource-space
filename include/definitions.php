@@ -1,6 +1,5 @@
 <?php
 
-
 // ------------------------- FIELD TYPES -------------------------
 $field_types=array(
 		0=>"fieldtype-text_box_single_line",
@@ -18,6 +17,8 @@ $field_types=array(
 		12=>"fieldtype-radio_buttons",
 		13=>"fieldtype-warning_message"
 		);
+
+$FIXED_LIST_FIELD_TYPES = array(2,3,7,9,12);
 
 // ------------------------- LOG_CODE_ -------------------------
 
