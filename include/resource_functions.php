@@ -173,7 +173,7 @@ function save_resource_data($ref,$multi,$autosave_field="")
 						}
 					}
 				}
-			elseif ($fields[$n]["type"] == 3 || $fields[$n]["type"] == 12)
+			elseif ($fields[$n]["type"] == 3)
 				{
 				$val=getvalescaped("field_" . $fields[$n]["ref"],"");	
 				foreach($fields[$n]["nodes"] as $noderef => $nodedata)
@@ -181,6 +181,28 @@ function save_resource_data($ref,$multi,$autosave_field="")
 					if (strip_leading_comma($val) == $nodedata['name'])
 						{
 						$nodes_to_add[] = $noderef;
+						}
+					else
+						{
+						$nodes_to_remove[] = $noderef;
+						}
+					}							
+				// if it doesn't already start with a comma, add one
+				if (substr($val,0,1) != ',')
+					{
+					$val = ','.$val;
+					}				
+				}
+			elseif ($fields[$n]["type"] == 12)
+				{
+				$val=getvalescaped("field_" . $fields[$n]["ref"],"");	
+				foreach($fields[$n]["nodes"] as $noderef => $nodedata)
+					{
+					if (in_array(strip_leading_comma($val),i18n_get_translations($nodedata['name'])))
+						{
+						$nodes_to_add[] = $noderef;
+						// Correct the string to include all multingual strings as for dropdowns
+						$val=$nodedata['name'];
 						}
 					else
 						{
@@ -347,7 +369,14 @@ function save_resource_data($ref,$multi,$autosave_field="")
 	# Update resource_node table
 	delete_resource_nodes($ref,$nodes_to_remove);
 	if(count($nodes_to_add)>0)
-		{add_resource_nodes($ref,$nodes_to_add);}
+		{
+		$existingnodes=sql_array("select distinct node value from resource_node where resource='" . $ref . "'","");
+		$nodes_to_add = trim_array(array_diff($nodes_to_add,$existingnodes));
+		if(count($nodes_to_add)>0)
+			{
+			add_resource_nodes($ref,$nodes_to_add);
+			}
+		}
             
 	# Expiry field(s) edited? Reset the notification flag so that warnings are sent again when the date is reached.
 	$expirysql="";
@@ -1901,7 +1930,7 @@ function get_alternative_files($resource,$order_by="",$sort="")
 		$ordersort="";
 	}
 	$extrasql=hook("get_alternative_files_extra_sql","",array($resource));
-	return sql_query("select ref,name,description,file_name,file_extension,file_size,creation_date,alt_type from resource_alt_files where resource='".escape_check($resource)."' $extrasql order by ".escape_check($ordersort)." file_size desc");
+	return sql_query("select ref,name,description,file_name,file_extension,file_size,creation_date,alt_type from resource_alt_files where resource='".escape_check($resource)."' $extrasql order by ".escape_check($ordersort)." name asc, file_size desc");
 	}
 	
 function add_alternative_file($resource,$name,$description="",$file_name="",$file_extension="",$file_size=0,$alt_type='')
