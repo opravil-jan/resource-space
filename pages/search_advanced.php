@@ -76,16 +76,18 @@ if (getval("submitted","")=="yes" && getval("resetform","")=="")
 		?>
 		<html>
 		<script type="text/javascript">
-			
-			function populate_view_buttons(content) {
-				var inputs = parent.document.getElementsByTagName('input'), i;
+            function populate_view_buttons(content)
+                {
+                var inputs = parent.document.getElementsByClassName('dosearch');
 
-				for(i in inputs) {
-					if((' ' + inputs[i].className + ' ').indexOf('dosearch') > -1) {
-						inputs[i].value = content;
-					}
-				}
-			}
+                for(var i = 0; i < inputs.length; i++)
+                    {
+                    if(typeof inputs[i] !== 'undefined')
+                        {
+                        inputs[i].value = content;
+                        }
+                    }
+                }
 		
 		<?php if ($count==0) { ?>
 			populate_view_buttons("<?php echo $lang["nomatchingresults"]?>");
