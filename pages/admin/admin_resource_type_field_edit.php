@@ -343,7 +343,7 @@ include "../../include/header.php";
 
  
 
-<form method=post class="FormWide" action="<?php echo $baseurl_short?>pages/admin/admin_resource_type_field_edit.php?ref=<?php echo $fielddata["ref"] . "&restypefilter=" . $restypefilter . "&field_order_by=" . $field_order_by . "&field_sort=" . $field_sort ."&find=" . urlencode($find); ?>&backurl=<?php echo urlencode($url) ?>" onSubmit="return CentralSpacePost(this,true);">
+<form method=post class="FormWide" action="<?php echo $baseurl_short?>pages/admin/admin_resource_type_field_edit.php?ref=<?php echo $fielddata["ref"] . "&restypefilter=" . $restypefilter . "&field_order_by=" . $field_order_by . "&field_sort=" . $field_sort ."&find=" . urlencode($find); ?>" onSubmit="return CentralSpacePost(this,true);">
 
 <input type=hidden name=ref value="<?php echo urlencode($ref) ?>">
 
