@@ -226,7 +226,7 @@ if($editing && !$editexternalurl)
                             ?>
                             <p><?php echo $lang['generateurlexternal']; ?></p>
                             <p>
-                                <input class="URLDisplay" type="text" value="<?php echo $baseurl?>/?c=<?php echo urlencode($ref) ?>&k=<?php echo $generated_access_key; ?>">
+                                <input class="URLDisplay" type="text" value="<?php echo $baseurl?>/?r=<?php echo urlencode($ref) ?>&k=<?php echo $generated_access_key; ?>">
                             </p>
                             <?php
                             }
