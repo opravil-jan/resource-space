@@ -104,7 +104,7 @@ function save_resource_data($ref,$multi,$autosave_field="")
 				$val=","; # Note: it seems wrong to start with a comma, but this ensures it is treated as a comma separated list by split_keywords(), so if just one item is selected it still does individual word adding, so 'South Asia' is split to 'South Asia','South','Asia'.
 				//$options=trim_array(explode(",",$fields[$n]["options"]));
 				
-				foreach($fields[$n]["nodes"] as $noderef => $nodedata)
+                foreach($fields[$n]["nodes"] as $noderef => $nodedata)
 					{
 					$name=$fields[$n]["ref"] . "_" . md5($nodedata['name']);
 					if (getval($name,"")=="yes")
@@ -370,12 +370,7 @@ function save_resource_data($ref,$multi,$autosave_field="")
 	delete_resource_nodes($ref,$nodes_to_remove);
 	if(count($nodes_to_add)>0)
 		{
-		$existingnodes=sql_array("select distinct node value from resource_node where resource='" . $ref . "'","");
-		$nodes_to_add = trim_array(array_diff($nodes_to_add,$existingnodes));
-		if(count($nodes_to_add)>0)
-			{
-			add_resource_nodes($ref,$nodes_to_add);
-			}
+        add_resource_nodes($ref,$nodes_to_add);
 		}
             
 	# Expiry field(s) edited? Reset the notification flag so that warnings are sent again when the date is reached.
@@ -1018,61 +1013,89 @@ function update_field($resource,$field,$value)
 	$fieldinfo=sql_query("select keywords_index,resource_column,partial_index,type, onchange_macro from resource_type_field where ref='$field'");
 
 	if (count($fieldinfo)==0) {return false;} else {$fieldinfo=$fieldinfo[0];}
-	
-        # If this is a dynamic keyword we need to add it to the field options
-        if($fieldinfo['type']==9 && !checkperm('bdk' . $field))
+	    
+    $fieldoptions= get_nodes($field);
+    $newvalues=explode(",",$value);
+    
+    # Set up arrays of node ids to add/remove. 
+	if (in_array($fieldinfo['type'], $FIXED_LIST_FIELD_TYPES))
+        {
+        $nodes_to_add=array();
+        $nodes_to_remove=array();
+        }
+    
+    # If this is a dynamic keyword we need to add it to the field options
+    if($fieldinfo['type']==9 && !checkperm('bdk' . $field))
+        {
+        $currentoptions=array();
+        foreach($fieldoptions as $fieldoption)
             {
-            $fieldoptions= get_nodes($field);
-            $currentoptions=array();
-            foreach($fieldoptions as $fieldoption)
+            $fieldoptiontranslations=explode("~",$fieldoption['name']);
+            if (count($fieldoptiontranslations)<2)
                 {
-                $fieldoptiontranslations=explode("~",$fieldoption['name']);
-                if (count($fieldoptiontranslations)<2)
-                    {
-                    $currentoptions[]=trim($fieldoption['name']); # Not a translatable field
-                    debug("update_field: current field option: '" . trim($fieldoption['name']) . "'<br>");
-                    }
-                else
-                    {
-                    $default="";
-                    for ($n=1;$n<count($fieldoptiontranslations);$n++)
-                        {
-                        # Not a translated string, return as-is
-                        if (substr($fieldoptiontranslations[$n],2,1)!=":" && substr($fieldoptiontranslations[$n],5,1)!=":" && substr($fieldoptiontranslations[$n],0,1)!=":")
-                            {
-                            $currentoptions[]=trim($fieldoption);
-                            debug("update_field: current field option: '" . $fieldoption . "'<br>");
-                            }
-                        else
-                            {
-                            # Support both 2 character and 5 character language codes (for example en, en-US).
-                            $p=strpos($fieldoptiontranslations[$n],':');                         
-                            $currentoptions[]=trim(substr($fieldoptiontranslations[$n],$p+1));
-                            debug("update_field: current field option: '" . trim(substr($fieldoptiontranslations[$n],$p+1)) . "'<br>");
-                            } 
-                        }
-                    }
+                $currentoptions[]=trim($fieldoption['name']); # Not a translatable field
+                debug("update_field: current field option: '" . trim($fieldoption['name']) . "'<br>");
                 }
-            $newvalues=explode(",",$value);
-            foreach($newvalues as $newvalue)
+            else
                 {
-                # Check if each new value exists in current options list
-                if(!in_array($newvalue,$currentoptions))
+                $default="";
+                for ($n=1;$n<count($fieldoptiontranslations);$n++)
                     {
-                    # Append the option and update the field
-                    //sql_query("update resource_type_field set options=concat(ifnull(options,''), ', " . escape_check(trim($newvalue)) . "') where ref='$field'");
-
-                    set_node(null,$field,escape_check(trim($newvalue)),null,null);
-
-                    $currentoptions[]=trim($newvalue);
-                    debug("update_field: field option added: '" . trim($newvalue) . "'<br>");
-                    }                    
+                    # Not a translated string, return as-is
+                    if (substr($fieldoptiontranslations[$n],2,1)!=":" && substr($fieldoptiontranslations[$n],5,1)!=":" && substr($fieldoptiontranslations[$n],0,1)!=":")
+                        {
+                        $currentoptions[]=trim($fieldoption);
+                        debug("update_field: current field option: '" . $fieldoption . "'<br>");
+                        }
+                    else
+                        {
+                        # Support both 2 character and 5 character language codes (for example en, en-US).
+                        $p=strpos($fieldoptiontranslations[$n],':');                         
+                        $currentoptions[]=trim(substr($fieldoptiontranslations[$n],$p+1));
+                        debug("update_field: current field option: '" . trim(substr($fieldoptiontranslations[$n],$p+1)) . "'<br>");
+                        } 
+                    }
                 }
             }
-        
-        # Fetch previous value
-        $existing=sql_value("select value from resource_data where resource='$resource' and resource_type_field='$field'","");
-                        
+        foreach($newvalues as $newvalue)
+            {
+            # Check if each new value exists in current options list
+            if(!in_array($newvalue,$currentoptions))
+                {
+                # Append the option and update the field
+                //sql_query("update resource_type_field set options=concat(ifnull(options,''), ', " . escape_check(trim($newvalue)) . "') where ref='$field'");
+                $newnode = set_node(null,$field,escape_check(trim($newvalue)),null,null);
+                $nodes_to_add[] = $newnode;
+
+                $currentoptions[]=trim($newvalue);
+                debug("update_field: field option added: '" . trim($newvalue) . "'<br>");
+                }
+            }
+        }
+    
+    # Fetch previous value
+    $existing=sql_value("select value from resource_data where resource='$resource' and resource_type_field='$field'","");
+     
+    if (in_array($fieldinfo['type'], $FIXED_LIST_FIELD_TYPES))
+        {
+        foreach($fieldoptions as $nodedata)
+            {
+            if (in_array($nodedata["name"],$newvalues))
+                {
+                $nodes_to_add[] = $nodedata["ref"];
+                }
+            else
+                {
+                $nodes_to_remove[] = $nodedata["ref"];
+                }
+            }
+        # Update resource_node table
+        delete_resource_nodes($resource,$nodes_to_remove);
+        if(count($nodes_to_add)>0)
+            {
+            add_resource_nodes($resource,$nodes_to_add);
+            }
+        }
 	if ($fieldinfo["keywords_index"])
 		{
 		$is_html=($fieldinfo["type"]==8);	
