@@ -89,7 +89,7 @@ if($lastresorttheme)
     }
 hook ("preheaderoutput");
  
-$k=getval("k","");
+$k=getvalescaped("k","");
 if(!isset($internal_share_access))
 	{
 	// Set a flag for logged in users if $external_share_view_as_internal is set and logged on user is accessing an external share
