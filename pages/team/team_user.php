@@ -238,12 +238,18 @@ if(!hook("replace_create_user"))
     }
 
     hook('render_options_to_create_users');
-    ?>
-<div class="BasicsBox">
-<div class="Question"><label><?php echo $lang["purgeusers"]?></label>
-<div class="Fixed"><a onClick="return CentralSpaceLoad(this,true);" href="<?php echo $baseurl ?>/pages/team/team_user_purge.php">&gt;&nbsp;<?php echo $lang["purgeusers"]?></a></div>
-<div class="clearerleft"> </div></div>
-</div>
+    
+if ($user_purge)
+	{
+	?>
+	<div class="BasicsBox">
+	<div class="Question"><label><?php echo $lang["purgeusers"]?></label>
+	<div class="Fixed"><a onClick="return CentralSpaceLoad(this,true);" href="<?php echo $baseurl ?>/pages/team/team_user_purge.php">&gt;&nbsp;<?php echo $lang["purgeusers"]?></a></div>
+	<div class="clearerleft"> </div></div>
+	</div>
+	<?php
+	}
+?>
 
 <?php if (!hook("replaceusersonline")) { ?>
 <div class="BasicsBox">

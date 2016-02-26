@@ -776,6 +776,8 @@ $defaulttheme="";
 /** USER PREFERENCES **/
 $user_preferences = true;
 
+/* Should the "purge users" function be available? */
+$user_purge=true;
 
 # List of active plugins.
 # Note that multiple plugins must be specified within array() as follows:
