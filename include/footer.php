@@ -65,7 +65,7 @@ if(!in_array($pagename,$omit_footer_pages) && ($loginterms==false))
 	<?php 
 	if (!hook("replacefooternavright"))
 		{
-		if ($about_link || $contact_link) 
+		if ($bottom_links_bar && ($about_link || $contact_link))
 			{ ?>
 			<div id="FooterNavRight" class="HorizontalNav HorizontalWhiteNav">
 			<ul>

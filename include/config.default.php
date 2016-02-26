@@ -2934,3 +2934,7 @@ $csv_export_add_original_size_url_column = false;
 
 // Show required field legend on upload
 $show_required_field_label = true;
+
+// Show extra home / about / contact us links in the page footer?
+$bottom_links_bar=false;
+
