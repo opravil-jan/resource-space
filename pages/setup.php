@@ -957,12 +957,8 @@ if ((isset($_REQUEST['submit'])) && (!isset($errors)))
         }
 
     // Create user
-    // Defaults in case creating user fails for some reason
-    $credentials_username = 'admin';
-    $credentials_password = 'admin';
-
-    $password_hash = hash('sha256', md5('RS' . $credentials_username . $credentials_password));
-    $sql_query     = "INSERT INTO user(username, password, fullname, email, usergroup) VALUES('" . $credentials_username . "', '" . $password_hash . "', '" . escape_check($admin_fullname) . "', '" . escape_check($admin_email) . "', 3)";
+    $credentials_username = '';
+    $credentials_password = '';
 
     $user_count = sql_value("SELECT count(*) value FROM user WHERE username = '{$admin_username}'", 0);
     if(0 == $user_count)
@@ -974,10 +970,16 @@ if ((isset($_REQUEST['submit'])) && (!isset($errors)))
 
         $credentials_username = $admin_username;
         $credentials_password = $admin_password;
+
+        sql_query($sql_query);
         }
 
-    sql_query($sql_query);
-	   ?>
+    // We got so far but if somehow we didn't create a user so far, trigger error now and let user be aware of it
+    if('' == $credentials_username)
+        {
+        trigger_error('Unexpected error! ResourceSpace could not set your credentials or username doesn\'t have a value!');
+        }
+        ?>
 	<div id="intro">
 		<h1><?php echo $lang["setup-successheader"]; ?></h1>
 		<p><?php echo $lang["setup-successdetails"]; ?></p>
@@ -992,6 +994,14 @@ if ((isset($_REQUEST['submit'])) && (!isset($errors)))
 				</ul>
 			</li>
 		</ul>
+    <?php
+    if('' == $credentials_password)
+        {
+        ?>
+        <p>Warning! for some unknown reason your password is being seen as not having a value. Please log in and change the password!</p>
+        <?php
+        }
+    ?>
 	</div>
 	<?php
 	}
