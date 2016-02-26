@@ -83,7 +83,27 @@ function tms_convert_value($value, $key)
 	//return $value . " (" . $encoding . ")";
 	return $value;
 	}
-	
+
+function getEncodingOrder()
+   {
+   $ary[] = 'UTF-32';
+   $ary[] = 'UTF-32BE';
+   $ary[] = 'UTF-32LE';
+   $ary[] = 'UTF-16';
+   $ary[] = 'UTF-16BE';
+   $ary[] = 'UTF-16LE';
+   $ary[] = 'UTF-8';
+   $ary[] = 'ASCII';
+   $ary[] = 'ISO-2022-JP';
+   $ary[] = 'JIS';
+   $ary[] = 'windows-1252';
+   $ary[] = 'windows-1251';
+   $ary[] = 'UCS-2LE';
+   $ary[] = 'SJIS-win';
+   $ary[] = 'EUC-JP';
+    
+   return $ary;
+   }
 
 function tms_link_get_tms_data($resource,$tms_object_id="",$resourcechecksum="")
 	{
@@ -119,7 +139,7 @@ function tms_link_get_tms_data($resource,$tms_object_id="",$resourcechecksum="")
 		//$tmssql="SELECT * FROM " . $tms_link_table_name . " where ObjectID ='" . $tms_object_id . "';";
 		
 		// Add normal value fields
-		$columnsql = implode(", ", $tms_link_numeric_columns);
+		$columnsql = implode(',', $tms_link_numeric_columns);
 		
 		// Add SQL to get back text fields as VARBINARY(MAX) so we can sort out encoding later
 		foreach ($tms_link_text_columns as $tms_link_text_column)
@@ -129,47 +149,43 @@ function tms_link_get_tms_data($resource,$tms_object_id="",$resourcechecksum="")
 		
 		
 		$tmssql = "SELECT " . $columnsql . " FROM " . $tms_link_table_name . $conditionsql . " ;";
-		
-		//exit($tmssql);
-		
+
 		// Execute the query to get the data from TMS
 		$tmsresultset = odbc_exec($conn,$tmssql);
 		
 		$resultcount=odbc_num_rows ($tmsresultset);
 		if($resultcount==0){global $lang;return $lang["tms_link_no_tms_data"];}
-		
-		$convertedtmsdata=array();
-		for ($r=1;$r<=$resultcount;$r++)
-			{		
-			$tmsdata=odbc_fetch_array ($tmsresultset,$r);
-			
-			if(is_array($tms_object_id))
-				{
-				foreach($tmsdata as $key=>$value)
-					{
-					$convertedtmsdata[$r][$key]=tms_convert_value($value, $key);
-					}
-				}
-			else
-				{
-				foreach($tmsdata as $key=>$value)
-					{
-					$convertedtmsdata[$key]=tms_convert_value($value, $key);
-					}
-				}
-				
-			}
-			//exit(print_r($convertedtmsdata));
-			return $convertedtmsdata;
-		}
-	else
-		{
-		
-		$error=odbc_errormsg();
-		exit($error);
-		return $error;
-		}
-		
+
+        $return_tmsdata = array();
+        for($r = 1; $r <= $resultcount; $r++)
+            {
+            $tmsdata = odbc_fetch_array($tmsresultset, $r);
+
+            if(is_array($tms_object_id))
+                {
+                foreach($tmsdata as $key => $value)
+                    {
+                    $return_tmsdata[$r][$key] = $value;
+                    }
+                }
+            else
+                {
+                foreach($tmsdata as $key => $value)
+                    {
+                    $return_tmsdata[$key] = $value;
+                    }
+                }
+
+            }
+
+        return $return_tmsdata;
+        }
+    else
+        {
+        $error = odbc_errormsg();
+        exit($error);
+        return $error;
+        }
 	}
 
 function tms_link_get_tms_resources()

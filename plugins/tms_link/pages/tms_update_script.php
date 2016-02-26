@@ -130,7 +130,7 @@ while ($tmspointer<$tmscount && $tmspointer<$tms_link_test_count)
 		
 				
 	fwrite($logfile,"Retrieving data from TMS system\r\n");
-	$tmsresults=tms_link_get_tms_data("", $tms_query_ids);	
+    $tmsresults = tms_link_get_tms_data('', $tms_query_ids);	
 	
 	if(!is_array($tmsresults) || count($tmsresults)==0)
 		{
@@ -154,8 +154,32 @@ while ($tmspointer<$tmscount && $tmspointer<$tms_link_test_count)
 				$logmessage= "Checking resource: "  . $tms_resources[$ri]["resource"]  . ". Object ID: " . $tms_resources[$ri]["objectid"] . "\r\n";
 				echo $logmessage;
 				fwrite($logfile,$logmessage);
-				//exit();
-				
+
+                // Process here TMS results and mark to be skipped if encoding is not UTF8
+                $skip_object           = false;
+                $encoding_issue_fields = array();
+
+                foreach($tmsresult as $tmsresult_key => $tmsresult_value)
+                   {
+                   $encoding = mb_detect_encoding($tmsresult_value, getEncodingOrder(), true);
+                   if($encoding != 'UTF-8')
+                       {
+                       $skip_object             = true;
+                       $encoding_issue_fields[] = $tmsresult_key;
+                       }
+                   }
+
+                // Log this and skip object
+                if($skip_object)
+                   {
+                   $encoding_issue_fields_string = implode ( ', ', $encoding_issue_fields);
+                   $logmessage = "Skipping Object ID: {$tms_resources[$ri]['objectid']} because encoding is not UTF-8 on the following fields: {$encoding_issue_fields_string} .  \r\n";
+                   echo $logmessage;
+                   fwrite($logfile, $logmessage);
+                   
+                   continue;
+                   }
+
 				// Check checksum
 				if(isset($tmsresult["RowChecksum"]) && $tms_resources[$ri]["checksum"]==$tmsresult["RowChecksum"])
 					{
