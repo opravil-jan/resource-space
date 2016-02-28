@@ -763,6 +763,7 @@ var pluploadconfig = {
                                 }
 
                             uploader.settings.url = pluploader_new_url;
+                            <?php hook('beforeupload_end'); ?>
                         });
                     
                 
