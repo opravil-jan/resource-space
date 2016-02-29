@@ -2151,7 +2151,7 @@ function notify_user_contributed_submitted($refs,$collection=0)
 	$templatevars['url']=$baseurl . "/pages/search.php?search=!userpending";	
 	$templatevars['list']=$list;
 		
-	$message=$lang["userresourcessubmitted"] . "\n\n". $templatevars['list'] . $lang["viewalluserpending"] . "\n\n" . $templatevars['url'];
+	$message=$lang["userresourcessubmitted"] . "\n\n". $templatevars['list'] . "\n\n" . $lang["viewalluserpending"] . "\n\n" . $templatevars['url'];
 	$notificationmessage=$lang["userresourcessubmittednotification"];
 	$notify_users=get_notification_users(array("e-1","e0")); 
 	$message_users=array();
