@@ -341,8 +341,7 @@ if ($collectionsearch)
 	$collection=$collection[0];
 	$collectiondata=get_collection($collection);
 	
-	if ($k!="" || $internal_share_access) {$usercollection=$collection;} # External access - set current collection.
-	
+	if ($k!="" && !$internal_share_access) {$usercollection=$collection;} # External access - set current collection.
 	if (!$collectiondata){?>
 		<script>alert('<?php echo $lang["error-collectionnotfound"];?>');document.location='<?php echo $baseurl."/pages/" . $default_home_page;?>'</script>
 	<?php } 
