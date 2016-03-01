@@ -407,10 +407,9 @@ function search_public_collections($search="", $order_by="name", $sort="ASC", $e
 	    	{
 	    	   if (substr($keywords[$n],0,16)=="collectiontitle:") $newsearch.=" ".substr($keywords[$n],16);    // wildcard * - %
 	    	}
-	    	if (strpos($newsearch,"*")===false) $newsearch.="%";
-	    	else $newsearch=str_replace("*", "%", $newsearch);
-	    	$newsearch=trim($newsearch);
-	    	$sql="and c.name like '$newsearch'";
+
+        $newsearch = strpos($newsearch,'*')===false ? '%' . trim($newsearch) . '%' : str_replace('*', '%', trim($newsearch));
+        $sql="and c.name like '$newsearch'";
 	    	
 	    }
 	if (strlen($search)>1 || is_numeric($search))
