@@ -2316,6 +2316,9 @@ $icc_extraction = false;
 # but will not be embedded
 $icc_preview_profile = 'sRGB_IEC61966-2-1_black_scaled.icc';
 
+# embed the target preview profile?
+$icc_preview_profile_embed=false;
+
 # additional options for profile conversion during preview generation
 $icc_preview_options = '-intent perceptual -black-point-compensation';
 

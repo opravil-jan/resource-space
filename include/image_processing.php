@@ -1326,9 +1326,10 @@ function create_previews_using_im($ref,$thumbonly=false,$extension="jpg",$previe
 				}
 
 				if($icc_extraction && file_exists($iccpath) && !$icc_transform_complete){
+					global $icc_preview_profile_embed;
 					// we have an extracted ICC profile, so use it as source
 					$targetprofile = dirname(__FILE__) . '/../iccprofiles/' . $icc_preview_profile;
-					$profile  = " -strip -profile $iccpath $icc_preview_options -profile $targetprofile -strip ";
+					$profile  = " -strip -profile $iccpath $icc_preview_options -profile $targetprofile".($icc_preview_profile_embed?" ":" -strip ");
 					// consider ICC transformation complete, if one of the sizes has been rendered that will be used for the smaller sizes
                     if ($id == 'hpr' || $id == 'lpr' || $id == 'scr') $icc_transform_complete=true;
 				} else {
