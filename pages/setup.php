@@ -1015,11 +1015,11 @@ else
 				<h2><?php echo $lang["installationcheck"]; ?></h2>
 				<?php 
 					$continue = true;
-					$phpversion = phpversion();
-					if ($phpversion<'4.4')
+					$phpversion = PHP_VERSION;
+					if(version_compare($phpversion, '5.3.0', '<='))
 						{
-						$result = $lang["status-fail"] . ": " . str_replace("?", "4.4", $lang["shouldbeversion"]);
-						$pass = false;
+						$result   = $lang["status-fail"] . ": " . str_replace('?', '5.3.0', $lang['shouldbeversion']);
+						$pass     = false;
 						$continue = false;
 						} 
 					else
