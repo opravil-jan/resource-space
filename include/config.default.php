@@ -627,6 +627,7 @@ $help_link=true;
 $search_results_link=true;
 
 # Display a 'My Collections' link in the top navigation
+# Note that permission 'b' is needed for collection_manage.php to be displayed
 $mycollections_link=false;
 
 # Display a 'My Requests' link in the top navigation
