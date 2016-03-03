@@ -196,7 +196,7 @@ for ($n=$offset;(($n<count($users)) && ($n<($offset+$per_page)));$n++)
 	<?php } ?>
 	<td><?php echo nicedate($users[$n]["created"]) ?></td>
 	<td><?php echo $users[$n]["approved"]?$lang["yes"]:$lang["no"] ?></td>
-	<td><?php echo nicedate($users[$n]["last_active"]) ?></td>
+	<td><?php echo nicedate($users[$n]["last_active"],true) ?></td>
 	<?php hook("additional_user_column");?>
 	<td><?php if (($usergroup==3) || ($users[$n]["usergroup"]!=3)) { ?><div class="ListTools">
 	<a href="<?php echo $baseurl ?>/pages/admin/admin_system_log.php?actasuser=<?php echo $users[$n]["ref"]?>&backurl=<?php echo urlencode($url . "&offset=" . $offset)?>" onClick="return CentralSpaceLoad(this,true);">&gt;&nbsp;<?php echo $lang["log"]?></a>
