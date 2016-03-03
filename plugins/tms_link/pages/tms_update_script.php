@@ -184,7 +184,7 @@ while ($tmspointer<$tmscount && $tmspointer<$tms_link_test_count)
 								if(!$tms_link_test_mode)
 									{
 									$logmessage = "---- Updating RS field " . $tms_link_field_id . " from column " . $tms_link_column_name . ". VALUE: " . $tmsresult[$tms_link_column_name] . "\r\n";
-									//echo $logmessage;
+									echo $logmessage;
 									fwrite($logfile,$logmessage);
 									update_field($tms_resources[$ri]["resource"],$tms_link_field_id,escape_check($tmsresult[$tms_link_column_name]));
 									}
@@ -197,7 +197,7 @@ while ($tmspointer<$tmscount && $tmspointer<$tms_link_test_count)
 						$tmsupdated++;
 						$tms_updated_array[$tms_resources[$ri]["resource"]]=$tms_resources[$ri]["objectid"];
 						
-						fwrite($logfile,"Resource " . $tms_resources[$ri]["resource"] . " : Updated successfully");
+						fwrite($logfile,"Resource " . $tms_resources[$ri]["resource"] . " : Updated successfully \r\n");
 						}
 					else
 						{
