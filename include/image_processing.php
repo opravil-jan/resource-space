@@ -1134,7 +1134,7 @@ function create_previews($ref,$thumbonly=false,$extension="jpg",$previewonly=fal
 
 function create_previews_using_im($ref,$thumbonly=false,$extension="jpg",$previewonly=false,$previewbased=false,$alternative=-1,$ingested=false)
 	{
-	global $keep_for_hpr,$imagemagick_path,$imagemagick_preserve_profiles,$imagemagick_quality,$imagemagick_colorspace,$default_icc_file,$autorotate_no_ingest,$always_make_previews,$lean_preview_generation,$previews_allow_enlarge;
+	global $keep_for_hpr,$imagemagick_path,$imagemagick_preserve_profiles,$imagemagick_quality,$imagemagick_colorspace,$default_icc_file,$autorotate_no_ingest,$always_make_previews,$lean_preview_generation,$previews_allow_enlarge,$alternative_file_previews;
 
 	$icc_transform_complete=false;
 	debug("create_previews_using_im(ref=$ref,thumbonly=$thumbonly,extension=$extension,previewonly=$previewonly,previewbased=$previewbased,alternative=$alternative,ingested=$ingested)");
@@ -1374,9 +1374,9 @@ function create_previews_using_im($ref,$thumbonly=false,$extension="jpg",$previe
 				global $watermark;
 				
 				if (!hook("replacewatermarkcreation","",array($ref,$ps,$n,$alternative))){
-				if ($alternative==-1 && isset($watermark) && ($ps[$n]["internal"]==1 || $ps[$n]["allow_preview"]==1))
+				if (($alternative==-1 || ($alternative!==-1 && $alternative_file_previews)) && isset($watermark) && ($ps[$n]["internal"]==1 || $ps[$n]["allow_preview"]==1))
 					{
-					$wmpath=get_resource_path($ref,true,$ps[$n]["id"],false,"jpg",-1,1,true);
+					$wmpath=get_resource_path($ref,true,$ps[$n]["id"],false,"jpg",-1,1,true,'',$alternative);
 					if (file_exists($wmpath)) {unlink($wmpath);}
 					
 					$watermarkreal=dirname(__FILE__) ."/../" . $watermark;
