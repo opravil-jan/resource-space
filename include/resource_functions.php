@@ -1014,8 +1014,8 @@ function update_field($resource,$field,$value)
 
 	if (count($fieldinfo)==0) {return false;} else {$fieldinfo=$fieldinfo[0];}
 	    
-    $fieldoptions= get_nodes($field);
-    $newvalues=explode(",",$value);
+    $fieldoptions = get_nodes($field);
+    $newvalues    = trim_array(explode(',', $value));
     
     # Set up arrays of node ids to add/remove. 
 	if (in_array($fieldinfo['type'], $FIXED_LIST_FIELD_TYPES))
@@ -1060,7 +1060,7 @@ function update_field($resource,$field,$value)
         foreach($newvalues as $newvalue)
             {
             # Check if each new value exists in current options list
-            if(!in_array($newvalue,$currentoptions))
+            if('' != $newvalue && !in_array($newvalue,$currentoptions))
                 {
                 # Append the option and update the field
                 //sql_query("update resource_type_field set options=concat(ifnull(options,''), ', " . escape_check(trim($newvalue)) . "') where ref='$field'");
