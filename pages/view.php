@@ -1147,6 +1147,7 @@ if ($alt_access)
 		$alt_thm="";$alt_pre="";
 		if ($alternative_file_previews)
 			{
+			$use_watermark=check_use_watermark();
 			$alt_thm_file=get_resource_path($ref,true,"col",false,"jpg",-1,1,$use_watermark,"",$altfiles[$n]["ref"]);
 			if (file_exists($alt_thm_file))
 				{
