@@ -1500,9 +1500,22 @@ function newlines($text)
 
 function get_active_users()
 	{
-	# Returns a list of active users, i.e. users still logged on with a last-active time within the last 2 hours.
-	return sql_query("select username,round((unix_timestamp(now())-unix_timestamp(last_active))/60,0) t from user where logged_in=1 and unix_timestamp(now())-unix_timestamp(last_active)<(3600*2) order by t;");
-	}
+    global $usergroup, $U_perm_strict;
+    $sql = "where logged_in=1 and unix_timestamp(now())-unix_timestamp(last_active)<(3600*2)";
+    if (checkperm("U") && $U_perm_strict)
+        {
+        $sql.= " and find_in_set('" . $usergroup . "',g.parent) ";
+        }
+
+    // Return users in both user's user group and children groups
+    elseif (checkperm('U') && !$U_perm_strict)
+        {
+    	$sql .= " and (g.ref = '" . $usergroup . "' OR find_in_set('" . $usergroup . "', g.parent))";
+        }
+    
+    # Returns a list of all active users, i.e. users still logged on with a last-active time within the last 2 hours.
+    return sql_query("select u.username,round((unix_timestamp(now())-unix_timestamp(u.last_active))/60,0) t from user u left outer join usergroup g on u.usergroup=g.ref $sql order by t;");
+    }
 
 function get_all_site_text($findpage="",$findname="",$findtext="")
 	{
