@@ -2942,3 +2942,5 @@ $show_required_field_label = true;
 // Show extra home / about / contact us links in the page footer?
 $bottom_links_bar=false;
 
+# Prevent users without accounts from requesting resources when accessing external shares. If true, external users requesting access will be redirected to the login screen so only recommended if account requests are allowed.
+$prevent_external_requests=false;

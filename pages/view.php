@@ -112,7 +112,7 @@ if ($use_mp3_player)
 		{$mp3path=get_resource_path($ref,false,"",false,"mp3");}
 	}
 # Load access level
-$access=get_resource_access($ref);
+$access=get_resource_access($resource);
 hook("beforepermissionscheck");
 # check permissions (error message is not pretty but they shouldn't ever arrive at this page unless entering a URL manually)
 if($access == 2) 
@@ -849,7 +849,7 @@ function make_download_preview_link($ref, $size, $label)
 
 function add_download_column($ref, $size_info, $downloadthissize)
 	{
-	global $save_as, $direct_download, $order_by, $lang, $baseurl_short, $baseurl, $k, $search, $request_adds_to_collection, $offset, $archive, $sort;
+	global $save_as, $direct_download, $order_by, $lang, $baseurl_short, $baseurl, $k, $search, $request_adds_to_collection, $offset, $archive, $sort, $internal_share_access;
 	if ($downloadthissize)
 		{
 		?><td class="DownloadButton"><?php
@@ -1114,8 +1114,9 @@ if ($access==0) $alt_access=true; # open access (not restricted)
 if ($alt_access) 
 	{
 	$alt_order_by="";$alt_sort="";
-	if ($alt_types_organize){$alt_order_by="alt_type";$alt_sort="asc";} 
-	$altfiles=get_alternative_files($ref,$alt_order_by,$alt_sort);
+	if ($alt_types_organize){$alt_order_by="alt_type";$alt_sort="asc";}
+	if(!isset($altfiles))
+		{$altfiles=get_alternative_files($ref,$alt_order_by,$alt_sort);}
 	hook("processaltfiles");
 	$last_alt_type="-";
 	for ($n=0;$n<count($altfiles);$n++)

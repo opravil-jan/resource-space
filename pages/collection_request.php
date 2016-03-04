@@ -5,6 +5,12 @@ $k=getvalescaped("k","");if ($k=="") {include "../include/authenticate.php";}
 include_once "../include/collections_functions.php";
 include "../include/request_functions.php";
 
+if ($prevent_external_requests)
+	{
+	echo "<script>window.location = '" .  $baseurl . "/login.php?error="  . (($allow_account_request)?"signin_required_request_account":"signin_required") . "'</script>";
+	exit();
+	}
+
 $ref=getval("ref","",true);
 $cinfo=get_collection($ref);
 $error=false;
