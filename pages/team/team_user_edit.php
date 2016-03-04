@@ -81,6 +81,7 @@ if (getval("loginas","")!="")
 <form method=post action="<?php echo $baseurl_short?>pages/team/team_user_edit.php">
 <input type=hidden name=ref value="<?php echo urlencode($ref) ?>">
 <input type=hidden name=backurl value="<?php echo getval("backurl", $baseurl_short . "pages/team/team_user.php?nc=" . time())?>">
+<input name="save" type="submit" style="display:none;" value="save" /><!-- to capture default action -->
 
 <?php
 if (($user["login_tries"]>=$max_login_attempts_per_username) && (strtotime($user["login_last_try"]) > (time() - ($max_login_attempts_wait_minutes * 60))))
