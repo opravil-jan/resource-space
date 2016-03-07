@@ -856,6 +856,8 @@ if (!hook("replacesearchheader")) # Always show search header now.
 			}
 		render_actions($collectiondata,true);
 
+		hook("search_header_after_actions");
+		
 		if (!$display_selector_dropdowns && !$perpage_dropdown){?>
 		<div class="InpageNavLeftBlock"><?php echo ucfirst($lang["perpage"]);?>:<br />
 		<?php 
