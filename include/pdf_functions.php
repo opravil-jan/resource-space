@@ -97,6 +97,9 @@ function generate_pdf($html_template_path, $filename, array $bind_placeholders =
         {
         // Bind [%param%] placeholders to their values
         $html = str_replace('[%' . $param . '%]', $param_value, $html);
+        
+        // replace \r\n with <br>. This is how they do it at the moment at html2pdf.fr
+        $html = str_replace("\r\n", '<br>', $html);
         }
 
     // Handle [%if var is set%] and [%endif%] statements
