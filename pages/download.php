@@ -68,7 +68,7 @@ if (!file_exists($path) && $noattach!="")
 	}
 
 # writing RS metadata to files: exiftool
-if ($noattach=="" && $alternative==-1) # Only for downloads (not previews)
+if ($noattach=="" && $alternative==-1 && $exiftool_write) # Only for downloads (not previews)
 	{
 	$tmpfile=write_metadata($path,$ref);
 	if ($tmpfile!==false && file_exists($tmpfile)){$path=$tmpfile;}
