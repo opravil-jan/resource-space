@@ -528,9 +528,9 @@ div.autocomplete ul li {
 
 li.plupload_droptext {font-size: 1.1em;}
 
-
+.plupload_filelist_header {height:12px;}
  /* Smoothness changes - general */
-#pluploader .plupload_header_content {padding-left:10px}
+#pluploader .plupload_header_content {padding-left:10px;background-image:none;}
 #pluploader .plupload_view_switch{bottom:16px;}
 #pluploader .plupload_view_switch .ui-button-icon-only {margin-right:0px;}
 

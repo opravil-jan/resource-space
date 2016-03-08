@@ -47,7 +47,7 @@
 }
 
 .plupload_container {
-	padding: 0px;
+	padding: 8px;
 	background: url('../img/transp50.png');
 	/*-moz-border-radius: 5px;*/
 }
@@ -58,7 +58,7 @@
 	width: 98%;
 }
 
-.plupload_header {background: #2A2C2E url('../img/backgrounds.gif') repeat-x;display: none;}
+.plupload_header {background: #2A2C2E url('../img/backgrounds.gif') repeat-x;}
 .plupload_header_content {
 	background: url('../img/backgrounds.gif') no-repeat 0 -317px;
 	min-height: 56px;
@@ -169,7 +169,7 @@ li.plupload_done a {
 
 /* Floats */
 
-.plupload_clear,.plupload_clearer {clear: left;}
+.plupload_clear,.plupload_clearer {clear: both;}
 .plupload_clearer, .plupload_progress_bar {
 	display: block;
 	font-size: 0;

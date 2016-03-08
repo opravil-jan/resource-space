@@ -674,10 +674,10 @@ var pluploadconfig = {
                 } ?>
 
         // Flash settings
-        flash_swf_url: '../lib/plupload_2.1.2/Moxie.swf',
+        flash_swf_url: '../lib/plupload_2.1.8/Moxie.swf',
 
         // Silverlight settings
-        silverlight_xap_url : '../lib/plupload_2.1.2/Moxie.xap',
+        silverlight_xap_url : '../lib/plupload_2.1.8/Moxie.xap',
         dragdrop: true,        
         
         preinit: {
@@ -911,9 +911,9 @@ if ($collection_add!="" && count(get_collection_external_access($collection_add)
 
 <?php
 	# Add language support if available
-	if (file_exists("../lib/plupload_2.1.2/i18n/" . $language . ".js"))
+	if (file_exists("../lib/plupload_2.1.8/i18n/" . $language . ".js"))
 		{
-		echo "<script type=\"text/javascript\" src=\"../lib/plupload_2.1.2/i18n/" . $language . ".js?" . $css_reload_key . "\"></script>";
+		echo "<script type=\"text/javascript\" src=\"../lib/plupload_2.1.8/i18n/" . $language . ".js?" . $css_reload_key . "\"></script>";
 		}
 		?>
 		
