@@ -1366,12 +1366,9 @@ function create_previews_using_im($ref,$thumbonly=false,$extension="jpg",$previe
 					unlink($path);
 					$path=str_replace($extension,"jpg",$path);
 				}               
-                                
-                                
-				//echo $runcommand."<br /><br/>";
-				# echo $runcommand."<br>\n";
+
 				# Add a watermarked image too?
-				global $watermark;
+				global $watermark, $watermark_single_image;
 				
 				if (!hook("replacewatermarkcreation","",array($ref,$ps,$n,$alternative))){
 				if (($alternative==-1 || ($alternative!==-1 && $alternative_file_previews)) && isset($watermark) && ($ps[$n]["internal"]==1 || $ps[$n]["allow_preview"]==1))
@@ -1387,11 +1384,30 @@ function create_previews_using_im($ref,$thumbonly=false,$extension="jpg",$previe
 					if ($extension=="png" || $extension=="gif"){
 						$runcommand = $convert_fullpath . ' '. escapeshellarg($path) .(($extension!="png" && $extension!="gif")?'[0] +matte ':'') . $flatten . ' -quality ' . $preview_quality ." -tile ".escapeshellarg($watermarkreal)." -draw \"rectangle 0,0 $tw,$th\" ".escapeshellarg($wmpath); 
 					}
-					
-					#die($runcommand);
-					$output=run_command($runcommand);
-					//echo $runcommand."</br>";
-					
+
+                    // Generate the command for a single watermark instead of a tiled one
+                    if(isset($watermark_single_image))
+                        {
+                        $wm_scale = $watermark_single_image['scale'];
+
+                        $wm_scaled_width  = $tw * ($wm_scale / 100);
+                        $wm_scaled_height = $th * ($wm_scale / 100);
+
+                        // Command example: convert input.jpg watermark.png -gravity Center -geometry 40x40+0+0 -resize 1100x800 -composite wm_version.jpg
+                        $runcommand = sprintf('%s %s %s -gravity %s -geometry %sx%s+0+0 -resize %sx%s -composite %s',
+                            $convert_fullpath,
+                            escapeshellarg($file),
+                            escapeshellarg($watermarkreal),
+                            escapeshellarg($watermark_single_image['position']),
+                            escapeshellarg($wm_scaled_width),
+                            escapeshellarg($wm_scaled_height),
+                            escapeshellarg($tw),
+                            escapeshellarg($th),
+                            escapeshellarg($wmpath)
+                        );
+                        }
+
+					$output = run_command($runcommand);
 					}
 				}// end hook replacewatermarkcreation
 				} 

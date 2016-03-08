@@ -2944,3 +2944,17 @@ $bottom_links_bar=false;
 
 # Prevent users without accounts from requesting resources when accessing external shares. If true, external users requesting access will be redirected to the login screen so only recommended if account requests are allowed.
 $prevent_external_requests=false;
+
+/*
+Display watermark without repeating it
+Possible values for position: NorthWest, North, NorthEast, West, Center, East, SouthWest, South, SouthEast
+
+IMPORTANT: the watermark used will need to have an aspect ratio of 1 for this to work as expected. A different aspect ratio
+           will return unexpected results
+
+$watermark_single_image = array(
+    'scale'    => 40,
+    'position' => 'Center',
+);
+*/
+
