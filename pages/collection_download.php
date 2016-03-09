@@ -227,6 +227,7 @@ if ($submitted != "")
 	# Build a list of files to download
 	for ($n=0;$n<count($result);$n++)
 		{
+		resource_type_config_override($result[$n]["resource_type"]);
 		$copy=false; 
 		$ref=$result[$n]["ref"];
 		# Load access level
