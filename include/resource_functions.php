@@ -2131,7 +2131,7 @@ function notify_user_contributed_submitted($refs,$collection=0)
 	// Send a notification mail to the administrators when resources are moved from "User Contributed - Pending Submission" to "User Contributed - Pending Review"
 	global $notify_user_contributed_submitted,$applicationname,$email_notify,$baseurl,$lang,$use_phpmailer;
 	if (!$notify_user_contributed_submitted) {return false;} # Only if configured.
-	$htmlbreak="";
+	$htmlbreak="\r\n";
 	if ($use_phpmailer){$htmlbreak="<br><br>";}
 	
 	$list="";
@@ -2191,7 +2191,7 @@ function notify_user_contributed_unsubmitted($refs,$collection=0)
 	global $notify_user_contributed_unsubmitted,$applicationname,$email_notify,$baseurl,$lang,$use_phpmailer;
 	if (!$notify_user_contributed_unsubmitted) {return false;} # Only if configured.
 	
-	$htmlbreak="";
+	$htmlbreak="\r\n";
 	if ($use_phpmailer){$htmlbreak="<br><br>";}
 	
 	$list="";
@@ -3428,7 +3428,7 @@ function notify_user_resources_approved($refs)
 	// Send a notification mail to the user when resources have been approved
 	global $applicationname,$baseurl,$lang;	
 	debug("Emailing user notifications of resource approvals");	
-	$htmlbreak="";
+	$htmlbreak="\r\n";
 	global $use_phpmailer,$userref,$templatevars;
 	if ($use_phpmailer){$htmlbreak="<br><br>";}
 	$notifyusers=array();
