@@ -31,7 +31,7 @@ $usagecomment=getvalescaped("usagecomment","");
 
 
 $resource_data=get_resource_data($ref);
-
+resource_type_config_override($resource_data["resource_type"]);
 if ($direct_download_noauth && $direct){
 	# if this is a direct download and direct downloads w/o authentication are enabled, allow regardless of permissions
 	$allowed = true;
