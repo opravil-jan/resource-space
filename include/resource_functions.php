@@ -215,6 +215,34 @@ function save_resource_data($ref,$multi,$autosave_field="")
 					$val = ','.$val;
 					}				
 				}
+            elseif ($fields[$n]["type"] == 7) // Category tree        
+				{
+				$submittedval=getvalescaped("field_" . $fields[$n]["ref"],"");
+				$submittedvals=explode(",",$submittedval);
+                $newvals=array();
+                foreach($fields[$n]["nodes"] as $noderef => $nodedata)
+                    {
+                    $addnode=false;
+                    foreach($submittedvals as $checkval)
+                        {                  
+                        if (in_array($checkval,i18n_get_translations($nodedata['name'])))
+                            {
+                            $addnode=true;                            
+                            }                        
+                        }
+                    if($addnode)
+                        {
+                        $nodes_to_add[] = $noderef;
+                        // Correct the string to include all multingual strings as for dropdowns
+                        $newvals[]=$nodedata['name'];    
+                        }
+                    else
+                        {
+                        $nodes_to_remove[] = $noderef;    
+                        }
+                    }
+				$val = ',' . implode(",",$newvals);
+				}
 			else
 				{
 				# Set the value exactly as sent.
@@ -1682,7 +1710,6 @@ function write_metadata($path, $ref, $uniqid="")
 	{
 	// copys the file to tmp and runs exiftool on it	
 	// uniqid tells the tmp file to be placed in an isolated folder within tmp
-
 	global $exiftool_remove_existing,$storagedir,$exiftool_write,$exiftool_no_process,$mysql_charset,$exiftool_write_omit_utf8_conversion;
 
     # Fetch file extension and resource type.
