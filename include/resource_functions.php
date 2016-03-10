@@ -97,7 +97,6 @@ function save_resource_data($ref,$multi,$autosave_field="")
 			{
 
             node_field_options_override($fields[$n]);
-			//print_r($fields[$n]["nodes"]);
 			if ($fields[$n]["type"]==2)
 				{
 				# construct the value from the ticked boxes
@@ -215,7 +214,7 @@ function save_resource_data($ref,$multi,$autosave_field="")
 					$val = ','.$val;
 					}				
 				}
-            elseif ($fields[$n]["type"] == 7) // Category tree        
+            elseif ($fields[$n]["type"] == 7 || $fields[$n]["type"]==9) // Category tree or dynamic keywords
 				{
 				$submittedval=getvalescaped("field_" . $fields[$n]["ref"],"");
 				$submittedvals=explode(",",$submittedval);
@@ -514,38 +513,36 @@ function save_resource_data_multi($collection)
 	$fields=get_resource_field_data($ref,true);
 	global $auto_order_checkbox,$auto_order_checkbox_case_insensitive, $FIXED_LIST_FIELD_TYPES;
 	$expiry_field_edited=false;
-
+   
 	for ($n=0;$n<count($fields);$n++)
 		{
 		if (getval("editthis_field_" . $fields[$n]["ref"],"")!="" || hook("save_resource_data_multi_field_decision","",array($fields[$n]["ref"])))
 			{
+             # Set up arrays of node ids selcted and we will then resolve these to add/remove. We can't remove all nodes as user may not have access
+            $nodes_to_add=array();
+            $nodes_to_remove=array();
+            $selected_nodes=array();
+            $unselected_nodes=array();
+        
+            node_field_options_override($fields[$n]);
 			if ($fields[$n]["type"]==2)
 				{
 				# construct the value from the ticked boxes
 				$val=","; # Note: it seems wrong to start with a comma, but this ensures it is treated as a comma separated list by split_keywords(), so if just one item is selected it still does individual word adding, so 'South Asia' is split to 'South Asia','South','Asia'.
                 
-                node_field_options_override($fields[$n]);
-				
-                $options = trim_array($fields[$n]['node_options']);
-
-				if ($auto_order_checkbox) {
-					if($auto_order_checkbox_case_insensitive){natcasesort($options);}
-					else{sort($options);}
-				}
-				
-				for($m=0; $m < count($options); $m++)
+                
+                foreach($fields[$n]["nodes"] as $noderef => $nodedata)
 					{
-                    $translated_val = i18n_get_translated($options[$m]);
-					$name           = $fields[$n]['ref'] . '_' . md5($translated_val);
-
-                    if('yes' == getval($name, ''))
+					$name=$fields[$n]["ref"] . "_" . md5($nodedata['name']);
+					if (getval($name,"")=="yes")
 						{
-						if($val != ',')
-                            {
-                            $val .= ',';
-                            }
-
-                        $val .= $translated_val;
+						if ($val!=",") {$val .= ",";}
+						$val .= $nodedata['name'];
+						$selected_nodes[] = $noderef;
+						}
+					else
+						{
+						$unselected_nodes[] = $noderef;
 						}
 					}
 				}
@@ -581,11 +578,72 @@ function save_resource_data_multi($collection)
 			elseif ($fields[$n]["type"] == 3)
 				{
 				$val=getvalescaped("field_" . $fields[$n]["ref"],"");				
+				foreach($fields[$n]["nodes"] as $noderef => $nodedata)
+					{
+					if (strip_leading_comma($val) == $nodedata['name'])
+						{
+						$selected_nodes[] = $noderef;
+						}
+					else
+						{
+						$unselected_nodes[] = $noderef;
+						}
+					}							
 				// if it doesn't already start with a comma, add one
 				if (substr($val,0,1) != ',')
 					{
 					$val = ','.$val;
-					}
+					}				
+				}
+            elseif ($fields[$n]["type"] == 12)
+				{
+				$val=getvalescaped("field_" . $fields[$n]["ref"],"");	
+				foreach($fields[$n]["nodes"] as $noderef => $nodedata)
+					{
+					if (in_array(strip_leading_comma($val),i18n_get_translations($nodedata['name'])))
+						{
+						$selected_nodes[] = $noderef;
+						// Correct the string to include all multingual strings as for dropdowns
+						$val=$nodedata['name'];
+						}
+					else
+						{
+						$unselected_nodes[] = $noderef;
+						}
+					}							
+				// if it doesn't already start with a comma, add one
+				if (substr($val,0,1) != ',')
+					{
+					$val = ','.$val;
+					}				
+				}
+            elseif ($fields[$n]["type"] == 7 || $fields[$n]["type"]==9) // Category tree or dynamic keywords     
+				{
+				$submittedval=getvalescaped("field_" . $fields[$n]["ref"],"");
+				$submittedvals=explode(",",$submittedval);
+                $newvals=array();
+                foreach($fields[$n]["nodes"] as $noderef => $nodedata)
+                    {
+                    $addnode=false;
+                    foreach($submittedvals as $checkval)
+                        {                  
+                        if (in_array($checkval,i18n_get_translations($nodedata['name'])))
+                            {
+                            $addnode=true;                            
+                            }                        
+                        }
+                    if($addnode)
+                        {
+                        $selected_nodes[] = $noderef;
+                        // Correct the string to include all multingual strings as for dropdowns
+                        $newvals[]=$nodedata['name'];    
+                        }
+                    else
+                        {
+                        $unselected_nodes[] = $noderef;    
+                        }
+                    }
+				$val = ',' . implode(",",$newvals);
 				}
 			else
 				{
@@ -601,41 +659,50 @@ function save_resource_data_multi($collection)
 				# Work out existing field value.
 				$existing=escape_check(sql_value("select value from resource_data where resource='$ref' and resource_type_field='" . $fields[$n]["ref"] . "'",""));
 				
-				# Find and replace mode? Perform the find and replace.
 				if (getval("modeselect_" . $fields[$n]["ref"],"")=="FR")
 					{
+                    # Find and replace mode? Perform the find and replace.
 					$val=str_replace
 						(
 						getvalescaped("find_" . $fields[$n]["ref"],""),
 						getvalescaped("replace_" . $fields[$n]["ref"],""),
 						$existing
-						);
+						);                    
 					}
 				
 				# Append text/option(s) mode?
 				if (getval("modeselect_" . $fields[$n]["ref"],"")=="AP")
 					{
 					$val=append_field_value($fields[$n],$origval,$existing);
+                    $nodes_to_add=$selected_nodes;
 					}
 					
 				# Prepend text/option(s) mode?
-				if (getval("modeselect_" . $fields[$n]["ref"],"")=="PP"){
+				elseif (getval("modeselect_" . $fields[$n]["ref"],"")=="PP")
+                    {
 					global $filename_field;
-					if ($fields[$n]["ref"]==$filename_field){
+					if ($fields[$n]["ref"]==$filename_field)
+                        {
 						$val=rtrim($origval,"_")."_".trim($existing); // use an underscore if editing filename.
-					}
+                        }
 					else {
 						# Automatically append a space when appending text types.
 						$val=$origval . " " . $existing;
 					}
-				}
-				
-				# Remove text/option(s) mode?
-				if (getval("modeselect_" . $fields[$n]["ref"],"")=="RM")
+                    }
+				elseif (getval("modeselect_" . $fields[$n]["ref"],"")=="RM")
 					{
-					$val=str_replace($origval,"",$existing);
+                    # Remove text/option(s) mode
+                    $val=str_replace($origval,"",$existing);
+                    $nodes_to_remove=$selected_nodes;
 					}
-					
+				else
+					{
+                    # Replace text/option(s) mode
+					$nodes_to_add=$selected_nodes;
+                    $nodes_to_remove=$unselected_nodes;
+					}
+                
                 # Possibility to hook in and alter the value - additional mode support
                 $hookval=hook("save_resource_data_multi_extra_modes","",array($ref,$fields[$n]));
                 if ($hookval!==false) {$val=$hookval;}
@@ -683,7 +750,15 @@ function save_resource_data_multi($collection)
 
 						remove_keyword_mappings($ref,i18n_get_indexable($oldval),$fields[$n]["ref"],$fields[$n]["partial_index"],$is_date,'','',$is_html);
 						add_keyword_mappings($ref,i18n_get_indexable($newval),$fields[$n]["ref"],$fields[$n]["partial_index"],$is_date,'','',$is_html);
-						}           
+						}
+                        
+                    # Update resource_node table
+                    delete_resource_nodes($ref,$nodes_to_remove);
+                    if(count($nodes_to_add)>0)
+                        {
+                        add_resource_nodes($ref,$nodes_to_add);
+                        }
+            
                             # Add any onchange code
                             if($fields[$n]["onchange_macro"]!="")
                                 {
@@ -872,7 +947,7 @@ function save_resource_data_multi($collection)
 
 function append_field_value($field_data,$new_value,$exiting_value)
 	{
-	if ($field_data["type"]!=2 && $field_data["type"]!=3 && $field_data["type"]!=9 && substr($new_value,0,1)!=",")
+	if ($field_data["type"]!=2 && $field_data["type"]!=3 && $field_data["type"]!=9 && $field_data["type"]!=12 && substr($new_value,0,1)!=",")
 		{
 		# Automatically append a space when appending text types.
 		$val=$exiting_value . " " . $new_value;
