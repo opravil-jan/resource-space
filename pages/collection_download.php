@@ -530,7 +530,7 @@ if ($submitted != "")
 
 		if($use_zip_extension)
 			{
-			$zip->addFile($csv_file, '/Col-' . $collection . '-metadata-export.csv');
+			$zip->addFile($csv_file, 'Col-' . $collection . '-metadata-export.csv');
 			}
 		else
 			{
