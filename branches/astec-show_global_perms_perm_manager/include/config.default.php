@@ -1441,6 +1441,10 @@ $global_permissions="";
 # Suggested setting for a 'read only' mode: $global_permissions_mask="a,t,c,d,e0,e1,e2,e-1,e-2,i,n,h";
 $global_permissions_mask="";
 
+# Show global permissions settings on permissions manager.
+# This will display global permissions as greyed out and read-only
+$global_permissions_show_on_manager=false;
+
 # User account application - auto creation
 # By default this is switched off and applications for new user accounts will be sent as e-mails
 # Enabling this option means user accounts will be created but will need to be approved by an administrator

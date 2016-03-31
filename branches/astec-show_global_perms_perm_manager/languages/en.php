@@ -1665,6 +1665,7 @@ $lang["can_change_own_password"]="Can change own account password";
 $lang["can_manage_users"]="Can manage users";
 $lang["can_manage_users_in_children_groups"]="Can manage users in children groups to the user's group only";
 $lang["can_email_resources_to_own_and_children_and_parent_groups"]="Can email resources to users in the user's own group, children groups and parent group only";
+$lang["permissionsmanager-global_permission_set"]="global";
 
 $lang["nodownloadcollection"]="You do not have access to download any of the resources in this collection.";
 
