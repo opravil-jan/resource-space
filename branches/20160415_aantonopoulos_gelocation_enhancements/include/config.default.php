@@ -3011,3 +3011,4 @@ $collection_search_includes_resource_metadata=false;
 # e.g. array(3,12);
 $default_to_first_node_for_fields=array();
 
+$geo_locate_collection = false;
