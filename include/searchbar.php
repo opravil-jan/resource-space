@@ -250,26 +250,10 @@ if (!$basic_simple_search)
 	if ($simple_search_date){$cleardate.=" document.getElementById('basicyear').value='';document.getElementById('basicmonth').value='';" ;}
         if ($searchbyday && $simple_search_date) { $cleardate.="document.getElementById('basicday').value='';"; }
 
-	if(!$basic_simple_search)
-        {
-        $searchbuttons .= "<input name=\"Clear\" id=\"clearbutton\" class=\"searchbutton\" type=\"button\" value=\"&nbsp;&nbsp;".$lang['clearbutton']."&nbsp;&nbsp;\" onClick=\"document.getElementById('ssearchbox').value='';$cleardate";
-        if($display_user_rating_stars && $star_search)
-            {
-            $searchbuttons .= "StarSearchRatingDisplay(0,'StarCurrent');document.getElementById('starsearch').value='';window['StarSearchRatingDone']=true;";
-            }
-
-        if($resourceid_simple_search)
-            {
-            $searchbuttons .= " document.getElementById('searchresourceid').value='';";
-            }
-
-        $searchbuttons .= "ResetTicks();\"/>";
-        }
-    else
-        {
-        $searchbuttons .= '<input name="Clear" id="clearbutton" class="searchbutton" type="button" value="&nbsp;&nbsp;' . $lang['clearbutton'] . '&nbsp;&nbsp;" onClick="document.getElementById(\'ssearchbox\').value=\'\';" />';
-        }
-
+	if (!$basic_simple_search) { $searchbuttons.="<input name=\"Clear\" id=\"clearbutton\" class=\"searchbutton\" type=\"button\" value=\"&nbsp;&nbsp;".$lang['clearbutton']."&nbsp;&nbsp;\" onClick=\"document.getElementById('ssearchbox').value='';$cleardate";
+	if ($display_user_rating_stars && $star_search) { $searchbuttons.="StarSearchRatingDisplay(0,'StarCurrent');document.getElementById('starsearch').value='';window['StarSearchRatingDone']=true;"; } 
+	if ($resourceid_simple_search) {$searchbuttons.=" document.getElementById('searchresourceid').value='';"; }
+	$searchbuttons.="ResetTicks();\"/>"; }
 	$searchbuttons.="<input name=\"Submit\" id=\"searchbutton\" class=\"searchbutton\" type=\"submit\" value=\"&nbsp;&nbsp;". $lang['searchbutton']."&nbsp;&nbsp;\" />";
 	hook("responsivesimplesearch");
 	$searchbuttons.="</div>";
@@ -417,23 +401,17 @@ if (!$basic_simple_search)
 			# Show a smaller version of the selected node box, plus the hidden value that submits the form.
 			
 			# Reprocess provided value into expected format.
-            $value=preg_replace('/[;\|]/',',',$value);
-
+			$value=str_replace(";",",",$value);
 			?>
+			
 			<div id="field_<?php echo htmlspecialchars($fields[$n]["name"]) ?>" >
-			<div id="<?php echo htmlspecialchars($fields[$n]["name"]) ?>_statusbox" class="MiniCategoryBox">
-                <script>UpdateStatusBox("<?php echo htmlspecialchars($fields[$n]["name"]) ?>", false);</script>
-            </div>
+			<div id="<?php echo htmlspecialchars($fields[$n]["name"]) ?>_statusbox" class="MiniCategoryBox"></div>
 			<input type="hidden" name="field_cat_<?php echo htmlspecialchars($fields[$n]["name"]) ?>" id="<?php echo htmlspecialchars($fields[$n]["name"]) ?>_category" value="<?php echo htmlspecialchars($value) ?>">
 			
 			
 			<?php
-            if (!isset($extrafooterhtml))
-                {
-                $extrafooterhtml='';
-                }
 			# Add floating frame HTML. This must go in the footer otherwise it appears in the wrong place in IE due to it existing within a floated parent (the search bar).
-			$extrafooterhtml.="
+			@$extrafooterhtml.="
 			<div class=\"RecordPanel\" style=\"display:none;position:fixed;top:100px;left:200px;text-align:left;\" id=\"cattree_" . $fields[$n]["name"] . "\">" . $lang["pleasewait"] . "</div>
 			<script type=\"text/javascript\">
 			// Load Category Tree

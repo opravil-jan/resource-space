@@ -745,8 +745,6 @@ $lang["wrongpassword"]="Incorrect password, please try again";
 $lang["action-view"]="View";
 $lang["action-preview"]="Preview";
 $lang["action-expand"]="Expand";
-$lang["action-more"]="More";
-$lang["action-less"]="Less";
 $lang["action-select"]="Select";
 $lang["action-download"]="Download";
 $lang["action-email"]="E-mail";
@@ -1183,7 +1181,6 @@ $lang["setup-login_to"]="Login to";
 $lang["setup-configuration_file_output"]="Configuration file output";
 $lang["more-information"]="More information";
 $lang["setup-structuralplugins"]="System templates";
-$lang["setup-headercolourstyleoverride"]="Custom header colour";
 
 # Collection log - actions
 $lang["collectionlog"]="Collection log";
@@ -1267,7 +1264,6 @@ $lang["allowedextensions"]="Allowed extensions";
 $lang["allowedextensions-extensions"]="Allowed extensions: %EXTENSIONS"; # Use %EXTENSIONS, %extensions or %Extensions as a placeholder. The placeholder will be replaced with the filename extensions, using the same case. E.g. "Allowed Extensions: %EXTENSIONS" -> "Allowed Extensions: JPG, PNG"
 
 $lang["alternativebatchupload"]="Upload alternative files";
-$lang["alternativelocalupload"]="Upload alternative files - fetch from local upload folder";
 
 $lang["confirmdeletefieldoption"]="Are you sure you wish to DELETE this field option?";
 
@@ -1669,6 +1665,7 @@ $lang["can_change_own_password"]="Can change own account password";
 $lang["can_manage_users"]="Can manage users";
 $lang["can_manage_users_in_children_groups"]="Can manage users in children groups to the user's group only";
 $lang["can_email_resources_to_own_and_children_and_parent_groups"]="Can email resources to users in the user's own group, children groups and parent group only";
+$lang["permissionsmanager-global_permission_set"]="global";
 
 $lang["nodownloadcollection"]="You do not have access to download any of the resources in this collection.";
 

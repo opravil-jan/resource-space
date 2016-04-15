@@ -19,7 +19,6 @@ $generateurl=generateURL($baseurl . "/plugins/video_tracks/pages/create_video.ph
 
 $message="";
 $video_tracks_output_formats=unserialize(base64_decode($video_tracks_output_formats_saved));
-$video_tracks_export_folder = rtrim($video_tracks_export_folder,"/");
 $resource=get_resource_data($ref);	
 $edit_access=get_edit_access($ref,$resource["archive"]);	
 
@@ -51,9 +50,9 @@ if(getval("generate","")!="")
 		// Get the chosen ffmpeg command as set in the plugin config
 		$video_track_command=$video_tracks_output_formats[$video_track_format];
 		
-		$shell_exec_cmd = $ffmpeg_fullpath . " " . $ffmpeg_global_options . " -i '" . $filesource . "'"; 
+		$shell_exec_cmd = $ffmpeg_fullpath . " " . $ffmpeg_global_options . " -i " . $filesource; 
 		
-		$probeout = run_command($ffprobe_fullpath . " -i '" . escapeshellarg($filesource), true) . "'";    
+		$probeout = run_command($ffprobe_fullpath . " -i " . escapeshellarg($filesource), true);    
 		if(preg_match("/Duration: (\d+):(\d+):(\d+)\.\d+, start/", $probeout, $match))
 			{
 			$duration = $match[1]*3600+$match[2]*60+$match[3];
@@ -65,7 +64,7 @@ if(getval("generate","")!="")
             $audio_info=get_alternative_file($ref,$video_audio_file);
 			$audio_path=get_resource_path($ref,true,"",false,$audio_info["file_extension"],-1,1,false,"",$video_audio_file);
            
-			$shell_exec_cmd .= " -i '" . $audio_path . "'";
+			$shell_exec_cmd .= " -i " . $audio_path;
 			$shell_exec_cmd .= " -map 0:v -map 1:a";
 			}
 		
@@ -73,10 +72,10 @@ if(getval("generate","")!="")
 			{
 			$subtitle_info=get_alternative_file($ref,$video_subtitle_file);
 			$subtitle_path=get_resource_path($ref,true,"",false,$subtitle_info["file_extension"],-1,1,false,"",$video_subtitle_file); 
-			$shell_exec_cmd .= " -vf subtitles='" . $subtitle_path . "'";
+			$shell_exec_cmd .= " -vf subtitles=" . $subtitle_path;
 			}
 
-		$shell_exec_cmd .= " " . $video_track_command["command"] . " %%TARGETFILE%%";
+		$shell_exec_cmd .= " %%TARGETFILE%%";
 		
 		// Video requirements have been defined. What does the user want to do with the video?	
 		if(getval("video_track_save_alt","")!="" && $edit_access)
@@ -120,11 +119,11 @@ if(getval("generate","")!="")
 			// Save into export directory
 			$filename=get_download_filename($ref,"","",$video_track_command["extension"]);
 			$filename=remove_extension($filename) . "_" . safe_file_name($video_track_format) . "." . $video_track_command["extension"];
-			$targetfile=$video_tracks_export_folder . DIRECTORY_SEPARATOR  .$filename;
+			$targetfile=$video_tracks_export_folder . $filename;
 			if(file_exists($targetfile))
 				{
 				$filename=remove_extension($filename) . "_" . date("Ymd_Hi") . "." . $video_track_command["extension"];
-				$targetfile=$video_tracks_export_folder . DIRECTORY_SEPARATOR . $filename;
+				$targetfile=$video_tracks_export_folder . "/" . $filename;
 				}
             
 			$message=$lang["video_tracks_export_file_created"];
@@ -156,7 +155,9 @@ if(getval("generate","")!="")
 			{
 			// Download	
 			// Generate a path based on userref
+			//$targetdir=get_temp_dir(false,'user_downloads';
 			$targetfile = get_temp_dir(false,'user_downloads') . "/" . $ref . "_" . md5($username . $randstring . $scramble_key) . "." . $video_track_command["extension"];
+			//$targetfile=$targetdir . "/" . $ref . "_" . md5($username . $randstring . $scramble_key) . "." . $video_track_command["extension"] ;	
 			if($offline)
 				{ 
 				$job_data=array();
@@ -187,13 +188,12 @@ if(getval("generate","")!="")
 			
 		if(!$offline)
 			{
-			$shell_exec_cmd = str_replace("%%TARGETFILE%%","'" . $targetfile . "'",$shell_exec_cmd);
+			$shell_exec_cmd = str_replace("%%TARGETFILE%%",$targetfile,$shell_exec_cmd);
 			if ($config_windows)
 				{
 				file_put_contents(get_temp_dir() . "/ffmpeg_" . $randstring . ".bat",$shell_exec_cmd);
 				$shell_exec_cmd=get_temp_dir() . "/ffmpeg_" . $randstring . ".bat";
 				}
-                
             $output=run_command($shell_exec_cmd);
             if(file_exists($targetfile))
                 {
@@ -202,7 +202,7 @@ if(getval("generate","")!="")
                     // Save as alternative
                     $newfilesize=filesize_unlimited($targetfile);
                     sql_query("update resource_alt_files set file_size='" . $newfilesize ."' where resource='" . $ref . "' and ref='" . $newaltfile . "'");
-                    if ($alternative_file_previews)
+                     if ($alternative_file_previews)
                         {create_previews($ref,false,$video_track_command["extension"],false,false,$newaltfile);}
                     $message = $lang["alternative_file_created"];
                     }

@@ -10,47 +10,16 @@ abstract class File implements FileInterface
     const MAC_LINE_ENDING     = "\r";
     const WINDOWS_LINE_ENDING = "\r\n";
 
-    /**
-     * @var array
-     */
     protected $cues;
-
-    /**
-     * @var string
-     */
     protected $filename;
-
-    /**
-     * @var string
-     */
     protected $encoding = self::DEFAULT_ENCODING;
-
-    /**
-     * @var bool
-     */
     protected $useIconv;
-
-    /**
-     * @var string
-     */
     protected $lineEnding;
 
-    /**
-     * @var string
-     */
     protected $fileContent;
 
-    /**
-     * @var array
-     */
     protected $stats;
 
-    /**
-     * File constructor.
-     * @param null       $_filename
-     * @param null       $_encoding
-     * @param bool|false $_useIconv
-     */
     public function __construct($_filename = null, $_encoding = null, $_useIconv = false)
     {
         $this->lineEnding = self::UNIX_LINE_ENDING;
@@ -82,10 +51,6 @@ abstract class File implements FileInterface
         );
     }
 
-    /**
-     * @param string $_filename The filename
-     * @return $this
-     */
     public function setFilename($_filename)
     {
         $this->filename = file_exists($_filename) ? $_filename : null;
@@ -93,10 +58,6 @@ abstract class File implements FileInterface
         return $this;
     }
 
-    /**
-     * @param string $_encoding
-     * @return $this
-     */
     public function setEncoding($_encoding)
     {
         $this->encoding = $_encoding;
@@ -104,10 +65,6 @@ abstract class File implements FileInterface
         return $this;
     }
 
-    /**
-     * @param bool $_useIconv
-     * @return $this
-     */
     public function setUseIconv($_useIconv)
     {
         $this->useIconv = $_useIconv;
@@ -115,9 +72,6 @@ abstract class File implements FileInterface
         return $this;
     }
 
-    /**
-     * @param string $_lineEnding
-     */
     public function setLineEnding($_lineEnding)
     {
         $lineEndings = array(
@@ -138,58 +92,36 @@ abstract class File implements FileInterface
         }
     }
 
-    /**
-     * @return string
-     */
     public function getFilename()
     {
         return $this->filename;
     }
 
-    /**
-     * @return string
-     */
     public function getFileContent()
     {
         return $this->fileContent;
     }
 
-    /**
-     * @return string
-     */
     public function getEncoding()
     {
         return $this->encoding;
     }
 
-    /**
-     * @return bool|false
-     */
     public function getUseIconv()
     {
         return $this->useIconv;
     }
 
-    /**
-     * @param integer $_index
-     * @return Cue|null
-     */
     public function getCue($_index)
     {
         return isset($this->cues[$_index]) ? $this->cues[$_index] : null;
     }
 
-    /**
-     * @return Cue|null
-     */
     public function getFirstCue()
     {
         return isset($this->cues[0]) ? $this->cues[0] : null;
     }
 
-    /**
-     * @return Cue|null
-     */
     public function getLastCue()
     {
         $count = count($this->cues);
@@ -197,27 +129,16 @@ abstract class File implements FileInterface
         return ($count > 0) ? $this->cues[$count - 1] : null;
     }
 
-    /**
-     * @return array
-     */
     public function getCues()
     {
         return $this->cues;
     }
 
-    /**
-     * @return integer
-     */
     public function getCuesCount()
     {
         return count($this->cues);
     }
 
-    /**
-     * @param null $_filename
-     * @return $this
-     * @throws \Exception
-     */
     public  function loadFromFile($_filename = null)
     {
         if ($_filename === null) {
@@ -239,10 +160,6 @@ abstract class File implements FileInterface
         return $this;
     }
 
-    /**
-     * @param string $_str
-     * @return $this
-     */
     public function loadFromString($_str)
     {
         // Clear cues from previous runs
@@ -400,12 +317,7 @@ abstract class File implements FileInterface
         return $this;
     }
 
-    /**
-     * @param FileInterface $_file
-     * @return $this
-     * @throws \Exception
-     */
-    public function merge(FileInterface $_file)
+    public function merge($_file)
     {
         if (!is_a($_file, get_class($this))) {
             throw new \Exception('Can\'t merge! Wrong format: '.$this->getFormat($_file));
@@ -420,7 +332,7 @@ abstract class File implements FileInterface
     /**
      * Shifts a range of subtitles a specified amount of time.
      *
-     * @param int $_time The time to use (ms), which can be positive or negative.
+     * @param $_time The time to use (ms), which can be positive or negative.
      * @param int $_startIndex The subtitle index the range begins with.
      * @param int $_endIndex The subtitle index the range ends with.
      */
@@ -507,9 +419,6 @@ abstract class File implements FileInterface
         return true;
     }
 
-    /**
-     * @return $this
-     */
     public function build()
     {
         $this->buildPart(0, $this->getCuesCount() - 1);
@@ -597,11 +506,7 @@ abstract class File implements FileInterface
         return $this->stats;
     }
 
-    /**
-     * @param $_file
-     * @return mixed
-     */
-    public static function getFormat(FileInterface $_file)
+    public static function getFormat($_file)
     {
         if (!is_subclass_of($_file, __NAMESPACE__.'\File')) {
             throw new \InvalidArgumentException('Expected subclass of File');
@@ -613,12 +518,7 @@ abstract class File implements FileInterface
         return $tmp[0];
     }
 
-    /**
-     * @param FileInterface $_file
-     * @param bool|true     $_full_namespace
-     * @return string
-     */
-    public static function getExpectedCueClass(FileInterface $_file, $_full_namespace = true)
+    public static function getExpectedCueClass($_file, $_full_namespace = true)
     {
         $format = self::getFormat($_file).'Cue';
 
@@ -631,10 +531,6 @@ abstract class File implements FileInterface
         return $format;
     }
 
-    /**
-     * @param string $_output_format
-     * @return mixed
-     */
     public function convertTo($_output_format)
     {
         $fileFormat = self::getFormat($this);
@@ -646,9 +542,6 @@ abstract class File implements FileInterface
         return Converter::defaultConverter($this, $_output_format);
     }
 
-    /**
-     * Encode file content
-     */
     protected function encode()
     {
         if ($this->useIconv) {

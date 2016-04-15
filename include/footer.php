@@ -352,13 +352,7 @@ if (isset($k) && $k!="" && isset($search) && !isset($usercollection))
 if (!hook("replacecdivrender"))
 	{
 	if ($collections_footer && !in_array($pagename,$omit_collectiondiv_load_pages) && !checkperm("b") && isset($usercollection)) 
-		{
-        // Footer requires restypes as a string because it is urlencoding them
-        if(isset($restypes) && is_array($restypes))
-            {
-            $restypes = implode(',', $restypes);
-            }
-            ?>
+		{?>
 		<div id="CollectionDiv" class="CollectBack AjaxCollect ui-layout-south"></div>
 
 		<script type="text/javascript">
@@ -430,7 +424,7 @@ if (!hook("replacecdivrender"))
 				}
 			});
 			window.onload = function() {
-				CollectionDivLoad('<?php echo $baseurl_short?>pages/collections.php?thumbs=<?php echo urlencode($thumbs); ?>&collection='+usercollection+'<?php echo (isset($k) ? "&k=".urlencode($k) : ""); ?>&order_by=<?php echo (isset($order_by) ? urlencode($order_by) : ""); ?>&sort=<?php echo (isset($sort) ? urlencode($sort) : ""); ?>&search=<?php echo (isset($search) ? urlencode($search) : ""); ?>&restypes=<?php echo (isset($restypes) ? urlencode($restypes) : "") ?>&archive=<?php echo (isset($archive) ? urlencode($archive) : "" ) ?>&daylimit=<?php echo (isset($daylimit) ? urlencode($daylimit) : "" ) ?>&offset=<?php echo (isset($offset) ? urlencode($offset) : "" );echo (isset($resources_count) ? "&resources_count=$resources_count" :""); ?>');
+				CollectionDivLoad('<?php echo $baseurl_short?>pages/collections.php?thumbs=<?php echo urlencode($thumbs); ?>&collection='+usercollection+'<?php echo (isset($k) ? "&k=".urlencode($k) : ""); ?>');
 				InitThumbs();
 			}
 	</script>

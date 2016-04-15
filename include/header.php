@@ -223,7 +223,14 @@ if($videojs && ($pagename=='search' && $keyboard_navigation_video_search) || ($p
 	<script type="text/javascript" src="<?php echo $baseurl_short?>lib/js/videojs-extras.js?<?php echo $css_reload_key?>"></script>
     <?php
     }
-?>
+
+if($dash_tile_colour && 0 === count($dash_tile_colour_options))
+    {
+    ?>
+    <script src="<?php echo $baseurl_short; ?>lib/js/jscolor.min.js?css_reload_key=<?php echo $css_reload_key; ?>"></script>
+    <?php
+    }
+    ?>
 
 <script type="text/javascript">
 var baseurl_short="<?php echo $baseurl_short?>";
@@ -325,8 +332,7 @@ $linkUrl=isset($header_link_url) ? $header_link_url : $homepage_url;
 if($slimheader)
     {
     ?>
-    <div id="Header" <?php echo (isset($slimheader_darken) && $slimheader_darken) ? "class='slimheader_darken'":"";
-    if (isset($header_colour_style_override) && $header_colour_style_override!='') { ?> style="background: <?php echo $header_colour_style_override; ?>;"<?php } ?>>
+    <div id="Header" <?php echo (isset($slimheader_darken) && $slimheader_darken) ? "class='slimheader_darken'":"";?>>
     <?php hook("responsiveheader");
     if($header_text_title) 
         {?>
@@ -546,12 +552,5 @@ if ($k!="" && !$internal_share_access) { ?>
 </style>
 <?php }
 // Ajax specific hook
-if ($ajax) {
-    // remove Spectrum colour picker as it is out of CentralSpace div scope
-    ?><script>
-        jQuery('.sp-container').remove();
-    </script>
-    <?php
-    hook("afterheaderajax");
-}
+if ($ajax) {hook("afterheaderajax");}
 ?>

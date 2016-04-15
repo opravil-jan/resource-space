@@ -279,7 +279,7 @@ function do_search($search,$restypes="",$order_by="relevance",$archive=0,$fetchr
                         }
                     elseif (!hook('customsearchkeywordfilter', null, array($kw)))
                         {
-
+                        $ckeywords=explode(";",$kw[1]);
 
                         # Fetch field info
                         global $fieldinfo_cache;
@@ -289,16 +289,6 @@ function do_search($search,$restypes="",$order_by="relevance",$archive=0,$fetchr
                             $fieldinfo=sql_query("select ref,type from resource_type_field where name='" . escape_check($kw[0]) . "'",0);
                             $fieldinfo_cache[$kw[0]]=$fieldinfo;
                         }
-
-                        if ($fieldinfo[0]["type"] == 7)
-                            {
-                            $ckeywords=preg_split('/[\|;]/',$kw[1]);
-                            }
-                        else
-                            {
-                            $ckeywords=explode(";",$kw[1]);
-                            }
-
                         if (count($fieldinfo)==0)
                             {
                             debug("Field short name not found.");return false;
@@ -1442,10 +1432,7 @@ function render_search_field($field,$value="",$autoupdate,$class="stdwidth",$for
         
         case 7: # ----- Category Tree
         $options=$field["options"];
-
-        //$set=trim_array(explode(";",cleanse_string($value,true)));
-        $set=preg_split('/[;\|]/',cleanse_string($value,true));
-
+        $set=trim_array(explode(";",cleanse_string($value,true)));
         if ($forsearchbar)
             {
             # On the search bar?
@@ -2027,12 +2014,10 @@ function compile_search_actions($top_actions)
                 {
                 $option_name = 'save_collection_to_dash';
                 $data_attribute['url'] = sprintf('
-                    %spages/dash_tile.php?create=true&tltype=srch&promoted_resource=true&freetext=true&all_users=1&link=/pages/search.php?search=%s&order_by=%s&sort=%s
+                    %spages/dash_tile.php?create=true&tltype=srch&promoted_resource=true&freetext=true&all_users=1&link=/pages/search.php?search=%s&order_by=relevance&sort=DESC
                     ',
                     $baseurl_short,
-                    $search,
-                    $order_by,
-                    $sort
+                    $search
                 );
                 }
 
@@ -2168,7 +2153,7 @@ function search_filter($search,$archive,$restypes,$starsearch,$recent_search_day
 	$sql_filter="";
 	
 	# Apply resource types
-	if (($restypes!="")&&(substr($restypes,0,6)!="Global") && substr($search, 0, 11) != '!collection')
+	if (($restypes!="")&&(substr($restypes,0,6)!="Global"))
 	    {
 	    if ($sql_filter!="") {$sql_filter.=" and ";}
 	    $restypes_x=explode(",",$restypes);
@@ -2381,9 +2366,8 @@ function search_special($search,$sql_join,$fetchrows,$sql_prefix,$sql_suffix,$or
      # This is used when the $collection_search_includes_resource_metadata option is enabled and searches collections based on the contents of the collections.
     if (substr($search,0,19)=="!contentscollection")
         {
-        $flags=substr($search,19,((strpos($search," ")!==false)?strpos($search," "):strlen($search)) -19); # Extract User/Public/Theme flags from the beginning of the search parameter.
-    	
-        if ($flags=="") {$flags="TP";} # Sensible default
+        $flags=substr($search,19,strpos($search," ")-19); # Extract User/Public/Theme flags from the beginning of the search parameter.
+    	if ($flags=="") {$flags="TP";} # Sensible default
 
         # Add collections based on the provided collection type flags.
         $collection_filter="(";

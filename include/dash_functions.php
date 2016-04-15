@@ -350,7 +350,7 @@ function get_default_dash($user_group_id = null)
 
             if(isset($buildstring['tltype']) && allow_tile_colour_change($buildstring['tltype']) && isset($buildstring['tlstylecolour']))
                 {
-                $tile_custom_style .= get_tile_custom_style($buildstring);
+                $tile_custom_style .= "background-color: #{$buildstring['tlstylecolour']};";
                 }
             }
             ?>
@@ -476,7 +476,7 @@ function get_default_dash($user_group_id = null)
  */
 function get_managed_dash()
 	{
-	global $baseurl,$baseurl_short,$lang,$anonymous_login,$username,$dash_tile_shadows, $anonymous_default_dash, $userref, $usergroup, $dash_tile_colour, $dash_tile_colour_options;
+	global $baseurl,$baseurl_short,$lang,$anonymous_login,$username,$dash_tile_shadows, $anonymous_default_dash, $userref, $dash_tile_colour, $dash_tile_colour_options;
 	#Build Tile Templates
 	if(checkPermission_anonymoususer() && !$anonymous_default_dash)
         {
@@ -490,20 +490,13 @@ function get_managed_dash()
         }
     else
         {
-        $tiles = sql_query("SELECT dash_tile.ref AS 'tile', dash_tile.title, dash_tile.url, dash_tile.reload_interval_secs, dash_tile.link, dash_tile.default_order_by as 'order_by'
-                              FROM dash_tile
-                             WHERE dash_tile.all_users = 1
-                               AND (dash_tile.ref IN (SELECT dash_tile FROM usergroup_dash_tile WHERE usergroup_dash_tile.usergroup = '{$usergroup}')
-								OR dash_tile.ref NOT IN (SELECT distinct dash_tile FROM usergroup_dash_tile))
-                               AND (
-                                    dash_tile.allow_delete = 1
-                                    OR (
-                                        dash_tile.allow_delete = 0
-                                        AND dash_tile.ref IN (SELECT DISTINCT user_dash_tile.dash_tile FROM user_dash_tile)
-                                       )
-                                   )
-                            ORDER BY default_order_by"
-                            );
+        $tiles = sql_query("SELECT dash_tile.ref AS 'tile',dash_tile.title,dash_tile.url,dash_tile.reload_interval_secs,dash_tile.link,dash_tile.default_order_by as 'order_by'
+                       FROM dash_tile
+                       WHERE dash_tile.all_users=1
+                       AND (dash_tile.allow_delete=1
+                       OR (dash_tile.allow_delete=0
+                       AND dash_tile.ref IN (SELECT DISTINCT user_dash_tile.dash_tile FROM user_dash_tile)))
+                       ORDER BY default_order_by");
         }
     
     foreach($tiles as $tile)
@@ -517,7 +510,7 @@ function get_managed_dash()
 
             if(isset($buildstring['tltype']) && allow_tile_colour_change($buildstring['tltype']) && isset($buildstring['tlstylecolour']))
                 {
-                $tile_custom_style .= get_tile_custom_style($buildstring);
+                $tile_custom_style .= "background-color: #{$buildstring['tlstylecolour']};";
                 }
             }
 		?>
@@ -957,7 +950,7 @@ function get_user_dash($user)
 
             if(isset($buildstring['tltype']) && allow_tile_colour_change($buildstring['tltype']) && isset($buildstring['tlstylecolour']))
                 {
-                $tile_custom_style .= get_tile_custom_style($buildstring);
+                $tile_custom_style .= "background-color: #{$buildstring['tlstylecolour']};";
                 }
             }
 		?>
@@ -1268,7 +1261,8 @@ function allow_tile_colour_change($tile_type, $tile_style = '')
 */
 function render_dash_tile_colour_chooser($tile_style, $tile_colour)
     {
-    global $lang, $dash_tile_colour, $dash_tile_colour_options, $baseurl;
+    global $lang, $dash_tile_colour, $dash_tile_colour_options;
+
     if('ftxt' == $tile_style)
         {
         ?>
@@ -1288,17 +1282,7 @@ function render_dash_tile_colour_chooser($tile_style, $tile_colour)
     if(0 === count($dash_tile_colour_options))
         {
         ?>
-        <script src="<?php echo $baseurl; ?>/lib/spectrum/spectrum.js"></script>
-        <link rel="stylesheet" href="<?php echo $baseurl; ?>/lib/spectrum/spectrum.css" />
-        <input id="tile_style_colour" name="tlstylecolour" type="text" onchange="update_tile_preview_colour(this.value);" value="<?php echo $tile_colour; ?>">
-        <script>
-            jQuery('#tile_style_colour').spectrum({
-                showAlpha: true,
-                showInput: true,
-                clickoutFiresChange: true,
-                preferredFormat: 'rgb'
-            });
-        </script>
+        <input id="tile_style_colour" name="tlstylecolour" class="jscolor {required: false}" onchange="update_tile_preview_colour(this.jscolor);" value="<?php echo $tile_colour; ?>">
         <?php
         }
     else
@@ -1384,23 +1368,3 @@ function render_dash_tile_colour_chooser($tile_style, $tile_colour)
 
     return;
     }
-
-function get_tile_custom_style($buildstring)
-    {
-    if (isset($buildstring['tlstylecolour']))
-        {
-        $return_value="background-color: ";
-        if (preg_match('/^[a-fA-F0-9]+$/',$buildstring['tlstylecolour']))
-            {
-            // this is a fix for supporting legacy hex values that do not have '#' at start
-            $return_value.='#';
-            }
-        $return_value.=$buildstring['tlstylecolour'] . ';';
-        return $return_value;
-        }
-    else
-        {
-        return '';
-        }
-    }
-

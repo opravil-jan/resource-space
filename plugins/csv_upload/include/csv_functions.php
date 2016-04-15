@@ -330,8 +330,7 @@ function csv_upload_process($filename,&$meta,$resource_types,&$messages,$overrid
 	
 	fclose($file);
 
-    // add an error if there are no lines of data to process (i.e. just the header)
-	if (0 == $line_count && !$processcsv)
+	if ($line_count==1 && !$processcsv)		// add an error if there are no lines of data to process (i.e. just the header)
 		{
 		array_push($messages,"Error: No lines of data found in file");		
 		}

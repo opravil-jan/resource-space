@@ -10,8 +10,6 @@ $title=sql_value("select title value from resource_type_field where ref='$ref'",
 # Perform copy
 if (getval("saveform","")!="")
 	{
-	global $lang;
-
 	$sync=getvalescaped("sync","");
 	if ($sync==1) {$sync="'" . $ref . "'";} else {$sync="null";}
 	
@@ -84,12 +82,14 @@ if (getval("saveform","")!="")
 		regexp_filter,
                 display_condition,
                 onchange_macro,
-		" . $sync . "
+		" . $sync . "	
+	
 		from resource_type_field where ref='$ref'
-		");
+		
+		
+		");	
 	$copied=sql_insert_id();
-	log_activity(null,LOG_CODE_COPIED,$lang['copy_of'] . " {$ref}",'resource_type_field','',$copied);
-	redirect($baseurl_short . "pages/admin/admin_resource_type_field_edit.php?ref=" . $copied);
+        redirect($baseurl_short . "pages/admin/admin_resource_type_field_edit.php?ref=" . $copied);
 	}
         
 if ($copied!='')
@@ -97,11 +97,7 @@ if ($copied!='')
     $saved_text=str_replace("?",$copied,$lang["copy-completed"]);    
     }
 	
-$backurl=getvalescaped("backurl","");
-if($backurl=="")
-    {
-    $backurl=$baseurl_short."pages/admin/admin_resource_type_fields.php";
-    }
+
 
 include "../../include/header.php";
 
@@ -109,8 +105,9 @@ include "../../include/header.php";
 <div class="BasicsBox">
     
 <p>
-    
-    <a href="<?php echo $backurl ?>" onClick="return CentralSpaceLoad(this,true);">&lt;&nbsp;<?php echo $lang["back"]?></a>
+    <a href="<?php echo $baseurl . "/pages/admin/admin_home.php" ?>" onClick="return CentralSpaceLoad(this,true);">&lt;&nbsp;<?php echo $lang["systemsetup"]?></a><br>
+    <a href="<?php echo $baseurl . "/pages/admin/admin_resource_type_fields.php" ?>" onClick="return CentralSpaceLoad(this,true);">&lt;&nbsp;<?php echo $lang["admin_resource_type_fields"]?></a><br>
+    <a href="<?php echo $baseurl . "/pages/admin/admin_resource_type_field_edit.php?ref=" . $ref ?>" onClick="return CentralSpaceLoad(this,true);">&lt;&nbsp;<?php echo $lang["admin_resource_type_field"] .": " . i18n_get_translated($title) ?></a></p>
 </p>
 
 <h1><?php echo $lang["copy-field"] . ":&nbsp;" . i18n_get_translated($title) ?></h1>
@@ -147,4 +144,6 @@ for ($n=0;$n<count($types);$n++)
 </div><!--End of BasicsBox -->
 <?php
 
+
 include "../../include/footer.php";
+	

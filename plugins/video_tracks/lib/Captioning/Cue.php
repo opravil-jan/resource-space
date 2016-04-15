@@ -4,47 +4,14 @@ namespace Captioning;
 
 abstract class Cue implements CueInterface
 {
-    /**
-     * @var mixed
-     */
     protected $start;
-
-    /**
-     * @var mixed
-     */
     protected $stop;
-
-    /**
-     * @var integer
-     */
     protected $startMS;
-
-    /**
-     * @var integer
-     */
     protected $stopMS;
-
-    /**
-     * @var string
-     */
     protected $text;
-
-    /**
-     * @var array
-     */
     protected $textLines = array();
-
-    /**
-     * @var string
-     */
     protected $lineEnding;
 
-    /**
-     * Cue constructor.
-     * @param mixed  $_start
-     * @param mixed  $_stop
-     * @param string $_text
-     */
     public function __construct($_start, $_stop, $_text = '')
     {
         $this->lineEnding = File::UNIX_LINE_ENDING;
@@ -57,12 +24,9 @@ abstract class Cue implements CueInterface
         } else {
             $this->text = '';
         }
+
     }
 
-    /**
-     * @param mixed $_start
-     * @return $this
-     */
     public function setStart($_start)
     {
         $this->start   = $_start;
@@ -72,10 +36,6 @@ abstract class Cue implements CueInterface
         return $this;
     }
 
-    /**
-     * @param mixed $_stop
-     * @return $this
-     */
     public function setStop($_stop)
     {
         $this->stop   = $_stop;
@@ -85,10 +45,6 @@ abstract class Cue implements CueInterface
         return $this;
     }
 
-    /**
-     * @param int $_startMS
-     * @return $this
-     */
     public function setStartMS($_startMS)
     {
         $this->startMS = $_startMS;
@@ -98,10 +54,6 @@ abstract class Cue implements CueInterface
         return $this;
     }
 
-    /**
-     * @param int $_stopMS
-     * @return $this
-     */
     public function setStopMS($_stopMS)
     {
         $this->stopMS = $_stopMS;
@@ -111,11 +63,6 @@ abstract class Cue implements CueInterface
         return $this;
     }
 
-    /**
-     * @param string $_text
-     * @return $this
-     * @throws \Exception
-     */
     public function setText($_text)
     {
         $this->parseTextLines($_text);
@@ -124,10 +71,6 @@ abstract class Cue implements CueInterface
         return $this;
     }
 
-    /**
-     * @param string $_lineEnding
-     * @return $this|void
-     */
     public function setLineEnding($_lineEnding)
     {
         $lineEndings = array(
@@ -141,45 +84,28 @@ abstract class Cue implements CueInterface
         }
 
         $this->lineEnding = $_lineEnding;
-
-        return $this;
     }
 
-    /**
-     * @return mixed
-     */
     public function getStart()
     {
         return $this->start;
     }
 
-    /**
-     * @return mixed
-     */
     public function getStop()
     {
         return $this->stop;
     }
 
-    /**
-     * @return int
-     */
     public function getStartMS()
     {
         return $this->startMS;
     }
 
-    /**
-     * @return int
-     */
     public function getStopMS()
     {
         return $this->stopMS;
     }
 
-    /**
-     * @return string
-     */
     public function getText()
     {
         $this->text = implode($this->lineEnding, $this->textLines);
@@ -187,18 +113,11 @@ abstract class Cue implements CueInterface
         return $this->text;
     }
 
-    /**
-     * @return int
-     */
     public function getDuration()
     {
         return $this->stopMS - $this->startMS;
     }
 
-    /**
-     * @param $_text
-     * @throws \Exception
-     */
     private function parseTextLines($_text)
     {
         if (trim($_text) === '') {
@@ -208,10 +127,6 @@ abstract class Cue implements CueInterface
         $this->textLines = array_map('trim', preg_split('/$\R?^/m', $_text));
     }
 
-    /**
-     * @param string $_line
-     * @return $this
-     */
     public function addTextLine($_line)
     {
         $split = array_map('trim', preg_split('/$\R?^/m', $_line));
@@ -228,34 +143,21 @@ abstract class Cue implements CueInterface
         return $this;
     }
 
-    /**
-     * @return array
-     */
     public function getTextLines()
     {
         return $this->textLines;
     }
 
-    /**
-     * @param int $_index
-     * @return string|null
-     */
     public function getTextLine($_index)
     {
         return isset($this->textLines[$_index]) ? $this->textLines[$_index] : null;
     }
 
-    /**
-     * @return int
-     */
     public function strlen()
     {
         return mb_strlen($this->getText(), 'UTF-8');
     }
 
-    /**
-     * @return float
-     */
     public function getCPS()
     {
         return round($this->strlen() / ($this->getDuration() / 1000), 1);
@@ -295,11 +197,6 @@ abstract class Cue implements CueInterface
         return true;
     }
 
-    /**
-     * @param     $_baseTime
-     * @param int $_factor
-     * @return bool
-     */
     public function scale($_baseTime, $_factor = 1)
     {
         if ($_factor == 1) {
@@ -315,11 +212,7 @@ abstract class Cue implements CueInterface
         return true;
     }
 
-    /**
-     * @param CueInterface $_cue
-     * @return mixed
-     */
-    public static function getFormat(CueInterface $_cue)
+    public static function getFormat($_cue)
     {
         if (!is_subclass_of($_cue, __NAMESPACE__.'\Cue')) {
             throw new \InvalidArgumentException('Invalid $_cue parameter, subclass of Cue expected.');

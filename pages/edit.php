@@ -250,6 +250,7 @@ if ((getval("autosave","")!="") || (getval("tweak","")=="" && getval("submitted"
             }
        else
           {
+          $single=false;
           $uploadparams = str_replace(array('&forcesingle=true','&noupload=true'), array(''),$uploadparams); 
           }
         }       

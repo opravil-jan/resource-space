@@ -30,8 +30,7 @@ if(substr($value, 0, 1) == ',')
 <?php if ($edit_autosave) {?>onChange="AutoSave('<?php echo $field["ref"] ?>');"<?php } ?>>
 
 <?php
-global $default_to_first_node_for_fields;
-if(!hook('replacedropdowndefault', '', array($field)) && !in_array($field["ref"],$default_to_first_node_for_fields))
+if(!hook('replacedropdowndefault', '', array($field)))
     {
     ?>
     <option value=""></option>

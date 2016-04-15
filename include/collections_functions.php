@@ -942,9 +942,7 @@ function get_smart_themes_nodes($field, $is_category_tree, $parent = null)
     // For each option, if it is in use, add it to the return list
     for($n = 0; $n < count($nodes); $n++)
         {
-        //$cleaned_option_base = str_replace('-', ' ', $options_base[$n]);
-        $cleaned_option_base = preg_replace('/\W/',' ',$options_base[$n]);      // replace any non-word characters with a space
-        $cleaned_option_base = trim($cleaned_option_base);      // trim (just in case prepended / appended space characters)
+        $cleaned_option_base = str_replace('-', ' ', $options_base[$n]);
 
         if(!in_array($cleaned_option_base, $keywords_in_use))
             {
@@ -1977,16 +1975,8 @@ function compile_collection_actions(array $collection_data, $top_actions)
            $manage_collections_remove_link, $userref, $collection_purge, $show_edit_all_link, $result,
            $edit_all_checkperms, $preview_all, $order_by, $sort, $archive, $contact_sheet_link_on_collection_bar,
            $show_searchitemsdiskusage, $emptycollection, $remove_resources_link_on_collection_bar, $count_result,
-           $download_usage, $home_dash, $top_nav_upload_type, $pagename, $offset, $col_order_by, $find, $default_sort, $default_collection_sort, $starsearch, $restricted_share, $hidden_collections, $internal_share_access, $search, $usercollection;
-           
-	if(isset($search) && substr($search, 0, 11) == '!collection' && ($k == '' || $internal_share_access))
-		{ 
-		# Extract the collection number - this bit of code might be useful as a function
-    	$search_collection = explode(' ', $search);
-    	$search_collection = str_replace('!collection', '', $search_collection[0]);
-    	$search_collection = explode(',', $search_collection); // just get the number
-    	$search_collection = escape_check($search_collection[0]);
-    	}
+           $download_usage, $home_dash, $top_nav_upload_type, $pagename, $offset, $col_order_by, $find, $default_sort, $default_collection_sort,
+           $starsearch, $restricted_share, $hidden_collections, $internal_share_access;
 
     $options = array();
 	$o=0;
@@ -1995,12 +1985,7 @@ function compile_collection_actions(array $collection_data, $top_actions)
         {
         return $options;
         }
-	
-	if(empty($order_by))
-    	{
-		$order_by = $default_collection_sort;
-		}
-	
+
     if(!collection_is_research_request($collection_data['ref']) || !checkperm('r'))
         {
         if(!$top_actions && checkperm('s') && $pagename === 'collections')
@@ -2051,7 +2036,7 @@ function compile_collection_actions(array $collection_data, $top_actions)
 
     // Select collection option - not for collection bar
     if($pagename != 'collections' && ($k == '' || $internal_share_access) && !checkperm('b')
-    	&& ($pagename == 'themes' || $pagename === 'collection_manage' || $pagename === 'resource_collection_list' || $top_actions) && ((isset($search_collection) && isset($usercollection) && $search_collection!=$usercollection) || !isset($search_collection)))
+    	&& ($pagename == 'themes' || $pagename === 'collection_manage' || $pagename === 'resource_collection_list' || $top_actions))
         {
         $options[$o]['value'] = 'select_collection';
 		$options[$o]['label'] = $lang['selectcollection'];
@@ -2095,12 +2080,10 @@ function compile_collection_actions(array $collection_data, $top_actions)
     if(!$top_actions && $home_dash && ($k == '' || $internal_share_access) && checkPermission_dashcreate())
         {
         $data_attribute['url'] = sprintf('
-            %spages/dash_tile.php?create=true&tltype=srch&promoted_resource=true&freetext=true&all_users=1&link=/pages/search.php?search=!collection%s&order_by=%s&sort=%s
+            %spages/dash_tile.php?create=true&tltype=srch&promoted_resource=true&freetext=true&all_users=1&link=/pages/search.php?search=!collection%s&order_by=relevance&sort=DESC
             ',
             $baseurl_short,
-            $collection_data['ref'],
-            $order_by,
-            $sort
+            $collection_data['ref']
         );
 
         $options[$o]['value']='save_collection_to_dash';
@@ -2348,6 +2331,10 @@ function compile_collection_actions(array $collection_data, $top_actions)
     // CSV export of collection metadata
     if(!$top_actions && ($k=="" || $internal_share_access))
         {
+    	if(empty($order_by))
+    		{
+			$order_by = $default_collection_sort;
+    		}
 
         $options[$o]['value']            = 'csv_export_results_metadata';
 		$options[$o]['label']            = $lang['csvExportResultsMetadata'];

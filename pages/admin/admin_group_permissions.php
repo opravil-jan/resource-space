@@ -55,18 +55,79 @@ $group=get_usergroup($ref);
 $permissions=trim_array(explode(",",$group["permissions"]));
 $permissions_done=array();
 
-function DrawOption($permission,$description,$reverse=false,$reload=false)
+function DrawOption($permission,$description,$reverse=false,$reload=false,$global=false)
 	{
-	global $permissions,$permissions_done;
+	global $permissions,$permissions_done,$global_permissions_show_on_manager,$global_permissions,$lang;
 	$checked=(in_array($permission,$permissions));
 	if ($reverse) {$checked=!$checked;}
+	
+	$readonly=false;
+	if($global_permissions_show_on_manager)
+		{
+		$global_perm_array=trim_array(explode(",",$global_permissions));
+		$readonly=false;
+			echo "permission:$permission...";
+		if($permission!=="f*" && strpos($permission,"f")!==false)
+			{echo "f perm...";
+			# f perms
+			
+			// allow field view
+			if (!in_array("f*",$global_perm_array))
+				{ echo "allow field view...";
+				$checked=(in_array($permission,$permissions) || in_array($permission,$global_perm_array));
+				$readonly=(in_array($permission,$global_perm_array));
+				if ($reverse) {$checked=!$checked;}
+				}
+			elseif(in_array("f*",$global_perm_array) && !in_array(str_replace("f","f-",$permission),$global_perm_array))
+				{ echo "allow field view...";
+				$checked=true;
+				$readonly=true;
+				if ($reverse) {$checked=!$checked;}
+				}
+			
+			// deny field view
+			elseif(in_array("f*",$global_perm_array) && in_array(str_replace("f","f-",$permission),$global_perm_array))
+				{ echo "deny field view...";
+				$checked=(in_array($permission,$global_perm_array));
+				$readonly=true;
+				if ($reverse) {$checked=!$checked;}
+				}
+			else
+				{ echo "skipping<br/>";
+				$permissions_done[]=$permission;
+				return;
+				}
+			}
+		elseif($permission=="f*")
+			{echo "f-all perm...";
+			if(strpos($global_permissions,"f-")!==false)
+				{
+				$checked=false;
+				}
+			else
+				{
+				$checked=(in_array($permission,$permissions) || in_array($permission,$global_perm_array));
+				}
+				$readonly=(in_array($permission,$global_perm_array));
+				if ($reverse) {$checked=!$checked;}
+			}
+		
+		else
+			{echo "default fallback...";
+			$checked=(in_array($permission,$global_perm_array));
+			$readonly=true;
+			if ($reverse) {$checked=!$checked;}
+			}
+		echo "checked=$checked<br/>";
+		}
+	
 	?>
 	<input type="hidden" name="permission_<?php echo urlencode($permission)?>" value="<?php echo ($reverse)?"reverse":"normal" ?>">
 	<tr>
 		<td><?php if ($reverse) {?><i><?php } ?><?php echo $permission?><?php if ($reverse) {?></i><?php } ?></td>
-		<td><?php echo $description?></td>
+		<td><?php echo $description.($readonly?" (".$lang["permissionsmanager-global_permission_set"].")":"")?></td>
 		<td><input type="checkbox" name="checked_<?php echo urlencode($permission) ?>" <?php 
-			if ($checked) { ?> checked <?php } ?><?php if ($reload) { ?> onChange="CentralSpacePost(this.form,false);" <?php } ?>></td>
+			if ($checked) { ?> checked <?php } ?><?php if ($reload) { ?> onChange="CentralSpacePost(this.form,false);" <?php } ?><?php if($readonly){?> disabled <?php } ?>></td>
 	</tr>
 	<?php
 	$permissions_done[]=$permission;

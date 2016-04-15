@@ -11,8 +11,10 @@ function get_resource_path($ref,$getfilepath,$size,$generate=true,$extension="jp
 	# returns the correct path to resource $ref of size $size ($size==empty string is original resource)
 	# If one or more of the folders do not exist, and $generate=true, then they are generated
 	if(!preg_match('/^[a-zA-Z0-9]+$/', $extension)){$extension="jpg";}
-	$override=hook("get_resource_path_override","",array($ref,$getfilepath,$size,$generate,$extension,$scramble,$page,$watermarked,$file_modified,$alternative,$includemodified));
-	if (is_string($override)) {return $override;}
+//	if(preg_match('/\w/', $extension)){$extension="jpg";}
+
+	    $override=hook("get_resource_path_override","",array($ref,$getfilepath,$size,$generate,$extension,$scramble,$page,$watermarked,$file_modified,$alternative,$includemodified));
+	    if (is_string($override)) {return $override;}
 
 	global $storagedir,$originals_separate_storage;
 
@@ -31,27 +33,19 @@ function get_resource_path($ref,$getfilepath,$size,$generate=true,$extension="jp
 		
 		$test_ext = explode(".",$fp);$test_ext=trim(strtolower($test_ext[count($test_ext)-1]));
 		
-        if (($test_ext == $extension || $alternative > 0) && strlen($fp)>0 && strpos($fp,"/")!==false)
-			{				
+		if (($test_ext == $extension) && (strlen($fp)>0) && (strpos($fp,"/")!==false) && !($alternative > 0))
+			{
+				
 			if ($getfilepath)
 				{
 				global $syncdir; 
-            	$syncdirmodified=hook("modifysyncdir","all",array($ref)); if ($syncdirmodified!=""){return $syncdirmodified;}
-                if(!($alternative>0))
-                    {return $syncdir . "/" . $fp;}
-                elseif(!$generate)
-                    {
-                    // Alternative file and using staticsync. Would not be generating path if checking for an existing file.
-                    // Check if file is present in syncdir, else continue to get the $storagedir location
-                    $altfile = get_alternative_file($ref,$alternative);
-                    if($altfile["file_extension"]==$extension && file_exists($altfile["file_name"]))
-                        {return $altfile["file_name"];}
-                    }
+            	$syncdirmodified=hook("modifysyncdir","all",array($ref)); if ($syncdirmodified!=""){return $syncdirmodified;}	
+            	return $syncdir . "/" . $fp;
 				}
 			else 
 				{
 				global $baseurl_short, $k;
-				return $baseurl_short . "pages/download.php?ref={$ref}&size={$size}&ext={$extension}&noattach=true&k={$k}&page={$page}&alternative={$alternative}"; 
+				return $baseurl_short . "pages/download.php?ref={$ref}&size={$size}&ext={$extension}&noattach=true&k={$k}&page={$page}"; 
 				}
 			}
 		}
@@ -1367,7 +1361,7 @@ function auto_create_user_account()
 			{
 			global $rs_session;
 			$rs_session=get_rs_session_id();
-			if($rs_session==false){continue;}
+			if($rs_session==false){break;}
 			# Copy any anonymous session collections to the new user account 
 			if (!function_exists("get_session_collections"))
 				{
@@ -1436,7 +1430,7 @@ function auto_create_user_account()
 			get_config_option($approval_notify_user['ref'],'email_user_notifications', $send_email, $email_user_notifications);    
 			if($send_email && $approval_notify_user["email"]!="")
 				{
-				send_mail($approval_notify_user["email"],$applicationname . ": " . $lang["requestuserlogin"] . " - " . getval("name",""),$message,"",$user_email,"emailuserrequest",$templatevars,getval("name",""));
+				send_mail($email_notify,$applicationname . ": " . $lang["requestuserlogin"] . " - " . getval("name",""),$message,"",$user_email,"emailuserrequest",$templatevars,getval("name",""));
 				}        
 			else
 				{
@@ -4100,39 +4094,6 @@ function format_display_field($value){
 	return $string;
 }
 
-// formats a string with a collapsible more / less section
-function format_string_more_link($string,$max_words_before_more=-1)
-    {
-    $words=preg_split('/\s/',$string);
-    if ($max_words_before_more==-1)
-        {
-        global $max_words_before_more;
-        }
-    if (count($words) < $max_words_before_more)
-        {
-        return $string;
-        }
-    global $lang;
-    $unique_id=uniqid();
-    $return_value = "";
-    for ($i=0; $i<count($words); $i++)
-        {
-        if ($i>0)
-            {
-            $return_value .= ' ';
-            }
-        if ($i==$max_words_before_more)
-            {
-            $return_value .= '<a id="' . $unique_id . 'morelink" href="#" onclick="jQuery(\'#' . $unique_id . 'morecontent\').show(); jQuery(this).hide();">' .
-                strtoupper($lang["action-more"]) . ' &gt;</a><span id="' . $unique_id . 'morecontent" style="display:none;">';
-            }
-        $return_value.=$words[$i];
-        }
-    $return_value .= ' <a href="#" onclick="jQuery(\'#' . $unique_id . 'morelink\').show(); jQuery(\'#' . $unique_id . 'morecontent\').hide();">&lt; ' .
-        strtoupper($lang["action-less"]) . '</a></span>';
-    return $return_value;
-    }
-
 // found multidimensional array sort function to support the performance footer
 // http://www.php.net/manual/en/function.sort.php#104464
  function sortmulti ($array, $index, $order, $natsort=FALSE, $case_sensitive=FALSE) {
@@ -4552,7 +4513,7 @@ function get_resource_type_fields($restypes="", $field_order_by="ref", $field_so
 			{
 			$conditionsql.=" where ( ";
 			}
-		$conditionsql.=" name like '%" . $find . "%' or title like '%" . $find . "%' or tab_name like '%" . $find . "%' or exiftool_field like '%" . $find . "%' or help_text like '%" . $find . "%' or ref like '%" . $find . "%' or tooltip_text like '%" .$find . "%' or display_template like '%" .$find . "%')";
+		$conditionsql.=" name like '%" . $find . "%' or options like '%" . $find . "%'or title like '%" . $find . "%'or tab_name like '%" . $find . "%'or exiftool_field like '%" . $find . "%'or help_text like '%" . $find . "%'or ref like '%" . $find . "%'or tooltip_text like '%" .$find . "%' or display_template like '%" .$find . "%')";
 		}
 	// Allow for sorting, enabled for use by System Setup pages
 	//if(!in_array($field_order_by,array("ref","name","tab_name","type","order_by","keywords_index","resource_type","display_field","required"))){$field_order_by="ref";}		

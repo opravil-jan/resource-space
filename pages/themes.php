@@ -41,7 +41,7 @@ function DisplayTheme($themes=array(), $simpleview=false)
 	else
 		{
 		global $theme_direct_jump,$themes_column_sorting,$themes_ref_column,$themes_date_column,$baseurl_short,$baseurl,
-			   $default_perpage_list,$collection_prefix,$revsort,$sort,$find,$getthemes,$m,$lang,$flag_new_themes,$flag_new_themes_age,
+			   $default_perpage_list,$collection_prefix,$revsort,$sort,$find,$getthemes,$m,$lang,$flag_new_themes,
 			   $contact_sheet,$theme_images,$allow_share,$zipcommand,$collection_download,$theme_images_align_right,
 			   $themes_category_split_pages,$themes_category_split_pages_parents,$collections_compact_style,$pagename,
 			   $show_edit_all_link,$preview_all,$userref,$collection_purge,$themes_category_split_pages,
@@ -214,14 +214,7 @@ function DisplayTheme($themes=array(), $simpleview=false)
 				?>
 				<tr <?php hook("collectionlistrowstyle");?>>
 				<td class="name" width="50%"><div class="ListTitle"><a href="<?php echo $baseurl_short?>pages/search.php?search=!collection<?php echo $getthemes[$m]["ref"]?>&bc_from=themes"  title="<?php echo $lang["collectionviewhover"]?>" onClick="return CentralSpaceLoad(this,true);"><?php echo i18n_get_collection_name($getthemes[$m])?></a>
-				<?php
-                if($flag_new_themes && (time() - strtotime($getthemes[$m]['created'])) < (60 * 60 * 24 * $flag_new_themes_age))
-                    {
-                    ?>
-                    <div class="NewFlag"><?php echo $lang['newflag']; ?></div>
-                    <?php
-                    }
-                    ?>
+				<?php if ($flag_new_themes && (time()-strtotime($getthemes[$m]["created"]))<(60*60*24*14)) { ?><div class="NewFlag"><?php echo $lang["newflag"]?></div><?php } ?>
 				</div></td>
 				<?php if ($themes_ref_column){?>
 				<td class="ref"><?php echo $getthemes[$m]["ref"];?></td>
@@ -349,7 +342,7 @@ if ($themes_category_split_pages && isset($themes[0]) && !$theme_direct_jump)
 		if($simpleview)
 		{$link.="&simpleview=true";}
 		echo "&gt;&nbsp;";
-		?><a href="<?php echo $link ?>" onClick="return CentralSpaceLoad(this,true);"><span><?php echo htmlspecialchars(i18n_get_collection_name($themes[$x])) ?>&nbsp;</span></a><?php
+		?><a href="<?php echo $link ?>" onClick="return CentralSpaceLoad(this,true);"><span><?php echo htmlspecialchars($themes[$x]) ?>&nbsp;</span></a><?php
 		}
 	echo "</div>";
 

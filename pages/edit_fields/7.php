@@ -38,10 +38,7 @@ nocategoriesmessage="<?php echo $lang["nocategoriesselected"] ?>";
 <?php
 
 # Load the tree
-//$checked=explode(",",strtolower($value));
-$checked=preg_split('/[,\|]/',strtolower($value));
-
-
+$checked=explode(",",strtolower($value));
 for($c=0;$c<count($checked);$c++)
 	{
 	$checked[$c] = trim($checked[$c]);

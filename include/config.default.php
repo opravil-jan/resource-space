@@ -168,7 +168,7 @@ $header_link=true;
 ## Defaults ##
 #This uses an img tag to display the header and will automatically include a link to the homepage. 
 $slimheader=false;
-# Custom source location for the header image (includes baseurl, requires leading "/"). Will default to the resourcespace logo if left blank. Recommended image size: 350px(X) x 80px(Y)
+# Custom source location for the header image (includes baseurl). Will default to the resourcespace logo if left blank. Recommended image size: 350px(X) x 80px(Y)
 $linkedheaderimgsrc="";
 ###### END SLIM HEADER #######
 
@@ -177,9 +177,6 @@ $linkedheaderimgsrc="";
 
 # Include ResourceSpace version header in View Source
 $include_rs_header_info=true;
-
-# Used for specifying custom colour for header background
-$header_colour_style_override='';
 
 # Available languages
 # If $defaultlanguage is not set, the brower's default language will be used instead
@@ -980,10 +977,8 @@ $prefix_resource_id_to_filename=true;
 # is a ResourceSpace resource ID.
 $prefix_filename_string="RS";
 
-# Display a 'new' flag next to new themes (by default themes created < 2 weeks ago)
-# Note: the age take days as parameter. Anything less than that would mean that a theme becomes old after a few hours which is highly unlikely.
-$flag_new_themes     = true;
-$flag_new_themes_age = 14;
+# Display a 'new' flag next to new themes (added < 1 month ago)
+$flag_new_themes=true;
 
 # Create file checksums?
 $file_checksums=false;
@@ -1445,6 +1440,10 @@ $global_permissions="";
 # Useful for temporarily disabling permissions globally, e.g. to make the system readonly during maintenance.
 # Suggested setting for a 'read only' mode: $global_permissions_mask="a,t,c,d,e0,e1,e2,e-1,e-2,i,n,h";
 $global_permissions_mask="";
+
+# Show global permissions settings on permissions manager.
+# This will display global permissions as greyed out and read-only
+$global_permissions_show_on_manager=false;
 
 # User account application - auto creation
 # By default this is switched off and applications for new user accounts will be sent as e-mails
@@ -2022,9 +2021,6 @@ $upload_methods = array(
 # Allow to change the location of the upload folder, so that it is not in the
 # web visible path. Relative and abolute paths are allowed.
 $local_ftp_upload_folder = 'upload/';
-
-# Use a file tree display for local folder upload
-$local_upload_file_tree=false;
 
 # Hide links to other uploader
 $hide_uploadertryother = false;
@@ -2918,9 +2914,6 @@ $execution_lockout=false;
 # Load help page in a modal?
 $help_modal=true;
 
-// maximum number of words shown before more/less link is shown (used in resource log)
-$max_words_before_more=30;
-
 # User preference - if set to false, hide the notification popups for new messages
 $user_pref_show_notifications=true;
 
@@ -3007,7 +3000,4 @@ $replace_resource_preserve_default=false;
 # When searching collections, return results based on the metadata of the resources inside also
 $collection_search_includes_resource_metadata=false;
 
-# Specify field references for fields that you do not wish the blank default entry to appear for, so the first keyword node is selected by default.
-# e.g. array(3,12);
-$default_to_first_node_for_fields=array();
 
