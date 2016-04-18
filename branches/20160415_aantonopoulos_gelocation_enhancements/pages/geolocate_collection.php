@@ -11,18 +11,22 @@ global $baseurl;
 
 $ref=getvalescaped("ref","",true);
 $all_resources =  get_collection_resources($ref) ;
-//echo get_resource_path(3,false,"col",$generate=true,$extension="png",$scramble=-1,$page=1,$watermarked=false,$file_modified="",$alternative=-1,$includemodified=true);
 $collection =  get_collection($ref);
 $collectionname = $collection['name'];
 $markers = array();
 $mean_lat=0;
 $mean_long=0;
+
 foreach ($all_resources as $value) {
     
     $resource = get_resource_data($value,$cache=true);
+    $url = get_resource_path($resource['ref'],false,"col",$generate=true,$extension="jpg",$scramble=-1,$page=1,$watermarked=false,$file_modified="",$alternative=-1,$includemodified=true);
+	$new = str_replace($baseurl,"", $url);
+	$parts =  explode('?',$new);
     $markers[] =  [ $resource['geo_long'] . "," .  $resource['geo_lat'] . "," . $resource['ref'] ];
-    $mean_lat=$mean_lat+$resource['geo_lat'];
-    $mean_long=$mean_long+$resource['geo_long'];  
+    $paths[] = $parts[0];
+    $mean_long=$mean_long+$resource['geo_long'];
+    $mean_lat=$mean_lat+$resource['geo_lat']; 
     }
 
 $mean_lat=$mean_lat/count($markers);
@@ -48,17 +52,19 @@ $mean_long=$mean_long/count($markers);
     var zoom=14;
     map.setCenter (lonLat, zoom);
     var vectorLayer = new OpenLayers.Layer.Vector("Overlay");
-    var markers = <?php echo str_replace('"','',json_encode($markers)) ?>;
-	var baseurl = <?php echo json_encode($baseurl) ?>;
+    var markers = <?php echo str_replace(array('"','\\'),'',json_encode($markers)) ?>;
+    var paths = <?php echo str_replace('\\','',json_encode($paths)) ?>;
+	var baseurl = <?php echo str_replace('\\','',json_encode($baseurl) )?>;
     for (var i=0; i<markers.length; i++) {
       
        var lon = markers[i][0];
        var lat = markers[i][1];
        var rf = String(markers[i][2]);
+       var reslink = paths[i];
        var feature = new OpenLayers.Feature.Vector(
                 new OpenLayers.Geometry.Point( lon, lat ).transform(epsg4326, projectTo),
-                {description: baseurl +  "/pages/view.php?ref=" + rf},
-                {externalGraphic: '../lib/OpenLayers/img/marker.png', graphicHeight: 25, graphicWidth: 21, graphicXOffset:-12, graphicYOffset:-25 }
+                {description: baseurl +  '/pages/view.php?ref=' + rf},
+                {externalGraphic: '..' + reslink, graphicHeight: 45, graphicWidth: 41, graphicXOffset:-32, graphicYOffset:-45 }
             );   
 		      
     
