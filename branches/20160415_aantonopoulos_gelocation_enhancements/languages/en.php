@@ -389,6 +389,7 @@ $lang["resize"]="Resize";
 $lang["contactsheet"]="Contact sheet";
 $lang["mycollection"]="My Collection";
 $lang["geolocatecollection"]="Geolocate collection";
+$lang["geoemptycollection"]="You provided an empty collection. Please add assets and try again.";
 $lang["editresearchrequests"]="Edit research requests";
 $lang["research"]="Research";
 $lang["savedsearch"]="Saved search";

@@ -9,7 +9,7 @@ include "../include/header.php";
 global $baseurl;
 
 $ref=getvalescaped("ref","",true);
-$all_resources =  get_collection_resources($ref) ;
+$all_resources =  get_collection_resources($ref);
 $collection =  get_collection($ref);
 $collectionname = $collection['name'];
 $markers = array();
@@ -23,6 +23,10 @@ $check = false;
 
 <?php
 
+//If the collection is empty stop here and provide a message
+if ( count($all_resources) == 0 ) {  exit( $lang["geoemptycollection"]);  }
+
+//Start looping through the data fetched earlier
 foreach ($all_resources as $value) 
 	{
     $resource = get_resource_data($value,$cache=true);
@@ -61,33 +65,40 @@ foreach ($all_resources as $value)
 		}
 	else
 		{
+		//These arrays are going to be passed to Javascript below to plot
 		$markers[] =  [ $resource['geo_long'] . "," .  $resource['geo_lat'] . "," . $resource['ref'] . "," . $forthumb['thumb_width'] . "," . $forthumb['thumb_height']];
 		$paths[] = $parts[0];
 		$mean_long=$mean_long+$resource['geo_long'];
 		$mean_lat=$mean_lat+$resource['geo_lat']; 
 		}
 	}
+
 $mean_lat=$mean_lat/count($markers);
 $mean_long=$mean_long/count($markers);
 
 ?>
 <?php if ($check){?></table><?php echo "<br>";} ?>
+
 <div id="GeoColDiv" style="width:900px; height:450px;"></div>
   
-<script src="http://www.openlayers.org/api/OpenLayers.js"></script>
+<script src="../lib/OpenLayers/OpenLayers.js"></script>
 <script>
 
     map = new OpenLayers.Map("GeoColDiv");
     map.addControl(new OpenLayers.Control.LayerSwitcher({'ascending':false}));
-    map.addLayer(new OpenLayers.Layer.OSM());
+    map.addLayer(new OpenLayers.Layer.OSM('OSM'));
     epsg4326 =  new OpenLayers.Projection("EPSG:4326"); //WGS 1984 projection
     projectTo = map.getProjectionObject(); //The map projection (Spherical Mercator)
-   
+    
     var lonLat = new OpenLayers.LonLat(  <?php echo $mean_long . "," . $mean_lat;?> ).transform(epsg4326, projectTo);
-          
+     
     var zoom=15;
     map.setCenter (lonLat, zoom);
-    var vectorLayer = new OpenLayers.Layer.Vector("Overlay");
+    var vectorLayer = new OpenLayers.Layer.Vector("Thumbnails");
+    var vectorLayer2 = new OpenLayers.Layer.Vector("Markers");
+    
+    //Unloading values to Javascript, some cases require stripping
+    //of backslashes because Javascript was complaining
     var markers = <?php echo str_replace(array('"','\\'),'',json_encode($markers)) ?>;
     var paths = <?php echo str_replace('\\','',json_encode($paths)) ?>;
 	var baseurl = <?php echo str_replace('\\','',json_encode($baseurl) )?>;
@@ -95,20 +106,38 @@ $mean_long=$mean_long/count($markers);
 		{
         var lon = markers[i][0];
         var lat = markers[i][1];
-        var rf = String(markers[i][2]);
+        var rf = markers[i][2];
         var width = markers[i][3];
         var height = markers[i][4];
         var reslink = paths[i];
-       
-        var feature = new OpenLayers.Feature.Vector(
+        
+		var feature = new OpenLayers.Feature.Vector(
 			new OpenLayers.Geometry.Point( lon, lat ).transform(epsg4326, projectTo),
 			{description: baseurl +  '/pages/view.php?ref=' + rf},
-			{externalGraphic: '..' + reslink, graphicHeight: height*0.5, graphicWidth: width*0.5, graphicXOffset:-32, graphicYOffset:-45 }
-		);   
-		      
-		vectorLayer.addFeatures(feature);
+			
+			{externalGraphic: '..' + reslink, graphicHeight: height*0.45, graphicWidth: width*0.45, graphicXOffset:0, graphicYOffset:0 }
+		);  
+		var feature2 = new OpenLayers.Feature.Vector(
+			new OpenLayers.Geometry.Point( lon, lat ).transform(epsg4326, projectTo),
+			{description: baseurl +  '/pages/view.php?ref=' + rf},
+			
+			{externalGraphic: '../lib/OpenLayers/img/marker.png', graphicHeight: 25, graphicWidth: 21, graphicXOffset:0, graphicYOffset:0 }
+		);  
 		
-		vectorLayer.events.register("featureselected", null, function(event){
+		vectorLayer.addFeatures(feature);
+		vectorLayer2.addFeatures(feature2);
+		//Hide by default the default red marker and display
+		//the thumbnails layer
+		vectorLayer2.setVisibility(false)
+		
+	}
+	
+	vectorLayer.events.register("featureselected", null, function(event){
+        var layer = event.feature.layer;
+        ModalLoad(event.feature.attributes.description)
+        selectControl.unselectAll();
+		});
+	vectorLayer2.events.register("featureselected", null, function(event){
         var layer = event.feature.layer;
         ModalLoad(event.feature.attributes.description)
         selectControl.unselectAll();
@@ -118,12 +147,15 @@ $mean_long=$mean_long/count($markers);
     var selectControl = new OpenLayers.Control.SelectFeature(vectorLayer);
     map.addControl(selectControl);
     selectControl.activate(); 
-        
-    }     
+    
+    var selectControl2 = new OpenLayers.Control.SelectFeature(vectorLayer2);
+    map.addControl(selectControl2);
+    selectControl2.activate();   
+    
     map.addLayer(vectorLayer);
+    map.addLayer(vectorLayer2);
+
 	
-
-
 </script>
 
 
