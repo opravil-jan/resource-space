@@ -169,6 +169,10 @@ $header_link=true;
 #This uses an img tag to display the header and will automatically include a link to the homepage. 
 $slimheader=false;
 # Custom source location for the header image (includes baseurl, requires leading "/"). Will default to the resourcespace logo if left blank. Recommended image size: 350px(X) x 80px(Y)
+
+# Set this to true in order for the top bar to remain present when scrolling down the page
+$slimheader_fixed_position=false;
+
 $linkedheaderimgsrc="";
 ###### END SLIM HEADER #######
 
@@ -3014,4 +3018,6 @@ $collection_search_includes_resource_metadata=false;
 # e.g. array(3,12);
 $default_to_first_node_for_fields=array();
 
-$geo_locate_collection = false;
+# A list of groups for which the knowledge base will launch on login, until dismissed.
+$launch_kb_on_login_for_groups=array();
+

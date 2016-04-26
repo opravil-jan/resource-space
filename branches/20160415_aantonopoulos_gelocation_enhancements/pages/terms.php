@@ -5,25 +5,37 @@ include_once "../include/general.php";
 # No need to check access key for this page as it merely redirects to other pages
 $k=getvalescaped("k","");if ($k=="") {include "../include/authenticate.php";}
 
-$url=getvalescaped("url","pages/home.php");
+$url=getvalescaped("url","pages/home.php?login=true");
 
 $newurl = hook("beforeredirectchangeurl");
-if (is_string($newurl)) {$url = $newurl;}
+if(is_string($newurl))
+    {
+    $url = $newurl;
+    }
 
-if ($terms_download==false && getval("noredir","")=="") {redirect($url);}
+if('' != getval('save', ''))
+    {
+    if('on' == getvalescaped('iaccept', ''))
+        {
+        sql_query("UPDATE user SET accepted_terms = 1 WHERE ref = '{$userref}'");
+        }
 
-if (getval("save","")!="")
-	{
-	if (strpos($url,"http")!==false)
-		{
-		header("Location: " . $url);
-		exit();
-		}
-	else
-		{
-		redirect($url);
-		}
-	}
+    if(false !== strpos($url, 'http'))
+        {
+        header("Location: {$url}");
+        exit();
+        }
+    else
+        {
+        redirect($url);
+        }
+    }
+
+if($terms_download == false && getval("noredir","") == "")
+    {
+    redirect($url);
+    }
+
 include "../include/header.php";
 ?>
 <div class="BasicsBox"> 

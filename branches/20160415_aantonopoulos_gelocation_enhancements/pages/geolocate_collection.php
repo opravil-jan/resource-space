@@ -1,20 +1,22 @@
 <?php
 include "../include/db.php";
 include_once "../include/general.php";
-include "../include/authenticate.php"; 
+include "../include/authenticate.php";
 include "../include/resource_functions.php";
 include "../include/collections_functions.php";
 include "../include/header.php";
 
+if ( $disable_geocoding || (!$disable_geocoding && !$geo_locate_collection) ){exit($lang["error-permissiondenied"]);}
+
 global $baseurl;
 
-$ref=getvalescaped("ref","",true);
-$all_resources =  get_collection_resources($ref);
-$collection =  get_collection($ref);
+$ref = getvalescaped("ref","",true);
+$all_resources = get_collection_resources($ref);
+$collection = get_collection($ref);
 $collectionname = $collection['name'];
 $markers = array();
-$mean_lat=0;
-$mean_long=0;
+$mean_lat = 0;
+$mean_long = 0;
 $check = false;
 ?>
 
@@ -30,6 +32,7 @@ if ( count($all_resources) == 0 ) {  exit( $lang["geoemptycollection"]);  }
 foreach ($all_resources as $value) 
 	{
     $resource = get_resource_data($value,$cache=true);
+	//echo get_resource_access($resource['ref']);
     $forthumb = get_resource_data($resource['ref']);
     $url = get_resource_path($resource['ref'],false,"thm",$generate=true,$extension="jpg",$scramble=-1,$page=1,$watermarked=false,$file_modified="",$alternative=-1,$includemodified=true);
 	$new = str_replace($baseurl,"", $url);
@@ -38,7 +41,7 @@ foreach ($all_resources as $value)
 		{
 		if (!$check)
 			{
-			echo $lang['location-missing'];
+			echo $lang['location-missing'] ;
 			//Set check to true so the text above and the table below 
 			//are only rendered if geolocation data are missing
 			$check = true;
@@ -47,7 +50,7 @@ foreach ($all_resources as $value)
 			<tr>
 			<td><?php echo $lang["resourceid"]?></td>
 			<td><?php echo $lang["action-preview"]?></td>
-			<td><?php echo $lang['location-add']?></td>
+			<td><?php echo $lang['location-title']?></td>
 			</td>
 			</tr>
 			<?php
@@ -57,7 +60,7 @@ foreach ($all_resources as $value)
 		<tr>
 		<td><?php echo $resource['ref']?></td>
 		<td><a href=<?php echo $baseurl . "/pages/view.php?ref=" . $resource['ref'] ?> > <img  src=<?php echo '..' . $parts[0]?> </img></a></td>
-		<td><a href=<?php echo $baseurl . "/pages/geo_edit.php?ref=" . $resource['ref'] ?> > <?php echo $lang['location-add']?></a></td>
+		<?php if (get_edit_access($resource['ref'])){?><td><a href=<?php echo $baseurl . "/pages/geo_edit.php?ref=" . $resource['ref'] ?> > <?php echo $lang['location-add']?></a></td><?php } else { ?><td> <?php echo $lang['location-noneselected'];?> </td><?php } ?>
 		</tr>
 		
 		
