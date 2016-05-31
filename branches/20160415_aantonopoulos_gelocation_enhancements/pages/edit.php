@@ -596,7 +596,7 @@ if(0 > $ref)
       {
       if (!hook('replacebacklink') && !$modal) 
          {?>
-         <p><a href="<?php echo $baseurl_short?>pages/view.php?ref=<?php echo urlencode($ref) ?>&search=<?php echo urlencode($search)?>&offset=<?php echo urlencode($offset) ?>&order_by=<?php echo urlencode($order_by) ?>&sort=<?php echo urlencode($sort) ?>&archive=<?php echo urlencode($archive) ?>" onClick="return CentralSpaceLoad(this,true);">&lt;&nbsp;<?php echo $lang["backtoresourceview"]?></a></p><?php
+         <p><a href="<?php echo $baseurl_short?>pages/view.php?ref=<?php echo urlencode($ref) ?>&search=<?php echo urlencode($search)?>&offset=<?php echo urlencode($offset) ?>&order_by=<?php echo urlencode($order_by) ?>&sort=<?php echo urlencode($sort) ?>&archive=<?php echo urlencode($archive) ?>" onClick="return CentralSpaceLoad(this,true);"><?php echo LINK_CARET_BACK ?><?php echo $lang["backtoresourceview"]?></a></p><?php
          }
       if (!hook("replaceeditheader")) 
          { ?>
@@ -682,7 +682,7 @@ if(0 > $ref)
         if(0 < $ref && !in_array($resource['resource_type'], $data_only_resource_types))
             {
             ?>
-            <a href="<?php echo $baseurl_short?>pages/upload_<?php echo $replace_upload_type ?>.php?ref=<?php echo urlencode($ref) ?>&search=<?php echo urlencode($search)?>&offset=<?php echo urlencode($offset) ?>&order_by=<?php echo urlencode($order_by) ?>&sort=<?php echo urlencode($sort) ?>&archive=<?php echo urlencode($archive) ?>&replace_resource=<?php echo urlencode($ref)  ?>&resource_type=<?php echo $resource['resource_type']?>" onClick="return CentralSpaceLoad(this,true);">&gt;&nbsp;<?php echo (($resource["file_extension"]!="")?$lang["replacefile"]:$lang["uploadafile"]) ?></a>
+            <a href="<?php echo $baseurl_short?>pages/upload_<?php echo $replace_upload_type ?>.php?ref=<?php echo urlencode($ref) ?>&search=<?php echo urlencode($search)?>&offset=<?php echo urlencode($offset) ?>&order_by=<?php echo urlencode($order_by) ?>&sort=<?php echo urlencode($sort) ?>&archive=<?php echo urlencode($archive) ?>&replace_resource=<?php echo urlencode($ref)  ?>&resource_type=<?php echo $resource['resource_type']?>" onClick="return CentralSpaceLoad(this,true);"><?php echo LINK_CARET ?><?php echo (($resource["file_extension"]!="")?$lang["replacefile"]:$lang["uploadafile"]) ?></a>
             <?php
             }
          if ($resource["file_extension"]!="") 
@@ -692,9 +692,9 @@ if(0 > $ref)
          if (! $disable_upload_preview) 
             { ?>
             <br />
-     <a href="<?php echo $baseurl_short?>pages/upload_preview.php?ref=<?php echo urlencode($ref) ?>&search=<?php echo urlencode($search)?>&offset=<?php echo urlencode($offset) ?>&order_by=<?php echo urlencode($order_by) ?>&sort=<?php echo urlencode($sort) ?>&archive=<?php echo urlencode($archive) ?>" onClick="return CentralSpaceLoad(this,true);">&gt;&nbsp;<?php echo $lang["uploadpreview"]?></a><?php } ?>
+     <a href="<?php echo $baseurl_short?>pages/upload_preview.php?ref=<?php echo urlencode($ref) ?>&search=<?php echo urlencode($search)?>&offset=<?php echo urlencode($offset) ?>&order_by=<?php echo urlencode($order_by) ?>&sort=<?php echo urlencode($sort) ?>&archive=<?php echo urlencode($archive) ?>" onClick="return CentralSpaceLoad(this,true);"><?php echo LINK_CARET ?><?php echo $lang["uploadpreview"]?></a><?php } ?>
      <?php if (!$disable_alternative_files && !checkperm('A')) { ?><br />
-     <a href="<?php echo $baseurl_short?>pages/alternative_files.php?ref=<?php echo urlencode($ref) ?>&search=<?php echo urlencode($search)?>&offset=<?php echo urlencode($offset) ?>&order_by=<?php echo urlencode($order_by) ?>&sort=<?php echo urlencode($sort) ?>&archive=<?php echo urlencode($archive) ?>"  onClick="return CentralSpaceLoad(this,true);">&gt;&nbsp;<?php echo $lang["managealternativefiles"]?></a><?php } ?>
+     <a href="<?php echo $baseurl_short?>pages/alternative_files.php?ref=<?php echo urlencode($ref) ?>&search=<?php echo urlencode($search)?>&offset=<?php echo urlencode($offset) ?>&order_by=<?php echo urlencode($order_by) ?>&sort=<?php echo urlencode($sort) ?>&archive=<?php echo urlencode($archive) ?>"  onClick="return CentralSpaceLoad(this,true);"><?php echo LINK_CARET ?><?php echo $lang["managealternativefiles"]?></a><?php } ?>
      <?php if ($allow_metadata_revert){?><br />
      <a href="<?php echo $baseurl_short?>pages/edit.php?ref=<?php echo urlencode($ref) ?>&exif=true&search=<?php echo urlencode($search)?>&offset=<?php echo urlencode($offset) ?>&order_by=<?php echo urlencode($order_by) ?>&sort=<?php echo urlencode($sort) ?>&archive=<?php echo urlencode($archive) ?>" onClick="return confirm('<?php echo $lang["confirm-revertmetadata"]?>');">&gt; 
         <?php echo $lang["action-revertmetadata"]?></a><?php } ?>
@@ -1015,283 +1015,6 @@ function is_field_displayed($field)
     || ($ref < 0 && $field["hide_when_uploading"] && $field["required"]==0)
     || hook('edithidefield', '', array('field' => $field))
     || hook('edithidefield2', '', array('field' => $field)));
-}
-
-function check_display_condition($n, $field)
-{
-  global $fields, $scriptconditions, $required_fields_exempt, $blank_edit_template, $ref, $use;
-
-  $displaycondition=true;
-  $s=explode(";",$field["display_condition"]);
-  $condref=0;
-    foreach ($s as $condition) # Check each condition
-    {
-       $displayconditioncheck=false;
-       $s=explode("=",$condition);
-        for ($cf=0;$cf<count($fields);$cf++) # Check each field to see if needs to be checked
-        {
-            node_field_options_override($fields[$cf]);
-            if ($s[0]==$fields[$cf]["name"]) # this field needs to be checked
-            {
-                $scriptconditions[$condref]["field"] = $fields[$cf]["ref"];  # add new jQuery code to check value
-                $scriptconditions[$condref]['type'] = $fields[$cf]['type'];
-                $scriptconditions[$condref]['options'] = (in_array($fields[$cf]['type'],array(2, 3, 7, 9, 12))?implode(",",$fields[$cf]['node_options']):$fields[$cf]['options']);
-
-                $checkvalues=$s[1];
-                $validvalues=explode("|",mb_strtoupper($checkvalues));
-                $scriptconditions[$condref]["valid"]= "\"";
-                $scriptconditions[$condref]["valid"].= implode("\",\"",$validvalues);
-                $scriptconditions[$condref]["valid"].= "\"";
-                $v=trim_array(explode(",",mb_strtoupper($fields[$cf]["value"])));
-
-                // If blank edit template is used, on upload form the dependent fields should be hidden
-                if($blank_edit_template && $ref < 0 && $use === '-1') {
-                   $v = array();
-                }
-                
-                foreach ($validvalues as $validvalue)
-                {
-                    if (in_array($validvalue,$v)) {$displayconditioncheck=true;} # this is  a valid value
-                 }
-                 if (!$displayconditioncheck) {$displaycondition=false;$required_fields_exempt[]=$field["ref"];}
-                #add jQuery code to update on changes
-                    if ($fields[$cf]["type"]==2) # add onchange event to each checkbox field
-                    {
-                        # construct the value from the ticked boxes
-                        # Note: it seems wrong to start with a comma, but this ensures it is treated as a comma separated list by split_keywords(), so if just one item is selected it still does individual word adding, so 'South Asia' is split to 'South Asia','South','Asia'.
-                     $options=trim_array($fields[$cf]["node_options"]);
-                     ?><script type="text/javascript">
-                     jQuery(document).ready(function() {<?php
-                       for ($m=0;$m<count($options);$m++)
-                       {
-                         $checkname=$fields[$cf]["ref"] . "_" . md5($options[$m]);
-                         echo "
-                         jQuery('input[name=\"" . $checkname . "\"]').change(function (){
-                           checkDisplayCondition" . $field["ref"] . "();
-                        });";
-                  }
-                  ?>
-               });
-                     </script><?php
-                  }
-                        # add onChange event to each radio button
-                  else if($fields[$cf]['type'] == 12) {
-
-                    $options = $fields[$cf]['node_options'];?>
-					
-                    <script type="text/javascript">
-                    jQuery(document).ready(function() {
-
-                       <?php
-                       foreach ($options as $option) {
-                         $element_id = 'field_' . $fields[$cf]['ref'] . '_' . sha1($option);
-                         $jquery = sprintf('
-                          jQuery("#%s").change(function() {
-                            checkDisplayCondition%s();
-                         });
-                         ',
-                         $element_id,
-                         $field["ref"]
-                         );
-                         echo $jquery;
-                      } ?>
-
-                   });
-                    </script>
-
-                    <?php
-                 }
-                 else
-                 {
-                  ?>
-                  <script type="text/javascript">
-                  jQuery(document).ready(function() {
-                    jQuery('#field_<?php echo $fields[$cf]["ref"];?>').change(function (){
-
-                       checkDisplayCondition<?php echo $field["ref"];?>();
-
-                    });
-                 });
-                  </script>
-                  <?php
-               }
-            }
-
-            } # see if next field needs to be checked
-
-            $condref++;
-        } # check next condition
-
-        ?>
-        <script type="text/javascript">
-        function checkDisplayCondition<?php echo $field["ref"];?>()
-			{
-			field<?php echo $field["ref"]?>status=jQuery('#question_<?php echo $n ?>').css('display');
-			newfield<?php echo $field["ref"]?>status='none';
-			newfield<?php echo $field["ref"]?>provisional=true;
-			
-			<?php
-			foreach ($scriptconditions as $scriptcondition)
-				{
-				?>
-				newfield<?php echo $field["ref"]?>provisionaltest=false;
-				if (jQuery('#field_<?php echo $scriptcondition["field"]?>').length!=0)
-					{
-					<?php
-					if($scriptcondition['type'] == 12) {
-
-						$scriptcondition["options"] = explode(',', $scriptcondition["options"]);
-
-						foreach ($scriptcondition["options"] as $key => $value) 
-							{
-							$scriptcondition["options"][$key] = sha1($value);
-							}
-
-						$scriptcondition["options"] = implode(',', $scriptcondition["options"]);
-						?>
-						
-						var options_string = '<?php echo $scriptcondition["options"]; ?>';
-						var field<?php echo $scriptcondition["field"]; ?>_options = options_string.split(',');
-						var checked = null;
-						
-						for(var i=0; i < field<?php echo $scriptcondition["field"]; ?>_options.length; i++)
-							{
-							if(jQuery('#field_<?php echo $scriptcondition["field"]; ?>_' + field<?php echo $scriptcondition["field"]; ?>_options[i]).is(':checked')) 
-								{
-								checked = jQuery('#field_<?php echo $scriptcondition["field"]; ?>_' + field<?php echo $scriptcondition["field"]; ?>_options[i] + ':checked').val();
-								checked = checked.toUpperCase();
-								}
-							}
-						
-						fieldvalues<?php echo $scriptcondition["field"]?>=checked.split(',');
-						fieldokvalues<?php echo $scriptcondition["field"]; ?> = [<?php echo $scriptcondition["valid"]; ?>];
-
-						if(checked !== null && jQuery.inArray(checked, fieldokvalues<?php echo $scriptcondition["field"]; ?>) > -1) 
-							{
-							newfield<?php echo $field["ref"]; ?>provisionaltest = true;
-							}
-						<?php
-						}
-					else
-						{
-						?>
-						fieldcheck<?php echo $scriptcondition["field"]?>=jQuery('#field_<?php echo $scriptcondition["field"]?>').val().toUpperCase();
-						fieldvalues<?php echo $scriptcondition["field"]?>=fieldcheck<?php echo $scriptcondition["field"]?>.split(',');
-						//alert(fieldvalues<?php echo $scriptcondition["field"]?>);
-						<?php
-						}
-					?>
-					}
-				else
-					{
-					<?php
-
-					# Handle Radio Buttons type: not sure if this is needed here anymore
-					if($scriptcondition['type'] == 12) {
-
-						$scriptcondition["options"] = explode(',', $scriptcondition["options"]);
-
-						foreach ($scriptcondition["options"] as $key => $value) 
-							{
-							$scriptcondition["options"][$key] = sha1($value);
-							}
-
-						$scriptcondition["options"] = implode(',', $scriptcondition["options"]);
-						?>
-						
-						var options_string = '<?php echo $scriptcondition["options"]; ?>';
-						var field<?php echo $scriptcondition["field"]; ?>_options = options_string.split(',');
-						var checked = null;
-						
-						for(var i=0; i < field<?php echo $scriptcondition["field"]; ?>_options.length; i++)
-							{
-							if(jQuery('#field_<?php echo $scriptcondition["field"]; ?>_' + field<?php echo $scriptcondition["field"]; ?>_options[i]).is(':checked')) 
-								{
-								checked = jQuery('#field_<?php echo $scriptcondition["field"]; ?>_' + field<?php echo $scriptcondition["field"]; ?>_options[i] + ':checked').val();
-								checked = checked.toUpperCase();
-								}
-							}
-
-						fieldokvalues<?php echo $scriptcondition["field"]; ?> = [<?php echo $scriptcondition["valid"]; ?>];
-
-						if(checked !== null && jQuery.inArray(checked, fieldokvalues<?php echo $scriptcondition["field"]; ?>) > -1) 
-							{
-							newfield<?php echo $field["ref"]; ?>provisionaltest = true;
-							}
-						<?php
-						}
-					?>
-					fieldvalues<?php echo $scriptcondition["field"]?>=new Array();
-					checkedvals<?php echo $scriptcondition["field"]?>=jQuery('input[name^=<?php echo $scriptcondition["field"]?>_]');
-      
-					jQuery.each(checkedvals<?php echo $scriptcondition["field"]?>,function()
-						{
-						if (jQuery(this).is(':checked'))
-							{
-							checktext<?php echo $scriptcondition["field"]?>=jQuery(this).parent().next().text().toUpperCase();
-							checktext<?php echo $scriptcondition["field"]?> = jQuery.trim(checktext<?php echo $scriptcondition["field"]?>);
-							fieldvalues<?php echo $scriptcondition["field"]?>.push(checktext<?php echo $scriptcondition["field"]?>);
-							//alert(fieldvalues<?php echo $scriptcondition["field"]?>);
-							}
-						});
-					}
-		
-				fieldokvalues<?php echo $scriptcondition["field"]?>=new Array();
-				fieldokvalues<?php echo $scriptcondition["field"]?>=[<?php echo $scriptcondition["valid"]?>];
-		
-				jQuery.each(fieldvalues<?php echo $scriptcondition["field"]?>,function(f,v)
-					{
-					//alert("checking value " + fieldvalues<?php echo $scriptcondition["field"]?> + " against " + fieldokvalues<?php echo $scriptcondition["field"]?>);
-					//alert(jQuery.inArray(fieldvalues<?php echo $scriptcondition["field"]?>,fieldokvalues<?php echo $scriptcondition["field"]?>));
-					if ((jQuery.inArray(v,fieldokvalues<?php echo $scriptcondition["field"]?>))>-1 || (fieldvalues<?php echo $scriptcondition["field"]?> ==fieldokvalues<?php echo  $scriptcondition["field"]?>))
-						{
-						newfield<?php echo $field["ref"]?>provisionaltest=true;
-						}
-					});
-
-				if (newfield<?php echo $field["ref"]?>provisionaltest==false)
-					{
-					newfield<?php echo $field["ref"]?>provisional=false;
-					}
-				<?php
-				}
-			?>
-			exemptfieldsval=jQuery('#exemptfields').val();
-			exemptfieldsarr=exemptfieldsval.split(',');
-			
-			if (newfield<?php echo $field["ref"]?>provisional==true)
-				{
-				if (jQuery.inArray(<?php echo $field["ref"]?>,exemptfieldsarr))
-					{
-					exemptfieldsarr.splice(jQuery.inArray(<?php echo $field["ref"]?>, exemptfieldsarr), 1 );
-					}
-				newfield<?php echo $field["ref"]?>status='block';
-				}
-			else
-				{
-				if ((jQuery.inArray(<?php echo $field["ref"]?>,exemptfieldsarr))==-1)
-					{
-					exemptfieldsarr.push(<?php echo $field["ref"]?>);
-					}
-				}
-			jQuery('#exemptfields').val(exemptfieldsarr.join(","));
-
-			if (newfield<?php echo $field["ref"]?>status!=field<?php echo $field["ref"]?>status)
-				{
-				jQuery('#question_<?php echo $n ?>').slideToggle();
-				if (jQuery('#question_<?php echo $n ?>').css('display')=='block')
-					{
-					jQuery('#question_<?php echo $n ?>').css('border-top','');
-					}
-				else
-					{
-					jQuery('#question_<?php echo $n ?>').css('border-top','none');
-					}
-				}
-			}
-		</script>
-		<?php
-return $displaycondition;
 }
 
 # Allows language alternatives to be entered for free text metadata fields.

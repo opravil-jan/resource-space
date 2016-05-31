@@ -148,15 +148,27 @@ function save_resource_data($ref,$multi,$autosave_field="")
 							$val.=" " . $field . ":";
 							if (($field=getvalescaped("field_" . $fields[$n]["ref"] . "-i",""))!="") 
 								{
-									$val.=$field;
+								$val.=$field;
 								} 
 							else 
 								{
-									$val.="00";
+								$val.="00";
 								}
 							}
+                        else 
+                            {
+                            $val.=" 00:00";
+                            }
 						}
+                     else 
+                        {
+                        $val.="-00 00:00";
+                        }
 					}
+                else 
+                    {
+                    $val.="-00-00 00:00";
+                    }
 				}
 			elseif ($multilingual_text_fields && ($fields[$n]["type"]==0 || $fields[$n]["type"]==1 || $fields[$n]["type"]==5))
 				{
@@ -220,8 +232,7 @@ function save_resource_data($ref,$multi,$autosave_field="")
 				$submittedvals=explode("|",$submittedval);
                 $newvals=array();
                 foreach($fields[$n]["nodes"] as $noderef => $nodedata)
-                    {
-               
+                    {               
                     $addnode=false;
                     foreach($submittedvals as $checkval)
                         {
@@ -316,7 +327,10 @@ function save_resource_data($ref,$multi,$autosave_field="")
 				sql_query("delete from resource_data where resource='$ref' and resource_type_field='" . $fields[$n]["ref"] . "'");
 				
 				# Insert new data and keyword mappings, increase keyword hitcounts.
-				sql_query("insert into resource_data(resource,resource_type_field,value) values('$ref','" . $fields[$n]["ref"] . "','" . escape_check($val) ."')");
+				if(escape_check($val)!=='')
+					{
+					sql_query("insert into resource_data(resource,resource_type_field,value) values('$ref','" . $fields[$n]["ref"] . "','" . escape_check($val) ."')");
+					}
 								
 				if ($fields[$n]["type"]==3 && substr($oldval,0,1) != ',')
 					{
@@ -573,8 +587,20 @@ function save_resource_data_multi($collection)
 									$val.="00";
 								}
 							}
+                        else 
+                            {
+                            $val.=" 00:00";
+                            }
 						}
+                    else 
+                        {
+                        $val.="-00 00:00";
+                        }
 					}
+                else 
+                    {
+                    $val.="-00-00 00:00";
+                    }
 				}
 			elseif ($fields[$n]["type"] == 3)
 				{
@@ -743,7 +769,10 @@ function save_resource_data_multi($collection)
 					sql_query("delete from resource_data where resource='$ref' and resource_type_field='" . $fields[$n]["ref"] . "'");
 					
 					# Insert new data and keyword mappings, increase keyword hitcounts.
-					sql_query("insert into resource_data(resource,resource_type_field,value) values('$ref','" . $fields[$n]["ref"] . "','" . escape_check($val) . "')");
+					if(escape_check($val)!=='')
+						{
+						sql_query("insert into resource_data(resource,resource_type_field,value) values('$ref','" . $fields[$n]["ref"] . "','" . escape_check($val) . "')");
+						}
 		
 					$oldval=$existing;
 					$newval=$val;
@@ -783,20 +812,39 @@ function save_resource_data_multi($collection)
 			}
 		}
 		
-	# Also save related resources field
-	if (getval("editthis_related","")!="")
-		{
-		$related=explode(",",getvalescaped("related",""));
-		# Make sure all submitted values are numeric
-		$ok=array();for ($n=0;$n<count($related);$n++) {if (is_numeric(trim($related[$n]))) {$ok[]=trim($related[$n]);}}
+    // Also save related resources field
+    if(getval("editthis_related","")!="")
+        {
+        $related = explode(',', getvalescaped('related', ''));
 
-		for ($m=0;$m<count($list);$m++)
-			{
-			$ref=$list[$m];
-			sql_query("delete from resource_related where resource='$ref' or related='$ref'"); # remove existing related items
-			if (count($ok)>0) {sql_query("insert into resource_related(resource,related) values ($ref," . join("),(" . $ref . ",",$ok) . ")");}
-			}
-		}
+        // Make sure all submitted values are numeric
+        $ok = array();
+        for($n = 0; $n < count($related); $n++)
+            {
+            if(is_numeric(trim($related[$n])))
+                {
+                $ok[] = trim($related[$n]);
+                }
+            }
+
+        // Clear out all relationships between related resources in this collection
+        sql_query("
+                DELETE rr
+                  FROM resource_related AS rr
+            INNER JOIN collection_resource AS cr ON rr.resource = cr.resource
+                 WHERE cr.collection = '{$collection}'
+        ");
+
+        for($m = 0; $m < count($list); $m++)
+            {
+            $ref = $list[$m];
+
+            if(0 < count($ok))
+                {
+                sql_query("INSERT INTO resource_related(resource, related) VALUES ($ref, " . join("),(" . $ref . ",",$ok) . ")");
+                }
+            }
+        }
 	
 	# Also update archive status
 	global $user_resources_approved_email,$email_notify;	
@@ -1239,7 +1287,12 @@ function update_field($resource,$field,$value)
 	# Delete the old value (if any) and add a new value.
 	sql_query("delete from resource_data where resource='$resource' and resource_type_field='$field'");
 	$value=escape_check($value);
-	sql_query("insert into resource_data(resource,resource_type_field,value) values ('$resource','$field','$value')");
+	
+	# write to resource_data if not an empty value
+	if($value!=='')
+		{
+		sql_query("insert into resource_data(resource,resource_type_field,value) values ('$resource','$field','$value')");
+		}
 	
 	if ($value=="") {$value="null";} else {$value="'" . $value . "'";}
 
@@ -1829,7 +1882,7 @@ function write_metadata($path, $ref, $uniqid="")
 	{
 	// copys the file to tmp and runs exiftool on it	
 	// uniqid tells the tmp file to be placed in an isolated folder within tmp
-	global $exiftool_remove_existing,$storagedir,$exiftool_write,$exiftool_no_process,$mysql_charset,$exiftool_write_omit_utf8_conversion;
+	global $exiftool_remove_existing, $storagedir, $exiftool_write, $exiftool_write_option, $exiftool_no_process, $mysql_charset, $exiftool_write_omit_utf8_conversion;
 
     # Fetch file extension and resource type.
 	$resource_data=get_resource_data($ref);
@@ -1839,7 +1892,7 @@ function write_metadata($path, $ref, $uniqid="")
 	$exiftool_fullpath = get_utility_path("exiftool");
 
     # Check if an attempt to write the metadata shall be performed.
-	if (($exiftool_fullpath!=false) && ($exiftool_write) && !in_array($extension,$exiftool_no_process))
+	if(false != $exiftool_fullpath && $exiftool_write && $exiftool_write_option && !in_array($extension, $exiftool_no_process))
 		{
 		# Trust Exiftool's list of writable formats	
 		$command=$exiftool_fullpath . " -listwf";
@@ -3109,7 +3162,7 @@ function update_xml_metadump($resource)
 		$rtypename = '';
 	}
 
-	$f=fopen($path,"w+");
+	$f=fopen($path,"w");
 	fwrite($f,"<?xml version=\"1.0\"?>\n");
 	fwrite($f,"<record xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\" resourcespace:resourceid=\"$resource\"");
 	fwrite($f," resourcespace:extension=\"$ext\" resourcespace:resourcetype=\"$rtypename\" resourcespace:resourcetypeid=\"$rtype\" ");
@@ -3392,7 +3445,7 @@ function reindex_resource($ref)
 	# Reindex a resource. Delete all resource_keyword rows and create new ones.
 	
 	# Delete existing keywords
-	sql_query("delete from resource_keyword where resource='$ref'");
+	sql_query("DELETE FROM resource_keyword WHERE resource = '{$ref}'");
 
 	# Index fields
 	$data=get_resource_field_data($ref,false,false); # Fetch all fields and do not use permissions.

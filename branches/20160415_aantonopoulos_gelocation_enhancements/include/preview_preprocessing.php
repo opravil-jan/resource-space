@@ -218,25 +218,42 @@ if ($extension=="swf" && !isset($newfile))
    ----------------------------------------
 */
 
-if (($extension=="cr2" || $extension=="nef" || $extension=="dng" || $extension=="raf" || $extension=="rw2") && !isset($newfile))
+if (($extension=="cr2" || $extension=="nef" || $extension=="dng" || $extension=="raf" || $extension=="rw2" || 'arw' == $extension) && !isset($newfile))
 	{
 	global $cr2_thumb_extract;
 	global $nef_thumb_extract;
 	global $dng_thumb_extract;
 	global $rw2_thumb_extract;
 	global $raf_thumb_extract;
+	global $arw_thumb_extract;
 	
-	if (($extension=="cr2" && $cr2_thumb_extract) || ($extension=="nef" && $nef_thumb_extract) || ($extension=="dng" && $dng_thumb_extract) || ($extension=="rw2" && $rw2_thumb_extract) || ($extension=="raf" && $raf_thumb_extract))
+	if (($extension=="cr2" && $cr2_thumb_extract) || 
+		($extension=="nef" && $nef_thumb_extract) || 
+		($extension=="dng" && $dng_thumb_extract) || 
+		($extension=="rw2" && $rw2_thumb_extract) || 
+		($extension=="raf" && $raf_thumb_extract) ||
+		('arw' == $extension && $arw_thumb_extract)
+	)
 		{
 		if ($exiftool_fullpath!=false)
 			{	
 			// previews are stored in a couple places, and some nef files have large previews in -otherimage
 			if ($extension=="rw2"){$bin_tag=" -jpgfromraw ";}
 			if ($extension=="nef"){$bin_tag=" -otherimage ";}
-			if ($extension=="cr2"||$extension=="dng"||$extension=="raf"){$bin_tag=" -previewimage ";}
-			// attempt
-            $cmd=$exiftool_fullpath.' -b '.$bin_tag.' '.escapeshellarg($file).' > '.$target;
-            $wait=run_command($cmd);
+			if ($extension=="cr2"||$extension=="dng"||$extension=="raf" || 'arw' == $extension)
+				{
+				$bin_tag = " -previewimage ";
+				}
+
+				// Attempt extraction. Replaced ">" with -w since this has been seen to fail on some Windows servers
+            $cmd=$exiftool_fullpath.' -b '.$bin_tag.' '.escapeshellarg($file).' -w %d%f.jpg';
+	    $extractedpreview=preg_replace('"\.' . $extension . '$"', '.jpg', $file);
+	    if($target!=$extractedpreview && file_exists($extractedpreview))
+		{
+		rename($extractedpreview, $target);
+		}
+            
+	    $wait=run_command($cmd);
             resource_log(RESOURCE_LOG_APPEND_PREVIOUS,LOG_CODE_TRANSFORMED,'','','',$cmd . ":\n" . $wait);
 
 			// check for nef -otherimage failure
@@ -245,9 +262,14 @@ if (($extension=="cr2" || $extension=="nef" || $extension=="dng" || $extension==
 				unlink($target);	
 				$bin_tag=" -previewimage ";
 				//2nd attempt
-				$cmd=$exiftool_fullpath.' -b '.$bin_tag.' '.escapeshellarg($file).' > '.$target;
-                $wait=run_command($cmd);
-                resource_log(RESOURCE_LOG_APPEND_PREVIOUS,LOG_CODE_TRANSFORMED,'','','',$cmd . ":\n" . $wait);
+				$cmd=$exiftool_fullpath.' -b '.$bin_tag.' '.escapeshellarg($file).' -w %d%f.jpg';
+				$wait=run_command($cmd);
+				$extractedpreview=preg_replace('"\.' . $extension . '$"', '.jpg', $file);
+				if($target!=$extractedpreview && file_exists($extractedpreview))
+					{
+					rename($extractedpreview, $target);
+					}
+				resource_log(RESOURCE_LOG_APPEND_PREVIOUS,LOG_CODE_TRANSFORMED,'','','',$cmd . ":\n" . $wait);
 				}
 				
 			// NOTE: in case of failures, other suboptimal possibilities 
@@ -276,7 +298,7 @@ if (($extension=="cr2" || $extension=="nef" || $extension=="dng" || $extension==
 					}
 				$newfile = $target;$keep_for_hpr=true;
 				}
-			else
+			elseif(file_exists($target))
 				{
 				unlink($target);
 				}	

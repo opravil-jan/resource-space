@@ -12,6 +12,7 @@ if ( $disable_geocoding || (!$disable_geocoding && !$geo_locate_collection) ){ex
 global $baseurl;
 
 $ref = getvalescaped("ref","",true);
+if (!is_numeric($ref)){exit("Go away");}
 $all_resources = get_collection_resources($ref);
 $collection = get_collection($ref);
 $collectionname = $collection['name'];
@@ -31,31 +32,19 @@ if ( count($all_resources) == 0 ) {  exit( $lang["geoemptycollection"]);  }
 foreach ($all_resources as $value) 
 	{
     $resource = get_resource_data($value,$cache=true);
-    //print_r($resource);
-	//print_r(get_resource_path($resource['ref'],false,"",$generate=true,$extension="gpx",$scramble=-1,$page=1,$watermarked=false,$file_modified="",$alternative=-1,$includemodified=false));
-	//hide the resource if it is confidential
+    
+    //hide the resource if it is confidential
 	if ( get_resource_access($resource['ref'])==2 ) {continue;}
     
     //If the resource is not confidential keep going
     else
     {
-	$file_extension = $resource['file_extension'];
-	//if ( $gpx==='gpx'){continue;}
 	$forthumb = get_resource_data($resource['ref']);
-	
-	if ( $file_extension ==='gpx' )
-	{
-	$url = get_resource_path($resource['ref'],false,"",$generate=true,$extension="gpx",$scramble=-1,$page=1,$watermarked=false,$file_modified="",$alternative=-1,$includemodified=false);
-	}
-	else
-	{
-    $url = get_resource_path($resource['ref'],false,"thm",$generate=true,$extension="jpg",$scramble=-1,$page=1,$watermarked=false,$file_modified="",$alternative=-1,$includemodified=true);
-	}
-	
+	$url = get_resource_path($resource['ref'],false,"thm",$generate=true,$extension="jpg",$scramble=-1,$page=1,$watermarked=false,$file_modified="",$alternative=-1,$includemodified=true);
 	$new = str_replace($baseurl,"", $url);
 	$parts =  explode('?',$new);
 	
-	if ( ( $resource['geo_long'] == '' || $resource['geo_lat'] == '') && $file_extension !='gpx' )
+	if (  $resource['geo_long'] == '' || $resource['geo_lat'] == '' )
 		{
 		if (!$check)
 			{
@@ -91,8 +80,6 @@ foreach ($all_resources as $value)
 		$markers[] =  [ $resource['geo_long'] . "," .  $resource['geo_lat'] . "," . $resource['ref'] . "," . $forthumb['thumb_width'] . "," . $forthumb['thumb_height']  ];
 		$paths[] = $parts[0];
 		$titles[] = $resource['field8'];
-		$file_extensions[] = $file_extension;
-		//print_r($markers); 
 		}
 	}
 }
@@ -120,8 +107,7 @@ foreach ($all_resources as $value)
     var markers = <?php echo str_replace(array('"','\\'),'',json_encode($markers)) ?>;
     var paths = <?php echo str_replace('\\','',json_encode($paths)) ?>;
     var titles = <?php echo json_encode($titles)?>;
-    var file_extension = <?php echo json_encode($file_extensions)?>;
-	var baseurl = <?php echo str_replace('\\','',json_encode($baseurl) )?>;
+    var baseurl = <?php echo str_replace('\\','',json_encode($baseurl) )?>;
 
     for (var i=0; i<markers.length; i++)
 		{
@@ -132,8 +118,6 @@ foreach ($all_resources as $value)
         var height = markers[i][4];
         var reslink = paths[i];
         var title = titles[i];
-        var fe = file_extension[i];
-        //alert(title);
         
         var feature = new OpenLayers.Feature.Vector(
 			new OpenLayers.Geometry.Point( lon, lat ).transform(epsg4326, projectTo),
@@ -149,31 +133,14 @@ foreach ($all_resources as $value)
 			{externalGraphic: '../lib/OpenLayers/img/marker.png', graphicHeight: 25, graphicWidth: 21 }
 		);  
 		
-		if ( fe ==='gpx') {
-		// Add the Layer with GPX Track
-		var lgpx = new OpenLayers.Layer.Vector(title, {
-			
-			strategies: [new OpenLayers.Strategy.Fixed()],
-			protocol: new OpenLayers.Protocol.HTTP({
-				url: '..' + reslink,
-				format: new OpenLayers.Format.GPX({
-extractWaypoints: true, extractRoutes: true, extractAttributes: true, keepData:true,
-})
-			}),
-			style: {strokeColor: "blue", strokeWidth: 5, strokeOpacity: 0.9},
-			
-			projection: new OpenLayers.Projection("EPSG:4326")
-		});
-		
-		map.addLayer(lgpx);
-	}
 		vectorLayer.addFeatures(feature);
 		vectorLayer2.addFeatures(feature2);
+	}
 		
-		//Hide by default the default red marker and display
-		//the thumbnails layer
-		vectorLayer.setVisibility(false)		
-}
+		
+	//Hide by default the thumbnails and display markers
+	vectorLayer.setVisibility(false)		
+
 	vectorLayer.events.register("featureselected", null, function(event){
         ModalLoad(event.feature.attributes.description)
         selectControl.unselectAll();
@@ -184,8 +151,7 @@ extractWaypoints: true, extractRoutes: true, extractAttributes: true, keepData:t
         selectControl.unselectAll();
 		});
     	
-		
-    // Add select feature control required to trigger events on the vector layer.
+	// Add select feature control required to trigger events on the vector layer.
     var selectControl = new OpenLayers.Control.SelectFeature(vectorLayer);
     map.addControl(selectControl);
     selectControl.activate(); 
@@ -194,13 +160,11 @@ extractWaypoints: true, extractRoutes: true, extractAttributes: true, keepData:t
     map.addControl(selectControl2);
     selectControl2.activate();  
     
-	
 	map.addLayer(vectorLayer);
     map.addLayer(vectorLayer2);
 	
     map.zoomToExtent(vectorLayer2.getDataExtent());
     
-	
 </script>
 
 

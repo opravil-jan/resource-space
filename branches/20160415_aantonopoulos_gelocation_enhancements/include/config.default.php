@@ -397,6 +397,21 @@ $exiftool_write=true;
 # Omit conversion to utf8 when exiftool writes (this happens when $mysql_charset is not set, or $mysql_charset!="utf8")
 $exiftool_write_omit_utf8_conversion=false;
 
+/*
+These two options allow the user to choose whether they want to write metadata on downloaded files.
+
+$force_exiftool_write_metadata should be used by system admins to force writing or not writing metadata on a file on download
+$exiftool_write_option will be used on both resource and collection download. On collection download, an extra option (check box)
+will be available so the user can specify whether they want to write metadata on the downloaded files
+example use:
+$force_exiftool_write_metadata = false; $exiftool_write_option = true; means ResourceSpace will write to the files
+$force_exiftool_write_metadata = true; $exiftool_write_option = false; means ResourceSpace will force users to not write metadata to the files
+
+Note: this honours $exiftool_write so if that option is false, this will not work
+*/
+$force_exiftool_write_metadata = false;
+$exiftool_write_option         = false;
+
 # Set metadata_read to false to omit the option to extract metadata.
 $metadata_read=true;
 
@@ -444,6 +459,7 @@ $nef_thumb_extract=false;
 $dng_thumb_extract=false;
 $rw2_thumb_extract=true;
 $raf_thumb_extract=false;
+$arw_thumb_extract = false;
 
 # Turn on creation of a miff file for Photoshop EPS.
 # Off by default because it is 4x slower than just ripping with ghostscript, and bloats filestore.
@@ -1405,6 +1421,8 @@ $default_user_select="";
 # limit the options available in the other dropdowns automatically? This adds a performance penalty so is off by default.
 $simple_search_dropdown_filtering=false;
 
+# Honor display condition settings on simple search for the included fields.
+$simple_search_display_condition=array();
 
 # When searching, also include themes/public collections at the top?
 $search_includes_themes=false;
@@ -1523,7 +1541,7 @@ $partial_index_min_word_length=3;
 # Search Display 
 
 # Thumbs Display Fields: array of fields to display on the large thumbnail view.
-$thumbs_display_fields=array(8,3);
+$thumbs_display_fields=array(8);
 # array of defined thumbs_display_fields to apply CSS modifications to (via $search_results_title_wordwrap, $search_results_title_height, $search_results_title_trim)
 $thumbs_display_extended_fields=array();
 	# $search_result_title_height=26;
@@ -1533,7 +1551,7 @@ $thumbs_display_extended_fields=array();
 # Enable extra large thumbnails option for search screen
 $xlthumbs=true;
 # Extra Large Display Fields:  array of fields to display on the xlarge thumbnail view.
-$xl_thumbs_display_fields=array(8,3);
+$xl_thumbs_display_fields=array(8);
 # array of defined xl_thumbs_display_fields to apply CSS modifications to (via $xl_search_results_title_wordwrap, $xl_search_results_title_height, $xl_search_results_title_trim)
 $xl_thumbs_display_extended_fields=array();
 	# $xl_search_result_title_height=26;
@@ -2818,9 +2836,6 @@ $team_user_filter_top=false;
 # Stemming support - at this stage, experimental. Indexes stems of words only, so plural / singular (etc) forms of keywords are indexed as if they are equivalent. Requires a full reindex.
 $stemming=false;
 
-# Show the > symbol in the resource tools
-$resourcetoolsGT=true;
-
 # Initialize array for classes to be added to <body> element
 $body_classes = array();
 
@@ -2922,6 +2937,9 @@ $user_pref_system_management_notifications=true;
 # User preference - email_user_notifications. Option to receive emails instead of new style system notifications where appropriate. 
 $email_user_notifications=false;
 
+# User preference - email_and_user_notifications. Option to receive emails instead of new style system notifications where appropriate. 
+$email_and_user_notifications=false;
+
 # Execution lockout mode - prevents entry of PHP even to admin users (e.g. config overrides and upload of new plugins) - useful on shared / multi-tennant systems.
 $execution_lockout=false;
 
@@ -2975,6 +2993,9 @@ $external_share_view_as_internal=false;
 they are allowed*/
 $allowed_external_share_groups = array();
 
+# When sharing externally as a specific user group (permission x), honor group config options (meant to respect settings like $collection_download).
+$external_share_groups_config_options=false;
+
 // CSV Download - add original URL column
 $csv_export_add_original_size_url_column = false;
 
@@ -3023,4 +3044,8 @@ $default_to_first_node_for_fields=array();
 
 # A list of groups for which the knowledge base will launch on login, until dismissed.
 $launch_kb_on_login_for_groups=array();
+
+# E-mail address to send a report to if any of the automated tests (tests/test.php) fail.
+# This is used by Montala to automatically test the RS trunk on a nightly basis.
+# $email_test_fails_to="example@example.com";
 

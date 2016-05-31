@@ -501,7 +501,7 @@ $lang["asadded"]="As added";
 $lang["popularity"]="Popularity";
 $lang["rating"]="Rating";
 $lang["colour"]="Colour";
-$lang["jumptopage"]="Jump to page";
+$lang["jumptopage"]="Page";
 $lang["jump"]="Jump";
 $lang["titleandcountry"]="Title / country";
 $lang["torefineyourresults"]="To refine your results, try";
@@ -802,6 +802,9 @@ $lang["status-note"]="NOTE";
 $lang["action-changelanguage"]="Change language";
 $lang["loading"]="Loading...";
 $lang['disable_languages']='Disable language selection options';
+$lang['import_export'] = 'Import/ Export';
+$lang['import'] = 'Import';
+$lang['export'] = 'Export';
 
 # Pager
 $lang["next"]="Next";
@@ -2118,6 +2121,7 @@ $lang["all__footer"]="Powered by <a target=\"_blank\" href=\"http://www.resource
 $lang["all__researchrequest"]="Let our resources team find the resources you need.";
 $lang["all__searchpanel"]="Search using descriptions, keywords and resource numbers";
 $lang["change_language__introtext"]="Please select your language below.";
+$lang['collection_download__write_metadata_on_download_label'] = 'Embed resource metadata in the downloaded file(s)?';
 $lang["collection_edit__introtext"]="Organise and manage your work by grouping resources together. Create 'Collections' to suit your way of working.\n\n<br />\n\nAll the collections in your list appear in the 'My Collections' panel at the bottom of the screen\n\n<br /><br />\n\n<strong>Private Access</strong> allows only you and and selected users to see the collection. Ideal for grouping resources under projects that you are working on independently and share resources amongst a project team.\n\n<br /><br />\n\n<strong>Public Access</strong> allows all users of the system to search and see the collection. Useful if you wish to share collections of resources that you think others would benefit from using.\n\n<br /><br />\n\nYou can choose whether you allow other users (public or users you have added to your private collection) to add and remove resources or simply view them for reference.";
 $lang["collection_email__introtext"]="Please complete the form below. The recipients will receive an email containing links to the collections rather than file attachments so they can choose and download the appropriate resources.";
 $lang["collection_email__introtextthemeshare"]="Complete the form below to e-mail the featured collections in this featured collection category. The recipients will receive an email containing links to each of the featured collections.";
@@ -2247,6 +2251,7 @@ $lang["dasheditchangeall_users"]="Turning off this setting will not remove this 
 $lang["dashtilevisitlink"]="Visit target link";
 $lang["alluserprebuiltdashtiles"]="Create pre-constructed dash tiles (added for all users)";
 $lang["manageowndashinto"]="Manage dash tiles available for your dash. You can add / remove or edit tiles on your dash if you have the permissions to do so.";
+$lang['manage_all_user_dash_tiles_note'] = 'Note: Tiles shown with a red border are hidden to the users. Admins see them as there are other tiles available but hidden from these users';
 
 /* User group dash tiles */
 $lang['manage_user_group_dash_tiles']  = 'Manage user group dash tiles';
@@ -2333,6 +2338,7 @@ $lang['userpreference_system_management_notifications'] = "Send me messages abou
 $lang['userpreference_user_management_notifications'] = "Send me user administration messages e.g. new user acount requests";
 $lang['userpreference_resource_access_notifications'] = "Send me messages about resource access e.g. resource requests";
 $lang['userpreference_resource_notifications'] = "Send me resource messages about resource management e.g. resource state changes, metadata changes";
+$lang['userpreference_exiftool_write_metadata_label'] = 'Write embedded metadata on download (provides option to choose this only on collection download)';
 
 /* System Config */
 $lang['systemconfig'] = 'System configuration';
@@ -2410,6 +2416,7 @@ $lang["applogo_does_not_exists"]="The uploaded logo is no longer available";
 
 /* Edit field options */
 $lang["manage_metadata_field_options"] = "Manage metadata field options";
+$lang['manage_metadata_field_options_import_options'] = 'Import options';
 $lang["system_performance"]="System performance";
 $lang["mysql_throughput"]="MySQL throughput";
 $lang["cpu_benchmark"]="CPU benchmark";
@@ -2428,6 +2435,8 @@ $lang['user_pref_daily_digest'] = "Send me a daily email with all unread notific
 $lang['email_daily_digest_subject'] = "Notification summary";
 $lang['email_daily_digest_text'] = "This is a summary of your unread messages from the last 24 hours";
 $lang['user_pref_daily_digest_mark_read'] = "Mark messages as read once I have been sent the summary email";
+$lang['user_pref_email_and_user_notifications']="Send me emails in addition to system notifications";
+$lang['notification_email_subject']="Notification email";
 $lang['mymessages_introtext'] = "You can configure which messages appear here by changing your user preferences";
 $lang["login_slideshow_image_notes"] = "This image will be used for the login page background only";
 $lang['media'] = "Media";

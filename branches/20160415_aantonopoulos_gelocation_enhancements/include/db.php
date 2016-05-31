@@ -115,37 +115,55 @@ if (!isset($storagedir)) {$storagedir=dirname(__FILE__)."/../filestore";}
 if (!isset($storageurl)) {$storageurl=$baseurl."/filestore";}
 
 $db = null;
-function sql_connect() {
-	global $use_mysqli,$db,$mysql_server,$mysql_username,$mysql_password,$mysql_db,$mysql_charset,$mysql_force_strict_mode;
+function sql_connect() 
+    {
+    global $use_mysqli,$db,$mysql_server,$mysql_username,$mysql_password,$mysql_db,$mysql_charset,$mysql_force_strict_mode;
 	# *** CONNECT TO DATABASE ***
-	if ($use_mysqli){
-	$db=mysqli_connect($mysql_server,$mysql_username,$mysql_password,$mysql_db);
-	} else {
-	mysql_connect($mysql_server,$mysql_username,$mysql_password);
-	mysql_select_db($mysql_db);
-	}
-
-	// If $mysql_charset is defined, we use it
-	// else, we use the default charset for mysql connection.
+	if ($use_mysqli)
+	    {
+	    $db=mysqli_connect($mysql_server,$mysql_username,$mysql_password,$mysql_db);
+	    } 
+	else 
+	    {
+	    mysql_connect($mysql_server,$mysql_username,$mysql_password);
+	    mysql_select_db($mysql_db);
+	    }
+	    // If $mysql_charset is defined, we use it
+	    // else, we use the default charset for mysql connection.
 	if(isset($mysql_charset))
-		{
+	    {
 		if($mysql_charset)
-			{
-			if ($use_mysqli){
-				mysqli_set_charset($db,$mysql_charset);
+		    {
+			if ($use_mysqli)
+			    {
+			    mysqli_set_charset($db,$mysql_charset);
 				}
-			else {
+			else 
+			    {
 				mysql_set_charset($mysql_charset);
-				}
+			    }
 			}
 		}
-
-	# Set MySQL Strict Mode (if configured)
-	if ($mysql_force_strict_mode)
-		{
-		sql_query("SET SESSION sql_mode='STRICT_ALL_TABLES'",false,-1,true,0);	
-		}
-}
+    # Set MySQL Strict Mode (if configured)    
+    if ($mysql_force_strict_mode)    
+        {
+        sql_query("SET SESSION sql_mode='STRICT_ALL_TABLES'",false,-1,true,0);	
+        }
+    else
+        {
+        # Determine MySQL version
+        $mysql_version = sql_query('select LEFT(VERSION(),3) as ver');
+        # Set sql_mode for MySQL 5.7+
+        if (version_compare($mysql_version[0]['ver'], '5.6', '>')) 
+            {
+             $sql_mode_current = sql_query('select @@SESSION.sql_mode');
+             $sql_mode_string = implode(" ", $sql_mode_current[0]);
+             $sql_mode_array_new = array_diff(explode(",",$sql_mode_string), array("ONLY_FULL_GROUP_BY", "NO_ZERO_IN_DATE", "NO_ZERO_DATE"));
+             $sql_mode_string_new = implode (",", $sql_mode_array_new);
+             sql_query("SET SESSION sql_mode = '$sql_mode_string_new'");           
+             }
+        }    
+    }
 sql_connect();
 
 #if (function_exists("set_magic_quotes_runtime")) {@set_magic_quotes_runtime(0);}
@@ -394,7 +412,7 @@ function hook($name,$pagename="",$params=array(),$last_hook_value_wins=false)
 					// We merge the cached result with the new result from the plugin and remove any duplicates
 					// Note: in custom plugins developers should work with the full array (ie. superset) rather than just a sub-set of the array.
 					//       If your plugin needs to know if the array has been modified previously by other plugins use the global variable "hook_return_value"
-					$GLOBALS['hook_return_value'] = array_unique(array_merge_recursive($GLOBALS['hook_return_value'], $function_return_value), SORT_REGULAR);
+					$GLOBALS['hook_return_value'] = array_values(array_unique(array_merge_recursive($GLOBALS['hook_return_value'], $function_return_value), SORT_REGULAR));
 					}
 				elseif (is_string($function_return_value))
 					{
@@ -855,6 +873,8 @@ function CheckDBStruct($path,$verbose=false)
 										(count($matchbase)==3 && count($matchexisting)==3 && $matchbase[1] == $matchexisting[1] && $matchbase[2] > $matchexisting[2])
 										 ||
 										(stripos($basecoltype,"text")!==false && stripos($existingcoltype,"text")===false)
+										||
+										(stripos($basecoltype,"BIGINT")!==false && stripos($existingcoltype,"INT")!==false)
 									       )
 										{        
 										debug("DBSTRUCT - updating column " . $col[0] . " in table " . $table . " from " . $existing[$n]["Type"] . " to " . str_replace("§",",",$col[1]) );
@@ -1010,7 +1030,7 @@ function nicedate($date,$time=false,$wordy=true)
 	{
 		$y = substr($y, 2, 2);
 	}
-	if (($y=="") || ($y=="0000")) return "-";
+	if ( $y=="" ) return "-";
 	$m = @$lang["months"][substr($date,5,2)-1];
 	if ($m=="") return $y;
 	$d = substr($date,8, 2);
@@ -1542,12 +1562,12 @@ function debug($text,$resource_log_resource_ref=null,$resource_log_code=LOG_CODE
 		$f=fopen($debug_log_location,"a");
 		chmod($debug_log_location,0333);
 		}
-	else
-		{
+    else
+        {
 		$f=fopen($debug_log_location,"a");
 		}
-	fwrite($f,date("Y-m-d H:i:s") . " " . $text . "\n");
-	fclose ($f);
+    fwrite($f,date("Y-m-d H:i:s") . " " . $text . "\n");
+    fclose ($f);
 	return true;
 	}
 	

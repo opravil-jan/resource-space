@@ -73,8 +73,6 @@ else
 	$path=get_resource_path($ref,true,$size,false,$ext,-1,$page,$use_watermark && $alternative==-1,"",$alternative);
 	
 	hook('modifydownloadpath');
-
-	if (!file_exists($path)) {$path=get_resource_path($ref,true,"",false,$ext,-1,$page,false,"",$alternative);}
         
 	if (!file_exists($path) && $noattach!="")
 		{
@@ -83,13 +81,18 @@ else
 		$path="../gfx/" . get_nopreview_icon($info["resource_type"],$ext,"thm");
 		}
 
-	# writing RS metadata to files: exiftool
-	if ($noattach=="" && $alternative==-1 && $exiftool_write) # Only for downloads (not previews)
-		{
-		$tmpfile=write_metadata($path,$ref);
-		if ($tmpfile!==false && file_exists($tmpfile)){$path=$tmpfile;}
-		}
-	}
+    // writing RS metadata to files: exiftool
+    // Note: only for downloads (not previews)
+    if('' == $noattach && -1 == $alternative && $exiftool_write)
+        {
+        $tmpfile = write_metadata($path, $ref);
+
+        if(false !== $tmpfile && file_exists($tmpfile))
+            {
+            $path = $tmpfile;
+            }
+        }
+    }
 
 
 if (!file_exists($path))

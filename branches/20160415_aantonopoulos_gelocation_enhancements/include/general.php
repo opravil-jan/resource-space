@@ -154,7 +154,7 @@ function get_resource_path($ref,$getfilepath,$size,$generate=true,$extension="jp
 			$file .= "?v=" . urlencode($file_modified);
 			}
 		}
-	
+	debug("BANG " . $file);
 	return  $file;
 	}
 	
@@ -1370,40 +1370,42 @@ function auto_create_user_account()
         }
 
     hook("afteruserautocreated", "all",array("new"=>$new));
-	if ($approve)
+	global $anonymous_login;
+    if(isset($anonymous_login))
+        {
+        global $rs_session;
+        $rs_session=get_rs_session_id();
+        if($rs_session!==false)
+            {				
+            # Copy any anonymous session collections to the new user account 
+            if (!function_exists("get_session_collections"))
+                {
+                include_once dirname(__FILE__) . "/../include/collections_functions.php";
+                }
+
+            global $username, $userref;
+
+            if(is_array($anonymous_login) && array_key_exists($baseurl, $anonymous_login))
+                {
+                $anonymous_login = $anonymous_login[$baseurl];
+                }
+
+            $username=$anonymous_login;
+            $userref=sql_value("SELECT ref value FROM user where username='$anonymous_login'","");
+            $sessioncollections=get_session_collections($rs_session,$userref,false);
+            if(count($sessioncollections)>0)
+                {
+                foreach($sessioncollections as $sessioncollection)
+                    {
+                    update_collection_user($sessioncollection,$new);
+                    }
+                sql_query("UPDATE user SET current_collection='$sessioncollection' WHERE ref='$new'");
+                }
+            }
+        }
+    if ($approve)
 		{
-		# Auto approving
-		 global $anonymous_login;
-		if(isset($anonymous_login))
-			{
-			global $rs_session;
-			$rs_session=get_rs_session_id();
-			if($rs_session==false){continue;}
-			# Copy any anonymous session collections to the new user account 
-			if (!function_exists("get_session_collections"))
-				{
-				include_once dirname(__FILE__) . "/../include/collections_functions.php";
-				}
-
-			global $username, $userref;
-
-			if(is_array($anonymous_login) && array_key_exists($baseurl, $anonymous_login))
-				{
-				$anonymous_login = $anonymous_login[$baseurl];
-				}
-
-			$username=$anonymous_login;
-			$userref=sql_value("SELECT ref value FROM user where username='$anonymous_login'","");
-			$sessioncollections=get_session_collections($rs_session,$userref,false);
-			if(count($sessioncollections)>0)
-				{
-				foreach($sessioncollections as $sessioncollection)
-					{
-					update_collection_user($sessioncollection,$new);
-					}
-				sql_query("UPDATE user SET current_collection='$sessioncollection' WHERE ref='$new'");
-				}
-			}
+		# Auto approving		
 		if($bypassemail)
 			{
 			// No requirement to check anything else e.g. a valid email domain. We can take user direct to the password reset page to set the new account
@@ -1532,7 +1534,7 @@ function new_user($newuser)
 function get_stats_activity_types()
 	{
 	# Returns a list of activity types for which we have stats data (Search, User Session etc.)
-	return sql_array("select distinct activity_type value from daily_stat order by activity_type");
+	return sql_array("SELECT DISTINCT activity_type `value` FROM daily_stat ORDER BY activity_type");
 	}
 
 function get_stats_years()
@@ -2027,7 +2029,7 @@ function bulk_mail($userlist,$subject,$text,$html=false,$message_type=MESSAGE_EN
 			# strip the tags out
 			$body=strip_tags($body);
 			}
-		message_add($user_refs,$body,$url);
+		message_add($user_refs,$body,$url,null,$message_type);
 		}
 
     # Return an empty string (all OK).
@@ -2651,7 +2653,7 @@ function pager($break=true)
 	$jumpcount++;
 	if(!hook("replace_pager")){
 		if ($totalpages!=0 && $totalpages!=1){?>     
-			<span class="TopInpageNavRight"><?php if ($break) { ?>&nbsp;<br /><?php } hook("custompagerstyle"); if ($curpage>1) { ?><a class="prevPageLink" href="<?php echo $url?>&amp;go=prev&amp;offset=<?php echo urlencode($offset-$per_page) ?>" <?php if(!hook("replacepageronclick_prev")){?>onClick="return <?php echo $modal ? 'Modal' : 'CentralSpace'; ?>Load(this, true);" <?php } ?>><?php } ?>&lt;&nbsp;<?php echo $lang["previous"]?><?php if ($curpage>1) { ?></a><?php } ?>&nbsp;|
+			<span class="TopInpageNavRight"><?php if ($break) { ?>&nbsp;<br /><?php } hook("custompagerstyle"); if ($curpage>1) { ?><a class="prevPageLink" title="<?php echo $lang["previous"]?>" href="<?php echo $url?>&amp;go=prev&amp;offset=<?php echo urlencode($offset-$per_page) ?>" <?php if(!hook("replacepageronclick_prev")){?>onClick="return <?php echo $modal ? 'Modal' : 'CentralSpace'; ?>Load(this, true);" <?php } ?>><?php } ?><i class="fa fa-arrow-left"></i><?php if ($curpage>1) { ?></a><?php } ?>&nbsp;&nbsp;
 
 			<?php if ($pager_dropdown){
 				$id=rand();?>
@@ -2661,15 +2663,16 @@ function pager($break=true)
 				<?php } ?>
 				</select>
 			<?php } else { ?>
-				<a href="#" title="<?php echo $lang["jumptopage"]?>" onClick="p=document.getElementById('jumppanel<?php echo $jumpcount?>');if (p.style.display!='block') {p.style.display='block';document.getElementById('jumpto<?php echo $jumpcount?>').focus();} else {p.style.display='none';}; return false;"><?php echo $lang["page"]?>&nbsp;<?php echo htmlspecialchars($curpage) ?>&nbsp;<?php echo $lang["of"]?>&nbsp;<?php echo $totalpages?></a>
+
+				<div class="JumpPanel" id="jumppanel<?php echo $jumpcount?>" style="display:none;"><?php echo $lang["jumptopage"]?>: <input type="text" size="1" id="jumpto<?php echo $jumpcount?>" onkeydown="var evt = event || window.event;if (evt.keyCode == 13) {var jumpto=document.getElementById('jumpto<?php echo $jumpcount?>').value;if (jumpto<1){jumpto=1;};if (jumpto><?php echo $totalpages?>){jumpto=<?php echo $totalpages?>;};<?php echo $modal ? 'Modal' : 'CentralSpace'; ?>Load('<?php echo $url?>&amp;go=page&amp;offset=' + ((jumpto-1) * <?php echo urlencode($per_page) ?>), true);}">
+			&nbsp;<a class="fa fa-times-circle" href="#" onClick="document.getElementById('jumppanel<?php echo $jumpcount?>').style.display='none';document.getElementById('jumplink<?php echo $jumpcount?>').style.display='inline';"></a></div>
+			
+				<a href="#" id="jumplink<?php echo $jumpcount?>" title="<?php echo $lang["jumptopage"]?>" onClick="document.getElementById('jumppanel<?php echo $jumpcount?>').style.display='inline';document.getElementById('jumplink<?php echo $jumpcount?>').style.display='none';document.getElementById('jumpto<?php echo $jumpcount?>').focus(); return false;"><?php echo $lang["page"]?>&nbsp;<?php echo htmlspecialchars($curpage) ?>&nbsp;<?php echo $lang["of"]?>&nbsp;<?php echo $totalpages?></a>
 			<?php } ?>
 
-			|&nbsp;<?php if ($curpage<$totalpages) { ?><a class="nextPageLink" href="<?php echo $url?>&amp;go=next&amp;offset=<?php echo urlencode($offset+$per_page) ?>" <?php if(!hook("replacepageronclick_next")){?>onClick="return <?php echo $modal ? 'Modal' : 'CentralSpace'; ?>Load(this, true);" <?php } ?>><?php } ?><?php echo $lang["next"]?>&nbsp;&gt;<?php if ($curpage<$totalpages) { ?></a><?php } hook("custompagerstyleend"); ?>
+			&nbsp;&nbsp;<?php if ($curpage<$totalpages) { ?><a class="nextPageLink" title="<?php echo $lang["next"]?>" href="<?php echo $url?>&amp;go=next&amp;offset=<?php echo urlencode($offset+$per_page) ?>" <?php if(!hook("replacepageronclick_next")){?>onClick="return <?php echo $modal ? 'Modal' : 'CentralSpace'; ?>Load(this, true);" <?php } ?>><?php } ?><i class="fa fa-arrow-right"></i><?php if ($curpage<$totalpages) { ?></a><?php } hook("custompagerstyleend"); ?>
 			</span>
-			<?php if (!$pager_dropdown){?>
-				<div id="jumppanel<?php echo $jumpcount?>" style="display:none;margin-top:5px;"><?php echo $lang["jumptopage"]?>: <input type="text" size="3" id="jumpto<?php echo $jumpcount?>" onkeydown="var evt = event || window.event;if (evt.keyCode == 13) {var jumpto=document.getElementById('jumpto<?php echo $jumpcount?>').value;if (jumpto<1){jumpto=1;};if (jumpto><?php echo $totalpages?>){jumpto=<?php echo $totalpages?>;};<?php echo $modal ? 'Modal' : 'CentralSpace'; ?>Load('<?php echo $url?>&amp;go=page&amp;offset=' + ((jumpto-1) * <?php echo urlencode($per_page) ?>), true);}">
-			&nbsp;<input type="submit" name="jump" value="<?php echo $lang["jump"]?>" onClick="var jumpto=document.getElementById('jumpto<?php echo $jumpcount?>').value;if (jumpto<1){jumpto=1;};if (jumpto><?php echo $totalpages?>){jumpto=<?php echo $totalpages?>;};<?php echo $modal ? 'Modal' : 'CentralSpace'; ?>Load('<?php echo $url?>&amp;offset=' + ((jumpto-1) * <?php echo urlencode($per_page) ?>), true);"></div>
-			<?php } ?>
+			
 		<?php } else { ?><span class="HorizontalWhiteNav">&nbsp;</span><div <?php if ($pagename=="search"){?>style="display:block;"<?php } else { ?>style="display:inline;"<?php }?>>&nbsp;</div><?php } ?>
 		<?php
 		}
@@ -3017,7 +3020,7 @@ function get_simple_search_fields()
     if (isset($country_search) && $country_search) {$sql=" or ref=3";}
 
     # Executes query.
-    $fields = sql_query("select *, ref, name, title, type, order_by, keywords_index, partial_index, resource_type, resource_column, display_field, use_for_similar, iptc_equiv, display_template, tab_name, required, smart_theme_name, exiftool_field, advanced_search, simple_search, help_text, display_as_dropdown, external_user_access, autocomplete_macro, hide_when_uploading, hide_when_restricted, value_filter, exiftool_filter, omit_when_copying, tooltip_text from resource_type_field where (simple_search=1 $sql) and keywords_index=1 order by resource_type,order_by");
+    $fields = sql_query("select *, ref, name, title, type, order_by, keywords_index, partial_index, resource_type, resource_column, display_field, use_for_similar, iptc_equiv, display_template, tab_name, required, smart_theme_name, exiftool_field, advanced_search, simple_search, help_text, display_as_dropdown, external_user_access, autocomplete_macro, hide_when_uploading, hide_when_restricted, value_filter, exiftool_filter, omit_when_copying, tooltip_text, display_condition from resource_type_field where (simple_search=1 $sql) and keywords_index=1 order by resource_type,order_by");
 
     # Applies field permissions and translates field titles in the newly created array.
     $return = array();
@@ -3030,7 +3033,274 @@ function get_simple_search_fields()
     }
     return $return;
 }
-	
+
+function check_display_condition($n, $field)
+{
+  global $fields, $scriptconditions, $required_fields_exempt, $blank_edit_template, $ref, $use;
+
+  $displaycondition=true;
+  $s=explode(";",$field["display_condition"]);
+  $condref=0;
+    foreach ($s as $condition) # Check each condition
+    {
+       $displayconditioncheck=false;
+       $s=explode("=",$condition);
+        for ($cf=0;$cf<count($fields);$cf++) # Check each field to see if needs to be checked
+        {
+            node_field_options_override($fields[$cf]);
+            if ($s[0]==$fields[$cf]["name"]) # this field needs to be checked
+            {
+                $scriptconditions[$condref]["field"] = $fields[$cf]["ref"];  # add new jQuery code to check value
+                $scriptconditions[$condref]['type'] = $fields[$cf]['type'];
+                $scriptconditions[$condref]['options'] = (in_array($fields[$cf]['type'],array(2, 3, 7, 9, 12))?implode(",",$fields[$cf]['node_options']):$fields[$cf]['options']);
+
+                $checkvalues=$s[1];
+                $validvalues=explode("|",mb_strtoupper($checkvalues));
+                $scriptconditions[$condref]["valid"]= "\"";
+                $scriptconditions[$condref]["valid"].= implode("\",\"",$validvalues);
+                $scriptconditions[$condref]["valid"].= "\"";
+                $v=trim_array(explode(",",mb_strtoupper($fields[$cf]["value"])));
+
+                // If blank edit template is used, on upload form the dependent fields should be hidden
+                if($blank_edit_template && $ref < 0 && $use === '-1') {
+                   $v = array();
+                }
+                
+                foreach ($validvalues as $validvalue)
+                {
+                    if (in_array($validvalue,$v)) {$displayconditioncheck=true;} # this is  a valid value
+                 }
+                 if (!$displayconditioncheck) {$displaycondition=false;$required_fields_exempt[]=$field["ref"];}
+                #add jQuery code to update on changes
+                    if ($fields[$cf]["type"]==2) # add onchange event to each checkbox field
+                    {
+                        # construct the value from the ticked boxes
+                        # Note: it seems wrong to start with a comma, but this ensures it is treated as a comma separated list by split_keywords(), so if just one item is selected it still does individual word adding, so 'South Asia' is split to 'South Asia','South','Asia'.
+                     $options=trim_array($fields[$cf]["node_options"]);
+                     ?><script type="text/javascript">
+                     jQuery(document).ready(function() {<?php
+                       for ($m=0;$m<count($options);$m++)
+                       {
+                         $checkname=$fields[$cf]["ref"] . "_" . md5($options[$m]);
+                         echo "
+                         jQuery('.Question input[name=\"" . $checkname . "\"]').change(function (){
+                           checkDisplayCondition" . $field["ref"] . "();
+                        });";
+                  }
+                  ?>
+               });
+                     </script><?php
+                  }
+                        # add onChange event to each radio button
+                  else if($fields[$cf]['type'] == 12) {
+
+                    $options = $fields[$cf]['node_options'];?>
+					
+                    <script type="text/javascript">
+                    jQuery(document).ready(function() {
+
+                       <?php
+                       foreach ($options as $option) {
+                         $element_id = 'field_' . $fields[$cf]['ref'] . '_' . sha1($option);
+                         $jquery = sprintf('
+                          jQuery("#%s").change(function() {
+                            checkDisplayCondition%s();
+                         });
+                         ',
+                         $element_id,
+                         $field["ref"]
+                         );
+                         echo $jquery;
+                      } ?>
+
+                   });
+                    </script>
+
+                    <?php
+                 }
+                 else
+                 {
+                  ?>
+                  <script type="text/javascript">
+                  jQuery(document).ready(function() {
+                    jQuery('.Question #field_<?php echo $fields[$cf]["ref"];?>').change(function (){
+
+                       checkDisplayCondition<?php echo $field["ref"];?>();
+
+                    });
+                 });
+                  </script>
+                  <?php
+               }
+            }
+
+            } # see if next field needs to be checked
+
+            $condref++;
+        } # check next condition
+
+        ?>
+        <script type="text/javascript">
+        function checkDisplayCondition<?php echo $field["ref"];?>()
+			{
+			field<?php echo $field["ref"]?>status=jQuery('#question_<?php echo $n ?>').css('display');
+			newfield<?php echo $field["ref"]?>status='none';
+			newfield<?php echo $field["ref"]?>provisional=true;
+			
+			<?php
+			foreach ($scriptconditions as $scriptcondition)
+				{
+				?>
+				newfield<?php echo $field["ref"]?>provisionaltest=false;
+				if (jQuery('.Question #field_<?php echo $scriptcondition["field"]?>').length!=0)
+					{
+					<?php
+					if($scriptcondition['type'] == 12) {
+						?>
+						
+						var options_string = '<?php echo htmlspecialchars($scriptcondition["options"]); ?>';
+						var field<?php echo $scriptcondition["field"]; ?>_options = options_string.split(',');
+						var checked = null;
+						
+						for(var i=0; i < field<?php echo $scriptcondition["field"]; ?>_options.length; i++)
+							{
+							if(jQuery('.Question #field_<?php echo $scriptcondition["field"]; ?>_' + field<?php echo $scriptcondition["field"]; ?>_options[i]).is(':checked')) 
+								{
+								checked = jQuery('.Question #field_<?php echo $scriptcondition["field"]; ?>_' + field<?php echo $scriptcondition["field"]; ?>_options[i] + ':checked').val();
+								checked = checked.toUpperCase();
+								}
+							}
+						
+						fieldvalues<?php echo $scriptcondition["field"]?>=checked.split(',');
+						fieldokvalues<?php echo $scriptcondition["field"]; ?> = [<?php echo $scriptcondition["valid"]; ?>];
+
+						if(checked !== null && jQuery.inArray(checked, fieldokvalues<?php echo $scriptcondition["field"]; ?>) > -1) 
+							{
+							newfield<?php echo $field["ref"]; ?>provisionaltest = true;
+							}
+						<?php
+						}
+					else
+						{
+						?>
+						fieldcheck<?php echo $scriptcondition["field"]?>=jQuery('.Question #field_<?php echo $scriptcondition["field"]?>').val().toUpperCase();
+						fieldvalues<?php echo $scriptcondition["field"]?>=fieldcheck<?php echo $scriptcondition["field"]?>.split(',');
+						//alert(fieldvalues<?php echo $scriptcondition["field"]?>);
+						<?php
+						}
+					?>
+					}
+				else
+					{
+					<?php
+
+					# Handle Radio Buttons type: not sure if this is needed here anymore
+					if($scriptcondition['type'] == 12) {
+
+						$scriptcondition["options"] = explode(',', $scriptcondition["options"]);
+
+						foreach ($scriptcondition["options"] as $key => $value) 
+							{
+							$scriptcondition["options"][$key] = sha1($value);
+							}
+
+						$scriptcondition["options"] = implode(',', $scriptcondition["options"]);
+						?>
+						
+						var options_string = '<?php echo $scriptcondition["options"]; ?>';
+						var field<?php echo $scriptcondition["field"]; ?>_options = options_string.split(',');
+						var checked = null;
+						
+						for(var i=0; i < field<?php echo $scriptcondition["field"]; ?>_options.length; i++)
+							{
+							if(jQuery('.Question #field_<?php echo $scriptcondition["field"]; ?>_' + field<?php echo $scriptcondition["field"]; ?>_options[i]).is(':checked')) 
+								{
+								checked = jQuery('.Question #field_<?php echo $scriptcondition["field"]; ?>_' + field<?php echo $scriptcondition["field"]; ?>_options[i] + ':checked').val();
+								checked = checked.toUpperCase();
+								}
+							}
+
+						fieldokvalues<?php echo $scriptcondition["field"]; ?> = [<?php echo $scriptcondition["valid"]; ?>];
+
+						if(checked !== null && jQuery.inArray(checked, fieldokvalues<?php echo $scriptcondition["field"]; ?>) > -1) 
+							{
+							newfield<?php echo $field["ref"]; ?>provisionaltest = true;
+							}
+						<?php
+						}
+					?>
+					fieldvalues<?php echo $scriptcondition["field"]?>=new Array();
+					checkedvals<?php echo $scriptcondition["field"]?>=jQuery('.Question input[name^=<?php echo $scriptcondition["field"]?>_]');
+      
+					jQuery.each(checkedvals<?php echo $scriptcondition["field"]?>,function()
+						{
+						if (jQuery(this).is(':checked'))
+							{
+							checktext<?php echo $scriptcondition["field"]?>=jQuery(this).parent().next().text().toUpperCase();
+							checktext<?php echo $scriptcondition["field"]?> = jQuery.trim(checktext<?php echo $scriptcondition["field"]?>);
+							fieldvalues<?php echo $scriptcondition["field"]?>.push(checktext<?php echo $scriptcondition["field"]?>);
+							//alert(fieldvalues<?php echo $scriptcondition["field"]?>);
+							}
+						});
+					}
+		
+				fieldokvalues<?php echo $scriptcondition["field"]?>=new Array();
+				fieldokvalues<?php echo $scriptcondition["field"]?>=[<?php echo $scriptcondition["valid"]?>];
+		
+				jQuery.each(fieldvalues<?php echo $scriptcondition["field"]?>,function(f,v)
+					{
+					//alert("checking value " + fieldvalues<?php echo $scriptcondition["field"]?> + " against " + fieldokvalues<?php echo $scriptcondition["field"]?>);
+					//alert(jQuery.inArray(fieldvalues<?php echo $scriptcondition["field"]?>,fieldokvalues<?php echo $scriptcondition["field"]?>));
+					if ((jQuery.inArray(v,fieldokvalues<?php echo $scriptcondition["field"]?>))>-1 || (fieldvalues<?php echo $scriptcondition["field"]?> ==fieldokvalues<?php echo  $scriptcondition["field"]?>))
+						{
+						newfield<?php echo $field["ref"]?>provisionaltest=true;
+						}
+					});
+
+				if (newfield<?php echo $field["ref"]?>provisionaltest==false)
+					{
+					newfield<?php echo $field["ref"]?>provisional=false;
+					}
+				<?php
+				}
+			?>
+			exemptfieldsval=jQuery('#exemptfields').val();
+			exemptfieldsarr=exemptfieldsval.split(',');
+			
+			if (newfield<?php echo $field["ref"]?>provisional==true)
+				{
+				if (jQuery.inArray(<?php echo $field["ref"]?>,exemptfieldsarr))
+					{
+					exemptfieldsarr.splice(jQuery.inArray(<?php echo $field["ref"]?>, exemptfieldsarr), 1 );
+					}
+				newfield<?php echo $field["ref"]?>status='block';
+				}
+			else
+				{
+				if ((jQuery.inArray(<?php echo $field["ref"]?>,exemptfieldsarr))==-1)
+					{
+					exemptfieldsarr.push(<?php echo $field["ref"]?>);
+					}
+				}
+			jQuery('#exemptfields').val(exemptfieldsarr.join(","));
+
+			if (newfield<?php echo $field["ref"]?>status!=field<?php echo $field["ref"]?>status)
+				{
+				jQuery('#question_<?php echo $n ?>').slideToggle();
+				if (jQuery('#question_<?php echo $n ?>').css('display')=='block')
+					{
+					jQuery('#question_<?php echo $n ?>').css('border-top','');
+					}
+				else
+					{
+					jQuery('#question_<?php echo $n ?>').css('border-top','none');
+					}
+				}
+			}
+		</script>
+		<?php
+return $displaycondition;
+}
 
 function check_access_key($resource,$key)
 	{
@@ -3067,14 +3337,14 @@ function check_access_key($resource,$key)
 			exit();
 			}
 		
-		global $usergroup,$userpermissions,$userrequestmode,$userfixedtheme,$usersearchfilter;
+		global $usergroup,$userpermissions,$userrequestmode,$userfixedtheme,$usersearchfilter,$external_share_groups_config_options; 
                 $groupjoin="u.usergroup=g.ref";
                 if ($keys[0]["usergroup"]!="")
                     {
                     # Select the user group from the access key instead.
                     $groupjoin="g.ref='" . escape_check($keys[0]["usergroup"]) . "'";
                     }
-		$userinfo=sql_query("select g.ref usergroup,g.permissions,g.fixed_theme,g.search_filter,u.search_filter_override from user u join usergroup g on $groupjoin where u.ref='$user'");
+		$userinfo=sql_query("select g.ref usergroup,g.permissions,g.fixed_theme,g.search_filter,g.config_options,u.search_filter_override from user u join usergroup g on $groupjoin where u.ref='$user'");
 		if (count($userinfo)>0)
 			{
                         $usergroup=$userinfo[0]["usergroup"]; # Older mode, where no user group was specified, find the user group out from the table.
@@ -3113,6 +3383,31 @@ function check_access_key($resource,$key)
 				}
 				
 			}
+			
+			if($external_share_groups_config_options || stripos(trim($userinfo[0]["config_options"]),"external_share_groups_config_options=true")!==false)
+				{
+				# Apply config override options
+				$config_options=trim($userinfo[0]["config_options"]);
+				if ($config_options!="")
+					{
+					$co=explode(";",$config_options);
+					foreach($co as $ext_co)
+						{
+						$co_parts=explode("=",$ext_co);
+						
+						if($co_parts[0]!='' && isset($co_parts[1]))
+							{
+							$name=str_replace("$","",$co_parts[0]);
+							$value=ltrim($co_parts[1]); 
+							if(strtolower($value)=='false'){$value=0;}
+							elseif(strtolower($value)=='true'){$value=1;}
+							
+							global $$name;
+							$$name = $value;
+							}
+						}
+					}
+				}
 		
 		# Special case for anonymous logins.
 		# When a valid key is present, we need to log the user in as the anonymous user so they will be able to browse the public links.
@@ -3137,26 +3432,56 @@ function check_access_key($resource,$key)
 		}
 	}
 
-function check_access_key_collection($collection,$key)
-	{
-	if ($collection=="" || !is_numeric($collection)) {return false;}
+
+/**
+* Check access key for a collection
+* 
+* @param integer $collection        Collection ID
+* @param string  $key               Access key
+* 
+* @return boolean
+*/
+function check_access_key_collection($collection, $key)
+    {
+    if('' == $collection || !is_numeric($collection))
+        {
+        return false;
+        }
     
     global $external_share_view_as_internal;
-    if($external_share_view_as_internal && isset($_COOKIE["user"])){return false;} // We want to authenticate the user so we can show the page as internal
-    
-	$r=get_collection_resources($collection);
-	if (count($r)==0){return false;}
-	
-	for ($n=0;$n<count($r);$n++)
-		{
-		# Verify a supplied external access key for all resources in a collection
-		if (!check_access_key($r[$n],$key)) {return false;}
-		}	
+    if($external_share_view_as_internal && isset($_COOKIE["user"]))
+        {
+        // We want to authenticate the user so we can show the page as internal
+        return false;
+        }
 
-	# Set the 'last used' date for this key
-	sql_query("update external_access_keys set lastused=now() where collection='$collection' and access_key='$key'");
-	return true;
-	}
+    $resources = get_collection_resources($collection);
+
+    if(0 == count($resources))
+        {
+        return false;
+        }
+
+    $invalid_resources = array();
+    foreach($resources as $resource_id)
+        {
+        // Verify a supplied external access key for all resources in a collection
+        if(!check_access_key($resource_id, $key))
+            {
+            $invalid_resources[] = $resource_id;
+            }
+        }
+
+    if(count($resources) === count($invalid_resources))
+        {
+        return false;
+        }
+
+    // Set the 'last used' date for this key
+    sql_query("UPDATE external_access_keys SET lastused = now() WHERE collection = '{$collection}' AND access_key = '{$key}'");
+
+    return true;
+    }
 
 function make_username($name)
 	{
@@ -4208,7 +4533,7 @@ function draw_performance_footer(){
 		}
 	?>
 	<tr><td>Dupes</td><td><?php echo $dupes?></td></tr>
-	<tr><td colspan=2><a href="#" onClick="document.getElementById('querylog<?php echo $performance_footer_id?>').style.display='block';return false;">&gt;&nbsp;details</a></td></tr>
+	<tr><td colspan=2><a href="#" onClick="document.getElementById('querylog<?php echo $performance_footer_id?>').style.display='block';return false;"><?php echo LINK_CARET ?>details</a></td></tr>
 	</table>
 	<table class="InfoTable" id="querylog<?php echo $performance_footer_id?>" style="display: none; float: <?php if ($pagename=='collections'){?>left<?php } else {?>right<?php }?>; margin: 10px;">
 	<?php
