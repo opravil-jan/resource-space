@@ -5,6 +5,7 @@ include "../include/authenticate.php";
 include "../include/resource_functions.php";
 include "../include/collections_functions.php";
 include "../include/header.php";
+include_once "../include/search_functions.php";
 
 //The two variables below act like "pemissions" to display or not the page
 if ( $disable_geocoding || (!$disable_geocoding && !$geo_locate_collection) ){exit($lang["error-permissiondenied"]);}
@@ -39,6 +40,7 @@ foreach ($all_resources as $value)
     //If the resource is not confidential keep going
     else
     {
+
 	$forthumb = get_resource_data($resource['ref']);
 	$url = get_resource_path($resource['ref'],false,"thm",$generate=true,$extension="jpg",$scramble=-1,$page=1,$watermarked=false,$file_modified="",$alternative=-1,$includemodified=true);
 	$new = str_replace($baseurl,"", $url);
@@ -84,17 +86,26 @@ foreach ($all_resources as $value)
 }
 
 ?>
-<?php if ($check){?></table><?php echo "<br>";} ?>
+<?php if ($check){?></table><?php echo "<br>";}
+
+//exit if there are no assets to put on the map
+if (count($markers)==0) {exit;}?>
 
 <div class="BasicsBox"> 
-<div id="map_canvas" style="width: 100%; height: <?php echo isset($mapheight)?$mapheight:"500" ?>px; display:block; float:none;overflow: hidden;" class="Picture" ></div>
+<div id="map_canvas_col" style="width: 100%; height: <?php echo isset($mapheight)?$mapheight:"500" ?>px; display:block; float:none;overflow: hidden;" class="Picture" ></div>
 <script src="../lib/OpenLayers/OpenLayers.js"></script>
 <script>
-
-    map = new OpenLayers.Map("map_canvas");
+	
+    var map;
+    map = new OpenLayers.Map("map_canvas_col");
+    var osm = new OpenLayers.Layer.OSM("OpenStreet");            
+    //var gmap = new OpenLayers.Layer.Google("Google Street");
     
-    map.addControl(new OpenLayers.Control.LayerSwitcher({'ascending':false}));
-    map.addLayer(new OpenLayers.Layer.OSM('OSM'));
+    //map.addLayers([osm,gmap]);
+	map.addLayer(osm);
+    //map.addControl(new OpenLayers.Control.LayerSwitcher());
+	map.addControl(new OpenLayers.Control.LayerSwitcher());
+    //map.baseLayer =
     epsg4326 =  new OpenLayers.Projection("EPSG:4326"); //WGS 1984 projection
     projectTo = map.getProjectionObject(); //The map projection (Spherical Mercator)
          
@@ -105,7 +116,6 @@ foreach ($all_resources as $value)
     //of backslashes because Javascript was complaining
     var markers = <?php echo str_replace(array('"','\\'),'',json_encode($markers)) ?>;
     var paths = <?php echo str_replace('\\','',json_encode($paths)) ?>;
-    
     var baseurl = <?php echo str_replace('\\','',json_encode($baseurl) )?>;
 
     for (var i=0; i<markers.length; i++)
