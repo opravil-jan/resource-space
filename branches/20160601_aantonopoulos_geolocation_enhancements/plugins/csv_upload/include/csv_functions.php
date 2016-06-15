@@ -21,7 +21,7 @@ function csv_upload_process($filename,&$meta,$resource_types,&$messages,$overrid
 		{
 		$header[$i]=strtoupper($header[$i]);
 		}
-				
+	
 	# ----- start of header row checks -----
 
 	$resource_types_allowed=array();
@@ -152,6 +152,36 @@ function csv_upload_process($filename,&$meta,$resource_types,&$messages,$overrid
 			$cell_count++;
 			$cell_value=trim($line[$cell_count]);		// important! we trim values, as options may contain a space after the comma
 			//echo "Found value for " . $field_name . ": " . $cell_value . "<br>";
+			
+			//Include a column called lonlat to handle coordinates
+			//The coordinates must be decimal degrees, first provide the longitude and then the latitude
+			//Optionally, you can provide a third value which is the mapzoom
+			if ( $field_name === "LONLAT" && $processcsv) 
+			{
+				//If no coordinates are provide for this resource move on
+				if ($cell_value=='') continue;
+				
+				//If you do find coordinates, process them here
+				else
+				{
+				$coordinates = explode(",",$cell_value);
+				$mapzoom = '';
+				
+				//If the user provided the optional mapzoom value, process this here
+				//If this value was not given, it will just be empty in the query below
+				if (count($coordinates)==3)
+				{
+				$mapzoom = "',mapzoom='" . escape_check($coordinates[2]) ;
+				}
+				
+				//Updating the resource with coordinates and mapzoom
+				sql_query("update resource set geo_lat='" . escape_check($coordinates[1]) . "',geo_long='" . escape_check($coordinates[0])  .  $mapzoom . "' where ref='$newref'");
+				
+				}
+				
+			}
+			
+			
 			if($field_name=="ACCESS" && $processcsv)
 				{
 				//echo "Checking access<br>";
