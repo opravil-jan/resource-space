@@ -31,8 +31,8 @@ function HookOcrstreamEditBeforeimagecorrection()
             $choices = get_tesseract_languages();
             ?>
             <div id="ocr_status_anim"><div style="margin-top: 66px;"><i class="fa fa-spinner fa-pulse fa-2x fa-fw" style="margin-top: 10px;margin-bottom: 10px;"></i><p><?php echo $lang['ocr_in_progress']?></p><p id="ocr_status_text"></p></div></div>
-            <script src="../plugins/ocrstream/vendor/monstrum/jcrop/dist/min/jquery.Jcrop.min.js"></script>
-            <link rel="stylesheet" href="../plugins/ocrstream/vendor/monstrum/jcrop/dist/min/jquery.Jcrop.min.css" type="text/css" />
+            <script src="../plugins/ocrstream/lib/jcrop/min/jquery.Jcrop.min.js"></script>
+            <link rel="stylesheet" href="../plugins/ocrstream/lib/jcrop/min/jquery.Jcrop.min.css" type="text/css" />
             <script>
                 // Initilaize Parameters
                 resourceId = <?php echo $ref ?>;
