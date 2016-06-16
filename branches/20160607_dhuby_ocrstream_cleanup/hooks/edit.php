@@ -1,5 +1,5 @@
 <?php
-require_once "../plugins/ocrstream/include/ocrstream_functions.php";
+require_once dirname(__DIR__) . "/include/ocrstream_functions.php";
 
 function HookOcrstreamEditEditbeforeheader()
     {
