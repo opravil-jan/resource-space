@@ -348,7 +348,7 @@ if (getvalescaped("refreshcollectionframe","")!="")
 $refs=array();
 
 # Special query? Ignore restypes
-if (strpos($search,"!")!==false &&  substr($search,0,11)!="!properties") {$restypes="";}
+if (strpos($search,"!")!==false &&  substr($search,0,11)!="!properties" && !$special_search_honors_restypes) {$restypes="";}
 
 # Do the search!
 $search=refine_searchstring($search);
@@ -373,6 +373,8 @@ if(($k=="" || $internal_share_access) && strpos($search,"!")===false && $archive
 # Allow results to be processed by a plugin
 $hook_result=hook("process_search_results","search",array("result"=>$result,"search"=>$search));
 if ($hook_result!==false) {$result=$hook_result;}
+
+$count_result = count($result);
 
 if ($collectionsearch)
 	{

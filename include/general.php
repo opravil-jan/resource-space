@@ -154,7 +154,6 @@ function get_resource_path($ref,$getfilepath,$size,$generate=true,$extension="jp
 			$file .= "?v=" . urlencode($file_modified);
 			}
 		}
-	debug("BANG " . $file);
 	return  $file;
 	}
 	
@@ -1585,6 +1584,7 @@ function get_all_site_text($findpage="",$findname="",$findtext="")
             {
             # When searching text, search all languages to pick up matches for languages other than the default. Add array so that default is first then we can skip adding duplicates.
 			$search_languages=array($defaultlanguage);
+            if($defaultlanguage!="en"){$search_languages[]="en";}
 			$search_languages = $search_languages + array_keys($languages);	
 			}
         else
@@ -3985,46 +3985,47 @@ function user_email_exists($email)
 	}
 
 function filesize_unlimited($path)
-    { 
+    {
     # A resolution for PHP's issue with large files and filesize().
-	
-	hook("beforefilesize_unlimited","",array($path));
-	
-    if (PHP_OS=='WINNT')
-        {
-		if (class_exists("COM"))
-			{
-			try
-				{
-				$filesystem=new COM('Scripting.FileSystemObject');
-				$file=$filesystem->GetFile($path);
-				return $file->Size();
-				}
-			catch (com_exception $e)
-				{
-				return false;
-				}
-			}
 
-		return exec('for %I in (' . escapeshellarg($path) . ') do @echo %~zI' );
+    hook("beforefilesize_unlimited","",array($path));
+
+    if('WINNT' == PHP_OS)
+        {
+        if(class_exists('COM'))
+            {
+            try
+                {
+                $filesystem = new COM('Scripting.FileSystemObject');
+                $file       =$filesystem->GetFile($path);
+
+                return $file->Size();
+                }
+            catch(com_exception $e)
+                {
+                return false;
+                }
+            }
+
+        return exec('for %I in (' . escapeshellarg($path) . ') do @echo %~zI' );
         }
-	else if(PHP_OS == 'Darwin') 
-    	{
+    else if('Darwin' == PHP_OS || 'FreeBSD' == PHP_OS)
+        {
         $bytesize = exec("stat -f '%z' " . escapeshellarg($path));
-    	}
+        }
     else 
-    	{
-		$bytesize = exec("stat -c '%s' " . escapeshellarg($path));
-    	}
-    	
-	if(!is_int($bytesize))
-		{
-		$bytesize= @filesize($path); # Bomb out, the output wasn't as we expected. Return the filesize() output.
-		}
-		
-	hook("afterfilesize_unlimited","",array($path));
-	
-	return $bytesize;
+        {
+        $bytesize = exec("stat -c '%s' " . escapeshellarg($path));
+        }
+
+    if(!is_int($bytesize))
+        {
+        $bytesize = @filesize($path); # Bomb out, the output wasn't as we expected. Return the filesize() output.
+        }
+
+    hook('afterfilesize_unlimited', '', array($path));
+
+    return $bytesize;
     }
 
 function strip_leading_comma($val)
@@ -4589,6 +4590,24 @@ function sql_affected_rows(){
 	}
 }
 
+function get_imagemagick_path($utilityname, $exeNames, &$checked_path)
+{
+    global $imagemagick_path;
+	if (!isset($imagemagick_path))
+		{
+		# ImageMagick convert path not configured.
+		return false;
+		}
+	$path=get_executable_path($imagemagick_path, $exeNames, $checked_path);
+	if ($path===false)
+		{
+		# Support 'magick' also, ie. ImageMagick 7+
+		return get_executable_path($imagemagick_path, array("unix"=>"magick", "win"=>"magick.exe"),
+				$checked_path) . ' ' . $utilityname;
+		}
+	return $path;
+}
+
 function get_utility_path($utilityname, &$checked_path = null)
     {
     # !!! Under development - only some of the utilities are implemented!!!
@@ -4596,28 +4615,20 @@ function get_utility_path($utilityname, &$checked_path = null)
     # Returns the full path to a utility if installed, else returns false.
     # Note that this function doesn't check that the utility is working.
 
-    global $imagemagick_path, $ghostscript_path, $ghostscript_executable, $ffmpeg_path, $exiftool_path, $antiword_path, $pdftotext_path, $blender_path, $archiver_path, $archiver_executable;
+    global $ghostscript_path, $ghostscript_executable, $ffmpeg_path, $exiftool_path, $antiword_path, $pdftotext_path, $blender_path, $archiver_path, $archiver_executable;
 
     $checked_path = null;
 
     switch (strtolower($utilityname))
         {
         case "im-convert":
-            if (!isset($imagemagick_path)) {return false;} # ImageMagick convert path not configured.
-            return get_executable_path($imagemagick_path, array("unix"=>"convert", "win"=>"convert.exe"), $checked_path);
-            break;
+			return get_imagemagick_path('convert', array("unix"=>"convert", "win"=>"convert.exe"), $checked_path);
         case "im-identify":
-            if (!isset($imagemagick_path)) {return false;} # ImageMagick identify path not configured.
-            return get_executable_path($imagemagick_path, array("unix"=>"identify", "win"=>"identify.exe"), $checked_path);
-            break;
+			return get_imagemagick_path('identify', array("unix"=>"identify", "win"=>"identify.exe"), $checked_path);
         case "im-composite":
-            if (!isset($imagemagick_path)) {return false;} # ImageMagick composite path not configured.
-            return get_executable_path($imagemagick_path, array("unix"=>"composite", "win"=>"composite.exe"), $checked_path);
-            break;
+			return get_imagemagick_path('composite', array("unix"=>"composite", "win"=>"composite.exe"), $checked_path);
         case "im-mogrify":
-            if (!isset($imagemagick_path)) {return false;} # ImageMagick mogrify path not configured.
-            return get_executable_path($imagemagick_path, array("unix"=>"mogrify", "win"=>"mogrify.exe"), $checked_path);
-            break;
+			return get_imagemagick_path('mogrify', array("unix"=>"mogrify", "win"=>"mogrify.exe"), $checked_path);
         case "ghostscript":
             if (!isset($ghostscript_path)) {return false;} # Ghostscript path not configured.
             if (!isset($ghostscript_executable)) {return false;} # Ghostscript executable not configured.

@@ -500,7 +500,7 @@ $ffmpeg_global_options = "";
 
 # $ffmpeg_command_prefix - Ability to add prefix to command when calling ffmpeg 
 # Example for use on Linux using nice to avoid slowing down the server
-# $ffmpeg_command_prefix = "nice - n 10";
+# $ffmpeg_command_prefix = "nice -n 10";
 
 # If uploaded file is in the preview format already, should we transcode it anyway?
 # Note this is now ON by default as of switching to MP4 previews, because it's likely that uploaded MP4 files will need a lower bitrate preview and
@@ -850,15 +850,14 @@ $contact_sheet_preview_size="250x250";
 # helvetica,times,courier (standard) and dejavusanscondensed for more Unicode support (but embedding/subsetting makes it slower).
 # There are also several other fonts included in the tcpdf lib (but not ResourceSpace), which provide unicode support
 # To embed more elaborate fonts, acquire the files from the TCPDF distribution or create your own using TCPDF utilities, and install them in the lib/tcpdf/fonts folder.
+# If you encounter issues with chinese characters, use "arialunicid0" and make sure GhosScript has ArialUnicodeMS font (on Windows server, this should be there already)
 $contact_sheet_font="helvetica";
-# if using a custom tcpdf font, subsetting is available, but can be turned off
-$subsetting=true; 
 # allow unicode filenames? (stripped out by default in tcpdf but since collection names may 
 # have special characters, probably want to try this on.)
 $contact_sheet_unicode_filenames=true;
 # Set font sizes for contactsheet
-$titlefontsize=10; // Contact Sheet Title
-$refnumberfontsize=8; // This includes field text, not just ref number
+$titlefontsize     = 20; // Contact Sheet Title
+$refnumberfontsize = 14; // This includes field text, not just ref number
 # If making a contact sheet with list sheet style, use these fields in contact sheet:
 $config_sheetlist_fields = array(8);
 $config_sheetlist_include_ref=true;
@@ -887,8 +886,8 @@ $contact_sheet_logo_resize=true;
 # Give user option to add/remove logo?
 #$contact_sheet_logo_option=true;
 
-# Optional example footer html to include on contact sheet
-#$contact_sheet_custom_footerhtml='<div style="text-align: center" >XXX MAIN STREET, CITY, ABC 123 - TEL: (111) 000-8888 - FAX: (000) 111-9999</div><table style="width:100%;margin:auto;"><tr><td style="width:50%;text-align: center" >resourcespace.org</td><td style="width:50%;text-align: center" >&#0169; ReourceSpace. All Rights Reserved.</td></tr></table>';
+# Show contact sheet footer (old $contact_sheet_custom_footerhtml removed as this is now handled in templates and enabled by either showing/ hiding the footer)
+$contact_sheet_footer = false;
 
 # Make images in contactsheet links to the resource view page?
 $contact_sheet_add_link=true;
@@ -1862,6 +1861,9 @@ $collection_allow_not_approved_share=false;
 #Allow the smartsearch to override $access rules when searching
 $smartsearch_accessoverride=true;
 
+# Allow special searches to honor resource type settings.
+$special_search_honors_restypes=false;
+
 # Image preview zoom using jQuery.zoom (hover over the preview image to zoom in on the resource view page)
 $image_preview_zoom=false;
 
@@ -2130,6 +2132,7 @@ $enable_plugin_upload = true;
 # Note that a Google Maps API key is no longer required.
 #Disable geocoding features?
 $disable_geocoding = false;
+$use_google_maps = false;
 
 #Enable geolocating multiple assets on a map that are part of a collection
 $geo_locate_collection = false;
@@ -2461,6 +2464,10 @@ $email_errors_address="";
 # Use php-mysqli extension for interfacing with the mysql database
 # Only enable if the extension is present.
 $use_mysqli=function_exists("mysqli_connect");
+
+# Use prepared statements
+# Default is false until technology proven
+$use_mysqli_prepared=$use_mysqli && false;
 
 # Experimental performance enhancement - two pass mode for search results.
 # The first query returns only the necessary number of results for the current search results display
@@ -3030,4 +3037,20 @@ $launch_kb_on_login_for_groups=array();
 # E-mail address to send a report to if any of the automated tests (tests/test.php) fail.
 # This is used by Montala to automatically test the RS trunk on a nightly basis.
 # $email_test_fails_to="example@example.com";
+
+# Option to hide the collection bar (hidden, not minimised) if it has no resources in it
+$collection_bar_hide_empty=false;
+
+# Should the alternative files be visible to restricted users (they must still request access to download however)
+$alt_files_visible_when_restricted=true;
+
+# Option to prevent resource types specified in array from being added to collections. Will not affect existing resources in collections
+# e.g. $collection_block_restypes=array(3,4);
+$collection_block_restypes=array();
+
+# Option to remove all resources from the current collection once it has been requested
+$collection_empty_on_submit=false;
+
+# Retina mode. Use the "next size up" when rending previews and thumbs for a more crisp display on high resolution screens. Note - uses much more bandwidth also.
+$retina_mode=false;
 

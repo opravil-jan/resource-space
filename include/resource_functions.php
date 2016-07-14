@@ -358,7 +358,7 @@ function save_resource_data($ref,$multi,$autosave_field="")
 					$joins=get_resource_table_joins();
 					if (in_array($fields[$n]["ref"],$joins)){
 						if(substr($val,0,1)==","){$val=substr($val,1);}
-						sql_query("update resource set field".$fields[$n]["ref"]."='".escape_check($val)."' where ref='$ref'");
+						sql_query("update resource set field".$fields[$n]["ref"]."='".escape_check(truncate_join_field_value($val))."' where ref='$ref'");
 					}
                                         
                                 # Add any onchange code
@@ -762,7 +762,7 @@ function save_resource_data_multi($collection)
 					# If this is a 'joined' field we need to add it to the resource column
 					$joins=get_resource_table_joins();
 					if (in_array($fields[$n]["ref"],$joins)){
-						sql_query("update resource set field".$fields[$n]["ref"]."='".escape_check($val)."' where ref='$ref'");
+						sql_query("update resource set field".$fields[$n]["ref"]."='".escape_check(truncate_join_field_value($val))."' where ref='$ref'");
 					}		
 						
 					# Purge existing data and keyword mappings, decrease keyword hitcounts.
@@ -1101,7 +1101,6 @@ function add_keyword_mappings($ref,$string,$resource_type_field,$partial_index=f
 
     add_verbatim_keywords($keywords, $string, $resource_type_field); // add in any verbatim keywords (found using regex).
 
-    db_begin_transaction();
     for($n = 0; $n < count($keywords); $n++)
         {
         unset($kwpos);
@@ -1119,7 +1118,6 @@ function add_keyword_mappings($ref,$string,$resource_type_field,$partial_index=f
 
         add_keyword_to_resource($ref, $kw, $resource_type_field, $kwpos, $optional_column, $optional_value, false);
         }
-    db_end_transaction();
 
     }
 }
@@ -1137,7 +1135,7 @@ function add_keyword_to_resource($ref,$keyword,$resource_type_field,$position,$o
                     add_keyword_to_resource($ref,$kworig,$resource_type_field,$position,$optional_column,$optional_value,true);
                     }
         }
-    global $noadd;
+    global $noadd,$use_mysqli_prepared;
     if (!(in_array($keyword,$noadd)))
             {           
             debug("adding " . $keyword);
@@ -1145,13 +1143,21 @@ function add_keyword_to_resource($ref,$keyword,$resource_type_field,$position,$o
             
             # create mapping, increase hit count.
             if ($optional_column<>'' && $optional_value<>'')	# Check if any optional column value passed and add this
-                    {
-					sql_query("insert into resource_keyword(resource,keyword,position,resource_type_field,$optional_column) values ('$ref','$keyref','$position','$resource_type_field','$optional_value')");
-					}
+                {
+                sql_query("insert into resource_keyword(resource,keyword,position,resource_type_field,$optional_column) values ('$ref','$keyref','$position','$resource_type_field','$optional_value')");
+                }
             else  
+                {
+                if(isset($use_mysqli_prepared) && $use_mysqli_prepared)
                     {
-					sql_query("insert into resource_keyword(resource,keyword,position,resource_type_field) values ('$ref','$keyref','$position','$resource_type_field')");
-					}
+                    sql_query_prepared('INSERT INTO `resource_keyword`(`resource`,`keyword`,`position`,`resource_type_field`) VALUES (?,?,?,?)',
+                        array('iiii',$ref,$keyref,$position,$resource_type_field));
+                    }
+                else
+                    {
+                    sql_query("insert into resource_keyword(resource,keyword,position,resource_type_field) values ('$ref','$keyref','$position','$resource_type_field')");
+                    }
+                }
 
             sql_query("update keyword set hit_count=hit_count+1 where ref='$keyref'");
             
@@ -1303,7 +1309,7 @@ function update_field($resource,$field,$value)
 		if ($value!="null")
 			{
 			global $resource_field_column_limit;
-			$truncated_value = substr($value, 0, $resource_field_column_limit);
+			$truncated_value = truncate_join_field_value($value);
 
             // Remove backslashes from the end of the truncated value
             if(substr($truncated_value, -1) === '\\')
@@ -1741,7 +1747,7 @@ function get_resource_log($resource, $fetchrows=-1)
     $extrafields=hook("get_resource_log_extra_fields");
     if (!$extrafields) {$extrafields="";}
     
-    $log = sql_query("select distinct r.ref,r.date,u.username,u.fullname,r.type,f.title,r.notes,r.diff,r.usageoption,r.purchase_price,r.purchase_size,ps.name size, r.access_key,ekeys_u.fullname shared_by" . $extrafields . " from resource_log r left outer join user u on u.ref=r.user left outer join resource_type_field f on f.ref=r.resource_type_field left outer join external_access_keys ekeys on r.access_key=ekeys.access_key left outer join user ekeys_u on ekeys.user=ekeys_u.ref left join preview_size ps on r.purchase_size=ps.id where r.resource='$resource' order by r.date desc",false,$fetchrows);
+    $log = sql_query("select distinct r.ref,r.date,u.username,u.fullname,r.type,f.title,r.notes,r.diff,r.usageoption,r.purchase_price,r.purchase_size,ps.name size, r.access_key,ekeys_u.fullname shared_by" . $extrafields . " from resource_log r left outer join user u on u.ref=r.user left outer join resource_type_field f on f.ref=r.resource_type_field left outer join external_access_keys ekeys on r.access_key=ekeys.access_key and r.resource=ekeys.resource left outer join user ekeys_u on ekeys.user=ekeys_u.ref left join preview_size ps on r.purchase_size=ps.id where r.resource='$resource' order by r.date desc",false,$fetchrows);
     for ($n = 0;$n<count($log);$n++)
         {
         $log[$n]["title"] = lang_or_i18n_get_translated($log[$n]["title"], "fieldtitle-");
@@ -2717,12 +2723,17 @@ function get_resource_access($resource)
 	$customuseraccess=false;
 	
 	global $k;
-	if ($k!="")
+	if('' != $k)
 		{
         global $internal_share_access;
+
 		# External access - check how this was shared.
-		$extaccess=sql_value("select access value from external_access_keys where resource=".$ref." and access_key='" . escape_check($k) . "' and (expires is null or expires>now())",-1);
-		if ($extaccess!=-1 && (!$internal_share_access || ($internal_share_access && $extaccess<$access))) {return $extaccess;}
+		$extaccess = sql_value("SELECT access `value` FROM external_access_keys WHERE resource = '{$ref}' AND access_key = '" . escape_check($k) . "' AND (expires IS NULL OR expires > NOW())", -1);
+
+		if(-1 != $extaccess && (!$internal_share_access || ($internal_share_access && $extaccess < $access)))
+            {
+            return $extaccess;
+            }
 		}
 	
 	global $uploader_view_override, $userref;
@@ -3998,4 +4009,9 @@ function delete_resource_custom_access_usergroups($ref)
         sql_query("delete from resource_custom_access where resource='" . escape_check($ref) . "' and usergroup is not null");
         }
 
-
+// truncate the field for insertion into the main resource table field<n>
+function truncate_join_field_value($value)
+    {
+    global $resource_field_column_limit;
+    return substr($value, 0, $resource_field_column_limit);
+    }
