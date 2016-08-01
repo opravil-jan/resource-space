@@ -395,7 +395,7 @@ function hook($name,$pagename="",$params=array(),$last_hook_value_wins=false)
 		$hook_cache_hits++;
 
 		unset($GLOBALS['hook_return_value']);
-
+		$empty_global_return_value=true;
 		// we use $GLOBALS['hook_return_value'] so that hooks can directly modify the overall return value
 
 		foreach ($hook_cache[$hook_cache_index] as $function)
@@ -407,7 +407,7 @@ function hook($name,$pagename="",$params=array(),$last_hook_value_wins=false)
 				continue;	// the function did not return a value so skip to next hook call
 				}
 
-			if (!$last_hook_value_wins &&
+			if (!$last_hook_value_wins && !$empty_global_return_value &&
 				isset($GLOBALS['hook_return_value']) &&
 				(gettype($GLOBALS['hook_return_value']) == gettype($function_return_value)) &&
 				(is_array($function_return_value) || is_string($function_return_value) || is_bool($function_return_value)))
@@ -417,7 +417,22 @@ function hook($name,$pagename="",$params=array(),$last_hook_value_wins=false)
 					// We merge the cached result with the new result from the plugin and remove any duplicates
 					// Note: in custom plugins developers should work with the full array (ie. superset) rather than just a sub-set of the array.
 					//       If your plugin needs to know if the array has been modified previously by other plugins use the global variable "hook_return_value"
-					$GLOBALS['hook_return_value'] = array_values(array_unique(array_merge_recursive($GLOBALS['hook_return_value'], $function_return_value), SORT_REGULAR));
+					$numeric_key=false;
+					foreach($GLOBALS['hook_return_value'] as $key=> $value){
+						if(is_numeric($key)){
+							$numeric_key=true;
+						}
+						else{
+							$numeric_key=false;
+						}
+						break;
+					}
+					if($numeric_key){
+						$GLOBALS['hook_return_value'] = array_values(array_unique(array_merge_recursive($GLOBALS['hook_return_value'], $function_return_value), SORT_REGULAR));
+					}
+					else{
+						$GLOBALS['hook_return_value'] = array_unique(array_merge_recursive($GLOBALS['hook_return_value'], $function_return_value), SORT_REGULAR);
+					}
 					}
 				elseif (is_string($function_return_value))
 					{
@@ -431,6 +446,7 @@ function hook($name,$pagename="",$params=array(),$last_hook_value_wins=false)
 			else
 				{
 				$GLOBALS['hook_return_value'] = $function_return_value;
+				$empty_global_return_value=false;
 				}
 			}
 
@@ -876,11 +892,13 @@ function CheckDBStruct($path,$verbose=false)
 							sql_query($sql,false,-1,false);
 							$values=sql_query("select resource,value from resource_data where resource_type_field=$joins[$m]",false,-1,false);
 	
-							for($x=0;$x<count($values);$x++){
-								$value=$values[$x]['value'];
-								$resource=$values[$x]['resource'];
-								sql_query("update resource set field$joins[$m]='".escape_check($value)."' where ref=$resource",false,-1,false);	
-						    }	
+							for($x = 0; $x < count($values); $x++)
+                                {
+                                $value    = substr(escape_check($values[$x]['value']), 0, $resource_field_column_limit);
+                                $resource = $values[$x]['resource'];
+
+                                sql_query("UPDATE resource SET field{$joins[$m]} = '{$value}' WHERE ref = {$resource}", false, -1, false);	
+                                }	
 						}
 					}	
 				}		
@@ -941,7 +959,9 @@ function CheckDBStruct($path,$verbose=false)
 										 ||
 										(stripos($basecoltype,"text")!==false && stripos($existingcoltype,"text")===false)
 										||
-										(stripos($basecoltype,"BIGINT")!==false && stripos($existingcoltype,"INT")!==false)
+										(strtoupper($basecoltype)=="BIGINT" && strtoupper($existingcoltype=="INT"))
+										||
+										(strtoupper($basecoltype)=="INT" && strtoupper($existingcoltype=="TINYINT") || strtoupper($existingcoltype=="SMALLINT"))
 									       )
 										{        
 										debug("DBSTRUCT - updating column " . $col[0] . " in table " . $table . " from " . $existing[$n]["Type"] . " to " . str_replace("§",",",$col[1]) );
