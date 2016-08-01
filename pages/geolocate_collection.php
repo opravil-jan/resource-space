@@ -77,7 +77,6 @@ foreach ($all_resources as $value)
 	else
 		{
 		//These arrays are going to be passed to Javascript below to plot
-		//echo $resource['field8'];
 		$markers[] =  [ $resource['geo_long'] . "," .  $resource['geo_lat'] . "," . $resource['ref'] . "," . $forthumb['thumb_width'] . "," . $forthumb['thumb_height']  ];
 		$paths[] = $parts[0];
 		
@@ -114,9 +113,9 @@ if (count($markers)==0) {exit;}?>
     
     //Unloading values to Javascript, some cases require stripping
     //of backslashes because Javascript was complaining
-    var markers = <?php echo str_replace(array('"','\\'),'',json_encode($markers)) ?>;
-    var paths = <?php echo str_replace('\\','',json_encode($paths)) ?>;
-    var baseurl = <?php echo str_replace('\\','',json_encode($baseurl) )?>;
+    var markers = <?php echo str_replace(array('"','\\'),'',json_encode($markers)); ?>;
+    var paths = <?php echo str_replace('\\','',json_encode($paths)); ?>;
+    var baseurl = <?php echo str_replace('\\','',json_encode($baseurl) );?>;
 
     for (var i=0; i<markers.length; i++)
 		{
@@ -148,15 +147,15 @@ if (count($markers)==0) {exit;}?>
 		
 		
 	//Hide by default the thumbnails and display markers
-	vectorLayer.setVisibility(false)		
+	vectorLayer.setVisibility(false);		
 
 	vectorLayer.events.register("featureselected", null, function(event){
-        ModalLoad(event.feature.attributes.description)
+        ModalLoad(event.feature.attributes.description);
         selectControl.unselectAll();
 		});
 
 	vectorLayer2.events.register("featureselected", null, function(event){
-        ModalLoad(event.feature.attributes.description)
+        ModalLoad(event.feature.attributes.description);
         selectControl.unselectAll();
 		});
     	

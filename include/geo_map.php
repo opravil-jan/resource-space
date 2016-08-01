@@ -22,7 +22,7 @@ var osm = new OpenLayers.Layer.OSM("<?php echo $lang["openstreetmap"]?>"
 	
 	<?php } else { ?>
 	
-		,"http://tile.openstreetmap.org/${z}/${x}/${y}.png",{transitionEffect: 'resize'}
+		,"https://b.tile.openstreetmap.org/${z}/${x}/${y}.png",{transitionEffect: 'resize'}
 		
 	<?php } ?>
 	

@@ -954,6 +954,11 @@ function get_user_by_email($email)
     return $return;
 }
 
+function get_user_by_username($username)
+    {
+    return sql_value("select ref value from user where username='" . escape_check($username) . "'",false);
+    }
+
 function get_usergroups($usepermissions = false, $find = '', $id_name_pair_array = false)
 {
     # Returns a list of user groups. The standard user groups are translated using $lang. Custom user groups are i18n translated.
@@ -1054,20 +1059,22 @@ function save_user($ref)
     {
     global $lang, $allow_password_email, $home_dash;
 
-    # Save user details, data is taken from the submitted form.
-    if(getval('deleteme', '') != '')
+    $current_user_data = get_user($ref);
+
+    // Save user details, data is taken from the submitted form.
+    if('' != getval('deleteme', ''))
         {
-        sql_query("DELETE FROM user WHERE ref='$ref'");
+        sql_query("DELETE FROM user WHERE ref = '{$ref}'");
+
         include dirname(__FILE__) ."/dash_functions.php";
         empty_user_dash($ref);
-        log_activity(null, LOG_CODE_DELETED, null, 'user', null, $ref);
+
+        log_activity("{$current_user_data['username']} ({$ref})", LOG_CODE_DELETED, null, 'user', null, $ref);
 
         return true;
         }
     else
         {
-        $current_user_data = get_user($ref);
-
         // Get submitted values
         $username               = trim(getvalescaped('username', ''));
         $password               = trim(getvalescaped('password', ''));
@@ -1078,8 +1085,7 @@ function save_user($ref)
         $ip_restrict            = trim(getvalescaped('ip_restrict', ''));
         $search_filter_override = trim(getvalescaped('search_filter_override', ''));
         $comments               = trim(getvalescaped('comments', ''));
-
-        $suggest = getval('suggest', '');
+        $suggest                = getval('suggest', '');
 
         # Username or e-mail address already exists?
         $c = sql_value("SELECT count(*) value FROM user WHERE ref <> '$ref' AND (username = '" . $username . "' OR email = '" . $email . "')", 0);
@@ -1123,6 +1129,13 @@ function save_user($ref)
         if('' == $fullname && '' == $suggest)
             {
             return $lang['setup-admin_fullname_error'];
+            }
+
+        /*Make sure IP restrict filter is a proper IP, otherwise make it blank
+        Note: we do this check only when wildcards are not used*/
+        if(false === strpos($ip_restrict, '*'))
+            {
+            $ip_restrict = (false === filter_var($ip_restrict, FILTER_VALIDATE_IP) ? '' : $ip_restrict);
             }
 
         $additional_sql = hook('additionaluserfieldssave');
@@ -2653,7 +2666,7 @@ function pager($break=true)
 	$jumpcount++;
 	if(!hook("replace_pager")){
 		if ($totalpages!=0 && $totalpages!=1){?>     
-			<span class="TopInpageNavRight"><?php if ($break) { ?>&nbsp;<br /><?php } hook("custompagerstyle"); if ($curpage>1) { ?><a class="prevPageLink" title="<?php echo $lang["previous"]?>" href="<?php echo $url?>&amp;go=prev&amp;offset=<?php echo urlencode($offset-$per_page) ?>" <?php if(!hook("replacepageronclick_prev")){?>onClick="return <?php echo $modal ? 'Modal' : 'CentralSpace'; ?>Load(this, true);" <?php } ?>><?php } ?><i class="fa fa-arrow-left"></i><?php if ($curpage>1) { ?></a><?php } ?>&nbsp;&nbsp;
+			<span class="TopInpageNavRight"><?php if ($break) { ?>&nbsp;<br /><?php } hook("custompagerstyle"); if ($curpage>1) { ?><a class="prevPageLink" title="<?php echo $lang["previous"]?>" href="<?php echo $url?>&amp;go=prev&amp;offset=<?php echo urlencode($offset-$per_page) ?>" <?php if(!hook("replacepageronclick_prev")){?>onClick="return <?php echo $modal ? 'Modal' : 'CentralSpace'; ?>Load(this, true);" <?php } ?>><?php } ?><i aria-hidden="true" class="fa fa-arrow-left"></i><?php if ($curpage>1) { ?></a><?php } ?>&nbsp;&nbsp;
 
 			<?php if ($pager_dropdown){
 				$id=rand();?>
@@ -2665,12 +2678,12 @@ function pager($break=true)
 			<?php } else { ?>
 
 				<div class="JumpPanel" id="jumppanel<?php echo $jumpcount?>" style="display:none;"><?php echo $lang["jumptopage"]?>: <input type="text" size="1" id="jumpto<?php echo $jumpcount?>" onkeydown="var evt = event || window.event;if (evt.keyCode == 13) {var jumpto=document.getElementById('jumpto<?php echo $jumpcount?>').value;if (jumpto<1){jumpto=1;};if (jumpto><?php echo $totalpages?>){jumpto=<?php echo $totalpages?>;};<?php echo $modal ? 'Modal' : 'CentralSpace'; ?>Load('<?php echo $url?>&amp;go=page&amp;offset=' + ((jumpto-1) * <?php echo urlencode($per_page) ?>), true);}">
-			&nbsp;<a class="fa fa-times-circle" href="#" onClick="document.getElementById('jumppanel<?php echo $jumpcount?>').style.display='none';document.getElementById('jumplink<?php echo $jumpcount?>').style.display='inline';"></a></div>
+			&nbsp;<a aria-hidden="true" class="fa fa-times-circle" href="#" onClick="document.getElementById('jumppanel<?php echo $jumpcount?>').style.display='none';document.getElementById('jumplink<?php echo $jumpcount?>').style.display='inline';"></a></div>
 			
 				<a href="#" id="jumplink<?php echo $jumpcount?>" title="<?php echo $lang["jumptopage"]?>" onClick="document.getElementById('jumppanel<?php echo $jumpcount?>').style.display='inline';document.getElementById('jumplink<?php echo $jumpcount?>').style.display='none';document.getElementById('jumpto<?php echo $jumpcount?>').focus(); return false;"><?php echo $lang["page"]?>&nbsp;<?php echo htmlspecialchars($curpage) ?>&nbsp;<?php echo $lang["of"]?>&nbsp;<?php echo $totalpages?></a>
 			<?php } ?>
 
-			&nbsp;&nbsp;<?php if ($curpage<$totalpages) { ?><a class="nextPageLink" title="<?php echo $lang["next"]?>" href="<?php echo $url?>&amp;go=next&amp;offset=<?php echo urlencode($offset+$per_page) ?>" <?php if(!hook("replacepageronclick_next")){?>onClick="return <?php echo $modal ? 'Modal' : 'CentralSpace'; ?>Load(this, true);" <?php } ?>><?php } ?><i class="fa fa-arrow-right"></i><?php if ($curpage<$totalpages) { ?></a><?php } hook("custompagerstyleend"); ?>
+			&nbsp;&nbsp;<?php if ($curpage<$totalpages) { ?><a class="nextPageLink" title="<?php echo $lang["next"]?>" href="<?php echo $url?>&amp;go=next&amp;offset=<?php echo urlencode($offset+$per_page) ?>" <?php if(!hook("replacepageronclick_next")){?>onClick="return <?php echo $modal ? 'Modal' : 'CentralSpace'; ?>Load(this, true);" <?php } ?>><?php } ?><i aria-hidden="true" class="fa fa-arrow-right"></i><?php if ($curpage<$totalpages) { ?></a><?php } hook("custompagerstyleend"); ?>
 			</span>
 			
 		<?php } else { ?><span class="HorizontalWhiteNav">&nbsp;</span><div <?php if ($pagename=="search"){?>style="display:block;"<?php } else { ?>style="display:inline;"<?php }?>>&nbsp;</div><?php } ?>
@@ -4237,59 +4250,52 @@ function get_temp_dir($asUrl = false,$uniqid="")
  * @return Url that is the relative path.
  */
 function convert_path_to_url($abs_path)
-{
+    {
     // Get the root directory of the app:
     $rootDir = dirname(dirname(__FILE__));
     // Get the baseurl:
     global $baseurl;
     // Replace the $rootDir with $baseurl in the path given:
     return str_ireplace($rootDir, $baseurl, $abs_path);
-}
+    }
 
 function run_command($command, $geterrors=false)
-	{
-	# Works like system(), but returns the complete output string rather than just the
-	# last line of it.
-	global $debug_log,$config_windows;
-	debug("CLI command: $command");
-	if($debug_log || $geterrors) 
-		{
-		if($config_windows===true) 
-			{
-			$process = @proc_open($command, array(1 => array('pipe', 'w'), 2 => array('pipe', 'w')), $pipe, NULL, NULL, array('bypass_shell' => true));
-			}
-		else 
-			{
-			$process = @proc_open($command, array(1 => array('pipe', 'w'), 2 => array('pipe', 'w')), $pipe, NULL, NULL, array('bypass_shell' => true));
-			}
-		}
-	else
-		{
-		$process = @proc_open($command, array(1 => array('pipe', 'w')), $pipe, NULL, NULL, array('bypass_shell' => true));
-		}
+    {
+    # Works like system(), but returns the complete output
+    # string rather than just the last line of it.
+    global $debug_log;
+    debug("CLI command: $command");
 
-	if (is_resource($process)) 
-		{
-		$output = trim(stream_get_contents($pipe[1]));
-	 	if($geterrors)
-			{
-			$output.= trim(stream_get_contents($pipe[2]));
-			}
-		if ($debug_log)
-			{
-			debug("CLI output: $output");
-			debug("CLI errors: ". trim(stream_get_contents($pipe[2])));
-			}
-		return $output;  
-		}
-	return '';
-	}
+    $descriptorspec = array(
+        1 => array("pipe", "w") // stdout is a pipe that the child will write to
+    );
+    if($debug_log || $geterrors) 
+        {
+        $descriptorspec[2] = array("pipe", "w"); // stderr is a file to write to
+        }
+    $process = @proc_open($command, $descriptorspec, $pipe, NULL, NULL, array('bypass_shell' => true));
+
+    if (!is_resource($process)) { return ''; }
+
+    $output = trim(stream_get_contents($pipe[1]));
+    if($geterrors)
+        {
+        $output .= trim(stream_get_contents($pipe[2]));
+        }
+    if ($debug_log)
+        {
+        debug("CLI output: $output");
+        debug("CLI errors: " . trim(stream_get_contents($pipe[2])));
+        }
+    proc_close($process);
+    return $output;
+    }
 
 function run_external($cmd,&$code)
-{
-# Thanks to dk at brightbyte dot de
-# http://php.net/manual/en/function.shell-exec.php
-# Returns an array with the resulting output (stdout & stderr). 
+    {
+    # Thanks to dk at brightbyte dot de
+    # http://php.net/manual/en/function.shell-exec.php
+    # Returns an array with the resulting output (stdout & stderr). 
     debug("CLI command: $cmd");
 
     $descriptorspec = array(

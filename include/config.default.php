@@ -498,6 +498,15 @@ $ffmpeg_global_options = "";
 #$ffmpeg_snapshot_fraction=0.1; # Set this to specify a point in the video at which snapshot image is taken. Expressed as a proportion of the video duration so must be set between 0 and 1. Only valid if duration is greater than 10 seconds.
 #$ffmpeg_snapshot_seconds=10;  # Set this to specify the number of seconds into the video at which snapshot should be taken, overrides the $ffmpeg_snapshot_fraction setting
 
+/*
+Make video previews have multiple snapshots from the video.
+Hovering over a search result thumbnail preview, will show the user frames from the video in order for 
+the user to get an idea of what the video is about
+
+Note: Set to 0 to disable this feature
+*/
+$ffmpeg_snapshot_frames = 12;
+
 # $ffmpeg_command_prefix - Ability to add prefix to command when calling ffmpeg 
 # Example for use on Linux using nice to avoid slowing down the server
 # $ffmpeg_command_prefix = "nice -n 10";
@@ -788,11 +797,6 @@ $videotypes=array(3);
 # add icons for resource types - add style IconResourceType<resourcetyperef> and 
 # IconResourceTypeLarge<resourcetyperef> similar to videotypes, this option overrides $videtypes option
 $resource_type_icons=false;
-
-
-# Sets the default colour theme (defaults to white)
-$defaulttheme="";
-
 
 
 /** USER PREFERENCES **/
@@ -1332,6 +1336,18 @@ $feedback_resource_select=false;
 # If true pre, thm, and col sizes will not be considered.
 $lean_preview_generation=false;
 
+# Experimental ImageMagic optimizations. This will not work for GraphicsMagick.
+$imagemagick_mpr=false;
+
+# Set the depth to be passed to mpr command.
+$imagemagick_mpr_depth="8";
+
+# Should colour profiles be preserved?
+$imagemagick_mpr_preserve_profiles=true;
+
+# If using imagemagick and mpr, specify any metadata profiles to be retained. Default setting good for ensuring copyright info is not stripped which may be required by law
+$imagemagick_mpr_preserve_metadata_profiles=array('iptc');
+
 # Should resource views be logged for reporting purposes?
 # Note that general daily statistics for each resource are logged anyway for the statistics graphs
 # - this option relates to specific user tracking for the more detailed report.
@@ -1391,6 +1407,9 @@ $mime_type_by_extension = array(
 # PHP execution time limit
 # Default is 5 minutes.
 $php_time_limit=300;
+
+# Cron jobs maximum execution time (Default: 30 minutes)
+$cron_job_time_limit = 1800;
 
 # Should the automatically produced FLV file be available as a separate download?
 $flv_preview_downloadable=false;
@@ -1844,7 +1863,9 @@ $reporting_periods_default=array(7,30,100,365);
 
 
 # For checkbox list searching, perform logical AND instead of OR when ticking multiple boxes.
-$checkbox_and=false;
+$checkbox_and = false;
+# For dynamic keyword list searching, perform logical AND instead of OR when selecting multiple options.
+$dynamic_keyword_and = false;
 
 # Option to show resource ID in the thumbnail, next to the action icons.
 $display_resource_id_in_thumbnail=false;
@@ -2261,7 +2282,7 @@ $wildcard_always_applied_leading = false;
 $U_perm_strict=false;
 
 # enable remote apis (if using API, RSS2, or other plugins that allow remote authentication via an api key)
-$enable_remote_apis=false;
+$enable_remote_apis=true;
 $api_scramble_key="abcdef123";
 
 # Allow users capable of deleting a full collection (of resources) to do so from the Collection Manage page.
@@ -2474,9 +2495,6 @@ $use_mysqli_prepared=$use_mysqli && false;
 # The second query is the same but returns only a count of the full result set, which is used to pad the result array to the correct size (so counts display correctly).
 # This means that large volumes of resource data are not passed around unnecessarily, which can significantly improve performance on systems with large data sets.
 $search_sql_double_pass_mode=true;
-
-# Experimental performance enhancement - only search for fields with matching keywords that are supposed to be indexed.
-$search_sql_force_field_index_check = false;
 
 # Use the new tab ordering system. This will sort the tabs by the order by value set in System Setup
 $use_order_by_tab_view=false;

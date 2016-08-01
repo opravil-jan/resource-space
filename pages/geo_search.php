@@ -5,6 +5,8 @@ include "../include/authenticate.php";
 include "../include/resource_functions.php";
 include "../include/header.php";
 
+
+
 ?>
 <div class="BasicsBox"> 
 <h1><?php echo $lang["geographicsearch"] ?></h1>
@@ -20,6 +22,7 @@ include "../include/header.php";
 </div>
 
 <?php include "../include/geo_map.php"; ?>
+
 <script>
 
 var control = new OpenLayers.Control();
@@ -82,9 +85,11 @@ $bounds=explode(",",$bounds);
 ?>
 map.setCenter(new OpenLayers.LonLat(<?php echo htmlspecialchars($bounds[0]) ?>,<?php echo htmlspecialchars($bounds[1]) ?>),<?php echo $bounds[2] ?>);
 
-
 	
 </script>
+<?php
+hook("geosearch");
+?>
 </div>
 
 <?php
