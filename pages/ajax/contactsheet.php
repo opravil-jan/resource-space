@@ -23,6 +23,7 @@ $preview       = ('true' == getvalescaped('preview', '') ? true : false);
 $previewpage   = getvalescaped('previewpage', 1);
 $includeheader = getvalescaped('includeheader', '');
 $addlink       = getvalescaped('addlink', '');
+$font          = getvalescaped('font', $contact_sheet_font);
 
 // Check access
 if(!collection_readable($collection))
@@ -118,7 +119,7 @@ $pdf_properties['margins']     = array(10, 12, 10, 7);
 $pdf_properties['title']       = $title;
 $pdf_properties['author']      = $user['fullname'];
 $pdf_properties['subject']     = "{$applicationname} - {$lang['contactsheet']}";
-$pdf_properties['font']        = $contact_sheet_font;
+$pdf_properties['font']        = $font;
 
 
 // Choose the image size requirements
