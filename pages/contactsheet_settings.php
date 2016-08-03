@@ -3,6 +3,7 @@ include '../include/db.php';
 include_once '../include/general.php';
 include '../include/authenticate.php'; 
 include_once '../include/collections_functions.php';
+include_once '../include/pdf_functions.php';
 
 $collection     = getvalescaped('ref', '', true);
 $collectiondata = get_collection($collection);
@@ -246,6 +247,21 @@ if($contact_sheet_add_link_option)
                 <option value="<?php echo $contact_sheet_field['ref']; ?>"<?php echo $selected; ?>><?php echo $contact_sheet_field['title']; ?></option>
                 <?php
                 }
+            ?>
+        </select>
+        <div class="clearerleft"></div>
+    </div>
+
+    <div id="font_selector" class="Question">
+        <label><?php echo $lang['contact_sheet_font_selector']; ?></label>
+        <select id="font" name="font" class="shrtwidth">
+        <?php
+        foreach(get_pdf_fonts() as $pdf_font_value => $pdf_font_name)
+            {
+            ?>
+            <option value="<?php echo $pdf_font_value; ?>"<?php echo ($contact_sheet_font == $pdf_font_value ? 'selected' : ''); ?>><?php echo $pdf_font_name; ?></option>
+            <?php
+            }
             ?>
         </select>
         <div class="clearerleft"></div>
