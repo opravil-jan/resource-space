@@ -401,3 +401,57 @@ function resolve_pdf_language(){
 			}
 		}
 }
+
+
+/**
+* Get all fonts available for HTML2PDF
+* 
+* @return array
+*/
+function get_pdf_fonts()
+    {
+    $html2pdf_available_fonts = array();
+    $html2pdf_fonts_dir       = dirname(__FILE__) . '/../lib/html2pdf/_tcpdf_5.0.002/fonts';
+
+    $scandir = scandir($html2pdf_fonts_dir);
+    sort($scandir);
+
+    foreach($scandir as $font_definition_file)
+        {
+        $font_definition_file_path = '';
+
+        if(!preg_match('/[[:alnum:]]+\.php/', $font_definition_file))
+            {
+            continue;
+            }
+
+        $font_definition_file_path = "{$html2pdf_fonts_dir}/{$font_definition_file}";
+        if(!file_exists($font_definition_file_path))
+            {
+            continue;
+            }
+
+        include $font_definition_file_path;
+
+        if(!isset($name))
+            {
+            continue;
+            }
+
+        $html2pdf_available_fonts[substr($font_definition_file, 0, -4)] = $name;
+
+        // Unset these variables since all font definition files use them
+        unset($type);
+        unset($name);
+        unset($desc);
+        unset($up);
+        unset($dw);
+        unset($cw);
+        unset($diff);
+        unset($originalsize);
+        unset($enc);
+        unset($cidinfo);
+        }
+
+    return $html2pdf_available_fonts;
+    }
