@@ -1878,6 +1878,7 @@ $lang["contact_sheet-add_logo_option"]="Add logo to top of each page?";
 $lang["contact_sheet-single_select_size"]="Image quality";
 $lang['contact_sheet_footer_address'] = 'XXX MAIN STREET, CITY, ABC 123 - TEL: (111) 000-8888 - FAX: (000) 111-9999';
 $lang['contact_sheet_footer_copyright'] = '&#0169; ResourceSpace. All Rights Reserved.';
+$lang['contact_sheet_font_selector'] = 'Select font';
 
 $lang["caps-lock-on"]="Warning! Caps Lock is on";
 $lang["collectionnames"]="Collection names";
