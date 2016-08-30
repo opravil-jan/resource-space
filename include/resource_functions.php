@@ -1378,11 +1378,17 @@ function email_resource($resource,$resourcename,$fromusername,$userlist,$message
 
 	$emails=array();
 	$key_required=array();
-	
-	$emails_keys=resolve_user_emails($ulist);
-	$unames=$emails_keys['unames'];
-	$emails=$emails_keys['emails'];
-	$key_required=$emails_keys['key_required'];
+
+    $emails_keys = resolve_user_emails($ulist);
+
+    if(0 === count($emails_keys))
+        {
+        return $lang['email_error_user_list_not_valid'];
+        }
+
+    $unames       = $emails_keys['unames'];
+    $emails       = $emails_keys['emails'];
+    $key_required = $emails_keys['key_required'];
 
 	# Send an e-mail to each resolved user / e-mail address
 	$subject="$applicationname: $resourcename";
@@ -1747,7 +1753,7 @@ function get_resource_log($resource, $fetchrows=-1)
     $extrafields=hook("get_resource_log_extra_fields");
     if (!$extrafields) {$extrafields="";}
     
-    $log = sql_query("select distinct r.ref,r.date,u.username,u.fullname,r.type,f.title,r.notes,r.diff,r.usageoption,r.purchase_price,r.purchase_size,ps.name size, r.access_key,ekeys_u.fullname shared_by" . $extrafields . " from resource_log r left outer join user u on u.ref=r.user left outer join resource_type_field f on f.ref=r.resource_type_field left outer join external_access_keys ekeys on r.access_key=ekeys.access_key and r.resource=ekeys.resource left outer join user ekeys_u on ekeys.user=ekeys_u.ref left join preview_size ps on r.purchase_size=ps.id where r.resource='$resource' order by r.date desc",false,$fetchrows);
+    $log = sql_query("select r.ref,r.date,u.username,u.fullname,r.type,f.title,r.notes,r.diff,r.usageoption,r.purchase_price,r.purchase_size,ps.name size, r.access_key,ekeys_u.fullname shared_by" . $extrafields . " from resource_log r left outer join user u on u.ref=r.user left outer join resource_type_field f on f.ref=r.resource_type_field left outer join external_access_keys ekeys on r.access_key=ekeys.access_key and r.resource=ekeys.resource left outer join user ekeys_u on ekeys.user=ekeys_u.ref left join preview_size ps on r.purchase_size=ps.id where r.resource='$resource' group by r.ref order by r.date desc",false,$fetchrows);
     for ($n = 0;$n<count($log);$n++)
         {
         $log[$n]["title"] = lang_or_i18n_get_translated($log[$n]["title"], "fieldtitle-");
@@ -3012,10 +3018,10 @@ function get_edit_access($resource,$status=-999,$metadata=false,&$resourcedata="
         
 	if (!checkperm("e" . $status)) {return false;} # Must have edit permission to this resource first and foremost, before checking the filter.
 	
-	if (checkperm("z" . $status) || ($status<0 && !(checkperm("t") || $resourcedata['created_by'] == $userref))) {return false;} # Cannot edit if z permission, or if other user uploads pending approval and not admin
+	if (checkperm("z" . $status) || ($status<0 && !(checkperm("t") || $resourcedata['created_by'] == $userref) && !checkperm("ert" . $resourcedata['resource_type']))) {return false;} # Cannot edit if z permission, or if other user uploads pending approval and not admin
 	
 	$gotmatch=false;
-	if (trim($usereditfilter)=="" || $status<0) # No filter set, or resource is still in a User Contributed state in which case the edit filter should not be applied.
+	if (trim($usereditfilter)=="" || ($status<0 && $resourcedata['created_by'] == $userref)) # No filter set, or resource was contributed by user and is still in a User Contributed state in which case the edit filter should not be applied.
 		{
 		$gotmatch = true;
 		}
