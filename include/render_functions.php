@@ -894,7 +894,7 @@ function render_actions(array $collection_data, $top_actions = true, $two_line =
         return;
         }
 
-    global $baseurl, $lang, $k, $pagename, $order_by, $sort;
+    global $baseurl, $lang, $k, $pagename, $order_by, $sort, $chosen_dropdowns, $allow_resource_deletion;
 
     
     // globals that could also be passed as a reference
@@ -943,6 +943,10 @@ function render_actions(array $collection_data, $top_actions = true, $two_line =
                 $action_index_to_remove = array_search('search_items_disk_usage', array_column($search_actions_array, 'value'));
                 unset($search_actions_array[$action_index_to_remove]);
                 $search_actions_array = array_values($search_actions_array);
+				
+				$action_index_to_remove = array_search('save_search_items_to_collection', array_column($search_actions_array, 'value'));
+                unset($search_actions_array[$action_index_to_remove]);
+				$search_actions_array = array_values($search_actions_array);
                 }
     
             $actions_array = array_merge($collection_actions_array, $search_actions_array);
@@ -1018,6 +1022,11 @@ function render_actions(array $collection_data, $top_actions = true, $two_line =
 
             if(!$top_actions || !empty($collection_data))
                 {
+                global $search;
+                $search_collection='';
+                if(substr($search,0,11)=='!collection'){
+                	$search_collection=substr($search,11);
+                }
                 ?>
                 case 'delete_collection':
                     if(confirm('<?php echo $lang["collectiondeleteconfirm"]; ?>')) {
@@ -1036,7 +1045,7 @@ function render_actions(array $collection_data, $top_actions = true, $two_line =
                                     {
                                     CentralSpaceLoad(document.URL);
                                     }
-                                else
+                                else if(basename(document.URL).substr(0, 6) === 'search' && '<?php echo $search_collection?>'=='<?php echo $collection_data["ref"]?>')
                                     {
                                     CentralSpaceLoad('<?php echo $baseurl; ?>/pages/search.php?search=!collection' + response.redirect_to_collection, true);
                                     }
@@ -1099,24 +1108,29 @@ function render_actions(array $collection_data, $top_actions = true, $two_line =
             <?php
             if(!$top_actions)
                 {
-                ?>
-                case 'delete_all_in_collection':
-                    if(confirm('<?php echo $lang["deleteallsure"]; ?>'))
-                        {
-                        var post_data = {
-                            submitted: true,
-                            ref: '<?php echo $collection_data["ref"]; ?>',
-                            name: '<?php echo urlencode($collection_data["name"]); ?>',
-                            public: '<?php echo $collection_data["public"]; ?>',
-                            deleteall: 'on'
-                        };
-
-                        jQuery.post('<?php echo $baseurl; ?>/pages/collection_edit.php?ajax=true', post_data, function()
+                if($allow_resource_deletion)
+                    {
+                    ?>
+                    case 'delete_all_in_collection':
+                        if(confirm('<?php echo $lang["deleteallsure"]; ?>'))
                             {
-                            CollectionDivLoad('<?php echo $baseurl; ?>/pages/collections.php?collection=<?php echo $collection_data["ref"] ?>');
-                            });
-                        }
-                    break;
+                            var post_data = {
+                                submitted: true,
+                                ref: '<?php echo $collection_data["ref"]; ?>',
+                                name: '<?php echo $collection_data["name"]; ?>',
+                                public: '<?php echo $collection_data["public"]; ?>',
+                                deleteall: 'on'
+                            };
+
+                            jQuery.post('<?php echo $baseurl; ?>/pages/collection_edit.php?ajax=true', post_data, function()
+                                {
+                                CollectionDivLoad('<?php echo $baseurl; ?>/pages/collections.php?collection=<?php echo $collection_data["ref"] ?>');
+                                });
+                            }
+                        break;
+                    <?php
+                    }
+                    ?>
 
 					case 'hide_collection':
 						var action = 'hidecollection';
@@ -1153,6 +1167,14 @@ function render_actions(array $collection_data, $top_actions = true, $two_line =
 
                 // Go back to no action option
                 jQuery('#<?php echo $action_selection_id; ?> option[value=""]').attr('selected', 'selected');
+                <?php
+                if($chosen_dropdowns)
+                	{
+                	?>
+                	jQuery('#<?php echo $action_selection_id; ?>').trigger('chosen:updated');
+                	<?php
+                	}
+                ?>
 
         }
         </script>

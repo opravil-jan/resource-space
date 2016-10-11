@@ -16,7 +16,9 @@ include "../include/header.php";
 <!-- Drag mode selector -->
 <div id="GeoDragMode">
 <?php echo $lang["geodragmode"] ?>:&nbsp;
-<input type="radio" name="dragmode" id="dragmodearea" checked="checked" onClick="control.point.activate()" /><label for="dragmodearea"><?php echo $lang["geodragmodeareaselect"] ?></label>
+<input type="radio" name="dragmode" id="dragmodearea" onClick="if( document.getElementById('dragmodearea').checked ){
+	   control.point.activate();
+	   }" /><label for="dragmodearea"><?php echo $lang["geodragmodeareaselect"] ?></label>
 &nbsp;&nbsp;
 <input type="radio" name="dragmode" id="dragmodepan" onClick="control.point.deactivate();" /><label for="dragmodepan"><?php echo $lang["geodragmodepan"] ?></label>
 </div>
@@ -24,13 +26,18 @@ include "../include/header.php";
 <?php include "../include/geo_map.php"; ?>
 
 <script>
+//alert(document.getElementById("dragmodearea").checked);
 
 var control = new OpenLayers.Control();
+
 OpenLayers.Util.extend(control, {
 draw: function () {
-    this.point = new OpenLayers.Handler.Box( control,
-        {"done": this.notice});
-    this.point.activate();
+		
+		this.point = new OpenLayers.Handler.Box( control,
+			{"done": this.notice});
+		this.point.activate();
+		
+	
 },
 
 notice: function (bounds) {
@@ -39,7 +46,7 @@ notice: function (bounds) {
 		(
            map.getProjectionObject(), // from Spherical Mercator Projection}
       	   new OpenLayers.Projection("EPSG:4326")
-      	)
+      	);
 
 	var trpix = new OpenLayers.Pixel(bounds.right,bounds.top);
 	var tr=map.getLonLatFromPixel(trpix).transform
@@ -69,7 +76,7 @@ if($geo_search_modal_results)
     window.location.href=url;
 	
 }
-    });map.addControl(control);
+});map.addControl(control);
 jQuery('#UICenter').scroll(function() {
   map.events.clearMouseCache();
 });

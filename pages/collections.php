@@ -743,7 +743,7 @@ elseif ($k!="" && !$internal_share_access)
                 
 
 			#show only active collections if a start date is set for $active_collections 
-			if (strtotime($list[$n]['created']) > ((isset($active_collections))?strtotime($active_collections):1))
+			if (strtotime($list[$n]['created']) > ((isset($active_collections))?strtotime($active_collections):1) || ($list[$n]['name']=="My Collection" && $list[$n]['user']==$userref))
 					{ ?>
 			<option value="<?php echo $list[$n]["ref"]?>" <?php if ($usercollection==$list[$n]["ref"]) {?> 	selected<?php $found=true;} ?>><?php echo i18n_get_collection_name($list[$n]) ?> <?php if ($collection_dropdown_user_access_mode){echo htmlspecialchars("(". $colusername."/".$accessmode.")"); } ?></option>
 			<?php }
@@ -907,10 +907,19 @@ if ($count_result>0)
 
 		<?php if (!isset($cinfo['savedsearch'])||(isset($cinfo['savedsearch'])&&$cinfo['savedsearch']==null)){ // add 'remove' link only if this is not a smart collection 
 			?>
-		<?php if (!hook("replaceremovelink")){?>
-		<a class="CollectionResourceRemove" onclick="return CollectionDivLoad(this);" href="<?php echo $baseurl_short?>pages/collections.php?remove=<?php echo urlencode($ref) ?>&nc=<?php echo time()?>"><i aria-hidden="true" class="fa fa-minus-circle"></i> <?php echo $lang["action-remove"]?></a>
-		<?php
-				} //end hook replaceremovelink 
+            
+        <?php
+        $rating = '';
+        if(isset($rating_field))
+            {
+            $rating = "field{$rating_field}";
+            }
+            
+            $url = $baseurl_short."pages/view.php?ref=" . $ref . "&amp;search=" . urlencode($search) . "&amp;order_by=" . urlencode($order_by) . "&amp;sort=". urlencode($sort) . "&amp;offset=" . urlencode($offset) . "&amp;archive=" . urlencode($archive) . "&amp;k=" . urlencode($k) . "&amp;curpos=" . urlencode($n) . '&amp;restypes=' . urlencode($restypes);
+            
+        # Include standard search views    
+        include "search_views/resource_tools.php";  
+            
 			} # End of remove link condition 
 		?></div><?php 
 		} # End of k="" condition 
@@ -1080,4 +1089,92 @@ hook("thumblistextra");
 	</div>
 	<?php } ?>
 
-<?php draw_performance_footer();
+<?php
+draw_performance_footer();
+
+if ($chosen_dropdowns && $chosen_dropdowns_collection) { ?>
+<!-- Chosen support -->
+<script type="text/javascript">
+	chosenColElm = (thumbs=='show' ? '#CollectionMaxDiv' : '#CollectionMinDiv');
+	var css_width = jQuery(chosenColElm+" select").css("width");
+	jQuery(chosenColElm+" select").each(function(){
+		var css_width = jQuery(this).css("width");
+		jQuery(this).chosen({disable_search_threshold: chosenCollectionThreshold, 'width': css_width});
+	});
+	
+	jQuery("#CollectionDiv select").on('chosen:showing_dropdown', function(event, params) {
+	   
+	   var chosen_container = jQuery( event.target ).next( '.chosen-container' );
+	   chosen_containerParent = jQuery(chosen_container).parent();
+	   var dropdown = chosen_container.find( '.chosen-drop' );
+	   var dropdown_top = dropdown.offset().top - jQuery('#CollectionDiv').scrollTop();
+	   var dropdown_height = dropdown.height();
+	   var viewport_height = jQuery('#CollectionDiv').height();
+
+	   if ( dropdown_top + dropdown_height > viewport_height ) {
+		  chosen_container.addClass( 'chosen-drop-up' );
+		  myLayout.allowOverflow('south');
+	   }
+	   switch(thumbs){
+	   		case 'show':
+	   			
+	   			if(jQuery(chosen_containerParent).hasClass('SearchItem')){
+					jQuery("#colselect .chosen-drop").css("display","block");
+				}
+				else{
+					jQuery("#CollectionMaxDiv .ActionsContainer .chosen-drop").css("display","block");
+				}
+	   			break;
+	   		case 'hide':
+	   			
+	   			if(jQuery(chosen_containerParent).attr('id')=='MinColDrop'){
+					jQuery("#colselect2 .chosen-drop").css("display","block");
+				}
+				else{
+					jQuery("#CollectionMinRightNav .ActionsContainer .chosen-drop").css("display","block");
+				}
+				break;
+	   }
+
+	});
+	
+	jQuery("#CollectionDiv select").on('chosen:hiding_dropdown', function(event, params) {
+	   
+	   myLayout.resetOverflow('south');
+	   chosen_containerParent = jQuery( event.target ).next( '.chosen-container' ).parent()
+	   jQuery( event.target ).next( '.chosen-container' ).removeClass( 'chosen-drop-up' );
+	   switch(thumbs){
+	   		case 'show':
+	   			if(jQuery(chosen_containerParent).hasClass('SearchItem')){
+					jQuery("#colselect .chosen-drop").css("display","none");
+				}
+				else{
+					jQuery("#CollectionMaxDiv .ActionsContainer .chosen-drop").css("display","none");
+				}
+	   			break;
+	   		case 'hide':
+	   			if(jQuery(chosen_containerParent).attr('id')=='MinColDrop'){
+					jQuery("#colselect2 .chosen-drop").css("display","none");
+				}
+				else{
+					jQuery("#CollectionMinRightNav .ActionsContainer .chosen-drop").css("display","none");
+				}
+				break;
+	   } 
+	});
+	
+	// for some reason creating a collection would not work without specifying this bit of code...
+	jQuery('#entername2').keyup(function(e){
+		if(e.keyCode == 13){
+			jQuery("#colselect2").submit();
+		}
+	});
+	
+	jQuery('#entername').keyup(function(e){
+		if(e.keyCode == 13){
+			jQuery("#colselect").submit();
+		}
+	});
+</script>
+<!-- End of chosen support -->
+<?php } ?>

@@ -1,16 +1,18 @@
 <?php
 include '../../../include/db.php';
+include_once '../../../include/general.php';
 include '../../../include/authenticate.php';
 if(!checkperm('a'))
     {
     header('HTTP/1.1 401 Unauthorized');
     exit($lang['error-permissiondenied']);
     }
-include_once '../../../include/general.php';
 include_once '../include/emu_functions.php';
 
 
 $plugin_name         = 'emu';
+if(!in_array($plugin_name, $plugins))
+	{plugin_activate_for_setup($plugin_name);}
 $emu_rs_mappings     = unserialize(base64_decode($emu_rs_saved_mappings));
 $emu_script_last_ran = '';
 

@@ -16,15 +16,15 @@ function HookResource_tourGeo_searchGeosearch()
 			<td><div id="ResultsCount">Resources Found:</div></td>
 			<td><div id="TourResultCount"> </div>	</td>
 			<td><button id="locate">Locate me and fetch resources!</button></td>
-			
 			</tr>
 </table>
 			
-
 <input type="checkbox" name="track" id="track">
-        <label for="track">Follow me!</label>
+<label for="track">Follow me!</label>
 <div id="LoadingBox"></div>
 <script type="text/javascript">
+	
+//document.getElementById("dragmodarea").checked = false;
 document.getElementById("dragmodepan").checked = true;
 //jQuery('#ResultsCount').hide();	
 
@@ -124,9 +124,6 @@ geolocate.events.register("locationupdated",geolocate,function(e) {
 				graphicZIndex: 1099,
 				fillOpacity: 0});
 			
-			vector.addFeatures([circle,me]);
-			
-			
 			for (var i=0; i<data.length; i++)
 				{
 				//alert(i);
@@ -155,7 +152,9 @@ geolocate.events.register("locationupdated",geolocate,function(e) {
 				vectorLayer.addFeatures(feature);
 				vectorLayer2.addFeatures(feature2);
 				
+				
 			}
+			vector.addFeatures([circle,me]);
 			//Hide by default the thumbnails and display markers
 			vectorLayer.setVisibility(false);		
 		

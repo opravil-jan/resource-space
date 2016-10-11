@@ -26,14 +26,16 @@ $nodes      = array();
 
 $import_export_parent = getvalescaped('import_export_parent', null);
 
+$filter_by_name = unescape(getvalescaped('filter_by_name', ''));
+
 $chosencsslink ='<link type="text/css" rel="stylesheet" href="' . $baseurl_short . 'lib/chosen/chosen.min.css"></link>';
 $chosenjslink = '<script type="text/javascript" src="' . $baseurl_short . 'lib/chosen/chosen.jquery.min.js"></script>';
 
 if(!$ajax)
-	{
-	$headerinsert .= $chosencsslink;
-	$headerinsert .= $chosenjslink;
-	}
+    {
+    $headerinsert .= $chosencsslink;
+    $headerinsert .= $chosenjslink;
+    }
 
 $new_node_record_form_action = '/pages/admin/admin_manage_field_options.php?field=' . $field;
 
@@ -293,34 +295,78 @@ if('true' === $ajax && 'export' === $action)
     exit();
     }
 
+// [Paging functionality]
+$url            = generateURL("{$baseurl_short}pages/admin/admin_manage_field_options.php",
+                        array(
+                            'field'          => $field,
+                            'filter_by_name' => $filter_by_name
+                        )
+                    );
+$offset         = (int) getvalescaped('offset', 0, true);
+$per_page       = (int) getvalescaped('per_page_list', $default_perpage_list, true);
+$count_nodes    = get_nodes_count($field, $filter_by_name);
+$totalpages     = ceil($count_nodes / $per_page);
+$curpage        = floor($offset / $per_page) + 1;
+$jumpcount      = 0;
+
+if($offset > $count_nodes)
+    {
+    $offset = 0;
+    }
+
 include '../../include/header.php';
 
 if($ajax)
-	{
-	echo $chosencsslink;
-	echo $chosenjslink;
-	}
-	
-?>
+    {
+    echo $chosencsslink;
+    echo $chosenjslink;
+    }
+    ?>
 <div class="BasicsBox">
     <p>
-        <a href="<?php echo $baseurl_short; ?>pages/admin/admin_resource_type_field_edit.php?ref=<?php echo $field; ?>" onClick="return CentralSpaceLoad(this, true);"><?php echo LINK_CARET_BACK ?><?php echo $lang['back']?></a>
+        <a href="<?php echo $baseurl_short; ?>pages/admin/admin_resource_type_field_edit.php?ref=<?php echo $field; ?>" onClick="return CentralSpaceLoad(this, true);"><?php echo LINK_CARET_BACK; ?><?php echo $lang['back']; ?></a>
     </p>
     <h1><?php echo $lang['manage_metadata_field_options'] . (isset($field_data['title']) ? ' - ' . $field_data['title'] : ''); ?></h1>
 
-	<p><?php echo $lang["metadata_option_change_warning"] ?></p>
-	<?php
-	if(in_array($field,$default_to_first_node_for_fields))
-		{
-		?>
-		<p><?php echo $lang["metadata_first_option_is_default"]; ?>
-		<p>
-			<a href="<?php echo $baseurl?>/pages/tools/update_empty_field_with_default.php?field=<?php echo $field?>" onClick="CentralSpaceLoad(this,true);"><?php echo $lang['metadata_populate_default_node_for_empty_values']; ?></a>
-		</p>
-		<?php
-		}
-	?>
-    <div class="ListView">
+    <p><?php echo $lang['metadata_option_change_warning']; ?></p>
+    <?php
+    if(in_array($field, $default_to_first_node_for_fields))
+        {
+        ?>
+        <p><?php echo $lang["metadata_first_option_is_default"]; ?>
+        <p>
+            <a href="<?php echo $baseurl; ?>/pages/tools/update_empty_field_with_default.php?field=<?php echo $field?>" onClick="CentralSpaceLoad(this,true);"><?php echo $lang['metadata_populate_default_node_for_empty_values']; ?></a>
+        </p>
+        <?php
+        }
+        ?>
+    <div id="AdminManageMetadataFieldOptions" class="ListView">
+    <?php
+    if(7 != $field_data['type'])
+        {
+        ?>
+        <form id="FilterNodeOptions" class="FormFilter" method="post" action="<?php echo $baseurl; ?>/pages/admin/admin_manage_field_options.php?field=<?php echo $field; ?>">
+            <fieldset>
+                <legend><?php echo $lang['filter_label']; ?></legend>
+                <div class="FilterItemContainer">
+                    <label><?php echo $lang['name']; ?></label>
+                    <input type="text" name="filter_by_name" value="<?php echo $filter_by_name; ?>">
+                </div>
+                <button type="submit"><?php echo $lang['filterbutton']; ?></button>
+                <button class="ClearButton" type="submit" onCLick="ClearFilterForm('FilterNodeOptions'); return false;"><?php echo $lang['clearbutton']; ?></button>
+            </fieldset>
+        </form>
+        <!-- Pager -->
+        <div class="TopInpageNavRight">
+        <?php
+        pager();
+        $draw_pager = true;
+        ?>
+        </div>
+        <div class="clearerleft"></div>
+        <?php
+        }
+        ?>
         <table class="ListviewStyle" border="0" cellspacing="0" cellpadding="5">
         <?php
         // When editing a category tree we won't show the table headers since the data
@@ -337,7 +383,7 @@ if($ajax)
             <tbody>
         <?php
         // Render existing nodes
-		$nodes = get_nodes($field);
+        $nodes = get_nodes($field, null, false, $offset, $per_page, $filter_by_name);
 
         if(0 == count($nodes))
             {
@@ -345,7 +391,7 @@ if($ajax)
 
             migrate_resource_type_field_check($fieldinfo);
 
-            $nodes = get_nodes($field);
+            $nodes = get_nodes($field, null, false, $offset, $per_page, $filter_by_name);
             }
 
         foreach($nodes as $node)
@@ -363,8 +409,15 @@ if($ajax)
                             <input type="hidden" name="option_<?php echo $node['ref']; ?>_order_by" value="<?php echo $node['order_by']; ?>">
 
                             <button type="submit" onclick="SaveNode(<?php echo $node['ref']; ?>); return false;"><?php echo $lang['save']; ?></button>
+                        <?php
+                        if('' == $filter_by_name)
+                            {
+                            ?>
                             <button type="submit" onclick="ReorderNode(<?php echo $node['ref']; ?>, 'moveup'); return false;"><?php echo $lang['action-move-up']; ?></button>
                             <button type="submit" onclick="ReorderNode(<?php echo $node['ref']; ?>, 'movedown'); return false;"><?php echo $lang['action-move-down']; ?></button>
+                            <?php
+                            }
+                            ?>
                             <button type="submit" onclick="DeleteNode(<?php echo $node['ref']; ?>); return false;"><?php echo $lang['action-delete']; ?></button>
                         </form>
                     </div>
@@ -379,6 +432,24 @@ if($ajax)
             }
             ?>
         </table>
+    <?php
+    if(7 != $field_data['type'])
+        {
+        ?>
+        <div class="BottomInpageNav">
+            <div class="BottomInpageNavRight">  
+            <?php 
+            if(isset($draw_pager))
+                {
+                pager(false);
+                } 
+                ?>
+            </div>
+            <div class="clearerleft"></div>
+        </div>
+        <?php
+        }
+        ?>
     </div><!-- end of ListView -->
 
 <?php
@@ -601,6 +672,19 @@ function ToggleTreeNode(ref, field_ref)
 
     return true;
     }
+
+
+    function ClearFilterForm(filter_form_id)
+        {
+        var input_elements = document.getElementById(filter_form_id).getElementsByTagName('input');
+
+        for(var index = input_elements.length - 1; index >= 0; index--)
+            {
+            input_elements[index].value = '';
+            }
+
+        document.getElementById(filter_form_id).submit();
+        }
 
 jQuery('.node_parent_chosen_selector').chosen({});
 </script>
