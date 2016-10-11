@@ -38,7 +38,7 @@ if (getval("save","")!="")
 			$key=substr($key,11);
 			if ((!$reverse && getval("checked_" . $key,"")!="") || ($reverse && !getval("checked_" . $key,"")!=""))
 				{
-				$perms[]=urldecode($key);
+				$perms[]=base64_decode($key);
 				}
 			}
 		}		
@@ -48,7 +48,7 @@ if (getval("save","")!="")
 		}
 
 	log_activity(null,LOG_CODE_EDITED,join(",",$perms),'usergroup','permissions',$ref,null,null,null,true);
-	sql_query("update usergroup set permissions='" . join(",",$perms) . "' where ref='$ref'");
+	sql_query("update usergroup set permissions='" . escape_check(join(",",$perms)) . "' where ref='$ref'");
 	}
 
 $group=get_usergroup($ref);
@@ -61,11 +61,11 @@ function DrawOption($permission,$description,$reverse=false,$reload=false)
 	$checked=(in_array($permission,$permissions));
 	if ($reverse) {$checked=!$checked;}
 	?>
-	<input type="hidden" name="permission_<?php echo urlencode($permission)?>" value="<?php echo ($reverse)?"reverse":"normal" ?>">
+	<input type="hidden" name="permission_<?php echo base64_encode($permission)?>" value="<?php echo ($reverse)?"reverse":"normal" ?>">
 	<tr>
 		<td><?php if ($reverse) {?><i><?php } ?><?php echo $permission?><?php if ($reverse) {?></i><?php } ?></td>
 		<td><?php echo $description?></td>
-		<td><input type="checkbox" name="checked_<?php echo urlencode($permission) ?>" <?php 
+		<td><input type="checkbox" name="checked_<?php echo base64_encode($permission) ?>" <?php 
 			if ($checked) { ?> checked <?php } ?><?php if ($reload) { ?> onChange="CentralSpacePost(this.form,false);" <?php } ?>></td>
 	</tr>
 	<?php
@@ -175,11 +175,19 @@ foreach ($rtypes as $rtype)
 	{
 	DrawOption("XU" . $rtype["ref"], $lang["restricted_upload_for_resource_of_type"] . " '" . lang_or_i18n_get_translated($rtype["name"], "resourcetype-") . "'", false);
 	}
+	
+# ------------ Edit access to resource types (in any archive state to whcih the group has access)
+foreach ($rtypes as $rtype)
+	{
+	DrawOption("ert" . $rtype["ref"], $lang["can_edit_resource_type"] ." '" . lang_or_i18n_get_translated($rtype["name"], "resourcetype-") . "'");
+	}
 
 ?>				<tr class="ListviewTitleStyle">
 					<td colspan=3 class="permheader"><?php echo $lang["resource_creation_and_management"] ?></td>
 				</tr>
 <?php
+
+
 
 # ------------ Edit access to workflow states
 for ($n=-2;$n<=3;$n++)
@@ -299,7 +307,6 @@ DrawOption('ex', $lang['permission_manage_external_shares']);
 				</tr>
 <?php
 DrawOption("p", $lang["can_change_own_password"], true);
-DrawOption("u", $lang["can_manage_users"]);
 DrawOption("U", $lang["can_manage_users_in_children_groups"]);
 DrawOption("E", $lang["can_email_resources_to_own_and_children_and_parent_groups"]);
 DrawOption("x", $lang["allow_user_group_selection_for_access_when_sharing_externally"]);

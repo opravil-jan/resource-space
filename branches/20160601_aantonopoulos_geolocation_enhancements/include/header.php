@@ -76,7 +76,7 @@ if ($include_rs_header_info)
 <?php if ($pagename=="login") { ?><script type="text/javascript" src="<?php echo $baseurl?>/lib/js/jquery.capslockstate.js"></script><?php } ?>
 <!--[if lte IE 9]><script src="<?php echo $baseurl?>/lib/historyapi/history.min.js"></script><![endif]-->
 <?php if ($image_preview_zoom) { ?><script src="<?php echo $baseurl?>/lib/js/jquery.zoom.js"></script><?php } ?>
-
+<script type="text/javascript" src="<?php echo $baseurl?>/lib/js/jquery.tshift.min.js"></script>
 <script type="text/javascript" src="<?php echo $baseurl?>/lib/js/jquery-periodical-updater.js"></script>
 
 <?php 
@@ -86,13 +86,7 @@ if ($slideshow_big)
     <link type="text/css" href="<?php echo $baseurl?>/css/slideshow_big.css?css_reload_key=<?php echo $css_reload_key?>" rel="stylesheet" />
     <?php 
     }
-if ($load_ubuntu_font) 
-    { 
-	$urlprefix="http://";
-	if (strpos($baseurl,"https://")!==false) // Change prefix as mixed content prevents linking in Firefox
-		{$urlprefix="https://";}
-	echo "<link href='" . $urlprefix . "fonts.googleapis.com/css?family=Ubuntu:400,700' rel='stylesheet' type='text/css'>";
-	}
+
 
 if ($contact_sheet)
     {?>
@@ -115,7 +109,7 @@ if ($contact_sheet)
 <?php if (!$disable_geocoding) { ?>
 <script src="<?php echo $baseurl ?>/lib/OpenLayers/OpenLayers.js"></script>
 <?php if ($use_google_maps) { ?>
-<script src="https://maps.google.com/maps/api/js?v=3.2&sensor=false"></script>
+<script src="https://maps.google.com/maps/api/js?<?php if(isset($google_maps_api_key)) { echo "key={$google_maps_api_key}&"; } ?>v=3"></script>
 <?php } ?>
 <?php } ?>
 <?php if (!hook("ajaxcollections")) { ?>
@@ -144,6 +138,18 @@ if($videojs && ($pagename=='search' && $keyboard_navigation_video_search) || ($p
 <script language="javascript" type="text/javascript" src="<?php echo $baseurl_short; ?>lib/flot/jquery.flot.time.js"></script> 
 <script language="javascript" type="text/javascript" src="<?php echo $baseurl_short; ?>lib/flot/jquery.flot.pie.js"></script>
 <script language="javascript" type="text/javascript" src="<?php echo $baseurl_short; ?>lib/flot/jquery.flot.tooltip.min.js"></script>
+
+<!-- Chosen support -->
+<?php 
+if ($chosen_dropdowns) 
+	{ 
+	?>
+	<script src="<?php echo $baseurl_short ?>lib/chosen/chosen.jquery.min.js" type="text/javascript"></script>
+	<link rel="stylesheet" href="<?php echo $baseurl_short ?>lib/chosen/chosen.min.css">
+	<?php
+	}
+?>
+
     
 <script type="text/javascript">
 var baseurl_short="<?php echo $baseurl_short?>";
@@ -164,6 +170,20 @@ var scrolltopElementCentral='.ui-layout-center';
 var scrolltopElementCollection='.ui-layout-south';
 var scrolltopElementModal='#modal'
 collection_bar_hide_empty=<?php echo $collection_bar_hide_empty?"true":"false"; ?>;
+<?php 
+if ($chosen_dropdowns) 
+	{ 
+	?>
+	var chosen_config = 
+			{
+			"#CentralSpace select"           : {disable_search_threshold:<?php echo $chosen_dropdowns_threshold_main ?>, allow_single_deselect: true, width:"0px"},
+			"#SearchBox select"           : {disable_search_threshold:<?php echo $chosen_dropdowns_threshold_simplesearch ?>, allow_single_deselect: true, width:"0px"}
+	  		}
+    var chosenCollection='<?php echo ($chosen_dropdowns && $chosen_dropdowns_collection)?>';
+    var chosenCollectionThreshold='<?php echo $chosen_dropdowns_threshold_collection ?>';
+	<?php
+	}
+?>
 </script>
 
 <script src="<?php echo $baseurl_short?>lib/js/global.js?css_reload_key=<?php echo $css_reload_key?>" type="text/javascript"></script>
@@ -199,10 +219,6 @@ echo get_plugin_css();
 hook("headblock");
  
 endif; # !hook("customhtmlheader") 
-if($slimheader)
-    {
-    $body_classes[] = 'SlimHeader';
-    }
 ?>
 </head>
 <body lang="<?php echo $language ?>" class="<?php echo implode(' ', $body_classes); ?>" <?php if (isset($bodyattribs)) { ?><?php echo $bodyattribs?><?php } ?>>
@@ -250,92 +266,64 @@ if(isset($usergroup))
     }
 
 $linkUrl=isset($header_link_url) ? $header_link_url : $homepage_url;
-if($slimheader)
-    {
-    ?>
-    <div id="Header" class="<?php
-        echo ((isset($slimheader_darken) && $slimheader_darken) ? 'slimheader_darken' : '');
-        echo ((isset($slimheader_fixed_position) && $slimheader_fixed_position) ? ' SlimHeaderFixedPosition' : '');
-    ?>"<?php
-    if (isset($header_colour_style_override) && $header_colour_style_override!='') { ?> style="background: <?php echo $header_colour_style_override; ?>;"<?php } ?>>
-    <?php hook("responsiveheader");
-    if($header_text_title) 
-        {?>
-        <div id="TextHeader"><?php if ($k=="" || $internal_share_access){?><a href="<?php echo $homepage_url?>"  onClick="return CentralSpaceLoad(this,true);"><?php } ?><?php echo $applicationname;?><?php if ($k=="" || $internal_share_access){?></a><?php } ?></div>
-        <?php if ($applicationdesc!="")
-            {?>
-            <div id="TextDesc"><?php echo i18n_get_translated($applicationdesc);?></div>
-            <?php 
-            }
-        }
-    else
-        {
-        if($linkedheaderimgsrc !="") 
-            {
-            $header_img_src = $linkedheaderimgsrc;
-            if(substr($header_img_src, 0, 4) !== 'http')
-                {
-                // Set via System Config page?
-                if (substr($header_img_src, 0, 13) == '[storage_url]')
-                    {
-                    // Parse and replace the storage URL
-                    $header_img_src = str_replace('[storage_url]', $storageurl, $header_img_src);
-                    }
-                else
-                    {
-                    // Set via config.php
-                    // if image source already has the baseurl short, then remove it and add it here
-                    if(substr($header_img_src, 0, 1) === '/')
-                        {
-                        $header_img_src = substr($header_img_src, 1);
-                        }
-                    $header_img_src = $baseurl_short . $header_img_src;
-                    }
-                }
-            }
-        else 
-            {
-            $header_img_src = $baseurl.'/gfx/titles/title.svg';
-            }
-        if($header_link && ($k=="" || $internal_share_access))
-	    {?>
-	    <a href="<?php echo $linkUrl; ?>" onClick="return CentralSpaceLoad(this,true);" class="HeaderImgLink"><img src="<?php echo $header_img_src; ?>" id="HeaderImg"></img></a>
-	    <?php
-	    }
-	else
-	    {?>
-	    <div class="HeaderImgLink"><img src="<?php echo $header_img_src; ?>" id="HeaderImg"></img></div>
-	    <?php
-	    }
-        }
-    }
+?>
+<div id="Header" class="<?php
+	echo ((isset($slimheader_darken) && $slimheader_darken) ? 'slimheader_darken' : '');
+	echo ((isset($slimheader_fixed_position) && $slimheader_fixed_position) ? ' SlimHeaderFixedPosition' : '');
+	echo " " . $header_size;
+?>"<?php
+if (isset($header_colour_style_override) && $header_colour_style_override!='') { ?> style="background: <?php echo $header_colour_style_override; ?>;"<?php } ?>>
+<?php hook("responsiveheader");
+if($header_text_title) 
+	{?>
+	<div id="TextHeader"><?php if ($k=="" || $internal_share_access){?><a href="<?php echo $homepage_url?>"  onClick="return CentralSpaceLoad(this,true);"><?php } ?><?php echo $applicationname;?><?php if ($k=="" || $internal_share_access){?></a><?php } ?></div>
+	<?php if ($applicationdesc!="")
+		{?>
+		<div id="TextDesc"><?php echo i18n_get_translated($applicationdesc);?></div>
+		<?php 
+		}
+	}
 else
-    {
-    ?>
-    <div id="Header" <?php if ($header_text_title){?>style="background-image:none;"<?php } ?>>
-    <?php hook("responsiveheader");
-    if ($header_link && !$header_text_title && ($k=="" || $internal_share_access)) 
-        {
-       if(isset($header_link_height) || isset($header_link_width))
-            {
-            # compile style attribute for headerlink
-            $headerlink_style='';
-            if(isset($header_link_height)){$headerlink_style.="height:".$header_link_height."px;";}
-            if(isset($header_link_width)){$headerlink_style.="width:".$header_link_width."px;";}
-            }
-       $onclick = (substr($linkUrl, 0, strlen($baseurl)) === $baseurl || substr($linkUrl, 0, strlen($baseurl_short)) === $baseurl_short) ? "" : ' onclick="return CentralSpaceLoad(this,true);"';
-        ?><a class="headerlink" <?php if(isset($headerlink_style)){?> style="<?php echo $headerlink_style?>" <?php } ?> href="<?php echo $linkUrl ?>"<?php echo $onclick?>></a><?php
-        }
-    if ($header_text_title)
-        {?>
-        <div id="TextHeader"><?php if ($k=="" || $internal_share_access){?><a href="<?php echo $homepage_url?>"  onClick="return CentralSpaceLoad(this,true);"><?php } ?><?php echo $applicationname;?><?php if ($k=="" || $internal_share_access){?></a><?php } ?></div>
-        <?php if ($applicationdesc!="")
-            {?>
-            <div id="TextDesc"><?php echo i18n_get_translated($applicationdesc);?></div>
-            <?php 
-            }
-        }
-    }
+	{
+	if($linkedheaderimgsrc !="") 
+		{
+		$header_img_src = $linkedheaderimgsrc;
+		if(substr($header_img_src, 0, 4) !== 'http')
+			{
+			// Set via System Config page?
+			if (substr($header_img_src, 0, 13) == '[storage_url]')
+				{
+				// Parse and replace the storage URL
+				$header_img_src = str_replace('[storage_url]', $storageurl, $header_img_src);
+				}
+			else
+				{
+				// Set via config.php
+				// if image source already has the baseurl short, then remove it and add it here
+				if(substr($header_img_src, 0, 1) === '/')
+					{
+					$header_img_src = substr($header_img_src, 1);
+					}
+				$header_img_src = $baseurl_short . $header_img_src;
+				}
+			}
+		}
+	else 
+		{
+		$header_img_src = $baseurl.'/gfx/titles/title.svg';
+		}
+	if($header_link && ($k=="" || $internal_share_access))
+	{?>
+	<a href="<?php echo $linkUrl; ?>" onClick="return CentralSpaceLoad(this,true);" class="HeaderImgLink"><img src="<?php echo $header_img_src; ?>" id="HeaderImg"></img></a>
+	<?php
+	}
+else
+	{?>
+	<div class="HeaderImgLink"><img src="<?php echo $header_img_src; ?>" id="HeaderImg"></img></div>
+	<?php
+	}
+	}
+
 
 hook("headertop");
 
@@ -345,8 +333,18 @@ $not_authenticated_pages = array('login', 'user_change_password');
 
 if(isset($username) && !in_array($pagename, $not_authenticated_pages) && false == $loginterms && '' == $k || $internal_share_access)
     {
-    ?>
-<div id="HeaderNav1" class="HorizontalNav ">
+    # Custom header links
+    if (isset($header_link_style_override) && $header_link_style_override!='')
+        {
+        ?>
+        <style>
+        #HeaderNav1 li a, #HeaderNav2 li a { color: <?php echo $header_link_style_override; ?>; }
+        #HeaderNav2 li { border-color: <?php echo $header_link_style_override; ?>; }
+        </style>
+        <?php
+        }
+	?>
+	<div id="HeaderNav1" class="HorizontalNav">
 
 <?php
 hook("beforeheadernav1");
@@ -450,7 +448,7 @@ else {$div="CentralSpace";}
 ?>
 <!--Main Part of the page-->
         <?php if (($pagename!="login") && ($pagename!="user_password") && ($pagename!="user_request")) { ?><div id="CentralSpaceContainer"<?php
-        if(isset($slimheader) && $slimheader && isset($slimheader_fixed_position) && $slimheader_fixed_position)
+        if(isset($slimheader_fixed_position) && $slimheader_fixed_position)
             {
             ?> class="SlimHeaderFixedPosition"<?php
             }

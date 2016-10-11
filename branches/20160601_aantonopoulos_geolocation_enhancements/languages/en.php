@@ -123,9 +123,9 @@ $lang["property-order_by"]="Order by";
 $lang["property-indexing"]="<b>Indexing</b>";
 $lang["information-if_you_enable_indexing_below_and_the_field_already_contains_data-you_will_need_to_reindex_this_field"]="If you enable indexing below and the field already contains data, you will need to <a target=_blank href=../tools/reindex_field.php?field=%ref>reindex this field</a>"; # %ref will be replaced with the field id
 $lang["property-index_this_field"]="Index this field";
-$lang["information-enable_partial_indexing"]="Partial keyword indexing (prefix+infix indexing) should be used sparingly as it will significantly increase the index size. See the wiki for details.";
+$lang["information-enable_partial_indexing"]="Partial keyword indexing (prefix+infix indexing) should be used sparingly as it will significantly increase the index size. See the Knowledge Base for details.";
 $lang["property-enable_partial_indexing"]="Enable partial indexing";
-$lang["information-shorthand_name"]="Important: Shorthand name must be set for the field to be appear on the search bar, in Advanced search or to be used in search/edit filters. It must contain only lowercase alphabetical characters - no spaces, numbers or symbols.";
+$lang["information-shorthand_name"]="Important: Shorthand name must be set for the field to be appear on the search bar, in Advanced search or to be used in search/edit filters. It must contain only lowercase alphabetical characters and/or numbers - no spaces or symbols.";
 $lang["property-shorthand_name"]="Shorthand name";
 $lang["property-display_field"]="Display field";
 $lang["property-enable_advanced_search"]="Enable advanced search";
@@ -754,6 +754,7 @@ $lang["action-download"]="Download";
 $lang["action-email"]="E-mail";
 $lang["action-edit"]="Edit";
 $lang["action-delete"]="Delete";
+$lang["action-deletechecked"]="Delete checked";
 $lang["action-deletecollection"]="Delete collection";
 $lang["action-revertmetadata"]="Revert metadata";
 $lang["confirm-revertmetadata"]="Are you sure you want to re-extract the original metadata from this file? This action will simulate a re-upload of the file, and you will lose any altered metadata.";
@@ -898,6 +899,7 @@ $lang["notapprovedsharetheme"]="Sharing is prohibited for at least one collectio
 $lang["notapprovedresources"]="The following resources are not active and cannot be added to a shared collection: ";
 $lang['error_generating_access_key'] = 'Could not generate an access key';
 $lang['access_key_deleted'] = "Access key '%access_key' deleted";
+$lang['email_error_user_list_not_valid'] = 'No valid emails to send to (users might not be approved)';
 
 
 # New for 1.3
@@ -1191,7 +1193,8 @@ $lang["setup-login_to"]="Login to";
 $lang["setup-configuration_file_output"]="Configuration file output";
 $lang["more-information"]="More information";
 $lang["setup-structuralplugins"]="System templates";
-$lang["setup-headercolourstyleoverride"]="Custom header colour";
+$lang["setup-headercolourstyleoverride"]="Custom header background colour";
+$lang["setup-headerlinkstyleoverride"]="Custom header link colour";
 
 # Collection log - actions
 $lang["collectionlog"]="Collection log";
@@ -2016,7 +2019,7 @@ $lang["fieldhelp-permissions_filter"]="You may enter a single permission or comm
 $lang['page-title_user_group_management_edit'] = "Edit user group";
 $lang['page-subtitle_user_group_management_edit'] = "Use this section to modify user group properties.";
 $lang["action-title_remove_user_group_logo"]="Tick to remove user group logo";
-$lang["action-title_see_wiki_for_advanced_options"]="Please refer to the <a href='http://wiki.resourcespace.org/index.php?title=Main_Page#System_Administrator.27s_Guide'>WIKI</a> for further help with Advanced options.";
+$lang["action-title_see_wiki_for_advanced_options"]="Please refer to the <a href='http://www.resourcespace.com/knowledge-base/'>Knowledge Base</a> for further help with Advanced options.";
 
 # admin web edit
 $lang['page-title_web_edit'] = "Edit file";
@@ -2464,6 +2467,7 @@ $lang["download_file_created"] = "Your file is ready for download.";
 $lang["download_file_creation_failed"] = "Your file download request failed.";
 $lang["replace_resource_preserve_original"]="Keep the existing file as an alternative?";
 $lang["replace_resource_original_description"]= "Original %EXTENSION file"; // %EXTENSION  will be relaced by originl file extension
+$lang['replace_resource_original_alt_filename'] = 'Alternative filename';
 
 /* Manage external shares */
 $lang['permission_manage_external_shares'] = 'Can manage external shares with expiry set to "Never"';
@@ -2513,3 +2517,9 @@ $lang["collection_restype_blocked"]="The following resource types cannot be adde
 $lang["retina_mode"]="Retina mode";
 
 $lang["private-api-key"]="Private API key";
+$lang["can_edit_resource_type"] = "Edit access to resource type: ";
+
+$lang["userpreference_headersize"]="Header size";
+$lang["headersmall"]="Small";
+$lang["headermid"]="Medium";
+$lang["headerlarge"]="Large";

@@ -103,6 +103,12 @@ if (file_exists(dirname(__FILE__)."/config.default.php")) {include dirname(__FIL
 if (!file_exists(dirname(__FILE__)."/config.php")) {header ("Location: pages/setup.php" );die(0);}
 include (dirname(__FILE__)."/config.php");
 
+if(!isset($suppress_headers) || !$suppress_headers)
+    {
+    // Add X-Frame-Options to HTTP header, so that page cannot be shown in an iframe unless specifically set in config.
+    header('X-Frame-Options: ' . $xframe_options);
+    }
+
 if($system_down_redirect && getval('show', '') === '') {
 	redirect($baseurl . '/pages/system_down.php?show=true');
 }
@@ -160,7 +166,7 @@ function sql_connect()
              $sql_mode_string = implode(" ", $sql_mode_current[0]);
              $sql_mode_array_new = array_diff(explode(",",$sql_mode_string), array("ONLY_FULL_GROUP_BY", "NO_ZERO_IN_DATE", "NO_ZERO_DATE"));
              $sql_mode_string_new = implode (",", $sql_mode_array_new);
-             sql_query("SET SESSION sql_mode = '$sql_mode_string_new'");           
+             sql_query("SET SESSION sql_mode = '$sql_mode_string_new'",false,-1,false,0);           
              }
         }    
     }
@@ -1367,7 +1373,10 @@ function resolve_user_agent($agent)
                     #catch all for mozilla references not specified above
                     );
     $osmatches=array(
-                    "iphone"=>"iPhone",                    
+                    "iphone"=>"iPhone",
+					"nt 10.0"=>"Windows 10",
+					"nt 6.3"=>"Windows 8.1",
+					"nt 6.2"=>"Windows 8",
                     "nt 6.1"=>"Windows 7",
                     "nt 6.0"=>"Vista",
                     "nt 5.2"=>"WS2003",
@@ -1882,4 +1891,34 @@ function setup_user($userdata)
             eval($config_options);
             }
         
+	}
+
+/**
+* Validate user - check we have a valid user based on SQL criteria e.g. session that is passed in as $user_select_sql
+* Will always return false if matches criteria but the user account is not approved or has expired
+*
+* $user_select_sql example u.session=$variable. 
+* Joins to usergroup table as g  which can be used in criteria
+*
+* @param	string	$user_select_sql		SQL to check - usually session hash e.g. (u.session=$variable) 
+* @param 	boolan	$getuserdata			default true. Return user data as required by authenticate.php
+* 
+* @return boolean|array
+*/
+function validate_user($user_select_sql, $getuserdata=true)
+	{
+	if($user_select_sql==""){return false;}
+	
+	$full_user_select_sql = "approved = 1 AND (account_expires IS NULL OR account_expires = '0000-00-00 00:00:00' OR account_expires > now()) " . ((strtoupper(trim(substr($user_select_sql,0,4)))=="AND")?" ":" AND ") .  $user_select_sql;
+	if($getuserdata)
+		{
+		$userdata=sql_query("SELECT u.ref, u.username, g.permissions, g.parent, u.usergroup, u.current_collection, u.last_active, timestampdiff(second, u.last_active, now()) idle_seconds, u.email, u.password, u.fullname, g.search_filter, g.edit_filter, g.ip_restrict ip_restrict_group, g.name groupname, u.ip_restrict ip_restrict_user, u.search_filter_override, resource_defaults, u.password_last_change, g.config_options, g.request_mode, g.derestrict_filter, u.hidden_collections, u.accepted_terms FROM user u LEFT JOIN usergroup g on u.usergroup=g.ref WHERE " . $full_user_select_sql);
+		return $userdata;
+		}
+	else
+		{
+		$validuser=sql_value("SELECT u.ref value FROM user u LEFT JOIN usergroup g on u.usergroup=g.ref WHERE " . $full_user_select_sql,"");
+		if($validuser!=""){return true;}
+		}
+	return false;
 	}

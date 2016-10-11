@@ -145,7 +145,7 @@ if ($ref<0)
 			#remove smart collections as they cannot be uploaded to.
 			if (!isset($list[$n]['savedsearch'])||(isset($list[$n]['savedsearch'])&&$list[$n]['savedsearch']==null)){
 				#show only active collections if a start date is set for $active_collections 
-				if (strtotime($list[$n]['created']) > ((isset($active_collections))?strtotime($active_collections):1))
+				if (strtotime($list[$n]['created']) > ((isset($active_collections))?strtotime($active_collections):1) || ($list[$n]['name']=="My Collection" && $list[$n]['user']==$userref))
 					{ if ($list[$n]["ref"]==$usercollection) {$currentfound=true;} 
 					if($hide_collection)
 						{
@@ -161,9 +161,11 @@ if ($ref<0)
 			{
 			# The user's current collection has not been found in their list of collections (perhaps they have selected a theme to edit). Display this as a separate item.
 			$cc=get_collection($usercollection);
-			//Check if the current collection is editable as well by checking $cc['allow_changes']
-			if ($cc!==false && $cc['allow_changes']!=0)
-				{$currentfound=true;
+
+            //Check if the current collection is editable as well by checking $cc['allow_changes']
+			if(false !== $cc && collection_writeable($usercollection))
+				{
+                $currentfound = true;
 				?>
 				<option value="<?php echo htmlspecialchars($usercollection) ?>" <?php if ($usercollection==$collection_add){?>selected <?php } ?>><?php echo i18n_get_collection_name($cc)?></option>
 				<?php

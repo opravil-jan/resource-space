@@ -10,6 +10,8 @@ include '../../../include/authenticate.php'; if (!checkperm('a')) {exit ($lang['
 
 // Specify the name of this plugin and the heading to display for the page.
 $plugin_name = 'rss2';
+if(!in_array($plugin_name, $plugins))
+	{plugin_activate_for_setup($plugin_name);}
 $plugin_page_heading = $lang['rss_setup_heading'];
 
 // Build the $page_def array of descriptions of each configuration variable the plugin uses.
@@ -17,7 +19,6 @@ $plugin_page_heading = $lang['rss_setup_heading'];
 // created by one of the config_add_xxxx helper functions. See their definitions and
 // descriptions in include/plugin_functions for more information.
 
-$page_def[] = config_add_boolean_select('rss_limits', $lang['rss_limits']);
 $page_def[] = config_add_multi_ftype_select('rss_fields', $lang['rss_fields']);
 $page_def[] = config_add_text_input('rss_ttl', $lang['rss_ttl']);
 $page_def[] = config_add_boolean_select('rss_show_field_titles', $lang['rss_show_field_titles']);

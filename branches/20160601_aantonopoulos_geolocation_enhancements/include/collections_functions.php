@@ -146,7 +146,7 @@ function add_resource_to_collection($resource,$collection,$smartadd=false,$size=
 	{
 	global $collection_allow_not_approved_share, $collection_block_restypes;	
 	$addpermitted=collection_writeable($collection) || $smartadd;
-	if ($addpermitted &&(count($collection_block_restypes)>0))
+	if ($addpermitted && !$smartadd && (count($collection_block_restypes)>0)) // Can't always block adding resource types since this may be a single resource managed request
 		{
 		if($addtype=="")
 			{
@@ -356,6 +356,9 @@ function delete_collection($ref)
 	# Deletes the collection with reference $ref
 	global $home_dash;
 	
+	# Permissions check
+	if (!collection_writeable($ref)) {return false;}
+	
 	hook("beforedeletecollection","",array($ref));
 	sql_query("delete from collection where ref='$ref'");
 	sql_query("delete from collection_resource where collection='$ref'");
@@ -503,9 +506,14 @@ function search_public_collections($search="", $order_by="name", $sort="ASC", $e
 }
 
 
-function do_collections_search($search,$restypes,$archive=0,$order_by,$sort)
+function do_collections_search($search,$restypes,$archive=0,$order_by='',$sort="DESC")
     {
-    global $search_includes_themes, $search_includes_public_collections, $search_includes_user_collections, $userref, $collection_search_includes_resource_metadata;
+    global $search_includes_themes, $search_includes_public_collections, $search_includes_user_collections, $userref, $collection_search_includes_resource_metadata, $default_collection_sort;
+    
+    if($order_by=='')
+    	{
+    	$order_by=$default_collection_sort;
+    	}
     $result=array();
     
     # Recognise a quoted search, which is a search for an exact string
@@ -808,12 +816,12 @@ function get_theme_headers($themes=array())
 		$theme_path .= $themes[$x];		
 		if (isset($themes[$x])){
 			$selecting="theme".($x+2);
-		}		
+		}	
 		if (isset($themes[$x]) && $themes[$x]!="" && $x==0) {
-			$sql.=" and theme='" . escape_check($themes[$x]) . "'";
+			$sql.=" and theme LIKE '%" . escape_check($themes[$x]) . "%'";
 		}
 		else if (isset($themes[$x])&& $themes[$x]!=""&& $x!=0) {
-			$sql.=" and theme".($x+1)."='" . escape_check($themes[$x]) . "'";
+			$sql.=" and theme".($x+1)." LIKE '%" . escape_check($themes[$x]) . "%'";
 		}
 	}	
 	$return=array();
@@ -1029,6 +1037,12 @@ function email_collection($colrefs,$collectionname,$fromusername,$userlist,$mess
 	if ($feedback) {$feedback=1;} else {$feedback=0;}
 	$reflist=trim_array(explode(",",$colrefs));
 	$emails_keys=resolve_user_emails($ulist);
+
+    if(0 === count($emails_keys))
+        {
+        return $lang['email_error_user_list_not_valid'];
+        }
+
 	$emails=$emails_keys['emails'];
 	$key_required=$emails_keys['key_required'];
 
@@ -1313,9 +1327,14 @@ function get_search_title($searchstring){
 
 function add_saved_search_items($collection)
 	{
-	global $collection_share_warning, $collection_allow_not_approved_share, $userref, $collection_block_restypes;
+	global $collection_share_warning, $collection_allow_not_approved_share, $userref, $collection_block_restypes, $search_all_workflow_states;
 	# Adds resources from a search to the collection.
-	$results=do_search(getvalescaped("addsearch",""), getvalescaped("restypes",""), "relevance", getvalescaped("archive","",true),-1,'',false,getvalescaped("starsearch",""),false,false,getvalescaped("daylimit",""));
+	$archivesearch = getvalescaped("archive","",true);
+	if($search_all_workflow_states && 0 != $archivesearch)
+		{
+		$search_all_workflow_states = false;
+		}
+	$results=do_search(getvalescaped("addsearch",""), getvalescaped("restypes",""), "relevance", $archivesearch,-1,'',false,getvalescaped("starsearch",""),false,false,getvalescaped("daylimit",""));
 
 	# Check if this collection has already been shared externally. If it has, we must add a further entry
 	# for this specific resource, and warn the user that this has happened.
@@ -2006,12 +2025,15 @@ function update_collection_user($collection,$newuser)
 if(!function_exists("compile_collection_actions")){	
 function compile_collection_actions(array $collection_data, $top_actions, $resource_data=array())
     {
-    global $baseurl_short, $lang, $k, $userrequestmode, $zipcommand, $collection_download, $use_zip_extension, $archiver_path, 		 $collection_download_settings, $contact_sheet,
+    global $baseurl_short, $lang, $k, $userrequestmode, $zipcommand, $collection_download, $use_zip_extension, $archiver_path,
            $manage_collections_contact_sheet_link, $manage_collections_share_link, $allow_share,
            $manage_collections_remove_link, $userref, $collection_purge, $show_edit_all_link, $result,
            $edit_all_checkperms, $preview_all, $order_by, $sort, $archive, $contact_sheet_link_on_collection_bar,
            $show_searchitemsdiskusage, $emptycollection, $remove_resources_link_on_collection_bar, $count_result,
-           $download_usage, $home_dash, $top_nav_upload_type, $pagename, $offset, $col_order_by, $find, $default_sort, $default_collection_sort, $starsearch, $restricted_share, $hidden_collections, $internal_share_access, $search, $usercollection, $disable_geocoding, $geo_locate_collection;
+           $download_usage, $home_dash, $top_nav_upload_type, $pagename, $offset, $col_order_by, $find, $default_sort,
+           $default_collection_sort, $starsearch, $restricted_share, $hidden_collections, $internal_share_access, $search,
+           $usercollection, $disable_geocoding, $geo_locate_collection, $collection_download_settings, $contact_sheet,
+           $allow_resource_deletion;
     
 	#This is to properly render the actions drop down in the themes page	
 	if (isset($collection_data['c']))
@@ -2321,7 +2343,7 @@ function compile_collection_actions(array $collection_data, $top_actions, $resou
     if(($k=="" || $internal_share_access) 
 		&& !$top_actions
         && (count($result) != 0 || $count_result != 0)
-        && !(isset($allow_resource_deletion) && !$allow_resource_deletion)
+        && (isset($allow_resource_deletion) && $allow_resource_deletion)
         && collection_writeable($collection_data['ref'])
         && $allow_multi_edit
         && !checkperm('D'))

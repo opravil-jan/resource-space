@@ -10,7 +10,7 @@
  */
 
 if (!function_exists("upload_file")){
-function upload_file($ref,$no_exif=false,$revert=false,$autorotate=false)
+function upload_file($ref,$no_exif=false,$revert=false,$autorotate=false,$file_path="")
 	{
 	hook("beforeuploadfile","",array($ref));
 	hook("clearaltfiles", "", array($ref)); // optional: clear alternative files before uploading new resource
@@ -60,11 +60,19 @@ function upload_file($ref,$no_exif=false,$revert=false,$autorotate=false)
 		if (isset($_FILES['userfile'])) {$processfile=$_FILES['userfile'];} # Single upload (at least) needs this
 		elseif (isset($_FILES['Filedata'])) {$processfile=$_FILES['Filedata'];} # Java upload (at least) needs this
 
-		# Plupload needs this
-		if (isset($_REQUEST['name'])) {
-			$filename=$_REQUEST['name'];
+		# Work out the filename.
+		if (isset($_REQUEST['name']))
+			{
+			$filename=$_REQUEST['name']; # For PLupload
 			}
-		else {$filename=$processfile['name'];}
+		elseif ($file_path!="")
+			{
+			$filename=basename($file_path); # The file path was provided
+			}
+		else
+			{
+			$filename=$processfile['name']; # Standard uploads
+			}
 
 		global $filename_field;
 		if($no_exif && isset($filename_field)) {
@@ -79,7 +87,7 @@ function upload_file($ref,$no_exif=false,$revert=false,$autorotate=false)
 					
 				$original_extension = $path_parts['extension'];
 
-				if($original_extension == $user_set_filename_path_parts['extension'])
+				if(isset($user_set_filename_path_parts['extension']) && $original_extension == $user_set_filename_path_parts['extension'])
 					{
 					$filename = $user_set_filename;
 					}
@@ -115,7 +123,6 @@ function upload_file($ref,$no_exif=false,$revert=false,$autorotate=false)
     global $banned_extensions;
     if (in_array($extension,$banned_extensions)) {return false;}
     
-    $status="Please provide a file name.";
     $filepath=get_resource_path($ref,true,"",true,$extension);
 
 	if (!$revert){ 
@@ -147,17 +154,11 @@ function upload_file($ref,$no_exif=false,$revert=false,$autorotate=false)
 	if (!$revert){
     if ($filename!="")
     	{
-    	global $jupload_alternative_upload_location, $plupload_upload_location;
-    	if (isset($plupload_upload_location))
-    		{
-    		# PLUpload - file was sent chunked and reassembled - use the reassembled file location
-			$result=rename($plupload_upload_location, $filepath);
-    		}
-		elseif (isset($jupload_alternative_upload_location))
-    		{
-    		# JUpload - file was sent chunked and reassembled - use the reassembled file location
-		    $result=rename($jupload_alternative_upload_location, $filepath);
-    		}
+	    if ($file_path!="")
+			{
+			# File path has been specified. Let's use that directly.
+			$result=rename($file_path, $filepath);
+			}
 		else
 			{
 			# Standard upload.
@@ -168,7 +169,6 @@ function upload_file($ref,$no_exif=false,$revert=false,$autorotate=false)
 			
     	if ($result==false)
        	 	{
-       	 	$status="File upload error. Please check the size of the file you are trying to upload.";
        	 	return false;
        	 	}
      	else
@@ -190,8 +190,6 @@ function upload_file($ref,$no_exif=false,$revert=false,$autorotate=false)
 			extract_icc_profile($ref,$extension);
 		}
 
-
-		$status="Your file has been uploaded.";
     	 	}
     	}
     }	
@@ -278,16 +276,13 @@ function upload_file($ref,$no_exif=false,$revert=false,$autorotate=false)
 
     }
 	
-	# extract text from documents (e.g. PDF, DOC).
+	# Extract text from documents (e.g. PDF, DOC)
 	global $extracted_text_field;
-	if (isset($extracted_text_field) && !$no_exif) {
-		if (isset($unoconv_path) && in_array($extension,$unoconv_extensions)){
-			// omit, since the unoconv process will do it during preview creation below
-			}
-		else {
-		extract_text($ref,$extension);
+	if (isset($extracted_text_field) && !(isset($unoconv_path) && in_array($extension,$unoconv_extensions))) 
+		{
+		// This is skipped if the unoconv process will do it during preview creation later
+		extract_text($r,$extension);
 		}
-	}
 
 	# Store original filename in field, if set
 	global $filename_field,$amended_filename;
@@ -367,7 +362,7 @@ function upload_file($ref,$no_exif=false,$revert=false,$autorotate=false)
 	$log_ref=resource_log($ref,"u",0);
 	hook("upload_image_after_log_write","",array($ref,$log_ref));
 	
-    return $status;
+    return true;
     }}
 
 function extract_exif_comment($ref,$extension="")
@@ -404,7 +399,7 @@ function extract_exif_comment($ref,$extension="")
 		
 			$command = $exiftool_fullpath . " -s -s -s -t -composite:imagesize -xresolution -resolutionunit " . escapeshellarg($image);
 			$dimensions_resolution_unit=explode("\t",run_command($command));
-            resource_log(RESOURCE_LOG_APPEND_PREVIOUS,LOG_CODE_TRANSFORMED,'','','',$command . ":\n" . $dimensions_resolution_unit);
+            resource_log(RESOURCE_LOG_APPEND_PREVIOUS,LOG_CODE_TRANSFORMED,'','','',$command . ":\n" . implode(",",$dimensions_resolution_unit));
 
             # if dimensions resolution and unit could be extracted, add them to the database.
 			# they can be used in view.php to give more accurate data.
@@ -429,7 +424,17 @@ function extract_exif_comment($ref,$extension="")
 		$command = $exiftool_fullpath . " -s -s -f -m -d \"%Y-%m-%d %H:%M:%S\" -G " . escapeshellarg($image);
         $output=run_command($command);
         $metalines = explode("\n",$output);
-        resource_log(RESOURCE_LOG_APPEND_PREVIOUS,LOG_CODE_TRANSFORMED,'','','',$command . ":\n" . $output);
+		
+		# Just get the first and last few lines of the output if it is large, otherwise the log can be overwhelmed by this output
+		if(count($metalines)>20)
+			{
+			$summary=implode("\n", array_merge(array_slice($metalines, 0, 10),array("...","...","..."),array_slice($metalines, -10, 9)));
+			}
+        else
+			{
+			$summary=$output;	
+			}		
+		resource_log(RESOURCE_LOG_APPEND_PREVIOUS,LOG_CODE_TRANSFORMED,'','','',$command . ":\n" . $summary);
 
         $metadata = array(); # an associative array to hold metadata field/value pairs
 		
@@ -463,6 +468,15 @@ function extract_exif_comment($ref,$extension="")
 					$value = str_replace('....', '\n\n', $value); // Two new line feeds in ExifPro are replaced with 4 dots '....'
 					$value=str_replace('...','.\n',$value); # Three dots together is interpreted as a full stop then line feed, not the other way round
 					$value=str_replace('..','\n',$value);
+					
+					# Convert to UTF-8 if not already encoded
+					$encoding=mb_detect_encoding($value,"UTF-8",true);
+					if($encoding!="UTF-8")
+						{
+						debug("extract_exif_comment: non-utf-8 value found. Extracted value: " . $value);
+						$value=utf8_encode($value);
+						debug("extract_exif_comment: Converted value: " . $value);
+						}
 					
 					# Extract group name and tag name
 					$groupname=strtoupper(substr($s[0],1));
@@ -1948,7 +1962,7 @@ function get_colour_key($image)
 	return($colkey);
 	}
 
-function tweak_preview_images($ref,$rotateangle,$gamma,$extension="jpg")
+function tweak_preview_images($ref,$rotateangle,$gamma,$extension="jpg",$alternative=-1)
 	{
 	# Tweak all preview images
 	# On the edit screen, preview images can be either rotated or gamma adjusted. We keep the high(original) and low resolution print versions intact as these would be adjusted professionally when in use in the target application.
@@ -1956,13 +1970,13 @@ function tweak_preview_images($ref,$rotateangle,$gamma,$extension="jpg")
 	# Use the screen resolution version for processing
 	global $tweak_all_images;
 	if ($tweak_all_images){
-		$file=get_resource_path($ref,true,"hpr",false,$extension);$top="hpr";
+		$file=get_resource_path($ref,true,"hpr",false,$extension,-1,1,false,'',$alternative);$top="hpr";
 		if (!file_exists($file)) {
-			$file=get_resource_path($ref,true,"lpr",false,$extension);$top="lpr";
+			$file=get_resource_path($ref,true,"lpr",false,$extension,-1,1,false,'',$alternative);$top="lpr";
 			if (!file_exists($file)) {
-				$file=get_resource_path($ref,true,"scr",false,$extension);$top="scr";
+				$file=get_resource_path($ref,true,"scr",false,$extension,-1,1,false,'',$alternative);$top="scr";
 				if (!file_exists($file)) {
-					$file=get_resource_path($ref,true,"pre",false,$extension);$top="pre";
+					$file=get_resource_path($ref,true,"pre",false,$extension,-1,1,false,'',$alternative);$top="pre";
 				}
 			}
 		}
@@ -2010,7 +2024,7 @@ function tweak_preview_images($ref,$rotateangle,$gamma,$extension="jpg")
 	for ($n=0;$n<count($ps);$n++)
 		{
 		# fetch target width and height
-	    $file=get_resource_path($ref,true,$ps[$n]["id"],false,$extension);		
+	    $file=get_resource_path($ref,true,$ps[$n]["id"],false,$extension,-1,1,false,'',$alternative);		
 	    if (file_exists($file)){
 			list($sw,$sh) = @getimagesize($file);
 	    
@@ -2034,7 +2048,7 @@ function tweak_preview_images($ref,$rotateangle,$gamma,$extension="jpg")
 			}
 		}
 
-	if ($rotateangle!=0)
+	if ($rotateangle!=0 && $alternative==-1)
 		{
 		# Swap thumb heights/widths
 		$ts=sql_query("select thumb_width,thumb_height from resource where ref='$ref'");
@@ -2050,11 +2064,15 @@ function tweak_preview_images($ref,$rotateangle,$gamma,$extension="jpg")
 		
 		}
 	# Update the modified date to force the browser to reload the new thumbs.
-	sql_query("update resource set file_modified=now() where ref='$ref'");
+	$current_preview_tweak ='';
+	if ($alternative==-1){
+		sql_query("update resource set file_modified=now() where ref='$ref'");
 	
 	# record what was done so that we can reconstruct later if needed
 	# current format is rotation|gamma. Additional could be tacked on if more manipulation options are added
 	$current_preview_tweak = sql_value("select preview_tweaks value from resource where ref = '$ref'","");
+	}
+	
 	if (strlen($current_preview_tweak) == 0)
 		{
 			$oldrotate = 0;
@@ -2077,19 +2095,20 @@ function tweak_preview_images($ref,$rotateangle,$gamma,$extension="jpg")
 		}
         global $watermark;
         if ($watermark){
-            tweak_wm_preview_images($ref,$rotateangle,$gamma);
+            tweak_wm_preview_images($ref,$rotateangle,$gamma,"jpg",$alternative);
         }
-        
-        sql_query("update resource set preview_tweaks = '$newrotate|$newgamma' where ref = $ref");
+        if ($alternative==-1){
+			sql_query("update resource set preview_tweaks = '$newrotate|$newgamma' where ref = $ref");
+		}
         
 	}
 
-function tweak_wm_preview_images($ref,$rotateangle,$gamma,$extension="jpg"){
+function tweak_wm_preview_images($ref,$rotateangle,$gamma,$extension="jpg",$alternative=-1){
 
     $ps=sql_query("select * from preview_size where (internal=1 or allow_preview=1)");
     for ($n=0;$n<count($ps);$n++)
         {
-        $wm_file=get_resource_path($ref,true,$ps[$n]["id"],false,$extension,-1,1,true);
+        $wm_file=get_resource_path($ref,true,$ps[$n]["id"],false,$extension,-1,1,true,'',$alternative);
         if (!file_exists($wm_file)) {return false;}
         list($sw,$sh) = @getimagesize($wm_file);
         
@@ -2682,3 +2701,17 @@ function calculate_image_dimensions($image_path, $target_width, $target_height, 
 
     return $return;
     }
+
+function upload_file_by_url($ref,$no_exif=false,$revert=false,$autorotate=false,$url)
+	{
+	# Download a file from the provided URL, then upload it as if it was a local upload.
+	global $userref;
+	$file_path=get_temp_dir(false,$userref) . "/" . basename($url); # Temporary path creation for the downloaded file.
+	copy($url, $file_path); # Download the file.
+	return upload_file($ref,$no_exif,$revert,$autorotate,$file_path);	# Process as a normal upload...
+	}
+	
+	
+	
+	
+	

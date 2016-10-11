@@ -149,25 +149,12 @@ $header_favicon="gfx/interface/favicon.png";
 #replace header logo with text, application name and description
 $header_text_title=false;
 
-#If using the old background method, create a clickable area of the resourcespace logo graphic. Defaults to Homepage
+# Is the logo a link to the home page?
 $header_link=true;
-#If $slimheader is off you must set the link height and width to match the size of the logo graphic in pixels (Legacy support)
-#$header_link_height=;
-#$header_link_width=;
 
-###### SLIM HEADER DESIGN ######
-#In order to maintain backwards compatibility you must do the following to turn on the Slim Header Design
-#1. Set #slimheader=true;
-#2. (If you want a custom Logo) Set a source image location for the header logo with $linkedheaderimgsrc="/your/location.png";
-#3. (If you want to see the optional slim themes) Enable slim themes (See Below)
+# Header size class. Options are HeaderSmall, HeaderMid, HeaderLarge.
+$header_size="HeaderMid";
 
-## Slim Themes ##
-# The Slim Charcoal theme can be added to the available themes like so: 
-# $available_themes=array("multi", "whitegry","greyblu","black","slimcharcoal");
-
-## Defaults ##
-#This uses an img tag to display the header and will automatically include a link to the homepage. 
-$slimheader=false;
 # Custom source location for the header image (includes baseurl, requires leading "/"). Will default to the resourcespace logo if left blank. Recommended image size: 350px(X) x 80px(Y)
 
 # Set this to true in order for the top bar to remain present when scrolling down the page
@@ -182,8 +169,9 @@ $linkedheaderimgsrc="";
 # Include ResourceSpace version header in View Source
 $include_rs_header_info=true;
 
-# Used for specifying custom colour for header background
+# Used for specifying custom colours for header 
 $header_colour_style_override='';
+$header_link_style_override='';
 
 # Available languages
 # If $defaultlanguage is not set, the brower's default language will be used instead
@@ -897,6 +885,14 @@ $contact_sheet_footer = false;
 $contact_sheet_add_link=true;
 # Give user option to enable links?
 $contact_sheet_add_link_option=false;
+
+# Use watermarked previews for contact sheets? If set to 'true' watermarks will be forced rather than judged based on user credentials.
+$contact_sheet_force_watermarks=false;
+# Give user option to force watermarks?
+$contact_sheet_force_watermark_option=false;
+
+# Show contact sheet metadata under preview? For thumbnail view only
+$contact_sheet_metadata_under_thumbnail=false;
 
 $contact_sheet_single_select_size=false;
 
@@ -1901,11 +1897,6 @@ $resource_field_column_limit=200;
 #
 # $resource_created_by_filter=array();
 
-# Tell the browser to load the Ubuntu font from Google, used by the new styling.
-# This can be set to 'false' to improve loading times if you are using custom styling
-# that does not use this font.
-$load_ubuntu_font=true;
-
 
 #
 # ------------------------ eCommerce Settings -----------------------------
@@ -2154,6 +2145,9 @@ $enable_plugin_upload = true;
 #Disable geocoding features?
 $disable_geocoding = false;
 $use_google_maps = false;
+
+# After obtaining an API key, please set the following config option:
+# $google_maps_api_key = '';
 
 #Enable geolocating multiple assets on a map that are part of a collection
 $geo_locate_collection = false;
@@ -2886,6 +2880,9 @@ $password_reset_link_expiry =1;
 # Show the resource view in a modal when accessed from search results.
 $resource_view_modal=true;
 
+# Show the resource edit in a modal when accessed from resource view modal.
+$resource_edit_modal_from_view_modal=false;
+
 # Show geographical search results in a modal
 $geo_search_modal_results = true;
 
@@ -2915,6 +2912,16 @@ $resource_request_reason_required=true;
 
 # Use the 'chosen' library for rendering dropdowns (improved display and search capability for large dropdowns)
 $chosen_dropdowns=false;
+
+# The number of options that must be present before including seach capability.
+$chosen_dropdowns_threshold_main=10;
+$chosen_dropdowns_threshold_simplesearch=10;
+
+# Use the 'chosen' library for rendering dropdowns in the collection bar. $chosen_dropdowns must be set to true.
+$chosen_dropdowns_collection=false;
+
+# The number of options that must be present before including seach capability for collection bar dropdowns.
+$chosen_dropdowns_threshold_collection=10;
 
 # Allow ResourceSpace to upload multiple times the same file in a row
 # Set to true only if you want RS to create duplicates when client is losing
@@ -3074,3 +3081,5 @@ $collection_empty_on_submit=false;
 # Retina mode. Use the "next size up" when rending previews and thumbs for a more crisp display on high resolution screens. Note - uses much more bandwidth also.
 $retina_mode=false;
 
+# $xframe_options - set this to SAMEORIGIN or ALLOW-FROM with a URL to allow site to be used in an iframe
+$xframe_options = "DENY";
