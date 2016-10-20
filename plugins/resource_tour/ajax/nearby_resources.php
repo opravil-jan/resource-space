@@ -21,17 +21,17 @@ function lat2y($lat) {
 //echo $_POST['jsonData'];
 $PostData = json_decode($_POST['jsonData']);
 
-$radius = $PostData->{'Radius'};
+$radius = escape_check(strip_tags($PostData->{'Radius'}));
 //echo($radius);
-$lon =  $PostData->{'coord'}->{'x'};
-$lat =  $PostData->{'coord'}->{'y'};
+$lon =  escape_check(strip_tags($PostData->{'coord'}->{'x'}));
+$lat =  escape_check(strip_tags($PostData->{'coord'}->{'y'}));
 $merc_lon = lon2x(floatval($lon));
 $merc_lat = lat2y(floatval($lat));
 
-$Bound_North = $PostData->{'Bound_North'}->{'y'};
-$Bound_South = $PostData->{'Bound_South'}->{'y'};
-$Bound_West  = $PostData->{'Bound_West'}->{'x'};
-$Bound_East  = $PostData->{'Bound_East'}->{'x'};
+$Bound_North = escape_check(strip_tags($PostData->{'Bound_North'}->{'y'}));
+$Bound_South = escape_check(strip_tags($PostData->{'Bound_South'}->{'y'}));
+$Bound_West  = escape_check(strip_tags($PostData->{'Bound_West'}->{'x'}));
+$Bound_East  = escape_check(strip_tags($PostData->{'Bound_East'}->{'x'}));
 
 $filter = sql_query("select ref as value from resource where ( geo_lat>'$Bound_South' and geo_lat<'$Bound_North' and geo_long>'$Bound_West' and geo_long<'$Bound_East');","");
 
@@ -76,5 +76,5 @@ if (isset($markers)){
 }
 
 else{
-	echo json_encode('cows go moo when they poo');
+	echo json_encode('No resources found!');
 }

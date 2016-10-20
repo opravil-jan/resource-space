@@ -8,8 +8,8 @@ function HookResource_tourGeo_searchGeosearch()
 <table class="InfoTable">
 			<tr>
 			<td><div id="ValueText">Search radius around me [meters]:</div></td>
-			<td><input id="radius" type="range" min="<?php global $min_val;echo $min_val;?>" max="<?php global $max_val;echo $max_val;?>" step="<?php global $step;echo $step;?>" value="500" onmousemove="showrangevalue();"/></td>
-			<td><div id="value"><?php global $default_val;echo $default_val;?></div></td>
+			<td><input id="radius" type="range" min="<?php global $min_val;echo $min_val[0];?>" max="<?php global $max_val;echo $max_val[0];?>" step="<?php global $step;echo $step[0];?>" value="500" onmousemove="showrangevalue();"/></td>
+			<td><div id="value"><?php global $default_val;echo $default_val[0];?></div></td>
 			
 			</tr>
 			<tr>
@@ -19,23 +19,20 @@ function HookResource_tourGeo_searchGeosearch()
 			</tr>
 </table>
 			
-<input type="checkbox" name="track" id="track">
-<label for="track">Follow me!</label>
 <div id="LoadingBox"></div>
 <script type="text/javascript">
 	
-//document.getElementById("dragmodarea").checked = false;
-document.getElementById("dragmodepan").checked = true;
-//jQuery('#ResultsCount').hide();	
 
 var uurl = "<?php global $baseurl;echo $baseurl;?>"+"/plugins/resource_tour/ajax/nearby_resources.php";
 
 function showrangevalue(){
   document.getElementById("value").innerHTML=document.getElementById("radius").value;
 }
+
 function showTourResultCount(count){
-  document.getElementById("TourResultCount").innerHTML=count;
+	document.getElementById("TourResultCount").innerHTML=count;
 }
+
 projectTo = map.getProjectionObject(); 
 var vector = new OpenLayers.Layer.Vector('Resource Tour!');
 var vectorLayer = new OpenLayers.Layer.Vector("Thumbnails");
@@ -90,7 +87,7 @@ geolocate.events.register("locationupdated",geolocate,function(e) {
 		
 		success: function(data)          
 		{
-			if (data==='cows go moo when they poo'){
+			if (data==='No resources found!'){
 				
 				jQuery('#LoadingBox').hide();
 				alert('No resources found!');
@@ -199,7 +196,6 @@ geolocate.events.register("locationfailed",this,function() {
 
 document.getElementById('locate').onclick = function() {
     geolocate.deactivate();
-    //firstGeolocation = true;
     geolocate.activate();
 };
 

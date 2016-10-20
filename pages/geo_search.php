@@ -20,7 +20,8 @@ include "../include/header.php";
 	   control.point.activate();
 	   }" /><label for="dragmodearea"><?php echo $lang["geodragmodeareaselect"] ?></label>
 &nbsp;&nbsp;
-<input type="radio" name="dragmode" id="dragmodepan" onClick="control.point.deactivate();" /><label for="dragmodepan"><?php echo $lang["geodragmodepan"] ?></label>
+<input type="radio" name="dragmode" id="dragmodepan" onClick="if( document.getElementById('dragmodepan').checked ){
+control.point.deactivate();};"checked /><label for="dragmodepan"><?php echo $lang["geodragmodepan"] ?></label>
 </div>
 
 <?php include "../include/geo_map.php"; ?>
@@ -34,10 +35,7 @@ OpenLayers.Util.extend(control, {
 draw: function () {
 		
 		this.point = new OpenLayers.Handler.Box( control,
-			{"done": this.notice});
-		this.point.activate();
-		
-	
+			{"done": this.notice});	
 },
 
 notice: function (bounds) {
